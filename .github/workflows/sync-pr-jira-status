@@ -1,0 +1,188 @@
+name: Sync PR status to Jira
+
+on:
+  pull_request:
+    types:
+      - opened
+      - ready_for_review
+      - reopened
+      - closed
+
+  pull_request_review:
+    types:
+      - submitted
+
+jobs:
+  sync-jira-status:
+    runs-on: ubuntu-latest
+
+    # PR 생성자 등이 임의로 Jira Secret을 사용하는 것을 방지
+    if: github.event.pull_request.head.repo.full_name == github.repository
+
+    steps:
+      - name: Resolve target Jira status
+        id: target
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ACTION: ${{ github.event.action }}
+          REVIEW_STATE: ${{ github.event.review.state }}
+          PR_MERGED: ${{ github.event.pull_request.merged }}
+        run: |
+          set -euo pipefail
+
+          TARGET_STATUS=""
+
+          if [ "$EVENT_NAME" = "pull_request_review" ]; then
+            REVIEW_STATE_NORMALIZED=$(printf '%s' "$REVIEW_STATE" \
+              | tr '[:lower:]' '[:upper:]')
+
+            if [ "$REVIEW_STATE_NORMALIZED" = "CHANGES_REQUESTED" ]; then
+              TARGET_STATUS="REOPEN"
+            fi
+
+          elif [ "$EVENT_NAME" = "pull_request" ]; then
+            case "$EVENT_ACTION" in
+              opened|ready_for_review|reopened)
+                TARGET_STATUS="CODE REVIEW"
+                ;;
+
+              closed)
+                if [ "$PR_MERGED" != "true" ]; then
+                  TARGET_STATUS="REOPEN"
+                fi
+                ;;
+            esac
+          fi
+
+          if [ -z "$TARGET_STATUS" ]; then
+            echo "이번 이벤트에서는 Jira 상태를 변경하지 않습니다."
+            echo "shouldRun=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "targetStatus=$TARGET_STATUS" >> "$GITHUB_OUTPUT"
+          echo "shouldRun=true" >> "$GITHUB_OUTPUT"
+
+          echo "Jira target status: $TARGET_STATUS"
+
+      - name: Extract Jira key
+        id: jira
+        if: steps.target.outputs.shouldRun == 'true'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+
+          # 우선순위:
+          # 1. 브랜치명
+          # 2. PR 제목
+          # 3. PR 본문
+          JIRA_KEY=$(printf '%s\n%s\n%s' \
+            "$HEAD_BRANCH" \
+            "$PR_TITLE" \
+            "$PR_BODY" \
+            | grep -oE 'BUT-[0-9]+' \
+            | head -n 1 || true)
+
+          if [ -z "$JIRA_KEY" ]; then
+            echo "PR에서 Jira Key를 찾지 못했습니다."
+            echo "Branch: $HEAD_BRANCH"
+            echo "Title: $PR_TITLE"
+            exit 1
+          fi
+
+          echo "jiraKey=$JIRA_KEY" >> "$GITHUB_OUTPUT"
+          echo "Jira key: $JIRA_KEY"
+
+      - name: Find Jira transition
+        id: transition
+        if: steps.target.outputs.shouldRun == 'true'
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_KEY: ${{ steps.jira.outputs.jiraKey }}
+          TARGET_STATUS: ${{ steps.target.outputs.targetStatus }}
+        run: |
+          set -euo pipefail
+
+          HTTP_STATUS=$(curl --silent --show-error \
+            --output transitions.json \
+            --write-out "%{http_code}" \
+            --request GET \
+            --url "${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions" \
+            --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
+            --header "Accept: application/json")
+
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+            cat transitions.json
+            echo "Jira transition 조회 실패: HTTP $HTTP_STATUS"
+            exit 1
+          fi
+
+          echo "현재 가능한 Jira transitions:"
+          jq -r '
+            .transitions[]
+            | "\(.id): \(.name) -> \(.to.name)"
+          ' transitions.json
+
+          TRANSITION_ID=$(jq -r \
+            --arg target "$TARGET_STATUS" \
+            '
+              .transitions[]
+              | select(
+                  (.name | ascii_upcase) == ($target | ascii_upcase)
+                  or
+                  (.to.name | ascii_upcase) == ($target | ascii_upcase)
+                )
+              | .id
+            ' transitions.json \
+            | head -n 1)
+
+          if [ -z "$TRANSITION_ID" ] || [ "$TRANSITION_ID" = "null" ]; then
+            echo "$TARGET_STATUS transition을 찾지 못했습니다."
+            exit 1
+          fi
+
+          echo "transitionId=$TRANSITION_ID" >> "$GITHUB_OUTPUT"
+          echo "Transition ID: $TRANSITION_ID"
+
+      - name: Transition Jira issue
+        if: steps.target.outputs.shouldRun == 'true'
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_KEY: ${{ steps.jira.outputs.jiraKey }}
+          TRANSITION_ID: ${{ steps.transition.outputs.transitionId }}
+          TARGET_STATUS: ${{ steps.target.outputs.targetStatus }}
+        run: |
+          set -euo pipefail
+
+          PAYLOAD=$(jq -n \
+            --arg transitionId "$TRANSITION_ID" \
+            '{
+              transition: {
+                id: $transitionId
+              }
+            }')
+
+          HTTP_STATUS=$(curl --silent --show-error \
+            --output response.json \
+            --write-out "%{http_code}" \
+            --request POST \
+            --url "${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions" \
+            --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
+            --header "Accept: application/json" \
+            --header "Content-Type: application/json" \
+            --data "$PAYLOAD")
+
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+            cat response.json
+            echo "Jira 상태 변경 실패: HTTP $HTTP_STATUS"
+            exit 1
+          fi
+
+          echo "${JIRA_KEY} → ${TARGET_STATUS} 상태 전환 완료"
