@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      jiraKey: ${{ steps.create.outputs.issue }}
+      jiraKey: ${{ steps.create.outputs.jiraKey }}
       branchName: ${{ steps.parser.outputs.issueparser_branchName }}
 
     steps:
@@ -27,54 +27,102 @@ jobs:
       - name: Set Jira issue type
         id: issue-type
         env:
-          GITHUB_ISSUE_TYPE: ${{ github.event.issue.type.name }}
+          ISSUE_TYPE: ${{ github.event.issue.type.name }}
         run: |
-          case "${GITHUB_ISSUE_TYPE,,}" in
-            bug)
-              echo "jiraType=Bug" >> "$GITHUB_OUTPUT"
-              ;;
-            feature)
-              echo "jiraType=Feature" >> "$GITHUB_OUTPUT"
-              ;;
-            test)
-              echo "jiraType=Test" >> "$GITHUB_OUTPUT"
-              ;;
+          case "${ISSUE_TYPE,,}" in
+            bug)     echo "jiraType=Bug" >> "$GITHUB_OUTPUT" ;;
+            feature) echo "jiraType=Feature" >> "$GITHUB_OUTPUT" ;;
+            task)    echo "jiraType=Task" >> "$GITHUB_OUTPUT" ;;
+            test)    echo "jiraType=Test" >> "$GITHUB_OUTPUT" ;;
             *)
-              echo "지원하지 않는 Issue Type입니다: $GITHUB_ISSUE_TYPE"
+              echo "지원하지 않는 Issue Type입니다: $ISSUE_TYPE"
               exit 1
               ;;
           esac
 
-      - name: Login Jira
-        uses: atlassian/gajira-login@v3
+      - name: Create Jira issue
+        id: create
         env:
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_TYPE: ${{ steps.issue-type.outputs.jiraType }}
+          PARENT_KEY: ${{ steps.parser.outputs.issueparser_parentKey }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+        run: |
+          DESCRIPTION=$(printf '%s\n\n%s\n\n%s' \
+            "GitHub Issue: $ISSUE_URL" \
+            "$ISSUE_BODY" \
+            "Created from GitHub")
 
-      - name: Create Jira issue
-        id: create
-        uses: atlassian/gajira-create@v3
-        with:
-          project: BUT
-          issuetype: ${{ steps.issue-type.outputs.jiraType }}
-          summary: ${{ github.event.issue.title }}
-          description: |
-            GitHub Issue:
-            ${{ github.event.issue.html_url }}
-
-            ${{ github.event.issue.body }}
-          fields: |
-            {
-              "parent": {
-                "key": "${{ steps.parser.outputs.issueparser_parentKey }}"
+          PAYLOAD=$(jq -n \
+            --arg project "BUT" \
+            --arg issueType "$JIRA_TYPE" \
+            --arg summary "$ISSUE_TITLE" \
+            --arg description "$DESCRIPTION" \
+            --arg parentKey "$PARENT_KEY" \
+            '{
+              fields: {
+                project: {
+                  key: $project
+                },
+                issuetype: {
+                  name: $issueType
+                },
+                summary: $summary,
+                description: {
+                  type: "doc",
+                  version: 1,
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: $description
+                        }
+                      ]
+                    }
+                  ]
+                },
+                parent: {
+                  key: $parentKey
+                }
               }
-            }
+            }')
+
+          HTTP_STATUS=$(curl -sS \
+            -o response.json \
+            -w "%{http_code}" \
+            --request POST \
+            --url "$JIRA_BASE_URL/rest/api/3/issue" \
+            --user "$JIRA_USER_EMAIL:$JIRA_API_TOKEN" \
+            --header "Accept: application/json" \
+            --header "Content-Type: application/json" \
+            --data "$PAYLOAD")
+
+          cat response.json
+
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+            echo "Jira 이슈 생성 실패: HTTP $HTTP_STATUS"
+            exit 1
+          fi
+
+          JIRA_KEY=$(jq -r '.key' response.json)
+
+          if [ -z "$JIRA_KEY" ] || [ "$JIRA_KEY" = "null" ]; then
+            echo "Jira Key를 응답에서 찾지 못했습니다."
+            exit 1
+          fi
+
+          echo "jiraKey=$JIRA_KEY" >> "$GITHUB_OUTPUT"
 
       - name: Update GitHub issue title
         env:
           GH_TOKEN: ${{ github.token }}
-          JIRA_KEY: ${{ steps.create.outputs.issue }}
+          JIRA_KEY: ${{ steps.create.outputs.jiraKey }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
