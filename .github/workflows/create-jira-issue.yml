@@ -83,7 +83,7 @@ jobs:
 
   create-branch:
     needs: create-jira
-    uses: ./.github/workflows/create-feature-branch.yml
+    uses: ./.github/workflows/create-branch.yml
     with:
       jiraKey: ${{ needs.create-jira.outputs.jiraKey }}
       branchName: ${{ needs.create-jira.outputs.branchName }}
