@@ -17,37 +17,33 @@ jobs:
       branchName: ${{ steps.parser.outputs.issueparser_branchName }}
 
     steps:
-      - name: Select issue type
-        id: config
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Parse issue form
+        id: parser
+        uses: stefanbuck/github-issue-parser@v3
+
+      - name: Set Jira issue type
+        id: issue-type
         env:
-          LABELS: ${{ join(github.event.issue.labels.*.name, ',') }}
+          GITHUB_ISSUE_TYPE: ${{ github.event.issue.type.name }}
         run: |
-          case "$LABELS" in
-            *bug*)
-              echo "template=bug-issue-template.yml" >> "$GITHUB_OUTPUT"
-              echo "type=Bug" >> "$GITHUB_OUTPUT"
+          case "${GITHUB_ISSUE_TYPE,,}" in
+            bug)
+              echo "jiraType=Bug" >> "$GITHUB_OUTPUT"
               ;;
-            *test*)
-              echo "template=test-issue-template.yml" >> "$GITHUB_OUTPUT"
-              echo "type=Test" >> "$GITHUB_OUTPUT"
+            feature)
+              echo "jiraType=Feature" >> "$GITHUB_OUTPUT"
               ;;
-            *feature*)
-              echo "template=feature-issue-template.yml" >> "$GITHUB_OUTPUT"
-              echo "type=Task" >> "$GITHUB_OUTPUT"
+            test)
+              echo "jiraType=Test" >> "$GITHUB_OUTPUT"
               ;;
             *)
-              echo "지원하지 않는 라벨입니다: $LABELS"
+              echo "지원하지 않는 Issue Type입니다: $GITHUB_ISSUE_TYPE"
               exit 1
               ;;
           esac
-
-      - uses: actions/checkout@v4
-
-      - name: Parse issue template
-        id: parser
-        uses: stefanbuck/github-issue-parser@v3
-        with:
-          template-path: .github/ISSUE_TEMPLATE/${{ steps.config.outputs.template }}
 
       - name: Login Jira
         uses: atlassian/gajira-login@v3
@@ -61,10 +57,10 @@ jobs:
         uses: atlassian/gajira-create@v3
         with:
           project: BUT
-          issuetype: ${{ steps.config.outputs.type }}
+          issuetype: ${{ steps.issue-type.outputs.jiraType }}
           summary: ${{ github.event.issue.title }}
           description: |
-            GitHub Issue
+            GitHub Issue:
             ${{ github.event.issue.html_url }}
 
             ${{ github.event.issue.body }}
@@ -80,14 +76,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           JIRA_KEY: ${{ steps.create.outputs.issue }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
-          ISSUE_URL: ${{ github.event.issue.html_url }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
-          gh issue edit "$ISSUE_URL" \
+          gh issue edit "$ISSUE_NUMBER" \
             --title "$JIRA_KEY $ISSUE_TITLE"
 
   create-branch:
     needs: create-jira
-    uses: ./.github/workflows/create-branch.yml
+    uses: ./.github/workflows/create-feature-branch.yml
     with:
       jiraKey: ${{ needs.create-jira.outputs.jiraKey }}
       branchName: ${{ needs.create-jira.outputs.branchName }}
