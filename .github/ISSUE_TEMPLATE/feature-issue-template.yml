@@ -1,4 +1,4 @@
-name: '[Develop] Feautre 이슈 생성'
+name: '[Develop] Feature 이슈 생성'
 description: '기능 개발을 위한 Feature 이슈를 생성합니다.'
 labels: [feature]
 type: feature
