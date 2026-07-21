@@ -1,0 +1,93 @@
+name: Create Jira Issue
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  create-jira:
+    runs-on: ubuntu-latest
+
+    outputs:
+      jiraKey: ${{ steps.create.outputs.issue }}
+      branchName: ${{ steps.parser.outputs.issueparser_branchName }}
+
+    steps:
+      - name: Select issue type
+        id: config
+        env:
+          LABELS: ${{ join(github.event.issue.labels.*.name, ',') }}
+        run: |
+          case "$LABELS" in
+            *bug*)
+              echo "template=bug-issue-template.yml" >> "$GITHUB_OUTPUT"
+              echo "type=Bug" >> "$GITHUB_OUTPUT"
+              ;;
+            *test*)
+              echo "template=test-issue-template.yml" >> "$GITHUB_OUTPUT"
+              echo "type=Test" >> "$GITHUB_OUTPUT"
+              ;;
+            *feature*)
+              echo "template=feature-issue-template.yml" >> "$GITHUB_OUTPUT"
+              echo "type=Task" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "지원하지 않는 라벨입니다: $LABELS"
+              exit 1
+              ;;
+          esac
+
+      - uses: actions/checkout@v4
+
+      - name: Parse issue template
+        id: parser
+        uses: stefanbuck/github-issue-parser@v3
+        with:
+          template-path: .github/ISSUE_TEMPLATE/${{ steps.config.outputs.template }}
+
+      - name: Login Jira
+        uses: atlassian/gajira-login@v3
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: Create Jira issue
+        id: create
+        uses: atlassian/gajira-create@v3
+        with:
+          project: BUT
+          issuetype: ${{ steps.config.outputs.type }}
+          summary: ${{ github.event.issue.title }}
+          description: |
+            GitHub Issue
+            ${{ github.event.issue.html_url }}
+
+            ${{ github.event.issue.body }}
+          fields: |
+            {
+              "parent": {
+                "key": "${{ steps.parser.outputs.issueparser_parentKey }}"
+              }
+            }
+
+      - name: Update GitHub issue title
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JIRA_KEY: ${{ steps.create.outputs.issue }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+        run: |
+          gh issue edit "$ISSUE_URL" \
+            --title "$JIRA_KEY $ISSUE_TITLE"
+
+  create-branch:
+    needs: create-jira
+    uses: ./.github/workflows/create-branch.yml
+    with:
+      jiraKey: ${{ needs.create-jira.outputs.jiraKey }}
+      branchName: ${{ needs.create-jira.outputs.branchName }}
