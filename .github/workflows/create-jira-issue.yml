@@ -25,7 +25,22 @@ jobs:
         uses: stefanbuck/github-issue-parser@v3
         with:
           template-path: .github/ISSUE_TEMPLATE/feature-issue-template.yml
-
+      - name: Set Jira issue type
+        id: issue_type
+        env:
+          GITHUB_ISSUE_TYPE: ${{ github.event.issue.type.name }}
+        run: |
+          case "${GITHUB_ISSUE_TYPE,,}" in
+            feature) echo "jiraType=Feature" >> "$GITHUB_OUTPUT" ;;
+            bug) echo "jiraType=Bug" >> "$GITHUB_OUTPUT" ;;
+            task) echo "jiraType=Task" >> "$GITHUB_OUTPUT" ;;
+            test) echo "jiraType=Test" >> "$GITHUB_OUTPUT" ;;
+            *)
+              echo "지원하지 않는 GitHub 이슈 타입입니다: $GITHUB_ISSUE_TYPE"
+              exit 1
+              ;;
+          esac
+          
       - name: Check parsed values
         env:
           PARENT_KEY: ${{ steps.parser.outputs.issueparser_parentKey }}
@@ -45,7 +60,7 @@ jobs:
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-          JIRA_TYPE: ${{ steps.issue-type.outputs.jiraType }}
+          JIRA_TYPE: ${{ steps.issue_type.outputs.jiraType }}
           PARENT_KEY: ${{ steps.parser.outputs.issueparser_parentKey }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}
