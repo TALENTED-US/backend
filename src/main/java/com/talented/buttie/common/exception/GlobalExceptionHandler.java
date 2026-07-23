@@ -58,7 +58,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             .findFirst()
             .orElseThrow(() -> new RuntimeException("ConstraintViolationException Error"));
 
-        return handleExceptionInternalConstraint(e, CommonErrorCode.valueOf(errorMessage), request);
+        BaseErrorCode errorCode = resolveErrorCode(errorMessage);
+        return handleExceptionInternalConstraint(e, errorCode, request);
+    }
+
+    // 운영 단계에서는 제거 요망
+    private BaseErrorCode resolveErrorCode(String errorCodeName) {
+        try {
+            return CommonErrorCode.valueOf(errorCodeName);
+        } catch (IllegalArgumentException | NullPointerException e) {
+            log.error("invalid validation error code. please fix the error code errorCodeName={}", errorCodeName, e);
+            return CommonErrorCode.BAD_REQUEST;
+        }
     }
 
     @Override
