@@ -30,12 +30,8 @@ public class SimulationCreateService {
 
         SimulationVO simulation = SimulationVO.createCurrentSimulation(
                 userId,
-                snapshot.snapshotId(),
-                request.startDate(),
-                request.endDate(),
-                snapshot.liquidAssets(), // TODO: 예상 재정 계획 구현(ProjectionEngine) 후 결과로 교체
-                snapshot.targetAchievementRate(),
-                snapshot.prepPossibleMonths()
+                request,
+                snapshot
             );
 
         simulationMapper.save(simulation);
