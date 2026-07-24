@@ -18,5 +18,4 @@ public class EmploymentPreparationVO {
     private LocalDate prepStartDate;
     private LocalDate targetEmploymentDate;
     private Integer livingFundThreshold;
-    private Integer emergencyFundThreshold;
 }

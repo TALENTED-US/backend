@@ -1,1 +1,31 @@
-<!-- TODO: Add MyBatis mapper statements. -->
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.talented.buttie.user.mapper.EmploymentPreparationMapper">
+  <insert id="insertEmploymentPreparation">
+
+    INSERT INTO EMPLOYMENT_PREPARATION (
+
+    USER_ID,
+    BIRTH_DATE,
+    REGION,
+    FAMILY_COUNT,
+    EMPLOYMENT_PREP_TYPE,
+    PREP_START_DATE,
+    TARGET_EMPLOYMENT_DATE,
+    LIVING_FUND_THRESHOLD
+
+    ) VALUES (
+    #{ep.userId},
+    #{ep.birthDate},
+    #{ep.region},
+    #{ep.familyCount},
+    #{ep.employmentPrepType},
+    #{ep.prepStartDate},
+    #{ep.targetEmploymentDate},
+    #{ep.livingFundThreshold}
+    )
+  </insert>
+
+</mapper>
