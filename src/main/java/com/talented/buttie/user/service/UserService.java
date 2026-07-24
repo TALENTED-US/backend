@@ -1,16 +1,18 @@
 package com.talented.buttie.user.service;
 
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
-import com.talented.buttie.user.dto.request.CreateEmploymentPreparationRequestDTO;
+import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.user.exception.UserErrorCode;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final EmploymentPreparationMapper employmentPreparationMapper;
-    public void createEmploymentPreparation(Long userId, CreateEmploymentPreparationRequestDTO request) {
+    public void saveEmploymentPreparation(Long userId, UpdateEmploymentPreparationRequestDTO request) {
 
         EmploymentPreparationVO vo = EmploymentPreparationVO.builder()
             .userId(userId)
@@ -23,6 +25,9 @@ public class UserService {
             .livingFundThreshold(request.livingFundThreshold())
             .build();
 
-        employmentPreparationMapper.insertEmploymentPreparation(vo);
+        int updated = employmentPreparationMapper.updateEmploymentPreparation(vo);
+        if (updated == 0) {
+            throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_NOT_FOUND);
+        }
     }
 }

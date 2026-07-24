@@ -3,7 +3,7 @@ package com.talented.buttie.user.dto.request;
 import com.talented.buttie.user.domain.EmploymentPreparationType;
 import java.time.LocalDate;
 
-public record CreateEmploymentPreparationRequestDTO(
+public record UpdateEmploymentPreparationRequestDTO(
 
     LocalDate birthDate,
     String region,
