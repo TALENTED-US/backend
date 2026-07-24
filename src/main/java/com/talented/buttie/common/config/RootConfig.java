@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.flywaydb.core.Flyway;
+import org.springframework.context.annotation.DependsOn;
 
 @Configuration
 @PropertySource({"classpath:/application.properties"})
@@ -50,9 +52,20 @@ public class RootConfig {
         return new HikariDataSource(config);
     }
 
+    // Flyway
+    @Bean(initMethod = "migrate")
+    public Flyway flyway(){
+        return Flyway.configure()
+            .dataSource(dataSource())
+            .locations("classpath:db/migration")
+            .baselineOnMigrate(true)
+            .load();
+    }
+
     @Autowired
     ApplicationContext applicationContext;
     @Bean
+    @DependsOn("flyway")
     public SqlSessionFactory sqlSessionFactory() throws Exception {
         SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
         sqlSessionFactory.setConfigLocation(applicationContext.getResource("classpath:/mybatis-config.xml"));
