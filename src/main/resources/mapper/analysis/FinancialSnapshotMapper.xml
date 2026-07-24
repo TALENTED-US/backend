@@ -1,1 +1,21 @@
-<!-- TODO: Add MyBatis mapper statements. -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper">
+
+  <select id="findLatestByUserId"
+          resultType="com.talented.buttie.snapshot.dto.result.SimulationSnapshotResultDTO">
+    select
+      SNAPSHOT_ID,
+      USER_ID,
+      LIQUID_ASSETS,
+      TARGET_ACHIEVEMENT_RATE,
+      PREP_POSSIBLE_MONTHS
+    from SNAPSHOT
+    where USER_ID = #{userId}
+    order by BASE_DATE desc, CREATED_AT desc
+    limit 1
+  </select>
+</mapper>
