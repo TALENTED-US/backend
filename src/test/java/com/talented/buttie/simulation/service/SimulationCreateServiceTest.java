@@ -9,9 +9,9 @@ import static org.mockito.Mockito.verifyNoInteractions;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.simulation.domain.SimulationVO;
-import com.talented.buttie.simulation.dto.request.CreateSimulationRequest;
+import com.talented.buttie.simulation.dto.request.CreateSimulationRequestDTO;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
-import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
+import com.talented.buttie.snapshot.dto.result.SimulationSnapshotResultDTO;
 import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
 import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
 import java.math.BigDecimal;
@@ -25,7 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class SimulationPostServiceTest {
+class SimulationCreateServiceTest {
 
     @Mock
     private FinancialSnapshotMapper financialSnapshotMapper;
@@ -34,15 +34,15 @@ class SimulationPostServiceTest {
     private SimulationMapper simulationMapper;
 
     @InjectMocks
-    private SimulationPostService simulationPostService;
+    private SimulationCreateService simulationCreateService;
 
     private Long userId;
-    private CreateSimulationRequest request;
+    private CreateSimulationRequestDTO request;
 
     @BeforeEach
     void setup(){
         userId = 1L;
-        request = new CreateSimulationRequest(
+        request = new CreateSimulationRequestDTO(
             LocalDateTime.of(2026, 8, 1, 0, 0),
             LocalDateTime.of(2027, 1, 31, 0, 0)
         );
@@ -51,19 +51,20 @@ class SimulationPostServiceTest {
     @Test
     @DisplayName("시뮬레이션 최초 생성 테스트")
     void createSimulation() {
-        FinancialSnapshotVO snapshot = FinancialSnapshotVO.builder()
-            .snapshotId(10L)
-            .userId(userId)
-            .liquidAssets(5_000_000)
-            .prepPossibleMonths(new BigDecimal("8.25"))
-            .targetAchievementRate(new BigDecimal("35.50"))
-            .build();
+        SimulationSnapshotResultDTO snapshot =
+            new SimulationSnapshotResultDTO(
+                10L,
+                userId,
+                5_000_000,
+                new BigDecimal("35.50"),
+                new BigDecimal("8.25")
+            );
 
         given(financialSnapshotMapper.findLatestByUserId(userId))
             .willReturn(snapshot);
 
         // when: 실제 테스트 실행
-        SimulationVO result = simulationPostService.createSimulation(userId, request);
+        SimulationVO result = simulationCreateService.createSimulation(userId, request);
 
         // then: 결과 확인
         assertEquals(5_000_000, result.getEndingBalance());
@@ -81,7 +82,7 @@ class SimulationPostServiceTest {
         given(simulationMapper.findActiveByUserId(userId))
             .willReturn(activeSimulation);
 
-        SimulationVO result = simulationPostService.createSimulation(userId, request);
+        SimulationVO result = simulationCreateService.createSimulation(userId, request);
 
         assertSame(activeSimulation, result);
         verify(simulationMapper, never()).save(any(SimulationVO.class));
@@ -96,7 +97,7 @@ class SimulationPostServiceTest {
 
         ApplicationException exception = assertThrows(
             ApplicationException.class,
-            () -> simulationPostService.createSimulation(userId, request)
+            () -> simulationCreateService.createSimulation(userId, request)
         );
 
         assertEquals(AnalysisErrorCode.SNAPSHOT_NOT_FOUND, exception.getCode());

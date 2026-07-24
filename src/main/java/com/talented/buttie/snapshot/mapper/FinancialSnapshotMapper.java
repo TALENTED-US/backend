@@ -1,10 +1,10 @@
 package com.talented.buttie.snapshot.mapper;
 
-import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
+import com.talented.buttie.snapshot.dto.result.SimulationSnapshotResultDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface FinancialSnapshotMapper {
-    FinancialSnapshotVO findLatestByUserId(@Param("userId") Long userId);
+    SimulationSnapshotResultDTO findLatestByUserId(@Param("userId") Long userId);
 }

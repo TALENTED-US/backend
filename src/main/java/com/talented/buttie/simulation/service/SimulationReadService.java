@@ -1,5 +1,5 @@
 package com.talented.buttie.simulation.service;
 
-public class SimulationPatchService {
+public class SimulationReadService {
 
 }

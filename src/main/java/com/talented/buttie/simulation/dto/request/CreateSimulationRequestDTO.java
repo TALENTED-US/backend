@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 
 @Builder
-public record CreateSimulationRequest(
+public record CreateSimulationRequestDTO(
     LocalDateTime startDate,
     LocalDateTime endDate
 ) {

@@ -18,4 +18,24 @@ public class SimulationVO {
     private LocalDateTime modifiedAt;
     private LocalDateTime confirmedAt;
     private Boolean isDeleted;
+
+    public static SimulationVO createCurrentSimulation(
+        Long userId,
+        Long snapshotId,
+        LocalDateTime startDate,
+        LocalDateTime endDate,
+        Integer endingBalance,
+        BigDecimal targetRate,
+        BigDecimal prepMonths
+    ) {
+        return SimulationVO.builder()
+            .userId(userId)
+            .snapshotId(snapshotId)
+            .startDate(startDate)
+            .endDate(endDate)
+            .endingBalance(endingBalance)
+            .targetRate(targetRate)
+            .prepMonths(prepMonths)
+            .build();
+    }
 }

@@ -2,8 +2,9 @@ package com.talented.buttie.simulation.controller;
 
 import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.simulation.domain.SimulationVO;
-import com.talented.buttie.simulation.dto.request.CreateSimulationRequest;
-import com.talented.buttie.simulation.service.SimulationPostService;
+import com.talented.buttie.simulation.dto.request.CreateSimulationRequestDTO;
+import com.talented.buttie.simulation.dto.response.SimulationResponseDTO;
+import com.talented.buttie.simulation.service.SimulationCreateService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,14 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class SimulationController {
 
-    private final SimulationPostService simulationPostService;
+    private final SimulationCreateService simulationCreateService;
 
     @PostMapping
-    public ApplicationResponse<SimulationVO> createSimulation(
+    public ApplicationResponse<SimulationResponseDTO> createSimulation(
         @RequestParam Long userId,
-        @RequestBody CreateSimulationRequest request
+        @RequestBody CreateSimulationRequestDTO request
     ) {
-        SimulationVO simulation = simulationPostService.createSimulation(userId, request);
-        return ApplicationResponse.onSuccess(simulation);
+        SimulationVO simulation = simulationCreateService.createSimulation(userId, request);
+        return ApplicationResponse.onSuccess(
+            SimulationResponseDTO.from(simulation)
+        );
     }
 }
