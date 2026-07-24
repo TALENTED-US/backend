@@ -1,13 +1,15 @@
 -- Buttie MySQL 8.x 테이블 생성 스크립트
--- 기준: 테이블 명세서 v0.0.3
+-- 기준: 테이블 명세서 v0.0.3 (개정)
 -- 데이터베이스: buttie
 --
 -- 주의:
 -- 1) USER, TRANSACTION은 MySQL에서 혼동될 수 있어 백틱(`)으로 감쌌습니다.
--- 2) 명세서의 거래 카테고리 기본값 'ETC'는 ENUM 값과 맞지 않아 'ETC_EXPENSE'로 정리했습니다.
+-- 2) 거래는 TYPE('EXPENSE','INCOME','FIXED')으로 지출/수입/고정지출을 구분합니다. (기존 IS_EXPENSE 대체)
 -- 3) ACCOUNT의 외부 계좌 복합 UNIQUE는 (MYDATA_ID, EXTERNAL_ACCOUNT_ID)로 구성했습니다.
 -- 4) UPDATED_AT / MODIFIED_AT은 수정 시 자동 갱신되도록 설정했습니다.
 -- 5) SIMULATION_ITEM의 POLICY_ID / FINANCE_ID는 CHECK 제약조건과 충돌하지 않도록 FK 갱신·삭제 동작을 RESTRICT로 설정했습니다.
+-- 6) v0.0.3 개정: CUSTOM_EXPENSE 테이블 삭제(고정지출은 TRANSACTION.TYPE='FIXED'로 통합),
+--    EMPLOYMENT_PREPARATIONS.EMERGENCY_FUND_THRESHOLD 삭제.
 
 SET NAMES utf8mb4;
 SET time_zone = '+09:00';
@@ -23,7 +25,6 @@ SET time_zone = '+09:00';
 -- DROP TABLE IF EXISTS `SIMULATION_ITEM`;
 -- DROP TABLE IF EXISTS `SIMULATION`;
 -- DROP TABLE IF EXISTS `SNAPSHOT`;
--- DROP TABLE IF EXISTS `CUSTOM_EXPENSE`;
 -- DROP TABLE IF EXISTS `TRANSACTION`;
 -- DROP TABLE IF EXISTS `ACCOUNT`;
 -- DROP TABLE IF EXISTS `MYDATA`;
@@ -136,7 +137,6 @@ CREATE TABLE IF NOT EXISTS `EMPLOYMENT_PREPARATIONS` (
     `PREP_START_DATE` DATE NOT NULL,
     `TARGET_EMPLOYMENT_DATE` DATE NOT NULL,
     `LIVING_FUND_THRESHOLD` INT NOT NULL DEFAULT 0,
-    `EMERGENCY_FUND_THRESHOLD` INT NOT NULL DEFAULT 0,
 
     PRIMARY KEY (`USER_ID`),
     KEY `IDX_EMPLOYMENT_PREPARATIONS_REGION` (`REGION`),
@@ -153,9 +153,7 @@ CREATE TABLE IF NOT EXISTS `EMPLOYMENT_PREPARATIONS` (
     CONSTRAINT `CK_EMPLOYMENT_PREPARATIONS_TARGET_DATE`
         CHECK (`TARGET_EMPLOYMENT_DATE` >= `PREP_START_DATE`),
     CONSTRAINT `CK_EMPLOYMENT_PREPARATIONS_LIVING_FUND`
-        CHECK (`LIVING_FUND_THRESHOLD` >= 0),
-    CONSTRAINT `CK_EMPLOYMENT_PREPARATIONS_EMERGENCY_FUND`
-        CHECK (`EMERGENCY_FUND_THRESHOLD` >= 0)
+        CHECK (`LIVING_FUND_THRESHOLD` >= 0)
 ) ENGINE=InnoDB;
 
 -- =========================================================
@@ -258,7 +256,7 @@ CREATE TABLE IF NOT EXISTS `TRANSACTION` (
     `ACCOUNT_ID` BIGINT NULL,
     `EXTERNAL_TRANSACTION_ID` VARCHAR(100) NULL,
     `CONTENT` VARCHAR(255) NOT NULL,
-    `IS_EXPENSE` BOOLEAN NOT NULL DEFAULT FALSE,
+    `TYPE` ENUM('EXPENSE', 'INCOME', 'FIXED') NOT NULL,
     `CATEGORY`
         ENUM(
             'FOOD',
@@ -268,8 +266,8 @@ CREATE TABLE IF NOT EXISTS `TRANSACTION` (
             'SUBSCRIPTION',
             'EDUCATION',
             'CERTIFICATE',
-            'ETC_EXPENSE'
-        ) NOT NULL DEFAULT 'ETC_EXPENSE',
+            'ETC'
+        ) NOT NULL DEFAULT 'ETC',
     `AMOUNT` INT NOT NULL,
     `TRANSACTION_AT` DATETIME NOT NULL,
     `MEMO` VARCHAR(500) NULL,
@@ -286,7 +284,7 @@ CREATE TABLE IF NOT EXISTS `TRANSACTION` (
     KEY `IDX_TRANSACTION_USER_AT` (`USER_ID`, `TRANSACTION_AT`),
     KEY `IDX_TRANSACTION_ACCOUNT_ID` (`ACCOUNT_ID`),
     KEY `IDX_TRANSACTION_CATEGORY` (`CATEGORY`),
-    KEY `IDX_TRANSACTION_IS_EXPENSE` (`IS_EXPENSE`),
+    KEY `IDX_TRANSACTION_TYPE` (`TYPE`),
     KEY `IDX_TRANSACTION_ANALYSIS_EXCLUDED` (`ANALYSIS_EXCLUDED`),
     KEY `IDX_TRANSACTION_IS_DELETED` (`IS_DELETED`),
 
@@ -314,60 +312,7 @@ CREATE TABLE IF NOT EXISTS `TRANSACTION` (
 ) ENGINE=InnoDB;
 
 -- =========================================================
--- 9. 사용자 설정 비용
--- 고정 지출 및 예정 비용
--- =========================================================
-CREATE TABLE IF NOT EXISTS `CUSTOM_EXPENSE` (
-    `CUSTOM_EXPENSE_ID` BIGINT NOT NULL AUTO_INCREMENT,
-    `USER_ID` BIGINT NOT NULL,
-    `IS_FIXED` BOOLEAN NOT NULL DEFAULT TRUE,
-    `NAME` VARCHAR(100) NOT NULL,
-    `CATEGORY` VARCHAR(50) NOT NULL,
-    `AMOUNT` INT NOT NULL,
-    `EXPECTED_DATE` DATE NOT NULL,
-    `IS_RECURRING` BOOLEAN NOT NULL DEFAULT FALSE,
-    `RECURRENCE_TYPE` ENUM('WEEKLY', 'MONTHLY') NULL,
-    `RECURRENCE_END_DATE` DATE NULL,
-    `STATUS` ENUM('ACTIVE', 'COMPLETED', 'CANCELLED')
-        NOT NULL DEFAULT 'ACTIVE',
-    `MEMO` VARCHAR(500) NULL,
-    `CREATED_AT` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `UPDATED_AT` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP,
-
-    PRIMARY KEY (`CUSTOM_EXPENSE_ID`),
-    KEY `IDX_CUSTOM_EXPENSE_USER_DATE` (`USER_ID`, `EXPECTED_DATE`),
-    KEY `IDX_CUSTOM_EXPENSE_STATUS` (`STATUS`),
-    KEY `IDX_CUSTOM_EXPENSE_IS_FIXED` (`IS_FIXED`),
-
-    CONSTRAINT `FK_CUSTOM_EXPENSE_USER`
-        FOREIGN KEY (`USER_ID`)
-        REFERENCES `USER` (`USER_ID`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-
-    CONSTRAINT `CK_CUSTOM_EXPENSE_AMOUNT`
-        CHECK (`AMOUNT` > 0),
-
-    CONSTRAINT `CK_CUSTOM_EXPENSE_RECURRENCE`
-        CHECK (
-            (`IS_RECURRING` = FALSE
-                AND `RECURRENCE_TYPE` IS NULL
-                AND `RECURRENCE_END_DATE` IS NULL)
-            OR
-            (`IS_RECURRING` = TRUE
-                AND `RECURRENCE_TYPE` IS NOT NULL)
-        ),
-
-    CONSTRAINT `CK_CUSTOM_EXPENSE_RECURRENCE_END_DATE`
-        CHECK (
-            `RECURRENCE_END_DATE` IS NULL
-            OR `RECURRENCE_END_DATE` >= `EXPECTED_DATE`
-        )
-) ENGINE=InnoDB;
-
--- =========================================================
--- 10. 재정 스냅샷
+-- 9. 재정 스냅샷
 -- =========================================================
 CREATE TABLE IF NOT EXISTS `SNAPSHOT` (
     `SNAPSHOT_ID` BIGINT NOT NULL AUTO_INCREMENT,
@@ -422,7 +367,7 @@ CREATE TABLE IF NOT EXISTS `SNAPSHOT` (
 ) ENGINE=InnoDB;
 
 -- =========================================================
--- 11. 금융 상품
+-- 10. 금융 상품
 -- =========================================================
 CREATE TABLE IF NOT EXISTS `FINANCE` (
     `FINANCE_ID` BIGINT NOT NULL AUTO_INCREMENT,
@@ -464,7 +409,7 @@ CREATE TABLE IF NOT EXISTS `FINANCE` (
 ) ENGINE=InnoDB;
 
 -- =========================================================
--- 12. 정부 지원 정책
+-- 11. 정부 지원 정책
 -- =========================================================
 CREATE TABLE IF NOT EXISTS `POLICY` (
     `POLICY_ID` BIGINT NOT NULL AUTO_INCREMENT,
@@ -503,7 +448,7 @@ CREATE TABLE IF NOT EXISTS `POLICY` (
 ) ENGINE=InnoDB;
 
 -- =========================================================
--- 13. 시뮬레이션
+-- 12. 시뮬레이션
 -- =========================================================
 CREATE TABLE IF NOT EXISTS `SIMULATION` (
     `SIMULATION_ID` BIGINT NOT NULL AUTO_INCREMENT,
@@ -546,7 +491,7 @@ CREATE TABLE IF NOT EXISTS `SIMULATION` (
 ) ENGINE=InnoDB;
 
 -- =========================================================
--- 14. 시뮬레이션 적용 항목
+-- 13. 시뮬레이션 적용 항목
 -- =========================================================
 CREATE TABLE IF NOT EXISTS `SIMULATION_ITEM` (
     `SIMULATION_ITEM_ID` BIGINT NOT NULL AUTO_INCREMENT,
@@ -603,7 +548,7 @@ CREATE TABLE IF NOT EXISTS `SIMULATION_ITEM` (
 ) ENGINE=InnoDB;
 
 -- =========================================================
--- 15. 월별 예상 결과
+-- 14. 월별 예상 결과
 -- =========================================================
 CREATE TABLE IF NOT EXISTS `PROJECTION` (
     `PROJECTION_ID` BIGINT NOT NULL AUTO_INCREMENT,
@@ -634,7 +579,7 @@ CREATE TABLE IF NOT EXISTS `PROJECTION` (
 ) ENGINE=InnoDB;
 
 -- =========================================================
--- 16. 알림
+-- 15. 알림
 -- =========================================================
 CREATE TABLE IF NOT EXISTS `NOTIFICATION` (
     `NOTIFICATION_ID` BIGINT NOT NULL AUTO_INCREMENT,
@@ -659,7 +604,7 @@ CREATE TABLE IF NOT EXISTS `NOTIFICATION` (
 ) ENGINE=InnoDB;
 
 -- =========================================================
--- 17. 퀘스트
+-- 16. 퀘스트
 -- =========================================================
 CREATE TABLE IF NOT EXISTS `QUEST` (
     `QUEST_ID` BIGINT NOT NULL AUTO_INCREMENT,
