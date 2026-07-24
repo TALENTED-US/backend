@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.flywaydb.core.Flyway;
 import org.springframework.context.annotation.DependsOn;
@@ -32,7 +33,8 @@ import org.springframework.context.annotation.DependsOn;
     "com.talented.buttie.quest.service",
     "com.talented.buttie.catalog.service",
     "com.talented.buttie.catalog.elasticsearch",
-    "com.talented.buttie.notification.service"
+    "com.talented.buttie.notification.service",
+    "com.talented.buttie.common.security"
 })
 @MapperScan(basePackages = {"com.talented.buttie"})
 public class RootConfig {
@@ -60,6 +62,16 @@ public class RootConfig {
             .locations("classpath:db/migration")
             .baselineOnMigrate(true)
             .load();
+    }
+
+    @Bean
+
+    public static PropertySourcesPlaceholderConfigurer
+    propertySourcesPlaceholderConfigurer() {
+        PropertySourcesPlaceholderConfigurer configurer =
+            new PropertySourcesPlaceholderConfigurer();
+        configurer.setIgnoreUnresolvablePlaceholders(false);
+        return configurer;
     }
 
     @Autowired
