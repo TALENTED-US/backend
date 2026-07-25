@@ -6,13 +6,8 @@
 <mapper namespace="com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper">
 
   <select id="findLatestByUserId"
-          resultType="com.talented.buttie.snapshot.dto.result.SimulationSnapshotResultDTO">
-    select
-      SNAPSHOT_ID,
-      USER_ID,
-      LIQUID_ASSETS,
-      TARGET_ACHIEVEMENT_RATE,
-      PREP_POSSIBLE_MONTHS
+          resultType="com.talented.buttie.snapshot.domain.FinancialSnapshotVO">
+    select *
     from SNAPSHOT
     where USER_ID = #{userId}
     order by BASE_DATE desc, CREATED_AT desc
