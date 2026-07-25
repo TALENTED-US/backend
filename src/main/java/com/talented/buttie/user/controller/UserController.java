@@ -2,6 +2,7 @@ package com.talented.buttie.user.controller;
 
 import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
+import com.talented.buttie.user.dto.response.UserPKResponseDTO;
 import com.talented.buttie.user.service.UserService;
 
 import io.swagger.annotations.Api;
@@ -22,11 +23,11 @@ public class UserController {
     private final UserService userService;
 
     @PatchMapping("/employment-preparation")
-    public ApplicationResponse<Void> saveEmploymentPreparation(
+    public ApplicationResponse<UserPKResponseDTO> saveEmploymentPreparation(
         @RequestParam Long userId,
         @RequestBody UpdateEmploymentPreparationRequestDTO request
     ) {
         userService.saveEmploymentPreparation(userId, request);
-        return ApplicationResponse.onSuccess();
+        return ApplicationResponse.onSuccess(new UserPKResponseDTO(userId));
     }
 }
