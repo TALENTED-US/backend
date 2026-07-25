@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PatchMapping;
-
+import javax.validation.Valid;
 @Api(tags = "User")
 @RestController
 @RequestMapping("/api/users/my")
@@ -25,7 +25,7 @@ public class UserController {
     @PatchMapping("/employment-preparation")
     public ApplicationResponse<UserPKResponseDTO> saveEmploymentPreparation(
         @RequestParam Long userId,
-        @RequestBody UpdateEmploymentPreparationRequestDTO request
+        @Valid @RequestBody UpdateEmploymentPreparationRequestDTO request
     ) {
         userService.saveEmploymentPreparation(userId, request);
         return ApplicationResponse.onSuccess(new UserPKResponseDTO(userId));
