@@ -6,13 +6,13 @@
   <update id="updateEmploymentPreparation">
     UPDATE EMPLOYMENT_PREPARATION
     SET
-      BIRTH_DATE = #{ep.birthDate},
-      REGION = #{ep.region},
-      FAMILY_COUNT = #{ep.familyCount},
-      EMPLOYMENT_PREP_TYPE = #{ep.employmentPrepType},
-      PREP_START_DATE = #{ep.prepStartDate},
-      TARGET_EMPLOYMENT_DATE = #{ep.targetEmploymentDate},
-      LIVING_FUND_THRESHOLD = #{ep.livingFundThreshold}
-    WHERE USER_ID = #{ep.userId}
+      BIRTH_DATE = #{employmentPreparation.birthDate},
+      REGION = #{employmentPreparation.region},
+      FAMILY_COUNT = #{employmentPreparation.familyCount},
+      EMPLOYMENT_PREP_TYPE = #{employmentPreparation.employmentPrepType},
+      PREP_START_DATE = #{employmentPreparation.prepStartDate},
+      TARGET_EMPLOYMENT_DATE = #{employmentPreparation.targetEmploymentDate},
+      LIVING_FUND_THRESHOLD = #{employmentPreparation.livingFundThreshold}
+    WHERE USER_ID = #{employmentPreparation.userId}
   </update>
 </mapper>
