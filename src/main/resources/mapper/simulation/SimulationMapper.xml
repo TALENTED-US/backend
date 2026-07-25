@@ -1,1 +1,27 @@
-<!-- TODO: Add MyBatis mapper statements. -->
+<?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  <mapper namespace="com.talented.buttie.simulation.mapper.SimulationMapper">
+  <insert id="save"
+          parameterType="com.talented.buttie.simulation.domain.SimulationVO"
+          useGeneratedKeys="true"
+          keyProperty="simulationId"
+          keyColumn="SIMULATION_ID"
+  >
+    insert into SIMULATION(USER_ID, SNAPSHOT_ID, START_DATE, END_DATE, ENDING_BALANCE, TARGET_RATE, PREP_MONTHS)
+    values(#{userId}, #{snapshotId}, #{startDate}, #{endDate}, #{endingBalance}, #{targetRate}, #{prepMonths})
+  </insert>
+
+  <select id="findActiveByUserId"
+          resultType="com.talented.buttie.simulation.domain.SimulationVO">
+    select * from SIMULATION
+    where USER_ID = #{userId}
+        and CONFIRMED_AT is null
+        and IS_DELETED = false
+    order by CREATED_AT desc
+    limit 1
+  </select>
+
+</mapper>
