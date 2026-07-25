@@ -14,18 +14,10 @@ public class UserService {
     private final EmploymentPreparationMapper employmentPreparationMapper;
     public void saveEmploymentPreparation(Long userId, UpdateEmploymentPreparationRequestDTO request) {
 
-        EmploymentPreparationVO vo = EmploymentPreparationVO.builder()
-            .userId(userId)
-            .birthDate(request.birthDate())
-            .region(request.region())
-            .familyCount(request.familyCount())
-            .employmentPrepType(request.employmentPrepType())
-            .prepStartDate(request.prepStartDate())
-            .targetEmploymentDate(request.targetEmploymentDate())
-            .livingFundThreshold(request.livingFundThreshold())
-            .build();
+        EmploymentPreparationVO employmentPreparation =
+            EmploymentPreparationVO.createEmploymentPreparation(userId, request);
 
-        int updated = employmentPreparationMapper.updateEmploymentPreparation(vo);
+        int updated = employmentPreparationMapper.updateEmploymentPreparation(employmentPreparation);
         if (updated == 0) {
             throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_NOT_FOUND);
         }
