@@ -3,13 +3,16 @@ package com.talented.buttie.simulation.controller;
 import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.request.CreateSimulationRequestDTO;
+import com.talented.buttie.simulation.dto.response.SimulationDetailResponseDTO;
 import com.talented.buttie.simulation.dto.response.SimulationResponseDTO;
 import com.talented.buttie.simulation.service.SimulationCreateService;
+import com.talented.buttie.simulation.service.SimulationReadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,20 +26,37 @@ import org.springframework.web.bind.annotation.RestController;
 public class SimulationController {
 
     private final SimulationCreateService simulationCreateService;
+    private final SimulationReadService simulationReadService;
 
     @ApiOperation("시뮬레이션 최초 생성")
     @PostMapping
     public ApplicationResponse<SimulationResponseDTO> createSimulation(
-        @ApiParam(value="사용자 ID", required = true)
-        @RequestParam Long userId,
+        @ApiParam(value = "사용자 ID", required = true)
+        @RequestParam
+        Long userId,
 
         @Valid
-        @RequestBody CreateSimulationRequestDTO request
+        @RequestBody
+        CreateSimulationRequestDTO request
     ) {
         SimulationVO simulation = simulationCreateService.createSimulation(userId, request);
 
         return ApplicationResponse.onSuccess(
             SimulationResponseDTO.from(simulation)
+        );
+    }
+
+    @ApiOperation("시뮬레이션 통합 조회")
+    @GetMapping
+    public ApplicationResponse<SimulationDetailResponseDTO> getSimulationTotal(
+        @ApiParam(value = "사용자 ID", required = true)
+        @RequestParam
+        Long userId
+    ){
+        SimulationVO simulation = simulationReadService.getSimulationDetail(userId);
+
+        return ApplicationResponse.onSuccess(
+            SimulationDetailResponseDTO.from(simulation)
         );
     }
 }
