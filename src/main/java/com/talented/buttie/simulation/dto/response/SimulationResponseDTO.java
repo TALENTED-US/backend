@@ -20,16 +20,10 @@ public record SimulationResponseDTO(
     @ApiModelProperty(value = "기준 스냅샷 ID", example = "10")
     Long snapshotId,
 
-    @ApiModelProperty(
-        value = "시뮬레이션 수행 시작 일시",
-        example = "2026-08-01T00:00:00"
-    )
+    @ApiModelProperty(value = "시뮬레이션 수행 시작 일시", example = "2026-08-01T00:00:00")
     LocalDateTime startDate,
 
-    @ApiModelProperty(
-        value = "시뮬레이션 종료 일시",
-        example = "2027-01-31T00:00:00"
-    )
+    @ApiModelProperty(value = "시뮬레이션 종료 일시", example = "2027-01-31T00:00:00")
     LocalDateTime endDate,
 
     @ApiModelProperty(value = "종료 예상 잔액", example = "5000000")

@@ -24,4 +24,11 @@
     limit 1
   </select>
 
+  <select id="findById"
+          resultType="com.talented.buttie.simulation.domain.SimulationVO">
+    select * from SIMULATION
+    where SIMULATION_ID = #{simulationId}
+        and IS_DELETED = false
+  </select>
+
 </mapper>

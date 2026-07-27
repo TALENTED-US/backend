@@ -18,24 +18,44 @@ public class SimulationReadService {
     private final SimulationMapper simulationMapper;
     private final MonthlyProjectionMapper monthlyProjectionMapper;
 
+    // 현재 시뮬레이션 이어보기
     @Transactional(readOnly = true)
-    public SimulationVO getSimulationDetail(Long userId){
+    public SimulationVO getCurrentSimulation(Long userId){
         SimulationVO simulation = simulationMapper.findActiveByUserId(userId);
 
         if(simulation == null){
             throw ApplicationException.from(SimulationErrorCode.SIMULATION_NOT_FOUND);
         }
 
-        Long simulationId = simulation.getSimulationId();
+        setMonthlyProjections(simulation);
+        return simulation;
+    }
 
-        List<MonthlyProjectionVO> monthlyProjections = monthlyProjectionMapper.findAllBySimulationId(simulationId);
+    // 특정 시뮬레이션 상세 조회
+    @Transactional(readOnly = true)
+    public SimulationVO getSimulationDetail(Long simulationId, Long userId){
+        SimulationVO simulation = simulationMapper.findById(simulationId);
+
+        if(simulation == null){
+            throw ApplicationException.from(SimulationErrorCode.SIMULATION_NOT_FOUND);
+        }
+
+        if(!userId.equals(simulation.getUserId())){
+            throw ApplicationException.from(SimulationErrorCode.SIMULATION_OWNER_MISMATCH);
+        }
+
+        setMonthlyProjections(simulation);
+        return simulation;
+    }
+
+    private void setMonthlyProjections(SimulationVO simulation){
+        List<MonthlyProjectionVO> monthlyProjections =
+            monthlyProjectionMapper.findAllBySimulationId(simulation.getSimulationId());
 
         if(monthlyProjections.isEmpty()){
             throw ApplicationException.from(SimulationErrorCode.SIMULATION_PROJECTION_NOT_FOUND);
         }
 
         simulation.setMonthlyProjections(monthlyProjections);
-
-        return simulation;
     }
 }

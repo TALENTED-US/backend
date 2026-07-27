@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiParam;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,12 +33,10 @@ public class SimulationController {
     @PostMapping
     public ApplicationResponse<SimulationResponseDTO> createSimulation(
         @ApiParam(value = "사용자 ID", required = true)
-        @RequestParam
-        Long userId,
+        @RequestParam Long userId,
 
         @Valid
-        @RequestBody
-        CreateSimulationRequestDTO request
+        @RequestBody CreateSimulationRequestDTO request
     ) {
         SimulationVO simulation = simulationCreateService.createSimulation(userId, request);
 
@@ -46,17 +45,28 @@ public class SimulationController {
         );
     }
 
-    @ApiOperation("시뮬레이션 통합 조회")
+    @ApiOperation("현재 시뮬레이션 통합 조회")
     @GetMapping
     public ApplicationResponse<SimulationDetailResponseDTO> getSimulationTotal(
         @ApiParam(value = "사용자 ID", required = true)
-        @RequestParam
-        Long userId
+        @RequestParam Long userId
     ){
-        SimulationVO simulation = simulationReadService.getSimulationDetail(userId);
+        SimulationVO simulation = simulationReadService.getCurrentSimulation(userId);
 
         return ApplicationResponse.onSuccess(
             SimulationDetailResponseDTO.from(simulation)
         );
     }
+
+    @ApiOperation("특정 시뮬레이션 상세 조회")
+    @GetMapping("/{simulationId}")
+    public ApplicationResponse<SimulationDetailResponseDTO> getSimulationDetail(
+        @PathVariable Long simulationId,
+        @RequestParam Long userId
+    ){
+        SimulationVO simulation = simulationReadService.getSimulationDetail(simulationId, userId);
+
+        return ApplicationResponse.onSuccess(SimulationDetailResponseDTO.from(simulation));
+    }
+
 }
