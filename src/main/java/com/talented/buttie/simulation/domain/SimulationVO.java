@@ -4,6 +4,7 @@ import com.talented.buttie.simulation.dto.request.CreateSimulationRequestDTO;
 import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.*;
 
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
@@ -20,6 +21,8 @@ public class SimulationVO {
     private LocalDateTime modifiedAt;
     private LocalDateTime confirmedAt;
     private Boolean isDeleted;
+
+    private List<MonthlyProjectionVO> monthlyProjections;
 
     public static SimulationVO createCurrentSimulation(
         Long userId,
