@@ -1,6 +1,7 @@
 package com.talented.buttie.user.controller;
 
 import com.talented.buttie.common.response.ApplicationResponse;
+import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
 import com.talented.buttie.user.dto.response.UserPKResponseDTO;
 import com.talented.buttie.user.service.UserService;
@@ -30,8 +31,8 @@ public class UserController {
         @RequestParam Long userId,
         @Valid @RequestBody UpdateEmploymentPreparationRequestDTO request
     ) {
-        userService.saveEmploymentPreparation(userId, request);
-        return ApplicationResponse.onSuccess(new UserPKResponseDTO(userId));
+        EmploymentPreparationVO employmentPreparation = userService.saveEmploymentPreparation(userId, request);
+        return ApplicationResponse.onSuccess(new UserPKResponseDTO(employmentPreparation.getUserId()));
     }
 
     @GetMapping("/employment-preparation")

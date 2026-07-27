@@ -1,1 +1,23 @@
-<!-- TODO: Add MyBatis mapper statements. -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.talented.buttie.simulation.mapper.MonthlyProjectionMapper">
+
+  <select id="findAllBySimulationId"
+          resultType="com.talented.buttie.simulation.domain.MonthlyProjectionVO">
+    select
+        PROJECTION_ID,
+        SIMULATION_ID,
+        PROJECTION_MONTH,
+        OPENING_BALANCE,
+        EXPECTED_INCOME,
+        EXPECTED_EXPENSE,
+        CLOSING_BALANCE,
+        ADJUSTMENT_REQUIRED,
+        ADJUSTMENT_REASON
+    from PROJECTION
+    where SIMULATION_ID = #{simulationId}
+    order by PROJECTION_MONTH
+  </select>
+</mapper>
