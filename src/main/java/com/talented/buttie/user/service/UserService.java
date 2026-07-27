@@ -22,4 +22,14 @@ public class UserService {
             throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_NOT_FOUND);
         }
     }
+    public EmploymentPreparationVO getEmploymentPreparation(Long userId) {
+        EmploymentPreparationVO employmentPreparation =
+            employmentPreparationMapper.selectEmploymentPreparation(userId);
+
+        if (employmentPreparation == null) {
+            throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_NOT_FOUND);
+        }
+
+        return employmentPreparation;
+    }
 }
