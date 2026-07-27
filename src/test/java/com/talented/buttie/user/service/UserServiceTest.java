@@ -82,4 +82,46 @@ class UserServiceTest {
             exception.getCode()
         );
     }
+
+    @Test
+    @DisplayName("취업 준비 정보를 조회하면 해당 사용자의 정보를 반환한다.")
+    void getEmploymentPreparation() {
+        Long userId = 1L;
+        EmploymentPreparationVO employmentPreparation = EmploymentPreparationVO.builder()
+            .userId(userId)
+            .region("서울특별시")
+            .familyCount(1)
+            .employmentPrepType(EmploymentPreparationType.FIRST_JOB)
+            .prepStartDate(LocalDate.of(2026, 7, 1))
+            .targetEmploymentDate(LocalDate.of(2027, 1, 1))
+            .build();
+
+        given(employmentPreparationMapper.selectEmploymentPreparation(userId))
+            .willReturn(employmentPreparation);
+
+        EmploymentPreparationVO result = userService.getEmploymentPreparation(userId);
+
+        assertEquals(userId, result.getUserId());
+        assertEquals("서울특별시", result.getRegion());
+        verify(employmentPreparationMapper).selectEmploymentPreparation(userId);
+    }
+
+    @Test
+    @DisplayName("취업 준비 정보 조회 시 해당 사용자가 없으면 예외가 발생한다.")
+    void throwWhenGetTargetNotFound() {
+        Long userId = 999L;
+
+        given(employmentPreparationMapper.selectEmploymentPreparation(userId))
+            .willReturn(null);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> userService.getEmploymentPreparation(userId)
+        );
+
+        assertEquals(
+            UserErrorCode.EMPLOYMENT_PREPARATION_NOT_FOUND,
+            exception.getCode()
+        );
+    }
 }
