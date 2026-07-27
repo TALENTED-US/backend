@@ -24,11 +24,14 @@
     limit 1
   </select>
 
-  <select id="findById"
+  <select id="findLatestConfirmedByUserId"
           resultType="com.talented.buttie.simulation.domain.SimulationVO">
     select * from SIMULATION
-    where SIMULATION_ID = #{simulationId}
+    where USER_ID = #{userId}
+        and CONFIRMED_AT is not null
         and IS_DELETED = false
+    order by CONFIRMED_AT desc
+    limit 1
   </select>
 
 </mapper>

@@ -7,6 +7,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface SimulationMapper {
     SimulationVO findActiveByUserId(@Param("userId") Long userId);
-    SimulationVO findById(@Param("simulationId") Long simulationId);
+    SimulationVO findLatestConfirmedByUserId(@Param("userId") Long userId);
     void save(SimulationVO simulationVO);
 }

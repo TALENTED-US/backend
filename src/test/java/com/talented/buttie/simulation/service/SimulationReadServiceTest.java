@@ -119,10 +119,10 @@ class SimulationReadServiceTest {
             .findAllBySimulationId(simulationId);
     }
 
-    // 특정 시뮬레이션 상세 조회
+    // 최근 확정 시뮬레이션 조회
     @Test
-    @DisplayName("특정 시뮬레이션과 월별 예상 재정 계획을 조회한다.")
-    void getSimulationDetail(){
+    @DisplayName("사용자의 최근 확정 시뮬레이션과 월별 예상 재정 계획을 조회한다.")
+    void getLatestConfirmedSimulation(){
         Long userId = 1L;
         Long simulationId = 10L;
 
@@ -130,7 +130,6 @@ class SimulationReadServiceTest {
             .simulationId(simulationId)
             .userId(userId)
             .build();
-
         List<MonthlyProjectionVO> monthlyProjections = List.of(
             MonthlyProjectionVO.builder()
                 .projectionId(100L)
@@ -139,64 +138,44 @@ class SimulationReadServiceTest {
                 .build()
         );
 
-        given(simulationMapper.findById(simulationId))
+        given(simulationMapper.findLatestConfirmedByUserId(userId))
             .willReturn(simulation);
         given(monthlyProjectionMapper.findAllBySimulationId(simulationId))
             .willReturn(monthlyProjections);
 
-        SimulationVO result = simulationReadService.getSimulationDetail(simulationId, userId);
+        SimulationVO result =
+            simulationReadService.getLatestConfirmedSimulation(userId);
 
         assertSame(simulation, result);
         assertEquals(monthlyProjections, result.getMonthlyProjections());
-
-        verify(simulationMapper).findById(simulationId);
-        verify(monthlyProjectionMapper).findAllBySimulationId(simulationId);
+        verify(simulationMapper).findLatestConfirmedByUserId(userId);
+        verify(monthlyProjectionMapper)
+            .findAllBySimulationId(simulationId);
     }
 
     @Test
-    @DisplayName("특정 시뮬레이션이 없으면 예외가 발생한다.")
-    void throwWhenDetailSimulationNotFound(){
+    @DisplayName("사용자의 확정 시뮬레이션이 없으면 예외가 발생한다.")
+    void throwWhenConfirmedSimulationNotFound(){
         Long userId = 1L;
-        Long simulationId = 10L;
 
-        given(simulationMapper.findById(simulationId))
+        given(simulationMapper.findLatestConfirmedByUserId(userId))
             .willReturn(null);
 
         ApplicationException exception = assertThrows(
             ApplicationException.class,
-            () -> simulationReadService.getSimulationDetail(simulationId, userId)
+            () -> simulationReadService.getLatestConfirmedSimulation(userId)
         );
 
-        assertEquals(SimulationErrorCode.SIMULATION_NOT_FOUND, exception.getCode());
-    }
-
-    @Test
-    @DisplayName("시뮬레이션 소유자가 다르면 예외가 발생한다.")
-    void throwWhenSimulationOwnerMismatch() {
-        Long requestUserId = 1L;
-        Long ownerUserId = 2L;
-        Long simulationId = 10L;
-
-        SimulationVO simulation = SimulationVO.builder()
-            .simulationId(simulationId)
-            .userId(ownerUserId)
-            .build();
-
-        given(simulationMapper.findById(simulationId))
-            .willReturn(simulation);
-
-        ApplicationException exception = assertThrows(
-            ApplicationException.class,
-            () -> simulationReadService.getSimulationDetail(simulationId, requestUserId)
+        assertEquals(
+            SimulationErrorCode.CONFIRMED_SIMULATION_NOT_FOUND,
+            exception.getCode()
         );
-
-        assertEquals(SimulationErrorCode.SIMULATION_OWNER_MISMATCH, exception.getCode());
         verifyNoInteractions(monthlyProjectionMapper);
     }
 
     @Test
-    @DisplayName("특정 시뮬레이션의 월별 예상 재정 계획이 없으면 예외가 발생한다.")
-    void throwWhenDetailProjectionNotFound() {
+    @DisplayName("최근 확정 시뮬레이션의 월별 예상 재정 계획이 없으면 예외가 발생한다.")
+    void throwWhenConfirmedProjectionNotFound() {
         Long userId = 1L;
         Long simulationId = 10L;
 
@@ -205,17 +184,21 @@ class SimulationReadServiceTest {
             .userId(userId)
             .build();
 
-        given(simulationMapper.findById(simulationId))
+        given(simulationMapper.findLatestConfirmedByUserId(userId))
             .willReturn(simulation);
         given(monthlyProjectionMapper.findAllBySimulationId(simulationId))
             .willReturn(List.of());
 
         ApplicationException exception = assertThrows(
             ApplicationException.class,
-            () -> simulationReadService.getSimulationDetail(simulationId, userId)
+            () -> simulationReadService.getLatestConfirmedSimulation(userId)
         );
 
-        assertEquals(SimulationErrorCode.SIMULATION_PROJECTION_NOT_FOUND, exception.getCode());
-        verify(monthlyProjectionMapper).findAllBySimulationId(simulationId);
+        assertEquals(
+            SimulationErrorCode.SIMULATION_PROJECTION_NOT_FOUND,
+            exception.getCode()
+        );
+        verify(monthlyProjectionMapper)
+            .findAllBySimulationId(simulationId);
     }
 }

@@ -31,17 +31,16 @@ public class SimulationReadService {
         return simulation;
     }
 
-    // 특정 시뮬레이션 상세 조회
+    // 최근 확정 시뮬레이션 조회
     @Transactional(readOnly = true)
-    public SimulationVO getSimulationDetail(Long simulationId, Long userId){
-        SimulationVO simulation = simulationMapper.findById(simulationId);
+    public SimulationVO getLatestConfirmedSimulation(Long userId){
+        SimulationVO simulation =
+            simulationMapper.findLatestConfirmedByUserId(userId);
 
         if(simulation == null){
-            throw ApplicationException.from(SimulationErrorCode.SIMULATION_NOT_FOUND);
-        }
-
-        if(!userId.equals(simulation.getUserId())){
-            throw ApplicationException.from(SimulationErrorCode.SIMULATION_OWNER_MISMATCH);
+            throw ApplicationException.from(
+                SimulationErrorCode.CONFIRMED_SIMULATION_NOT_FOUND
+            );
         }
 
         setMonthlyProjections(simulation);

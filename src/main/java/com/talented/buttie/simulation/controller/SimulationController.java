@@ -3,6 +3,7 @@ package com.talented.buttie.simulation.controller;
 import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.request.CreateSimulationRequestDTO;
+import com.talented.buttie.simulation.dto.response.ConfirmedSimulationResponseDTO;
 import com.talented.buttie.simulation.dto.response.SimulationDetailResponseDTO;
 import com.talented.buttie.simulation.dto.response.SimulationResponseDTO;
 import com.talented.buttie.simulation.service.SimulationCreateService;
@@ -13,7 +14,6 @@ import io.swagger.annotations.ApiParam;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,15 +58,18 @@ public class SimulationController {
         );
     }
 
-    @ApiOperation("특정 시뮬레이션 상세 조회")
-    @GetMapping("/{simulationId}")
-    public ApplicationResponse<SimulationDetailResponseDTO> getSimulationDetail(
-        @PathVariable Long simulationId,
+    @ApiOperation("최근 확정 시뮬레이션 조회")
+    @GetMapping("/confirmed")
+    public ApplicationResponse<ConfirmedSimulationResponseDTO> getLatestConfirmedSimulation(
+        @ApiParam(value = "사용자 ID", required = true)
         @RequestParam Long userId
     ){
-        SimulationVO simulation = simulationReadService.getSimulationDetail(simulationId, userId);
+        SimulationVO simulation =
+            simulationReadService.getLatestConfirmedSimulation(userId);
 
-        return ApplicationResponse.onSuccess(SimulationDetailResponseDTO.from(simulation));
+        return ApplicationResponse.onSuccess(
+            ConfirmedSimulationResponseDTO.from(simulation)
+        );
     }
 
 }
