@@ -14,19 +14,12 @@ import org.springframework.stereotype.Service;
 public class GetTransactionService {
     private final TransactionMapper transactionMapper;
 
-    public List<TransactionResponseDTO> getAllTransactions(Long userId){
+    public List<TransactionVO> getAllTransactions(Long userId){
         List<TransactionVO> transactions = transactionMapper.findAllByUserId(userId);
 
-        if (transactions == null || transactions.isEmpty()) {
+        if(transactions == null){
             throw ApplicationException.from(LedgerErrorCode.TRANSACTION_NOT_FOUND);
         }
-        else {
-            Long ownerId = transactions.get(0).getUserId();
-            if(!userId.equals(ownerId)){
-                throw ApplicationException.from(LedgerErrorCode.TRANSACTION_USER_ID_MISMATCH);
-            }
-        }
-
-        return transactions.stream().map(TransactionResponseDTO::from).toList();
+        return transactions;
     }
 }

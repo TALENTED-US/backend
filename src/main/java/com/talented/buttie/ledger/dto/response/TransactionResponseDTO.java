@@ -8,6 +8,7 @@ import com.talented.buttie.ledger.exception.LedgerErrorCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 
 @ApiModel(description = "거래 목록 조회 응답")
@@ -41,5 +42,12 @@ public record TransactionResponseDTO(
             .transactionAt(vo.getTransactionAt())
             .memo(vo.getMemo())
             .build();
+    }
+
+    public static List<TransactionResponseDTO> fromList(List<TransactionVO> voList){
+        if(voList == null || voList.isEmpty()){
+            return List.of();
+        }
+        return voList.stream().map(TransactionResponseDTO::from).toList();
     }
 }
