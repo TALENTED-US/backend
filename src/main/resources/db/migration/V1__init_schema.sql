@@ -6,7 +6,7 @@
 -- 1) USER, TRANSACTION은 예약어 혼동 방지를 위해 백틱(`)으로 감쌌습니다.
 -- 2) 컬럼명은 v1.0.0 규칙(테이블 프리픽스)을 따릅니다. 예: USER_NAME, ADMIN_EMAIL.
 -- 3) USER의 버티 정보(경험치·레벨)는 별도 1:1 테이블 USER_BUTTIE로 분리했습니다. (명세서에 테이블명 미기재 → USER_BUTTIE로 명명)
--- 4) CARD.CARD_TYPE은 명세서에 ENUM()으로 값이 비어 있어 임시로 ENUM('CREDIT','CHECK')로 정의했습니다. (확정 시 수정 필요)
+-- 4) CARD.CARD_TYPE은 ENUM('CREDIT','DEBIT','PREPAID') (신용/체크/선불).
 -- 5) ACCOUNT의 마이데이터 연결 컬럼(구 MYDATA_ID/CONNECTION_ID)이 명세서에서 빠져 제거했고, UNIQUE는 (USER_ID, EXTERNAL_ACCOUNT_ID)로 구성했습니다.
 -- 6) v0.0.3 대비: FINANCE(금융상품)·CUSTOM_EXPENSE 테이블 삭제, CARD 신규, SNAPSHOT 컬럼 개편.
 
@@ -216,7 +216,6 @@ CREATE TABLE IF NOT EXISTS `ACCOUNT` (
 
 -- =========================================================
 -- 9. 카드 (CARD)
---    ※ CARD_TYPE은 명세서에 ENUM()으로 비어 있어 임시값 정의
 -- =========================================================
 CREATE TABLE IF NOT EXISTS `CARD` (
     `CARD_ID` BIGINT NOT NULL AUTO_INCREMENT,
@@ -224,8 +223,8 @@ CREATE TABLE IF NOT EXISTS `CARD` (
     `EXTERNAL_CARD_ID` VARCHAR(100) NOT NULL,
     `CARD_INSTITUTION_NAME` VARCHAR(100) NOT NULL,
     `CARD_NAME` VARCHAR(100) NOT NULL,
-    `CARD_TYPE` ENUM('CREDIT', 'CHECK') NOT NULL,
-    `CARD_NUMBER_MASKED` VARCHAR(50) NOT NULL,
+    `CARD_TYPE` ENUM('CREDIT', 'DEBIT', 'PREPAID') NOT NULL,
+    `CARD_NUMBER_MASKED` VARCHAR(50) NULL,
     `CARD_BALANCE` INT NOT NULL DEFAULT 0,
     `CARD_IS_ACTIVE` BOOLEAN NOT NULL DEFAULT TRUE,
     `CARD_SYNCED_AT` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
