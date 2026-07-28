@@ -82,6 +82,7 @@ class UserServiceTest {
             exception.getCode()
         );
     }
+<<<<<<< HEAD
 
     @Test
     @DisplayName("취업 준비 정보를 조회하면 해당 사용자의 정보를 반환한다.")
@@ -124,4 +125,6 @@ class UserServiceTest {
             exception.getCode()
         );
     }
+=======
+>>>>>>> origin/develop
 }
