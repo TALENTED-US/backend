@@ -21,4 +21,12 @@ public class UserVO {
     private LocalDateTime withdrawnAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public static UserVO createModifiedUser(Long userId, String nickname) {
+        return UserVO.builder()
+            .userId(userId)
+            .nickname(nickname)
+            .build();
+    }
 }
+
