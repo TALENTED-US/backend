@@ -10,7 +10,7 @@ public class TransactionVO {
     private Long accountId;
     private String externalTransactionId;
     private String content;
-    private Boolean isExpense;
+    private TransactionType transactionType;
     private ExpenseCategory category;
     private Integer amount;
     private LocalDateTime transactionAt;
