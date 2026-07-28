@@ -20,13 +20,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import com.talented.buttie.user.domain.UserProfileVO;
+import com.talented.buttie.user.mapper.UserMapper;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
     @Mock
     private EmploymentPreparationMapper employmentPreparationMapper;
-
+    @Mock
+    private UserMapper userMapper;
     @InjectMocks
     private UserService userService;
 
@@ -79,6 +82,44 @@ class UserServiceTest {
 
         assertEquals(
             UserErrorCode.EMPLOYMENT_PREPARATION_NOT_FOUND,
+            exception.getCode()
+        );
+    }
+    @Test
+    @DisplayName("회원 프로필을 조회하면 해당 사용자의 프로필 정보를 반환한다.")
+    void getUserProfile() {
+        // given
+        Long userId = 1L;
+        UserProfileVO mockVO = new UserProfileVO();
+
+        given(userMapper.selectUserProfile(userId))
+            .willReturn(mockVO);
+
+        // when
+        UserProfileVO result = userService.getUserProfile(userId);
+
+        // then
+        assertNotNull(result);
+        verify(userMapper).selectUserProfile(userId);
+    }
+
+    @Test
+    @DisplayName("회원 프로필 조회 시 해당 사용자가 없으면 예외가 발생한다.")
+    void throwWhenGetUserProfileNotFound() {
+        // given
+        Long userId = 999L;
+
+        given(userMapper.selectUserProfile(userId))
+            .willReturn(null);
+
+        // when & then
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> userService.getUserProfile(userId)
+        );
+
+        assertEquals(
+            UserErrorCode.USER_NOT_FOUND,
             exception.getCode()
         );
     }
