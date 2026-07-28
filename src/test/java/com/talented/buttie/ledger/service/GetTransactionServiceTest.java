@@ -61,6 +61,8 @@ class GetTransactionServiceTest {
             verify(transactionMapper).findAllByUserId(userId);
     }
 
+    @Test
+    @DisplayName("사용자 거래목록이 없을때 예외가 발생한다.")
     void ThrowsWhenNull(){
         given(transactionMapper.findAllByUserId(userId)).willReturn(null);
 
