@@ -3,6 +3,7 @@ package com.talented.buttie.simulation.controller;
 import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.request.CreateSimulationRequestDTO;
+import com.talented.buttie.simulation.dto.response.ConfirmedSimulationResponseDTO;
 import com.talented.buttie.simulation.dto.response.SimulationDetailResponseDTO;
 import com.talented.buttie.simulation.dto.response.SimulationResponseDTO;
 import com.talented.buttie.simulation.service.SimulationCreateService;
@@ -32,12 +33,10 @@ public class SimulationController {
     @PostMapping
     public ApplicationResponse<SimulationResponseDTO> createSimulation(
         @ApiParam(value = "사용자 ID", required = true)
-        @RequestParam
-        Long userId,
+        @RequestParam Long userId,
 
         @Valid
-        @RequestBody
-        CreateSimulationRequestDTO request
+        @RequestBody CreateSimulationRequestDTO request
     ) {
         SimulationVO simulation = simulationCreateService.createSimulation(userId, request);
 
@@ -46,17 +45,31 @@ public class SimulationController {
         );
     }
 
-    @ApiOperation("시뮬레이션 통합 조회")
+    @ApiOperation("현재 시뮬레이션 통합 조회")
     @GetMapping
     public ApplicationResponse<SimulationDetailResponseDTO> getSimulationTotal(
         @ApiParam(value = "사용자 ID", required = true)
-        @RequestParam
-        Long userId
+        @RequestParam Long userId
     ){
-        SimulationVO simulation = simulationReadService.getSimulationDetail(userId);
+        SimulationVO simulation = simulationReadService.getCurrentSimulation(userId);
 
         return ApplicationResponse.onSuccess(
             SimulationDetailResponseDTO.from(simulation)
         );
     }
+
+    @ApiOperation("최근 확정 시뮬레이션 조회")
+    @GetMapping("/confirmed")
+    public ApplicationResponse<ConfirmedSimulationResponseDTO> getLatestConfirmedSimulation(
+        @ApiParam(value = "사용자 ID", required = true)
+        @RequestParam Long userId
+    ){
+        SimulationVO simulation =
+            simulationReadService.getLatestConfirmedSimulation(userId);
+
+        return ApplicationResponse.onSuccess(
+            ConfirmedSimulationResponseDTO.from(simulation)
+        );
+    }
+
 }
