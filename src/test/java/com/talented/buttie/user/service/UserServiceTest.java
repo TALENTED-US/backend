@@ -51,7 +51,7 @@ class UserServiceTest {
 
         assertNotNull(result);
         assertEquals(userId, result.getUserId());
-        assertEquals("서울특별시", result.getRegion());
+        assertEquals("서울특별시", result.getEmploymentPrepRegion());
         verify(employmentPreparationMapper).updateEmploymentPreparation(any(EmploymentPreparationVO.class));
     }
 
@@ -88,7 +88,7 @@ class UserServiceTest {
         Long userId = 1L;
         EmploymentPreparationVO employmentPreparation = EmploymentPreparationVO.builder()
             .userId(userId)
-            .region("서울특별시")
+            .employmentPrepRegion("서울특별시")
             .familyCount(1)
             .employmentPrepType(EmploymentPreparationType.FIRST_JOB)
             .prepStartDate(LocalDate.of(2026, 7, 1))
@@ -101,7 +101,7 @@ class UserServiceTest {
         EmploymentPreparationVO result = userService.getEmploymentPreparation(userId);
 
         assertEquals(userId, result.getUserId());
-        assertEquals("서울특별시", result.getRegion());
+        assertEquals("서울특별시", result.getEmploymentPrepRegion());
         verify(employmentPreparationMapper).selectEmploymentPreparation(userId);
     }
 
