@@ -62,7 +62,7 @@ public record RegisterTransactionRequestDTO(
             .amount(this.amount)
             .category(this.category)
             .transactionAt(this.transactionDate)
-            .memo(this.memo)
+            .transactionMemo(this.memo)
             .build();
     }
 }
