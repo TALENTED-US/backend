@@ -37,9 +37,9 @@ public record SimulationResponseDTO(
             .simulationId(simulation.getSimulationId())
             .userId(simulation.getUserId())
             .snapshotId(simulation.getSnapshotId())
-            .startDate(simulation.getStartDate())
-            .endDate(simulation.getEndDate())
-            .endingBalance(simulation.getEndingBalance())
+            .startDate(simulation.getSimulationStartDate())
+            .endDate(simulation.getSimulationDueDate())
+            .endingBalance(simulation.getSimulationEndAmount())
             .prepMonths(simulation.getPrepMonths())
             .build();
     }

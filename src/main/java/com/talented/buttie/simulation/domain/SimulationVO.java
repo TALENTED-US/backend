@@ -13,9 +13,9 @@ public class SimulationVO {
     private Long simulationId;
     private Long userId;
     private Long snapshotId;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private Integer endingBalance;
+    private LocalDate simulationStartDate;
+    private LocalDate simulationDueDate;
+    private Integer simulationEndAmount;
     private BigDecimal prepMonths;
     private LocalDateTime confirmedAt;
 
@@ -29,9 +29,9 @@ public class SimulationVO {
         return SimulationVO.builder()
             .userId(userId)
             .snapshotId(snapshot.getSnapshotId())
-            .startDate(request.startDate())
-            .endDate(request.endDate())
-            .endingBalance(snapshot.getLiquidAssets())
+            .simulationStartDate(request.startDate())
+            .simulationDueDate(request.endDate())
+            .simulationEndAmount(snapshot.getLiquidAssets())
             .prepMonths(snapshot.getPrepPossibleMonths())
             .build();
     }

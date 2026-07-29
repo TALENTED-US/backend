@@ -10,8 +10,8 @@
           keyProperty="simulationId"
           keyColumn="SIMULATION_ID"
   >
-    insert into SIMULATION(USER_ID, SNAPSHOT_ID, START_DATE, END_DATE, ENDING_BALANCE, TARGET_RATE, PREP_MONTHS)
-    values(#{userId}, #{snapshotId}, #{startDate}, #{endDate}, #{endingBalance}, #{targetRate}, #{prepMonths})
+    insert into SIMULATION(USER_ID, SNAPSHOT_ID, SIMULATION_START_DATE, SIMULATION_DUE_DATE, SIMULATION_END_AMOUNT, PREP_MONTHS)
+    values(#{userId}, #{snapshotId}, #{simulationStartDate}, #{simulationDueDate}, #{simulationEndAmount}, #{prepMonths})
   </insert>
 
   <select id="findActiveByUserId"
@@ -19,8 +19,7 @@
     select * from SIMULATION
     where USER_ID = #{userId}
         and CONFIRMED_AT is null
-        and IS_DELETED = false
-    order by CREATED_AT desc
+    order by SIMULATION_ID desc
     limit 1
   </select>
 
@@ -29,8 +28,7 @@
     select * from SIMULATION
     where USER_ID = #{userId}
         and CONFIRMED_AT is not null
-        and IS_DELETED = false
-    order by CONFIRMED_AT desc
+    order by CONFIRMED_AT desc, SIMULATION_ID desc
     limit 1
   </select>
 
