@@ -1,12 +1,12 @@
 -- =========================================================
 -- Buttie 시드 데이터 (Flyway Repeatable) - 전 환경 실행
--- 기준: 테이블 명세서 v1.0.0 / V1__init_schema.sql
+-- 기준: 테이블 명세서 v1.0.0 (최종, (3)) / V1__init_schema.sql
 -- =========================================================
 -- 메모:
 --   - 마이데이터 실연동이 없는 데모 서비스라 mock 데이터를 모든 환경에 그대로 배포함.
 --   - TRUNCATE 없이 '고정 ID + ON DUPLICATE KEY UPDATE(upsert)'. 파일이 바뀌면 재적용됨.
---   - USE / SET NAMES 등은 Flyway가 연결을 관리하므로 넣지 않음.
 --   - 부모 → 자식 순으로 INSERT (FK 충족). BUTTIE_LEVEL 먼저.
+--   - 시뮬레이션 관련 날짜(적용일 포함)는 DATE(LocalDate)라 날짜 전용 값 사용.
 -- =========================================================
 
 -- ---------------------------------------------------------
@@ -103,7 +103,7 @@ ON DUPLICATE KEY UPDATE
     `MYDATA_STATUS`=VALUES(`MYDATA_STATUS`), `LAST_SYNCED_AT`=VALUES(`LAST_SYNCED_AT`);
 
 -- ---------------------------------------------------------
--- 7. 계좌 (ACCOUNT)  유동자산 500만(입출금+적금) / 예금 200만
+-- 7. 계좌 (ACCOUNT)
 -- ---------------------------------------------------------
 INSERT INTO `ACCOUNT`
 (`ACCOUNT_ID`, `USER_ID`, `EXTERNAL_ACCOUNT_ID`, `INSTITUTION_NAME`,
@@ -117,7 +117,7 @@ ON DUPLICATE KEY UPDATE
     `BALANCE`=VALUES(`BALANCE`), `IS_ACTIVE`=VALUES(`IS_ACTIVE`), `SYNCED_AT`=VALUES(`SYNCED_AT`);
 
 -- ---------------------------------------------------------
--- 8. 카드 (CARD)  * CARD_TYPE: CREDIT(신용)/DEBIT(체크)/PREPAID(선불)
+-- 8. 카드 (CARD)  CARD_TYPE: CREDIT(신용)/DEBIT(체크)/PREPAID(선불)
 -- ---------------------------------------------------------
 INSERT INTO `CARD`
 (`CARD_ID`, `USER_ID`, `EXTERNAL_CARD_ID`, `CARD_INSTITUTION_NAME`,
@@ -152,7 +152,7 @@ ON DUPLICATE KEY UPDATE
     `ANALYSIS_EXCLUDED`=VALUES(`ANALYSIS_EXCLUDED`), `IS_DELETED`=VALUES(`IS_DELETED`);
 
 -- ---------------------------------------------------------
--- 10. 재정 스냅샷 (SNAPSHOT)  유동자산 500만 / 월순현금흐름 -140만 → CAUTION
+-- 10. 재정 스냅샷 (SNAPSHOT)
 -- ---------------------------------------------------------
 INSERT INTO `SNAPSHOT`
 (`SNAPSHOT_ID`, `USER_ID`, `SNAPSHOT_BASE_DATE`, `LIQUID_ASSETS`, `MONTHLY_NET_CASHFLOW`,
@@ -173,7 +173,7 @@ ON DUPLICATE KEY UPDATE
 INSERT INTO `POLICY`
 (`POLICY_ID`, `POLICY_NAME`, `POLICY_CATEGORY`, `POLICY_MIN_AGE`, `POLICY_MAX_AGE`, `POLICY_REGION`,
  `POLICY_SUPPORT_AMOUNT`, `DUE_DATE`, `REQUIRED_DOCUMENT`, `EMPLOYMENT_PREP_STATUS`,
- `FAMILY_COUNT`, `POLICY_STATUS`, `URL`) VALUES
+ `FAMILY_COUNT`, `POLICY_STATUS`, `POLICY_URL`) VALUES
 (1, '청년월세 특별지원', '주거', 19, 34, '전국', 200000,
  '2026-12-31 23:59:59', '주민등록등본, 임대차계약서, 통장사본', '미취업', 1, 'AVAILABLE', 'https://www.gov.kr/youth-housing'),
 (2, '국민취업지원제도',  '취업', 15, 69, '전국', 500000,
@@ -186,10 +186,10 @@ ON DUPLICATE KEY UPDATE
     `POLICY_REGION`=VALUES(`POLICY_REGION`), `POLICY_SUPPORT_AMOUNT`=VALUES(`POLICY_SUPPORT_AMOUNT`),
     `DUE_DATE`=VALUES(`DUE_DATE`), `REQUIRED_DOCUMENT`=VALUES(`REQUIRED_DOCUMENT`),
     `EMPLOYMENT_PREP_STATUS`=VALUES(`EMPLOYMENT_PREP_STATUS`), `FAMILY_COUNT`=VALUES(`FAMILY_COUNT`),
-    `POLICY_STATUS`=VALUES(`POLICY_STATUS`), `URL`=VALUES(`URL`);
+    `POLICY_STATUS`=VALUES(`POLICY_STATUS`), `POLICY_URL`=VALUES(`POLICY_URL`);
 
 -- ---------------------------------------------------------
--- 12. 시뮬레이션 (SIMULATION) = 최종 재정 계획(확정)
+-- 12. 시뮬레이션 (SIMULATION)  * 날짜 DATE
 -- ---------------------------------------------------------
 INSERT INTO `SIMULATION`
 (`SIMULATION_ID`, `USER_ID`, `SNAPSHOT_ID`, `SIMULATION_START_DATE`, `SIMULATION_DUE_DATE`,
@@ -201,20 +201,20 @@ ON DUPLICATE KEY UPDATE
     `PREP_MONTHS`=VALUES(`PREP_MONTHS`), `CONFIRMED_AT`=VALUES(`CONFIRMED_AT`);
 
 -- ---------------------------------------------------------
--- 13. 시뮬레이션 항목 (SIMULATION_ITEM)
+-- 13. 시뮬레이션 항목 (SIMULATION_ITEM)  * 적용일 DATE
 -- ---------------------------------------------------------
 INSERT INTO `SIMULATION_ITEM`
-(`SIMULATION_ITEM_ID`, `SIMULATION_ID`, `SIMULATION_ITEM_CATEGORY`, `SIMULATION_APPLY_AMOUNT`,
+(`SIMULATION_ITEM_ID`, `SIMULATION_ID`, `SIMULATION_ITEM_CATEGORY`, `SIMULATION_ITEM_APPLY_AMOUNT`,
  `APPLY_START_DATE`, `APPLY_END_DATE`, `POLICY_ID`, `DETAIL_VALUE`, `RECURRENCE_TYPE`, `IS_DELETED`) VALUES
-(1, 1, 'INCOME',  550000, '2026-08-01 00:00:00', '2026-12-23 00:00:00',
+(1, 1, 'INCOME',  550000, '2026-08-01', '2026-12-23',
  NULL, '{"job":"편의점 알바","hourlyWage":11000,"hoursPerDay":5,"daysPerWeek":2}', 'MONTHLY', FALSE),
-(2, 1, 'POLICY',  200000, '2026-08-01 00:00:00', '2026-12-23 00:00:00',
+(2, 1, 'POLICY',  200000, '2026-08-01', '2026-12-23',
  1, '{"policyName":"청년월세 특별지원"}', 'MONTHLY', FALSE),
-(3, 1, 'EXPENSE', 9900,   '2026-08-01 00:00:00', NULL,
+(3, 1, 'EXPENSE', 9900,   '2026-08-01', NULL,
  NULL, '{"action":"넷플릭스 구독 해지"}', 'MONTHLY', FALSE)
 ON DUPLICATE KEY UPDATE
     `SIMULATION_ITEM_CATEGORY`=VALUES(`SIMULATION_ITEM_CATEGORY`),
-    `SIMULATION_APPLY_AMOUNT`=VALUES(`SIMULATION_APPLY_AMOUNT`),
+    `SIMULATION_ITEM_APPLY_AMOUNT`=VALUES(`SIMULATION_ITEM_APPLY_AMOUNT`),
     `APPLY_START_DATE`=VALUES(`APPLY_START_DATE`), `APPLY_END_DATE`=VALUES(`APPLY_END_DATE`),
     `POLICY_ID`=VALUES(`POLICY_ID`), `DETAIL_VALUE`=VALUES(`DETAIL_VALUE`),
     `RECURRENCE_TYPE`=VALUES(`RECURRENCE_TYPE`), `IS_DELETED`=VALUES(`IS_DELETED`);
@@ -273,3 +273,17 @@ ON DUPLICATE KEY UPDATE
     `QUEST_DEADLINE`=VALUES(`QUEST_DEADLINE`), `QUEST_STATUS`=VALUES(`QUEST_STATUS`),
     `QUEST_URL`=VALUES(`QUEST_URL`), `EXP_REWARD`=VALUES(`EXP_REWARD`),
     `QUEST_COMPLETED_AT`=VALUES(`QUEST_COMPLETED_AT`);
+
+-- ---------------------------------------------------------
+-- 17. 로그 (LOG) - 도메인 이벤트 이력 샘플
+-- ---------------------------------------------------------
+INSERT INTO `LOG`
+(`LOG_ID`, `USER_ID`, `ENTITY_TYPE`, `ENTITY_ID`, `ACTION`, `LOG_DETAIL`) VALUES
+(1, 1,    'AUTH',       NULL, 'LOGIN',         JSON_OBJECT('ip', '127.0.0.1')),
+(2, 1,    'MYDATA',     1,    'SYNC_SUCCESS',  JSON_OBJECT('syncedCount', 12)),
+(3, 1,    'MYDATA',     1,    'TOKEN_REFRESH', JSON_OBJECT('expiresAt', '2026-08-22 12:00:00')),
+(4, 1,    'SIMULATION', 1,    'CONFIRM',       JSON_OBJECT('prepMonths', 7.81)),
+(5, NULL, 'POLICY',     NULL, 'BATCH_SYNC',    JSON_OBJECT('collected', 3, 'source', '온통청년'))
+ON DUPLICATE KEY UPDATE
+    `USER_ID`=VALUES(`USER_ID`), `ENTITY_TYPE`=VALUES(`ENTITY_TYPE`), `ENTITY_ID`=VALUES(`ENTITY_ID`),
+    `ACTION`=VALUES(`ACTION`), `LOG_DETAIL`=VALUES(`LOG_DETAIL`);
