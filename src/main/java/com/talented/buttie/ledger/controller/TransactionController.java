@@ -33,7 +33,6 @@ public class TransactionController {
     ){
         List<TransactionVO> transactions = getTransactionService.getAllTransactions(userId);
 
-
         return ApplicationResponse.onSuccess(TransactionResponseDTO.fromList(transactions));
 
     }

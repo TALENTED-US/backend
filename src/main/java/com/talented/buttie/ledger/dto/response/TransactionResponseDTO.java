@@ -15,32 +15,32 @@ import lombok.Builder;
 @Builder
 public record TransactionResponseDTO(
     @ApiModelProperty(value = "거래 내용", example = "세종대학교 학식당")
-    String content,
+    String transactionContent,
 
     @ApiModelProperty(value = "지출 유형", example = "지출")
     TransactionType transactionType,
 
     @ApiModelProperty(value = "카테고리", example = "식비")
-    ExpenseCategory category,
+    ExpenseCategory expenseCategory,
 
     @ApiModelProperty(value = "거래 금액", example = "10000")
-    Integer amount,
+    Integer transactionAmount,
 
     @ApiModelProperty(value = "거래 일시", example = "2026-07-25T:00:00:00")
     LocalDateTime transactionAt,
 
     @ApiModelProperty(value = "거래 메모", example = "학식당에서 스팸순두부찌개")
-    String memo
+    String transactionMemo
 ) {
 
     public static TransactionResponseDTO from(TransactionVO vo) {
         return TransactionResponseDTO.builder()
-            .content(vo.getContent())
+            .transactionContent(vo.getTransactionContent())
             .transactionType(vo.getTransactionType())
-            .category(vo.getCategory())
-            .amount(vo.getAmount())
+            .expenseCategory(vo.getExpenseCategory())
+            .transactionAmount(vo.getTransactionAmount())
             .transactionAt(vo.getTransactionAt())
-            .memo(vo.getMemo())
+            .transactionMemo(vo.getTransactionMemo())
             .build();
     }
 
