@@ -6,6 +6,7 @@
 --   - 마이데이터 실연동이 없는 데모 서비스라 mock 데이터를 모든 환경에 그대로 배포함.
 --   - TRUNCATE 없이 '고정 ID + ON DUPLICATE KEY UPDATE(upsert)'. 파일이 바뀌면 재적용됨.
 --   - 부모 → 자식 순으로 INSERT (FK 충족). BUTTIE_LEVEL 먼저.
+--   - 시뮬레이션 관련 날짜(적용일 포함)는 DATE(LocalDate)라 날짜 전용 값 사용.
 -- =========================================================
 
 -- ---------------------------------------------------------
@@ -188,7 +189,7 @@ ON DUPLICATE KEY UPDATE
     `POLICY_STATUS`=VALUES(`POLICY_STATUS`), `POLICY_URL`=VALUES(`POLICY_URL`);
 
 -- ---------------------------------------------------------
--- 12. 시뮬레이션 (SIMULATION)
+-- 12. 시뮬레이션 (SIMULATION)  * 날짜 DATE
 -- ---------------------------------------------------------
 INSERT INTO `SIMULATION`
 (`SIMULATION_ID`, `USER_ID`, `SNAPSHOT_ID`, `SIMULATION_START_DATE`, `SIMULATION_DUE_DATE`,
@@ -200,16 +201,16 @@ ON DUPLICATE KEY UPDATE
     `PREP_MONTHS`=VALUES(`PREP_MONTHS`), `CONFIRMED_AT`=VALUES(`CONFIRMED_AT`);
 
 -- ---------------------------------------------------------
--- 13. 시뮬레이션 항목 (SIMULATION_ITEM)
+-- 13. 시뮬레이션 항목 (SIMULATION_ITEM)  * 적용일 DATE
 -- ---------------------------------------------------------
 INSERT INTO `SIMULATION_ITEM`
 (`SIMULATION_ITEM_ID`, `SIMULATION_ID`, `SIMULATION_ITEM_CATEGORY`, `SIMULATION_ITEM_APPLY_AMOUNT`,
  `APPLY_START_DATE`, `APPLY_END_DATE`, `POLICY_ID`, `DETAIL_VALUE`, `RECURRENCE_TYPE`, `IS_DELETED`) VALUES
-(1, 1, 'INCOME',  550000, '2026-08-01 00:00:00', '2026-12-23 00:00:00',
+(1, 1, 'INCOME',  550000, '2026-08-01', '2026-12-23',
  NULL, '{"job":"편의점 알바","hourlyWage":11000,"hoursPerDay":5,"daysPerWeek":2}', 'MONTHLY', FALSE),
-(2, 1, 'POLICY',  200000, '2026-08-01 00:00:00', '2026-12-23 00:00:00',
+(2, 1, 'POLICY',  200000, '2026-08-01', '2026-12-23',
  1, '{"policyName":"청년월세 특별지원"}', 'MONTHLY', FALSE),
-(3, 1, 'EXPENSE', 9900,   '2026-08-01 00:00:00', NULL,
+(3, 1, 'EXPENSE', 9900,   '2026-08-01', NULL,
  NULL, '{"action":"넷플릭스 구독 해지"}', 'MONTHLY', FALSE)
 ON DUPLICATE KEY UPDATE
     `SIMULATION_ITEM_CATEGORY`=VALUES(`SIMULATION_ITEM_CATEGORY`),

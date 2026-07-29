@@ -5,9 +5,10 @@
 -- 주의:
 -- 1) USER, TRANSACTION, LOG은 예약어 혼동 방지를 위해 백틱(`)으로 감쌌습니다.
 -- 2) 컬럼명은 v1.0.0 규칙(테이블 프리픽스)을 따릅니다.
--- 3) USER의 버티 정보(경험치·레벨)는 별도 1:1 테이블 USER_BUTTIE로 분리했습니다. (명세서 테이블명 미기재 → USER_BUTTIE)
+-- 3) USER의 버티 정보(경험치·레벨)는 별도 1:1 테이블 USER_BUTTIE로 분리했습니다.
 -- 4) ACCOUNT/CARD의 마이데이터 연결 컬럼(CONNECTION_ID)이 명세서에서 빠져 제거했고, UNIQUE는 (USER_ID, EXTERNAL_*)로 구성했습니다.
--- 5) 모든 도메인 이벤트 이력은 단일 LOG 테이블로 통합(ENTITY_TYPE/ENTITY_ID/ACTION/LOG_DETAIL).
+-- 5) 모든 도메인 이벤트 이력은 단일 LOG 테이블로 통합.
+-- 6) 시뮬레이션 관련 날짜는 전부 DATE(LocalDate)로 통일 (SIMULATION 시작/종료, SIMULATION_ITEM 적용 시작/종료).
 
 SET NAMES utf8mb4;
 SET time_zone = '+09:00';
@@ -344,7 +345,7 @@ CREATE TABLE IF NOT EXISTS `POLICY` (
 ) ENGINE=InnoDB;
 
 -- =========================================================
--- 13. 시뮬레이션 (SIMULATION)
+-- 13. 시뮬레이션 (SIMULATION)  * 시작/종료일 DATE(LocalDate)
 -- =========================================================
 CREATE TABLE IF NOT EXISTS `SIMULATION` (
     `SIMULATION_ID` BIGINT NOT NULL AUTO_INCREMENT,
@@ -373,15 +374,15 @@ CREATE TABLE IF NOT EXISTS `SIMULATION` (
 ) ENGINE=InnoDB;
 
 -- =========================================================
--- 14. 시뮬레이션 적용 항목 (SIMULATION_ITEM)
+-- 14. 시뮬레이션 적용 항목 (SIMULATION_ITEM)  * 적용 시작/종료일 DATE(LocalDate)
 -- =========================================================
 CREATE TABLE IF NOT EXISTS `SIMULATION_ITEM` (
     `SIMULATION_ITEM_ID` BIGINT NOT NULL AUTO_INCREMENT,
     `SIMULATION_ID` BIGINT NOT NULL,
     `SIMULATION_ITEM_CATEGORY` ENUM('POLICY', 'FINANCIAL', 'EXPENSE', 'INCOME') NOT NULL,
     `SIMULATION_ITEM_APPLY_AMOUNT` INT NOT NULL DEFAULT 0,
-    `APPLY_START_DATE` DATETIME NOT NULL,
-    `APPLY_END_DATE` DATETIME NULL,
+    `APPLY_START_DATE` DATE NOT NULL,
+    `APPLY_END_DATE` DATE NULL,
     `POLICY_ID` BIGINT NULL,
     `DETAIL_VALUE` TEXT NULL,
     `RECURRENCE_TYPE` ENUM('ONCE', 'WEEKLY', 'MONTHLY') NOT NULL DEFAULT 'ONCE',
@@ -502,7 +503,6 @@ CREATE TABLE IF NOT EXISTS `QUEST` (
 
 -- =========================================================
 -- 18. 로그 (LOG) - 도메인 이벤트 통합 이력
---     ENTITY_TYPE/ENTITY_ID 로 대상 지정, ACTION 으로 행위 구분, LOG_DETAIL(JSON)에 부가정보.
 -- =========================================================
 CREATE TABLE IF NOT EXISTS `LOG` (
     `LOG_ID` BIGINT NOT NULL AUTO_INCREMENT,
@@ -519,7 +519,6 @@ CREATE TABLE IF NOT EXISTS `LOG` (
     KEY `IDX_LOG_ACTION` (`ACTION`),
     KEY `IDX_LOG_CREATED_AT` (`LOG_CREATED_AT`),
 
-    -- 로그는 사용자가 삭제돼도 보존되도록 ON DELETE SET NULL
     CONSTRAINT `FK_LOG_USER`
         FOREIGN KEY (`USER_ID`) REFERENCES `USER` (`USER_ID`)
         ON UPDATE CASCADE ON DELETE SET NULL
