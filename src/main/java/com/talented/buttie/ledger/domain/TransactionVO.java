@@ -14,10 +14,9 @@ public class TransactionVO {
     private ExpenseCategory category;
     private Integer amount;
     private LocalDateTime transactionAt;
-    private String memo;
+    private String transactionMemo;
     private Boolean analysisExcluded;
     private Boolean isDeleted;
-    private LocalDateTime deletedAt;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime transactionCreatedAt;
+    private LocalDateTime transactionUpdatedAt;
 }

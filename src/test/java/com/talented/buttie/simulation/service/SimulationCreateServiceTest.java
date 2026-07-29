@@ -11,7 +11,7 @@ import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.request.CreateSimulationRequestDTO;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
-import com.talented.buttie.snapshot.dto.result.SimulationSnapshotResultDTO;
+import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
 import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
 import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
 import java.math.BigDecimal;
@@ -51,14 +51,13 @@ class SimulationCreateServiceTest {
     @Test
     @DisplayName("시뮬레이션 최초 생성 테스트")
     void createSimulation() {
-        SimulationSnapshotResultDTO snapshot =
-            new SimulationSnapshotResultDTO(
-                10L,
-                userId,
-                5_000_000,
-                new BigDecimal("35.50"),
-                new BigDecimal("8.25")
-            );
+        FinancialSnapshotVO snapshot = FinancialSnapshotVO.builder()
+            .snapshotId(10L)
+            .userId(userId)
+            .liquidAssets(5_000_000)
+            .targetAchievementRate(new BigDecimal("35.50"))
+            .prepPossibleMonths(new BigDecimal("8.25"))
+            .build();
 
         given(financialSnapshotMapper.findLatestByUserId(userId))
             .willReturn(snapshot);

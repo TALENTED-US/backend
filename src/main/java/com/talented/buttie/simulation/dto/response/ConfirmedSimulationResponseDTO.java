@@ -5,11 +5,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 
-@ApiModel(description = "시뮬레이션 생성 응답")
+@ApiModel(description = "최근 확정 시뮬레이션 조회 응답")
 @Builder
-public record SimulationResponseDTO(
+public record ConfirmedSimulationResponseDTO(
 
     @ApiModelProperty(value = "시뮬레이션 ID", example = "1")
     Long simulationId,
@@ -30,10 +32,18 @@ public record SimulationResponseDTO(
     Integer endingBalance,
 
     @ApiModelProperty(value = "준비 가능 개월", example = "8.25")
-    BigDecimal prepMonths
+    BigDecimal prepMonths,
+
+    @ApiModelProperty(value = "확정 일시", example = "2027-02-01T12:00:00")
+    LocalDateTime confirmedAt,
+
+    @ApiModelProperty(value = "관련 월별 재정 계획 리스트")
+    List<MonthlyProjectionResponseDTO> monthlyProjections
 ) {
-    public static SimulationResponseDTO from(SimulationVO simulation){
-        return SimulationResponseDTO.builder()
+    public static ConfirmedSimulationResponseDTO from(
+        SimulationVO simulation
+    ) {
+        return ConfirmedSimulationResponseDTO.builder()
             .simulationId(simulation.getSimulationId())
             .userId(simulation.getUserId())
             .snapshotId(simulation.getSnapshotId())
@@ -41,6 +51,12 @@ public record SimulationResponseDTO(
             .endDate(simulation.getEndDate())
             .endingBalance(simulation.getEndingBalance())
             .prepMonths(simulation.getPrepMonths())
+            .confirmedAt(simulation.getConfirmedAt())
+            .monthlyProjections(
+                simulation.getMonthlyProjections().stream()
+                    .map(MonthlyProjectionResponseDTO::from)
+                    .toList()
+            )
             .build();
     }
 }

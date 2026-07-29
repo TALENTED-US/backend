@@ -4,7 +4,7 @@ import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.request.CreateSimulationRequestDTO;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
-import com.talented.buttie.snapshot.dto.result.SimulationSnapshotResultDTO;
+import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
 import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
 import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +22,11 @@ public class SimulationCreateService {
 
         if(activeSimulation != null) return activeSimulation;
 
-        SimulationSnapshotResultDTO snapshot = financialSnapshotMapper.findLatestByUserId(userId);
+        FinancialSnapshotVO snapshot = financialSnapshotMapper.findLatestByUserId(userId);
 
         if(snapshot == null) throw ApplicationException.from(AnalysisErrorCode.SNAPSHOT_NOT_FOUND);
 
-        if(!userId.equals(snapshot.userId())) throw ApplicationException.from(AnalysisErrorCode.SNAPSHOT_OWNER_MISMATCH);
+        if(!userId.equals(snapshot.getUserId())) throw ApplicationException.from(AnalysisErrorCode.SNAPSHOT_OWNER_MISMATCH);
 
         SimulationVO simulation = SimulationVO.createCurrentSimulation(
                 userId,
