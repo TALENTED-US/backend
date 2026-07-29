@@ -11,11 +11,11 @@ public class QuestVO {
     private Long simulationItemId;
     private Long transactionId;
     private QuestType questType;
-    private String title;
-    private String description;
-    private LocalDateTime deadline;
-    private QuestStatus status;
-    private String url;
+    private String questTitle;
+    private String questDescription;
+    private LocalDateTime questDeadline;
+    private QuestStatus questStatus;
+    private String questUrl;
     private Integer expReward;
-    private LocalDateTime completedAt;
+    private LocalDateTime questCompletedAt;
 }

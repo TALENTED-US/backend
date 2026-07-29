@@ -8,10 +8,10 @@ public class ButtieLevelVO {
     private Integer level;
     private String stageName;
     private Integer requiredExp;
-    private String description;
+    private String levelDescription;
     private String imageUrlStable;
     private String imageUrlCaution;
     private String imageUrlDanger;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime levelCreatedAt;
+    private LocalDateTime levelUpdatedAt;
 }
