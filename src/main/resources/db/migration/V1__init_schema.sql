@@ -1,14 +1,13 @@
 -- Buttie MySQL 8.x 테이블 생성 스크립트
--- 기준: 테이블 명세서 v1.0.0
+-- 기준: 테이블 명세서 v1.0.0 (최종, (3))
 -- 데이터베이스: buttie
 --
 -- 주의:
--- 1) USER, TRANSACTION은 예약어 혼동 방지를 위해 백틱(`)으로 감쌌습니다.
--- 2) 컬럼명은 v1.0.0 규칙(테이블 프리픽스)을 따릅니다. 예: USER_NAME, ADMIN_EMAIL.
--- 3) USER의 버티 정보(경험치·레벨)는 별도 1:1 테이블 USER_BUTTIE로 분리했습니다. (명세서에 테이블명 미기재 → USER_BUTTIE로 명명)
--- 4) CARD.CARD_TYPE은 ENUM('CREDIT','DEBIT','PREPAID') (신용/체크/선불).
--- 5) ACCOUNT의 마이데이터 연결 컬럼(구 MYDATA_ID/CONNECTION_ID)이 명세서에서 빠져 제거했고, UNIQUE는 (USER_ID, EXTERNAL_ACCOUNT_ID)로 구성했습니다.
--- 6) v0.0.3 대비: FINANCE(금융상품)·CUSTOM_EXPENSE 테이블 삭제, CARD 신규, SNAPSHOT 컬럼 개편.
+-- 1) USER, TRANSACTION, LOG은 예약어 혼동 방지를 위해 백틱(`)으로 감쌌습니다.
+-- 2) 컬럼명은 v1.0.0 규칙(테이블 프리픽스)을 따릅니다.
+-- 3) USER의 버티 정보(경험치·레벨)는 별도 1:1 테이블 USER_BUTTIE로 분리했습니다. (명세서 테이블명 미기재 → USER_BUTTIE)
+-- 4) ACCOUNT/CARD의 마이데이터 연결 컬럼(CONNECTION_ID)이 명세서에서 빠져 제거했고, UNIQUE는 (USER_ID, EXTERNAL_*)로 구성했습니다.
+-- 5) 모든 도메인 이벤트 이력은 단일 LOG 테이블로 통합(ENTITY_TYPE/ENTITY_ID/ACTION/LOG_DETAIL).
 
 SET NAMES utf8mb4;
 SET time_zone = '+09:00';
@@ -17,6 +16,7 @@ SET time_zone = '+09:00';
 -- 기존 테이블 초기화가 필요한 경우 아래 주석을 해제하세요. (운영 금지)
 -- =========================================================
 -- SET FOREIGN_KEY_CHECKS = 0;
+-- DROP TABLE IF EXISTS `LOG`;
 -- DROP TABLE IF EXISTS `QUEST`;
 -- DROP TABLE IF EXISTS `NOTIFICATION`;
 -- DROP TABLE IF EXISTS `PROJECTION`;
@@ -106,7 +106,6 @@ CREATE TABLE IF NOT EXISTS `USER` (
 
 -- =========================================================
 -- 4. 사용자 버티 정보 (USER_BUTTIE) - USER와 1:1
---    ※ 명세서에 테이블명 미기재 → USER_BUTTIE로 명명
 -- =========================================================
 CREATE TABLE IF NOT EXISTS `USER_BUTTIE` (
     `USER_ID` BIGINT NOT NULL,
@@ -324,7 +323,7 @@ CREATE TABLE IF NOT EXISTS `POLICY` (
     `EMPLOYMENT_PREP_STATUS` VARCHAR(50) NULL,
     `FAMILY_COUNT` INT NOT NULL DEFAULT 1,
     `POLICY_STATUS` ENUM('AVAILABLE', 'CLOSED') NOT NULL DEFAULT 'AVAILABLE',
-    `URL` VARCHAR(500) NULL,
+    `POLICY_URL` VARCHAR(500) NULL,
 
     PRIMARY KEY (`POLICY_ID`),
     KEY `IDX_POLICY_CATEGORY_STATUS` (`POLICY_CATEGORY`, `POLICY_STATUS`),
@@ -375,13 +374,12 @@ CREATE TABLE IF NOT EXISTS `SIMULATION` (
 
 -- =========================================================
 -- 14. 시뮬레이션 적용 항목 (SIMULATION_ITEM)
---     ※ v1.0.0에서 FINANCE 삭제로 FINANCE_ID 제거. CATEGORY 'FINANCIAL'은 명세서상 유지.
 -- =========================================================
 CREATE TABLE IF NOT EXISTS `SIMULATION_ITEM` (
     `SIMULATION_ITEM_ID` BIGINT NOT NULL AUTO_INCREMENT,
     `SIMULATION_ID` BIGINT NOT NULL,
     `SIMULATION_ITEM_CATEGORY` ENUM('POLICY', 'FINANCIAL', 'EXPENSE', 'INCOME') NOT NULL,
-    `SIMULATION_APPLY_AMOUNT` INT NOT NULL DEFAULT 0,
+    `SIMULATION_ITEM_APPLY_AMOUNT` INT NOT NULL DEFAULT 0,
     `APPLY_START_DATE` DATETIME NOT NULL,
     `APPLY_END_DATE` DATETIME NULL,
     `POLICY_ID` BIGINT NULL,
@@ -460,7 +458,6 @@ CREATE TABLE IF NOT EXISTS `NOTIFICATION` (
 
 -- =========================================================
 -- 17. 퀘스트 (QUEST)
---     ※ QUEST_STATUS 기본값은 명세서 표기('PLANNED')가 ENUM에 없어 'NOT_COMPLETED'로 교정.
 -- =========================================================
 CREATE TABLE IF NOT EXISTS `QUEST` (
     `QUEST_ID` BIGINT NOT NULL AUTO_INCREMENT,
@@ -501,4 +498,29 @@ CREATE TABLE IF NOT EXISTS `QUEST` (
             (`QUEST_STATUS` = 'COMPLETED' AND `QUEST_COMPLETED_AT` IS NOT NULL)
             OR (`QUEST_STATUS` <> 'COMPLETED')
         )
+) ENGINE=InnoDB;
+
+-- =========================================================
+-- 18. 로그 (LOG) - 도메인 이벤트 통합 이력
+--     ENTITY_TYPE/ENTITY_ID 로 대상 지정, ACTION 으로 행위 구분, LOG_DETAIL(JSON)에 부가정보.
+-- =========================================================
+CREATE TABLE IF NOT EXISTS `LOG` (
+    `LOG_ID` BIGINT NOT NULL AUTO_INCREMENT,
+    `USER_ID` BIGINT NULL,
+    `ENTITY_TYPE` VARCHAR(50) NOT NULL,
+    `ENTITY_ID` BIGINT NULL,
+    `ACTION` VARCHAR(50) NOT NULL,
+    `LOG_DETAIL` JSON NULL,
+    `LOG_CREATED_AT` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (`LOG_ID`),
+    KEY `IDX_LOG_USER_CREATED` (`USER_ID`, `LOG_CREATED_AT`),
+    KEY `IDX_LOG_ENTITY` (`ENTITY_TYPE`, `ENTITY_ID`),
+    KEY `IDX_LOG_ACTION` (`ACTION`),
+    KEY `IDX_LOG_CREATED_AT` (`LOG_CREATED_AT`),
+
+    -- 로그는 사용자가 삭제돼도 보존되도록 ON DELETE SET NULL
+    CONSTRAINT `FK_LOG_USER`
+        FOREIGN KEY (`USER_ID`) REFERENCES `USER` (`USER_ID`)
+        ON UPDATE CASCADE ON DELETE SET NULL
 ) ENGINE=InnoDB;
