@@ -15,4 +15,18 @@
       LIVING_FUND_THRESHOLD = #{employmentPreparation.livingFundThreshold}
     WHERE USER_ID = #{employmentPreparation.userId}
   </update>
+
+  <select id="selectEmploymentPreparation" resultType="com.talented.buttie.user.domain.EmploymentPreparationVO">
+    SELECT
+      USER_ID,
+      BIRTH_DATE,
+      REGION,
+      FAMILY_COUNT,
+      EMPLOYMENT_PREP_TYPE,
+      PREP_START_DATE,
+      TARGET_EMPLOYMENT_DATE,
+      LIVING_FUND_THRESHOLD
+    FROM EMPLOYMENT_PREPARATION
+    WHERE USER_ID = #{userId}
+  </select>
 </mapper>
