@@ -3,5 +3,5 @@ package com.talented.buttie.ledger.dto.request;
 import lombok.Builder;
 
 @Builder
-public record RegisterTransactionRequest() {
+public record RegisterTransactionRequestDTO() {
 }
