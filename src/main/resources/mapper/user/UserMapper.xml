@@ -1,1 +1,22 @@
-<!-- TODO: Add MyBatis mapper statements. -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.talented.buttie.user.mapper.UserMapper">
+
+  <select id="selectUserProfile" resultType="com.talented.buttie.user.domain.UserProfileVO">
+    SELECT
+      u.USER_ID,
+      u.NICKNAME,
+      u.BUTTIE_TOTAL_EXP,
+      u.BUTTIE_LEVEL,
+      u.USERNAME,
+      u.PHONE_NUMBER,
+      u.EMAIL,
+      ep.BIRTH_DATE
+    FROM USER u
+           JOIN EMPLOYMENT_PREPARATION ep ON u.USER_ID = ep.USER_ID
+    WHERE u.USER_ID = #{userId}
+  </select>
+
+</mapper>
