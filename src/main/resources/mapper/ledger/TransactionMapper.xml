@@ -1,1 +1,32 @@
-<!-- TODO: Add MyBatis mapper statements. -->
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.talented.buttie.ledger.mapper.TransactionMapper">
+
+  <insert id="insertTransaction"
+    parameterType="com.talented.buttie.ledger.domain.TransactionVO"
+    useGeneratedKeys="true"
+    keyProperty="transactionId">
+    INSERT INTO transactions (
+      user_id,
+      transaction_type,
+      amount,
+      category,
+      transaction_at,
+      memo,
+      created_at,
+      updated_at
+    ) VALUES (
+               #{userId},
+               #{transactionType},
+               #{amount},
+               #{category},
+               #{transactionAt},
+               #{memo},
+               NOW(),
+               NOW()
+             )
+  </insert>
+
+</mapper>
