@@ -29,8 +29,8 @@ public class SimulationVO {
         return SimulationVO.builder()
             .userId(userId)
             .snapshotId(snapshot.getSnapshotId())
-            .simulationStartDate(request.startDate())
-            .simulationDueDate(request.endDate())
+            .simulationStartDate(request.simulationStartDate())
+            .simulationDueDate(request.simulationDueDate())
             .simulationEndAmount(snapshot.getLiquidAssets())
             .prepMonths(snapshot.getPrepPossibleMonths())
             .build();

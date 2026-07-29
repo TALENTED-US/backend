@@ -32,4 +32,13 @@
     limit 1
   </select>
 
+  <update id="updateSimulationPeriod">
+    update SIMULATION
+    set SIMULATION_START_DATE = #{simulationStartDate},
+        SIMULATION_DUE_DATE = #{simulationDueDate},
+        SIMULATION_END_AMOUNT = #{simulationEndAmount}
+    where SIMULATION_ID = #{simulationId}
+      and CONFIRMED_AT is null
+  </update>
+
 </mapper>
