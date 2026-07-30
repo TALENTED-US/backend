@@ -78,7 +78,15 @@ public class ServletConfig implements WebMvcConfigurer {
     @Override
     public Validator getValidator() {
         return validator();
+    }
 
+    //swagger
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("swagger-ui.html")
+            .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+            .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
 //    resources 밑 정적 파일로 제공 시, 해당 설정 필요
