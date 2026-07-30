@@ -58,7 +58,7 @@ class UserServiceTest {
 
         assertNotNull(result);
         assertEquals(userId, result.getUserId());
-        assertEquals("서울특별시", result.getRegion());
+        assertEquals("서울특별시", result.getEmploymentPrepRegion());
         verify(employmentPreparationMapper).updateEmploymentPreparation(any(EmploymentPreparationVO.class));
     }
 
@@ -104,7 +104,7 @@ class UserServiceTest {
 
         assertNotNull(result);
         assertEquals(userId, result.getUserId());
-        assertEquals("새닉네임", result.getNickname());
+        assertEquals("새닉네임", result.getUserNickname());
         verify(userMapper).countByNickname("새닉네임");
         verify(userMapper).updateUser(any(UserVO.class));
     }
