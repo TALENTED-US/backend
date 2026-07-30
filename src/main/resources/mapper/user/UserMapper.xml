@@ -32,4 +32,27 @@
     WHERE NICKNAME = #{nickname}
   </select>
 
+  <select id="selectUserById" resultType="com.talented.buttie.user.domain.UserVO">
+    SELECT
+      USER_ID,
+      USER_NAME,
+      USER_EMAIL,
+      USER_PASSWORD_HASH,
+      USER_NICKNAME,
+      USER_PHONE_NUMBER,
+      USER_ONBOARDING_COMPLETED,
+      USER_STATUS,
+      USER_WITHDRAWN_AT,
+      USER_CREATED_AT,
+      USER_UPDATED_AT
+    FROM USER
+    WHERE USER_ID = #{userId}
+  </select>
+
+  <update id="updateWithdrawnUser">
+    UPDATE USER
+    SET USER_STATUS = #{user.userStatus},
+        USER_WITHDRAWN_AT = #{user.userWithdrawnAt}
+    WHERE USER_ID = #{user.userId}
+  </update>
 </mapper>

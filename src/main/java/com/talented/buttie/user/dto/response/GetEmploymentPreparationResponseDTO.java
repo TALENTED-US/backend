@@ -29,8 +29,9 @@ public record GetEmploymentPreparationResponseDTO(
             vo.getEmploymentPrepType(),
             vo.getPrepStartDate(),
             vo.getTargetEmploymentDate(),
-            vo.getRegion(),
+            vo.getEmploymentPrepRegion(),
             vo.getFamilyCount()
         );
     }
 }
+//그냥 앞에거랑 합칠게요,,

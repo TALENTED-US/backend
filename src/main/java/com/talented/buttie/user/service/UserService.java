@@ -7,11 +7,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.user.exception.UserErrorCode;
+import com.talented.buttie.user.domain.UserVO;
+import com.talented.buttie.user.dto.request.WithdrawUserRequestDTO;
+import com.talented.buttie.user.mapper.UserMapper;
+
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final EmploymentPreparationMapper employmentPreparationMapper;
+    private final UserMapper userMapper;
+
     public EmploymentPreparationVO saveEmploymentPreparation(Long userId, UpdateEmploymentPreparationRequestDTO request) {
 
         EmploymentPreparationVO employmentPreparation =
@@ -32,5 +38,22 @@ public class UserService {
         }
 
         return employmentPreparation;
+    }
+
+    public Long withdrawUser(Long userId, WithdrawUserRequestDTO request) {
+        UserVO user = userMapper.selectUserById(userId);
+
+        if (user == null) {
+            throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
+        }
+
+        if (!user.getUserPasswordHash().equals(request.password())){
+            throw ApplicationException.from(UserErrorCode.PASSWORD_MISMATCH);
+        }
+
+        UserVO withdrawnUser = UserVO.createWithdrawnUser(userId);
+        userMapper.updateWithdrawnUser(withdrawnUser);
+
+        return userId;
     }
 }

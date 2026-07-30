@@ -10,9 +10,13 @@ import static org.mockito.Mockito.verify;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.user.domain.EmploymentPreparationType;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
+import com.talented.buttie.user.domain.UserStatus;
+import com.talented.buttie.user.domain.UserVO;
 import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
+import com.talented.buttie.user.dto.request.WithdrawUserRequestDTO;
 import com.talented.buttie.user.exception.UserErrorCode;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
+import com.talented.buttie.user.mapper.UserMapper;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +30,9 @@ class UserServiceTest {
 
     @Mock
     private EmploymentPreparationMapper employmentPreparationMapper;
+
+    @Mock
+    private UserMapper userMapper;
 
     @InjectMocks
     private UserService userService;
@@ -122,6 +129,63 @@ class UserServiceTest {
             UserErrorCode.EMPLOYMENT_PREPARATION_NOT_FOUND,
             exception.getCode()
         );
+    }
+
+    @Test
+    @DisplayName("비밀번호가 일치하면 회원을 탈퇴 처리하고 userId를 반환한다.")
+    void withdrawUser() {
+        Long userId = 1L;
+        String password = "password1234";
+        WithdrawUserRequestDTO request = new WithdrawUserRequestDTO(password);
+        UserVO user = UserVO.builder()
+            .userId(userId)
+            .userPasswordHash(password)
+            .userStatus(UserStatus.ACTIVE)
+            .build();
+
+        given(userMapper.selectUserById(userId)).willReturn(user);
+
+        Long result = userService.withdrawUser(userId, request);
+
+        assertEquals(userId, result);
+        verify(userMapper).updateWithdrawnUser(any(UserVO.class));
+    }
+
+    @Test
+    @DisplayName("회원 탈퇴 시 해당 사용자가 없으면 예외가 발생한다.")
+    void throwWhenWithdrawTargetNotFound() {
+        Long userId = 999L;
+        WithdrawUserRequestDTO request = new WithdrawUserRequestDTO("password1234");
+
+        given(userMapper.selectUserById(userId)).willReturn(null);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> userService.withdrawUser(userId, request)
+        );
+
+        assertEquals(UserErrorCode.USER_NOT_FOUND, exception.getCode());
+    }
+
+    @Test
+    @DisplayName("회원 탈퇴 시 비밀번호가 일치하지 않으면 예외가 발생한다.")
+    void throwWhenWithdrawPasswordMismatch() {
+        Long userId = 1L;
+        WithdrawUserRequestDTO request = new WithdrawUserRequestDTO("wrongPassword");
+        UserVO user = UserVO.builder()
+            .userId(userId)
+            .userPasswordHash("password1234")
+            .userStatus(UserStatus.ACTIVE)
+            .build();
+
+        given(userMapper.selectUserById(userId)).willReturn(user);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> userService.withdrawUser(userId, request)
+        );
+
+        assertEquals(UserErrorCode.PASSWORD_MISMATCH, exception.getCode());
     }
 
 }

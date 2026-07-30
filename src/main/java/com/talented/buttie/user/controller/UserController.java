@@ -5,10 +5,13 @@ import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
 import com.talented.buttie.user.dto.response.UserPKResponseDTO;
 import com.talented.buttie.user.service.UserService;
-import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.dto.response.GetEmploymentPreparationResponseDTO;
+import com.talented.buttie.user.dto.request.WithdrawUserRequestDTO;
+
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import javax.validation.Valid;
+
 @Api(tags = "User")
 @RestController
 @RequestMapping("/api/users/my")
@@ -41,5 +46,16 @@ public class UserController {
     ) {
         EmploymentPreparationVO employmentPreparation = userService.getEmploymentPreparation(userId);
         return ApplicationResponse.onSuccess(GetEmploymentPreparationResponseDTO.from(employmentPreparation));
+    }
+
+    @DeleteMapping
+    @ApiOperation("회원 탈퇴")
+    public ApplicationResponse<UserPKResponseDTO> withdrawUser(
+        @ApiParam(value="사용자 ID", required = true)
+        @RequestParam Long userId,
+        @Valid @RequestBody WithdrawUserRequestDTO request
+    ) {
+        Long withdrawnUserId = userService.withdrawUser(userId, request);
+        return ApplicationResponse.onSuccess(new UserPKResponseDTO(withdrawnUserId));
     }
 }

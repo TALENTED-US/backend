@@ -13,4 +13,8 @@ public interface UserMapper {
     int updateUser(@Param("user") UserVO user);
 
     int countByNickname(@Param("nickname") String nickname);
+
+    UserVO selectUserById(@Param("userId") Long userId);
+
+    int updateWithdrawnUser(@Param("user") UserVO user);
 }
