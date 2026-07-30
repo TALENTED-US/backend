@@ -9,7 +9,7 @@ import java.time.LocalDate;
 public record GetUserProfileResponseDTO(
 
     @ApiModelProperty(value = "닉네임", example = "김재준")
-    String nickname,
+    String userNickname,
 
     @ApiModelProperty(value = "버티 누적 경험치", example = "340")
     Integer buttieTotalExp,
@@ -17,27 +17,27 @@ public record GetUserProfileResponseDTO(
     @ApiModelProperty(value = "버티 레벨", example = "5")
     Integer buttieLevel,
 
-    @ApiModelProperty(value = "이름", example = "김재준")
+    @ApiModelProperty(value = "이름", example = "홍길동")
     String username,
 
-    @ApiModelProperty(value = "생년월일", example = "1998-03-15")
+    @ApiModelProperty(value = "생년월일", example = "2002-03-29")
     LocalDate birthDate,
 
     @ApiModelProperty(value = "휴대전화 번호", example = "010-1234-5678")
-    String phoneNumber,
+    String userPhoneNumber,
 
-    @ApiModelProperty(value = "이메일", example = "skadngus1128@gmail.com")
-    String email
+    @ApiModelProperty(value = "이메일", example = "qwert1234@gmail.com")
+    String userEmail
 ) {
     public static GetUserProfileResponseDTO from(UserProfileVO vo) {
         return new GetUserProfileResponseDTO(
-            vo.getNickname(),
+            vo.getUserNickname(),
             vo.getButtieTotalExp(),
             vo.getButtieLevel(),
-            vo.getUsername(),
+            vo.getUserName(),
             vo.getBirthDate(),
-            vo.getPhoneNumber(),
-            vo.getEmail()
+            vo.getUserPhoneNumber(),
+            vo.getUserEmail()
         );
     }
 }

@@ -54,7 +54,7 @@ class UserServiceTest {
 
         assertNotNull(result);
         assertEquals(userId, result.getUserId());
-        assertEquals("서울특별시", result.getRegion());
+        assertEquals("서울특별시", result.getEmploymentPrepRegion());
         verify(employmentPreparationMapper).updateEmploymentPreparation(any(EmploymentPreparationVO.class));
     }
 
