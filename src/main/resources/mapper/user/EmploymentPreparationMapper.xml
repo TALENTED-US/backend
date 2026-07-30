@@ -4,10 +4,10 @@
 
 <mapper namespace="com.talented.buttie.user.mapper.EmploymentPreparationMapper">
   <update id="updateEmploymentPreparation">
-    UPDATE EMPLOYMENT_PREPARATION
+    UPDATE EMPLOYMENT_PREPARATIONS
     SET
       BIRTH_DATE = #{employmentPreparation.birthDate},
-      REGION = #{employmentPreparation.region},
+      EMPLOYMENT_PREP_REGION = #{employmentPreparation.employmentPrepRegion},
       FAMILY_COUNT = #{employmentPreparation.familyCount},
       EMPLOYMENT_PREP_TYPE = #{employmentPreparation.employmentPrepType},
       PREP_START_DATE = #{employmentPreparation.prepStartDate},
@@ -20,7 +20,7 @@
     SELECT
       USER_ID,
       BIRTH_DATE,
-      REGION,
+      EMPLOYMENT_PREP_REGION,
       FAMILY_COUNT,
       EMPLOYMENT_PREP_TYPE,
       PREP_START_DATE,

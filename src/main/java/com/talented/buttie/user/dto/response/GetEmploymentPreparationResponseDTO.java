@@ -19,7 +19,7 @@ public record GetEmploymentPreparationResponseDTO(
     LocalDate targetEmploymentDate,
 
     @ApiModelProperty(value = "거주 지역", example = "서울특별시")
-    String region,
+    String employmentPrepRegion,
 
     @ApiModelProperty(value = "세대원 수", example = "1")
     Integer familyCount
@@ -29,7 +29,7 @@ public record GetEmploymentPreparationResponseDTO(
             vo.getEmploymentPrepType(),
             vo.getPrepStartDate(),
             vo.getTargetEmploymentDate(),
-            vo.getRegion(),
+            vo.getEmploymentPrepRegion(),
             vo.getFamilyCount()
         );
     }
