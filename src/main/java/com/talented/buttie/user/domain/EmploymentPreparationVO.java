@@ -13,7 +13,7 @@ public class EmploymentPreparationVO {
     private Long userId;
     @ToString.Exclude
     private LocalDate birthDate;
-    private String region;
+    private String employmentPrepRegion;
     private Integer familyCount;
     private EmploymentPreparationType employmentPrepType;
     private LocalDate prepStartDate;
@@ -27,7 +27,7 @@ public class EmploymentPreparationVO {
         return EmploymentPreparationVO.builder()
             .userId(userId)
             .birthDate(request.birthDate())
-            .region(request.region())
+            .employmentPrepRegion(request.region())
             .familyCount(request.familyCount())
             .employmentPrepType(request.employmentPrepType())
             .prepStartDate(request.prepStartDate())

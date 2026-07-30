@@ -6,27 +6,24 @@ import lombok.*;
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
 public class UserVO {
     private Long userId;
-    private String username;
+    private String userName;
     @ToString.Exclude
-    private String email;
+    private String userEmail;
     @ToString.Exclude
-    private String password;
-    private String nickname;
+    private String userPasswordHash;
+    private String userNickname;
     @ToString.Exclude
-    private String phoneNumber;
-    private Boolean onboardingCompleted;
-    private UserStatus status;
-    private Integer buttieTotalExp;
-    private Integer buttieLevel;
-    private LocalDateTime withdrawnAt;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String userPhoneNumber;
+    private Boolean userOnboardingCompleted;
+    private UserStatus userStatus;
+    private LocalDateTime userWithdrawnAt;
+    private LocalDateTime userCreatedAt;
+    private LocalDateTime userUpdatedAt;
 
     public static UserVO createModifiedUser(Long userId, String nickname) {
         return UserVO.builder()
             .userId(userId)
-            .nickname(nickname)
+            .userNickname(nickname)
             .build();
     }
 }
-

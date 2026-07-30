@@ -9,19 +9,14 @@ import lombok.*;
 public class FinancialSnapshotVO {
     private Long snapshotId;
     private Long userId;
-    private LocalDate baseDate;
-    private Integer calculationMonths;
-    private Integer totalAssets;
+    private LocalDate snapshotBaseDate;
     private Integer liquidAssets;
-    private Integer financialProductAssets;
-    private Integer totalDebt;
-    private Integer avgMonthlyIncome;
-    private Integer avgMonthlyExpense;
     private Integer monthlyNetCashflow;
     private BigDecimal prepPossibleMonths;
-    private Integer targetBalance;
-    private Integer additionalRequiredAmount;
-    private BigDecimal targetAchievementRate;
+    private BigDecimal avgWeekendExpense;
+    private BigDecimal avgWeekendIncome;
+    private BigDecimal avgWeekExpense;
+    private BigDecimal avgWeekIncome;
     private RiskLevel riskLevel;
-    private LocalDateTime createdAt;
+    private LocalDateTime snapshotCreatedAt;
 }
