@@ -30,7 +30,7 @@ public class JwtTokenProvider {
         @Value("${jwt.refresh-token-expiration}")
         long refreshTokenExpiration
     ) {
-        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        byte[] keyBytes = secret.getBytes();
 
         this.signingKey = Keys.hmacShaKeyFor(keyBytes);
         this.accessTokenExpiration = accessTokenExpiration;
