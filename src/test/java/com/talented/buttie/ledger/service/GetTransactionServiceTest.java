@@ -38,14 +38,14 @@ class GetTransactionServiceTest {
     void getAllTransactions(){
             TransactionVO mockTransaction1 = TransactionVO.builder()
                 .userId(userId)
-                .content("세종대학교 학식당")
-                .amount(10000)
+                .transactionContent("세종대학교 학식당")
+                .transactionAmount(10000)
                 .build();
 
             TransactionVO mockTransaction2 = TransactionVO.builder()
                 .userId(userId)
-                .content("스타벅스")
-                .amount(4500)
+                .transactionContent("스타벅스")
+                .transactionAmount(4500)
                 .build();
 
             List<TransactionVO> mockList = List.of(mockTransaction1, mockTransaction2);
@@ -56,7 +56,7 @@ class GetTransactionServiceTest {
 
             assertNotNull(result);
             assertEquals(1, result.size());
-            assertEquals("세종대학교 학식당", result.get(0).getContent());
+            assertEquals("세종대학교 학식당", result.get(0).getTransactionContent());
 
             verify(transactionMapper).findAllByUserId(userId);
     }
