@@ -9,15 +9,14 @@ public class TransactionVO {
     private Long userId;
     private Long accountId;
     private String externalTransactionId;
-    private String content;
-    private Boolean isExpense;
-    private ExpenseCategory category;
-    private Integer amount;
+    private String transactionContent;
+    private TransactionType transactionType;
+    private ExpenseCategory expenseCategory;
+    private Integer transactionAmount;
     private LocalDateTime transactionAt;
-    private String memo;
+    private String transactionMemo;
     private Boolean analysisExcluded;
     private Boolean isDeleted;
-    private LocalDateTime deletedAt;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime transactionCreatedAt;
+    private LocalDateTime transactionUpdatedAt;
 }

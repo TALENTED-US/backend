@@ -7,7 +7,6 @@ import lombok.*;
 public class AccountVO {
     private Long accountId;
     private Long userId;
-    private Long mydataId;
     private String externalAccountId;
     private String institutionName;
     private String accountName;
@@ -17,6 +16,4 @@ public class AccountVO {
     private Integer balance;
     private Boolean isActive;
     private LocalDateTime syncedAt;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }
