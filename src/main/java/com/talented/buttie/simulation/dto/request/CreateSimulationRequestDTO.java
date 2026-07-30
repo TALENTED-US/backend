@@ -3,7 +3,7 @@ package com.talented.buttie.simulation.dto.request;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
@@ -12,23 +12,23 @@ import lombok.Builder;
 @Builder
 public record CreateSimulationRequestDTO(
     @ApiModelProperty(
-        value = "시뮬레이션 수행 시작 일시",
-        example = "2026-08-01T00:00:00",
+        value = "시뮬레이션 수행 시작일",
+        example = "2026-08-01",
         required = true
     )
-    @NotNull(message = "시뮬레이션 수행 시작 일시는 필수입니다.")
-    LocalDateTime startDate,
+    @NotNull(message = "시뮬레이션 수행 시작일은 필수입니다.")
+    LocalDate startDate,
 
     @ApiModelProperty(
-        value = "시뮬레이션 종료 일시",
-        example = "2027-01-31T00:00:00",
+        value = "시뮬레이션 종료일",
+        example = "2027-01-31",
         required = true
     )
-    @NotNull(message = "시뮬레이션 종료 일시는 필수입니다.")
-    LocalDateTime endDate
+    @NotNull(message = "시뮬레이션 종료일은 필수입니다.")
+    LocalDate endDate
 ) {
     @JsonIgnore
-    @AssertTrue(message = "종료 일시는 시작 일시 이후여야 합니다.")
+    @AssertTrue(message = "종료일은 시작일 이후여야 합니다.")
     public boolean isValidDateRange() {
         return startDate == null
             || endDate == null
