@@ -15,7 +15,7 @@ import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
 import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
 import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,8 +43,8 @@ class SimulationCreateServiceTest {
     void setup(){
         userId = 1L;
         request = new CreateSimulationRequestDTO(
-            LocalDateTime.of(2026, 8, 1, 0, 0),
-            LocalDateTime.of(2027, 1, 31, 0, 0)
+            LocalDate.of(2026, 8, 1),
+            LocalDate.of(2027, 1, 31)
         );
     }
 
@@ -55,7 +55,6 @@ class SimulationCreateServiceTest {
             .snapshotId(10L)
             .userId(userId)
             .liquidAssets(5_000_000)
-            .targetAchievementRate(new BigDecimal("35.50"))
             .prepPossibleMonths(new BigDecimal("8.25"))
             .build();
 
@@ -66,7 +65,7 @@ class SimulationCreateServiceTest {
         SimulationVO result = simulationCreateService.createSimulation(userId, request);
 
         // then: 결과 확인
-        assertEquals(5_000_000, result.getEndingBalance());
+        assertEquals(5_000_000, result.getSimulationEndAmount());
         verify(simulationMapper).save(result);
     }
 

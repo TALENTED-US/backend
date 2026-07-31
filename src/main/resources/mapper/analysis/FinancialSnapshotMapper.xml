@@ -10,7 +10,7 @@
     select *
     from SNAPSHOT
     where USER_ID = #{userId}
-    order by BASE_DATE desc, CREATED_AT desc
+    order by SNAPSHOT_BASE_DATE desc, SNAPSHOT_CREATED_AT desc
     limit 1
   </select>
 </mapper>
