@@ -1,37 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="com.talented.buttie.user.mapper.UserMapper">
-
-  <select id="selectUserProfile" resultType="com.talented.buttie.user.domain.UserProfileVO">
-    SELECT
-      u.USER_ID,
-      u.NICKNAME,
-      u.BUTTIE_TOTAL_EXP,
-      u.BUTTIE_LEVEL,
-      u.USERNAME,
-      u.PHONE_NUMBER,
-      u.EMAIL,
-      ep.BIRTH_DATE
-    FROM USER u
-           JOIN EMPLOYMENT_PREPARATION ep ON u.USER_ID = ep.USER_ID
-    WHERE u.USER_ID = #{userId}
-  </select>
-
-  <update id="updateUser">
-    UPDATE USER
-    SET NICKNAME = #{user.nickname},
-        UPDATED_AT = NOW()
-    WHERE USER_ID = #{user.userId}
-  </update>
-
-  <select id="countByNickname" resultType="int">
-    SELECT COUNT(*)
-    FROM USER
-    WHERE NICKNAME = #{nickname}
-  </select>
-
   <select id="selectUserById" resultType="com.talented.buttie.user.domain.UserVO">
     SELECT
       USER_ID,
@@ -45,12 +15,11 @@
       USER_WITHDRAWN_AT,
       USER_CREATED_AT,
       USER_UPDATED_AT
-    FROM USER
+    FROM `USER`
     WHERE USER_ID = #{userId}
   </select>
-
   <update id="updateWithdrawnUser">
-    UPDATE USER
+    UPDATE `USER`
     SET USER_STATUS = #{user.userStatus},
         USER_WITHDRAWN_AT = #{user.userWithdrawnAt}
     WHERE USER_ID = #{user.userId}
