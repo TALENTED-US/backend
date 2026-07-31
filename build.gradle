@@ -99,6 +99,9 @@ dependencies {
     //Annotation
     implementation 'javax.annotation:javax.annotation-api:1.3.2'
 
+    //Spring Security
+    implementation 'org.springframework.security:spring-security-crypto:5.8.16'
+
 
 
 }

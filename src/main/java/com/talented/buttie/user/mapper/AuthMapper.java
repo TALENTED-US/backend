@@ -12,4 +12,6 @@ public interface AuthMapper {
     boolean existsByPhoneNumber(@Param("phoneNumber") String phoneNumber);
     boolean existsByEmail(@Param("email") String email);
     boolean existsByNickName(@Param("userNickname") String userNickname);
+    String getPasswordByUserEmail(@Param("email") String email);
+    Long getUserIdByUserEmail(@Param("email") String email);
 }
