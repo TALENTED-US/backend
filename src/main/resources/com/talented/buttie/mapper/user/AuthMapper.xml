@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.talented.buttie.user.mapper.AuthMapper">
+  <insert id="createUser"
+    parameterType="com.talented.buttie.user.dto.request.auth.AuthSignUpRequestDTO"
+    useGeneratedKeys="true"
+    keyProperty="id"
+  >
+    INSERT INTO `USER` (
+      USER_NAME,
+      USER_EMAIL,
+      USER_PASSWORD_HASH,
+      USER_NICKNAME,
+      USER_PHONE_NUMBER
+    ) VALUES (
+      #{authSignUpRequestDTO.userName},
+      #{authSignUpRequestDTO.userEmail},
+      #{authSignUpRequestDTO.userPassword},
+      #{authSignUpRequestDTO.userNickname},
+      #{authSignUpRequestDTO.phoneNumber}
+    )
+  </insert>
+
+  <select id="existsByPhoneNumber"
+    parameterType="string"
+    resultType="boolean">
+    SELECT EXISTS (
+      SELECT 1
+      FROM `USER`
+      WHERE USER_PHONE_NUMBER = #{phoneNumber} AND USER_STATUS != 'WITHDRAWN'
+    )
+  </select>
+
+  <select id="existsByEmail"
+    parameterType="string"
+    resultType="boolean">
+    SELECT EXISTS (
+      SELECT 1
+      FROM `USER`
+      WHERE USER_EMAIL = #{email} AND USER_STATUS != 'WITHDRAWN'
+    )
+  </select>
+  <select id="existsByNickName" resultType="java.lang.Boolean">
+    SELECT EXISTS (
+      SELECT 1
+      FROM `USER`
+      WHERE USER_NICKNAME = #{nickName} AND USER_STATUS != 'WITHDRAWN'
+    )
+  </select>
+
+</mapper>

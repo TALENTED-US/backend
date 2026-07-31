@@ -23,13 +23,13 @@ public record ConfirmedSimulationResponseDTO(
     Long snapshotId,
 
     @ApiModelProperty(value = "시뮬레이션 수행 시작일", example = "2026-08-01")
-    LocalDate startDate,
+    LocalDate simulationStartDate,
 
     @ApiModelProperty(value = "시뮬레이션 종료일", example = "2027-01-31")
-    LocalDate endDate,
+    LocalDate simulationDueDate,
 
     @ApiModelProperty(value = "종료 예상 잔액", example = "5000000")
-    Integer endingBalance,
+    Integer simulationEndAmount,
 
     @ApiModelProperty(value = "준비 가능 개월", example = "8.25")
     BigDecimal prepMonths,
@@ -47,9 +47,9 @@ public record ConfirmedSimulationResponseDTO(
             .simulationId(simulation.getSimulationId())
             .userId(simulation.getUserId())
             .snapshotId(simulation.getSnapshotId())
-            .startDate(simulation.getStartDate())
-            .endDate(simulation.getEndDate())
-            .endingBalance(simulation.getEndingBalance())
+            .simulationStartDate(simulation.getSimulationStartDate())
+            .simulationDueDate(simulation.getSimulationDueDate())
+            .simulationEndAmount(simulation.getSimulationEndAmount())
             .prepMonths(simulation.getPrepMonths())
             .confirmedAt(simulation.getConfirmedAt())
             .monthlyProjections(

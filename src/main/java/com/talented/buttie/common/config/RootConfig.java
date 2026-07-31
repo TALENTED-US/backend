@@ -12,7 +12,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.flywaydb.core.Flyway;
 import org.springframework.context.annotation.DependsOn;
@@ -32,7 +35,12 @@ import org.springframework.context.annotation.DependsOn;
     "com.talented.buttie.quest.service",
     "com.talented.buttie.catalog.service",
     "com.talented.buttie.catalog.elasticsearch",
-    "com.talented.buttie.notification.service"
+    "com.talented.buttie.notification.service",
+    "com.talented.buttie.common.security",
+    "com.talented.buttie.common.util"
+})
+@Import({
+    RedisConfig.class
 })
 @MapperScan(basePackages = {"com.talented.buttie"})
 public class RootConfig {
@@ -62,6 +70,16 @@ public class RootConfig {
             .load();
     }
 
+    @Bean
+
+    public static PropertySourcesPlaceholderConfigurer
+    propertySourcesPlaceholderConfigurer() {
+        PropertySourcesPlaceholderConfigurer configurer =
+            new PropertySourcesPlaceholderConfigurer();
+        configurer.setIgnoreUnresolvablePlaceholders(false);
+        return configurer;
+    }
+
     @Autowired
     ApplicationContext applicationContext;
     @Bean
@@ -70,8 +88,13 @@ public class RootConfig {
         SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
         sqlSessionFactory.setConfigLocation(applicationContext.getResource("classpath:/mybatis-config.xml"));
         sqlSessionFactory.setDataSource(dataSource());
-        return (SqlSessionFactory) sqlSessionFactory.getObject();
+        sqlSessionFactory.setMapperLocations(
+            new PathMatchingResourcePatternResolver()
+                .getResources("classpath*:com/talented/buttie/mapper/**/*.xml")
+        );
+        return sqlSessionFactory.getObject();
     }
+
     @Bean
     public DataSourceTransactionManager transactionManager(){
         DataSourceTransactionManager manager = new DataSourceTransactionManager(dataSource());
