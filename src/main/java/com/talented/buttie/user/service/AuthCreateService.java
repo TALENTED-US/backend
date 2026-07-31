@@ -4,10 +4,8 @@ import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.user.dto.request.auth.AuthSignUpRequestDTO;
 import com.talented.buttie.user.exception.AuthErrorCode;
 import com.talented.buttie.user.mapper.AuthMapper;
-import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
-import com.talented.buttie.user.mapper.UserConsentMapper;
-import com.talented.buttie.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,12 +14,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthCreateService {
 
     private final AuthMapper authMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public Long createUser(AuthSignUpRequestDTO authSignUpRequestDTO) {
         isPasswordValid(authSignUpRequestDTO);
         isFieldDuplicate(authSignUpRequestDTO);
-        Long userId = authMapper.createUser(authSignUpRequestDTO);
+
+        String passwordHash = passwordEncoder.encode(authSignUpRequestDTO.userPassword());
+        AuthSignUpRequestDTO newUser = authSignUpRequestDTO.saveNewUser(authSignUpRequestDTO, passwordHash);
+        Long userId = authMapper.createUser(newUser);
         if(userId == null) {
             throw ApplicationException.from(AuthErrorCode.USER_CREATE_FAILED);
         }

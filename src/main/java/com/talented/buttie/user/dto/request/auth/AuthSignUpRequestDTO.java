@@ -51,6 +51,17 @@ public record AuthSignUpRequestDTO(
     @Size(min = 2, max = 20, message = "닉네임은 2~20자여야 합니다.")
     String userNickname
 ) {
+    public AuthSignUpRequestDTO saveNewUser(AuthSignUpRequestDTO authSignUpRequestDTO, String userPassword) {
+       return AuthSignUpRequestDTO.builder()
+           .userName(authSignUpRequestDTO.userName())
+           .birthDate(authSignUpRequestDTO.birthDate())
+           .phoneNumber(authSignUpRequestDTO.phoneNumber())
+           .userEmail(authSignUpRequestDTO.userEmail())
+           .userPassword(userPassword)
+           .userPasswordCheck(authSignUpRequestDTO.userPasswordCheck())
+           .userNickname(authSignUpRequestDTO.userNickname())
+           .build();
+    }
 
 
 }
