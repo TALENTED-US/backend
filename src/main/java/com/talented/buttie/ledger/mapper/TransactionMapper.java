@@ -9,5 +9,9 @@ import org.apache.ibatis.annotations.Param;
 public interface TransactionMapper {
     List<TransactionVO> findAllByUserId(@Param("userId") Long userId);
     int insertTransaction(TransactionVO transaction);
+
+    TransactionVO findById(@Param("transactionId") Long transactionId);
+
+    int updateTransaction(TransactionVO transaction);
 }
 

@@ -3,7 +3,10 @@ package com.talented.buttie.ledger.domain;
 import java.time.LocalDateTime;
 import lombok.*;
 
-@Data @Builder @NoArgsConstructor @AllArgsConstructor
+@Data
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransactionVO {
     private Long transactionId;
     private Long userId;

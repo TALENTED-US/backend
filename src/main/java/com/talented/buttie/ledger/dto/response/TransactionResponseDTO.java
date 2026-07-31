@@ -1,10 +1,8 @@
 package com.talented.buttie.ledger.dto.response;
 
-import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
 import com.talented.buttie.ledger.domain.TransactionType;
 import com.talented.buttie.ledger.domain.TransactionVO;
-import com.talented.buttie.ledger.exception.LedgerErrorCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;

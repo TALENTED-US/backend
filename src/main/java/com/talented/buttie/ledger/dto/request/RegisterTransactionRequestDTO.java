@@ -59,8 +59,8 @@ public record RegisterTransactionRequestDTO(
         return TransactionVO.builder()
             .userId(userId)
             .transactionType(this.type)
-            .amount(this.amount)
-            .category(this.category)
+            .transactionAmount(this.amount)
+            .expenseCategory(this.category)
             .transactionAt(this.transactionDate)
             .transactionMemo(this.memo)
             .build();

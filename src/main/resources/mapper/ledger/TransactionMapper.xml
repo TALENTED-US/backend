@@ -4,6 +4,28 @@
 
 <mapper namespace="com.talented.buttie.ledger.mapper.TransactionMapper">
 
+  <select id="findAllByUserId" resultType="com.talented.buttie.ledger.domain.TransactionVO">
+    SELECT
+      transaction_id          AS transactionId,
+      user_id                 AS userId,
+      account_id              AS accountId,
+      external_transaction_id AS externalTransactionId,
+      content,
+      transaction_type        AS transactionType,
+      category,
+      amount,
+      transaction_at          AS transactionAt,
+      memo,
+      analysis_excluded       AS analysisExcluded,
+      is_deleted              AS isDeleted,
+      deleted_at              AS deletedAt,
+      created_at              AS createdAt,
+      updated_at              AS updatedAt
+    FROM transaction
+    WHERE user_id = #{userId}
+      AND is_deleted = false  ORDER BY transaction_at DESC
+  </select>
+
   <insert id="insertTransaction"
     parameterType="com.talented.buttie.ledger.domain.TransactionVO"
     useGeneratedKeys="true"
@@ -28,5 +50,47 @@
                NOW()
              )
   </insert>
+
+  <select id="findById" resultType="com.talented.buttie.ledger.domain.TransactionVO">
+    SELECT
+      transaction_id AS transactionId,
+      user_id AS userId,
+      account_id AS accountId,
+      external_transaction_id AS externalTransactionId,
+      transaction_content AS transactionContent,
+      transaction_type AS transactionType,
+      expense_category AS expenseCategory,
+      transaction_amount AS transactionAmount,
+      transaction_at AS transactionAt,
+      transaction_memo AS transactionMemo,
+      analysis_excluded AS analysisExcluded,
+      is_deleted AS isDeleted,
+      transaction_created_at AS transactionCreatedAt,
+      transaction_updated_at AS transactionUpdatedAt
+    FROM transactions
+    WHERE transaction_id = #{transactionId}
+      AND is_deleted = false
+  </select>
+
+  <update id="updateTransaction" parameterType="com.talented.buttie.ledger.domain.TransactionVO">
+    UPDATE transactions
+    <set>
+      <if test="transactionAmount != null">
+        transaction_amount = #{transactionAmount},
+      </if>
+      <if test="expenseCategory != null">
+        expense_category = #{expenseCategory},
+      </if>
+      <if test="transactionAt != null">
+        transaction_at = #{transactionAt},
+      </if>
+      <if test="transactionMemo != null">
+        transaction_memo = #{transactionMemo},
+      </if>
+
+      transaction_updated_at = NOW()
+    </set>
+    WHERE transaction_id = #{transactionId}
+  </update>
 
 </mapper>

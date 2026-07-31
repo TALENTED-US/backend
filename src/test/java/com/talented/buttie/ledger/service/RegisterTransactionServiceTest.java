@@ -54,8 +54,8 @@ class RegisterTransactionServiceTest {
 
         assertNotNull(result);
         assertEquals(userId, result.getUserId());
-        assertEquals(10000, result.getAmount());
-        assertEquals("학식당에서 스팸치즈순두부찌개", result.getMemo());
+        assertEquals(10000, result.getTransactionAmount());
+        assertEquals("학식당에서 스팸치즈순두부찌개", result.getTransactionMemo());
 
         verify(transactionMapper).insertTransaction(any(TransactionVO.class));
 
