@@ -1,0 +1,60 @@
+package com.talented.buttie.user.service;
+
+import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.common.security.AccountType;
+import com.talented.buttie.common.security.jwt.JwtTokenProvider;
+import com.talented.buttie.common.security.redis.RefreshTokenRepository;
+import com.talented.buttie.user.dto.request.AuthLoginRequestDTO;
+import com.talented.buttie.user.dto.response.auth.TokenResponseDTO;
+import com.talented.buttie.user.exception.AuthErrorCode;
+import com.talented.buttie.user.mapper.AuthMapper;
+import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class AuthReadService {
+
+    private final AuthMapper authMapper;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public TokenResponseDTO userLogin(@Valid AuthLoginRequestDTO authLoginRequestDTO) {
+        if (!authMapper.existsByEmail(authLoginRequestDTO.userEmail())) {
+            throw ApplicationException.from(AuthErrorCode.EMAIL_NOT_FOUND);
+        }
+
+        String targetPassword = authMapper.getPasswordByUserEmail(authLoginRequestDTO.userEmail());
+        if (targetPassword == null) {
+            throw ApplicationException.from(AuthErrorCode.EMAIL_NOT_FOUND);
+        }
+
+        if (!passwordEncoder.matches(authLoginRequestDTO.password(), targetPassword)) {
+            throw ApplicationException.from(AuthErrorCode.PASSWORD_NOT_MATCH);
+        }
+
+        Long userId = authMapper.getUserIdByUserEmail(authLoginRequestDTO.userEmail());
+        if (userId == null) {
+            throw ApplicationException.from(AuthErrorCode.EMAIL_NOT_FOUND);
+        }
+
+        String accessToken = jwtTokenProvider.createUserAccessToken(userId);
+        String refreshToken = jwtTokenProvider.createRefreshToken(userId, AccountType.USER);
+        long refreshTokenExpiration = jwtTokenProvider.getRefreshTokenExpiration();
+
+        refreshTokenRepository.save(
+            userId,
+            AccountType.USER,
+            refreshToken,
+            refreshTokenExpiration
+        );
+
+        return new TokenResponseDTO(accessToken, refreshToken, refreshTokenExpiration);
+    }
+
+}

@@ -16,7 +16,9 @@ public enum AuthErrorCode  implements BaseErrorCode {
     USER_CREATE_FAILED(HttpStatus.CONFLICT, "AUTH_005", "사용자 생성에 실패했습니다."),
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "AUTH_006", "이미 존재하는 이메일입니다."),
     PHONE_NUMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "AUTH_007", "이미 존재하는 전화번호입니다."),
-    NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "AUTH_008", "이미 존재하는 닉네임입니다.");
+    NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "AUTH_008", "이미 존재하는 닉네임입니다."),
+    EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH_009", "아이디를 찾을 수 없습니다."),
+    PASSWORD_NOT_MATCH(HttpStatus.UNAUTHORIZED, "AUTH_010", "비밀번호가 일치하지 않습니다.");
 
 
     private final HttpStatus httpStatus;
