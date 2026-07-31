@@ -11,5 +11,5 @@ public interface AuthMapper {
     Long createUser(@Param("authSignUpRequestDTO") AuthSignUpRequestDTO authSignUpRequestDTO);
     boolean existsByPhoneNumber(@Param("phoneNumber") String phoneNumber);
     boolean existsByEmail(@Param("email") String email);
-    boolean existsByNickName(@NotBlank(message = "닉네임은 필수입니다.") @Size(min = 2, max = 20, message = "닉네임은 2~20자여야 합니다.") String userNickname);
+    boolean existsByNickName(@Param("userNickname") String userNickname);
 }
