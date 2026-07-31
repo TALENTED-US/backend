@@ -1,10 +1,13 @@
 package com.talented.buttie.common.config;
 
+import com.talented.buttie.common.security.AuthUserArgumentResolver;
+import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -31,6 +34,23 @@ import org.springframework.web.servlet.view.JstlView;
 @Import(SwaggerConfig.class)
 public class ServletConfig implements WebMvcConfigurer {
 
+    private final AuthUserArgumentResolver authUserArgumentResolver;
+
+    public ServletConfig(
+        AuthUserArgumentResolver authUserArgumentResolver
+    ) {
+        this.authUserArgumentResolver = authUserArgumentResolver;
+    }
+
+    @Override
+    public void addArgumentResolvers(
+        List<HandlerMethodArgumentResolver> resolvers
+    ){
+        resolvers.add(authUserArgumentResolver);
+    }
+
+
+
     @Bean
     public MultipartResolver multipartResolver() {
         StandardServletMultipartResolver resolver = new StandardServletMultipartResolver();
@@ -46,6 +66,7 @@ public class ServletConfig implements WebMvcConfigurer {
             )
             .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
             .allowedHeaders("*")
+            .exposedHeaders("Authorization")
             .allowCredentials(true);
     }
 
@@ -57,7 +78,15 @@ public class ServletConfig implements WebMvcConfigurer {
     @Override
     public Validator getValidator() {
         return validator();
+    }
 
+    //swagger
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("swagger-ui.html")
+            .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+            .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
 //    resources 밑 정적 파일로 제공 시, 해당 설정 필요
