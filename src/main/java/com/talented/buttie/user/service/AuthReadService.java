@@ -41,4 +41,12 @@ public class AuthReadService {
 
         return authTokenService.createToken(userId);
     }
+
+    public boolean isEmailDuplicate(String email) {
+        boolean isDuplicate = authMapper.existsByEmail(email);
+        if (!isDuplicate) {
+            throw ApplicationException.from(AuthErrorCode.EMAIL_NOT_FOUND);
+        }
+        return isDuplicate;
+    }
 }
