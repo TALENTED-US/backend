@@ -4,7 +4,7 @@ import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.common.security.AccountType;
 import com.talented.buttie.common.security.jwt.JwtTokenProvider;
 import com.talented.buttie.common.security.redis.RefreshTokenRepository;
-import com.talented.buttie.user.dto.request.AuthLoginRequestDTO;
+import com.talented.buttie.user.dto.request.auth.AuthLoginRequestDTO;
 import com.talented.buttie.user.dto.response.auth.TokenResponseDTO;
 import com.talented.buttie.user.exception.AuthErrorCode;
 import com.talented.buttie.user.mapper.AuthMapper;

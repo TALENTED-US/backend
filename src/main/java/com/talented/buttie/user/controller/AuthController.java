@@ -3,7 +3,7 @@ package com.talented.buttie.user.controller;
 import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.common.security.SecurityConstants;
 import com.talented.buttie.common.util.PKCrypto;
-import com.talented.buttie.user.dto.request.AuthLoginRequestDTO;
+import com.talented.buttie.user.dto.request.auth.AuthLoginRequestDTO;
 import com.talented.buttie.user.dto.request.auth.AuthSignUpRequestDTO;
 import com.talented.buttie.user.dto.response.auth.TokenResponseDTO;
 import com.talented.buttie.user.dto.response.UserPKResponseDTO;
