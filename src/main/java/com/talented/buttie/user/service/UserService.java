@@ -10,6 +10,8 @@ import com.talented.buttie.user.exception.UserErrorCode;
 import com.talented.buttie.user.domain.UserVO;
 import com.talented.buttie.user.dto.request.WithdrawUserRequestDTO;
 import com.talented.buttie.user.mapper.UserMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 
 @Service
@@ -17,6 +19,7 @@ import com.talented.buttie.user.mapper.UserMapper;
 public class UserService {
     private final EmploymentPreparationMapper employmentPreparationMapper;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public EmploymentPreparationVO saveEmploymentPreparation(Long userId, UpdateEmploymentPreparationRequestDTO request) {
 
@@ -47,7 +50,7 @@ public class UserService {
             throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
         }
 
-        if (!user.getUserPasswordHash().equals(request.password())){
+        if (!passwordEncoder.matches(request.password(), user.getUserPasswordHash())){
             throw ApplicationException.from(UserErrorCode.PASSWORD_MISMATCH);
         }
 

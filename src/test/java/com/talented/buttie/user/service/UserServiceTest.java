@@ -24,6 +24,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -36,6 +37,9 @@ class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @Test
     @DisplayName("취업 준비 정보를 저장하면 수정된 VO를 반환한다.")
@@ -144,6 +148,8 @@ class UserServiceTest {
             .build();
 
         given(userMapper.selectUserById(userId)).willReturn(user);
+        given(passwordEncoder.matches(password, user.getUserPasswordHash())).willReturn(true);
+        given(userMapper.updateWithdrawnUser(any(UserVO.class))).willReturn(1);
 
         Long result = userService.withdrawUser(userId, request);
 
@@ -179,6 +185,7 @@ class UserServiceTest {
             .build();
 
         given(userMapper.selectUserById(userId)).willReturn(user);
+        given(passwordEncoder.matches("wrongPassword", user.getUserPasswordHash())).willReturn(false);
 
         ApplicationException exception = assertThrows(
             ApplicationException.class,
