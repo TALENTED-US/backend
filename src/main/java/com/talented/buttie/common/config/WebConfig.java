@@ -1,10 +1,11 @@
 package com.talented.buttie.common.config;
 
+import javax.servlet.Filter;
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletRegistration;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
-import javax.servlet.Filter;
 
 
 public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer {
@@ -13,11 +14,12 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
     final String LOCATION = "c:/upload";
     final long MAX_FILE_SIZE = 1024 * 1024 * 10L;
     final long MAX_REQUEST_SIZE = 1024 * 1024 * 20L;
-    final int FILE_SIZE_THRESHOLD = 1024 * 1024 * 5;;
+    final int FILE_SIZE_THRESHOLD = 1024 * 1024 * 5;
+    ;
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[] { RootConfig.class };
+        return new Class[]{RootConfig.class};
     }
 
     @Override
@@ -34,7 +36,13 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
         CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
         characterEncodingFilter.setEncoding("UTF-8");
         characterEncodingFilter.setForceEncoding(true);
-        return new Filter[] {characterEncodingFilter};
+
+        DelegatingFilterProxy jwtAuthenticationFilter = new DelegatingFilterProxy("jwtAuthenticationFilter");
+
+        return new Filter[]{
+            characterEncodingFilter
+            , jwtAuthenticationFilter
+        };
     }
 
     @Override
