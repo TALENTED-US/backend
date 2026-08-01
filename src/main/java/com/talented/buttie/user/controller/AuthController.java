@@ -78,4 +78,10 @@ public class AuthController {
         boolean isDuplicate = authReadService.isEmailDuplicate(email);
         return ApplicationResponse.onSuccess(new AuthDuplicateCheckResponseDTO(isDuplicate));
     }
+
+    @GetMapping("/check-nickname")
+    public ApplicationResponse<AuthDuplicateCheckResponseDTO> checkNicknameDuplicate(@RequestParam String nickname) {
+        boolean isDuplicate = authReadService.isNicknameDuplicate(nickname);
+        return ApplicationResponse.onSuccess(new AuthDuplicateCheckResponseDTO(isDuplicate));
+    }
 }
