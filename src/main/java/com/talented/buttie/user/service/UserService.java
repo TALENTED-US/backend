@@ -32,6 +32,7 @@ public class UserService {
         }
         return employmentPreparation;
     }
+
     public EmploymentPreparationVO getEmploymentPreparation(Long userId) {
         EmploymentPreparationVO employmentPreparation =
             employmentPreparationMapper.selectEmploymentPreparation(userId);

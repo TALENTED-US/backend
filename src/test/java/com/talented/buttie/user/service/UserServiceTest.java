@@ -194,5 +194,4 @@ class UserServiceTest {
 
         assertEquals(UserErrorCode.PASSWORD_MISMATCH, exception.getCode());
     }
-
 }

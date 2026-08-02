@@ -14,17 +14,44 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProjectionEngine {
 
+    public List<MonthlyProjectionVO> createInitialProjections(
+        Long simulationId,
+        LocalDate simulationStartDate,
+        LocalDate simulationDueDate,
+        int openingBalance,
+        int avgMonthlyIncome,
+        int avgMonthlyExpense,
+        int livingFundThreshold
+    ){
+        int closingBalance = openingBalance + avgMonthlyIncome - avgMonthlyExpense;
+        boolean adjustmentRequired = closingBalance < livingFundThreshold;
+
+        List<MonthlyProjectionVO> baseline = List.of(
+            MonthlyProjectionVO.builder()
+                .simulationId(simulationId)
+                .projectionMonth(simulationStartDate.withDayOfMonth(1))
+                .openingBalance(openingBalance)
+                .expectedIncome(avgMonthlyIncome)
+                .expectedExpense(avgMonthlyExpense)
+                .closingBalance(closingBalance)
+                .adjustmentRequired(adjustmentRequired)
+                .adjustmentReason(
+                    adjustmentRequired ? "월별 예상 잔액이 생활자금 기준보다 부족합니다" : null
+                )
+                .build()
+        );
+
+        return recalculateProjections(simulationId, simulationStartDate, simulationDueDate, baseline, livingFundThreshold);
+    }
+
     public List<MonthlyProjectionVO> recalculateProjections(
         Long simulationId,
         LocalDate simulationStartDate,
         LocalDate simulationDueDate,
-        List<MonthlyProjectionVO> existingProjections
+        List<MonthlyProjectionVO> existingProjections,
+        int livingFundThreshold
     ) {
-        validate(
-            simulationStartDate,
-            simulationDueDate,
-            existingProjections
-        );
+        validate(simulationStartDate, simulationDueDate, existingProjections);
 
         List<MonthlyProjectionVO> sortedProjections = existingProjections.stream()
             .sorted(Comparator.comparing(MonthlyProjectionVO::getProjectionMonth))
@@ -48,14 +75,12 @@ public class ProjectionEngine {
         int currentBalance = startingProjection.getOpeningBalance();
 
         while (!currentMonth.isAfter(dueMonth)) {
-            MonthlyProjectionVO monthlyCondition =
-                projectionByMonth.getOrDefault(currentMonth, defaultProjection);
+            MonthlyProjectionVO monthlyCondition = projectionByMonth.getOrDefault(currentMonth, defaultProjection);
 
             int expectedIncome = monthlyCondition.getExpectedIncome();
             int expectedExpense = monthlyCondition.getExpectedExpense();
-            int closingBalance =
-                currentBalance + expectedIncome - expectedExpense;
-            boolean adjustmentRequired = closingBalance < 0;
+            int closingBalance = currentBalance + expectedIncome - expectedExpense;
+            boolean adjustmentRequired = closingBalance < livingFundThreshold;
 
             recalculatedProjections.add(MonthlyProjectionVO.builder()
                 .simulationId(simulationId)
@@ -66,14 +91,13 @@ public class ProjectionEngine {
                 .closingBalance(closingBalance)
                 .adjustmentRequired(adjustmentRequired)
                 .adjustmentReason(
-                    adjustmentRequired ? "월말 예상 잔액이 부족합니다." : null
+                    adjustmentRequired ? "월말 예상 잔액이 생활자금 기준보다 부족합니다." : null
                 )
                 .build());
 
             currentBalance = closingBalance;
             currentMonth = currentMonth.plusMonths(1);
         }
-
         return recalculatedProjections;
     }
 

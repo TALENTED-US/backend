@@ -16,7 +16,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,19 +32,23 @@ public class UserController {
     private final UserService userService;
 
     @PatchMapping("/employment-preparation")
+    @ApiOperation("취업 준비 정보 수정")
     public ApplicationResponse<UserPKResponseDTO> saveEmploymentPreparation(
-        @RequestParam Long userId,
+        @AuthUser AuthenticationUser user,
         @Valid @RequestBody UpdateEmploymentPreparationRequestDTO request
     ) {
-        EmploymentPreparationVO employmentPreparation = userService.saveEmploymentPreparation(userId, request);
+        Long targetUserId = user.userId();
+        EmploymentPreparationVO employmentPreparation = userService.saveEmploymentPreparation(targetUserId, request);
         return ApplicationResponse.onSuccess(new UserPKResponseDTO(PKCrypto.encrypt(employmentPreparation.getUserId())));
     }
 
     @GetMapping("/employment-preparation")
+    @ApiOperation("취업 준비 정보 조회")
     public ApplicationResponse<GetEmploymentPreparationResponseDTO> getEmploymentPreparation(
-        @RequestParam Long userId
-    ) {
-        EmploymentPreparationVO employmentPreparation = userService.getEmploymentPreparation(userId);
+        @AuthUser AuthenticationUser user
+    ){
+        Long targetUserId = user.userId();
+        EmploymentPreparationVO employmentPreparation = userService.getEmploymentPreparation(targetUserId);
         return ApplicationResponse.onSuccess(GetEmploymentPreparationResponseDTO.from(employmentPreparation));
     }
 
