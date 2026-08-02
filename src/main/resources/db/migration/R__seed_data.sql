@@ -56,7 +56,21 @@ ON DUPLICATE KEY UPDATE
     `USER_ONBOARDING_COMPLETED`=VALUES(`USER_ONBOARDING_COMPLETED`), `USER_STATUS`=VALUES(`USER_STATUS`);
 
 -- ---------------------------------------------------------
--- 3. 사용자 버티 정보 (USER_BUTTIE)
+-- 3. 사용자 알림 설정 (USER_NOTIFICATION)
+-- ---------------------------------------------------------
+INSERT INTO `USER_NOTIFICATION`
+(`USER_ID`, `POLICY_DEADLINE_NOTIFICATION_YN`, `FINANCIAL_CHANGE_NOTIFICATION_YN`,
+ `PLAN_DEVIATION_NOTIFICATION_YN`, `SERVICE_NOTICE_NOTIFICATION_YN`) VALUES
+(1, TRUE, TRUE, TRUE, TRUE),
+(2, TRUE, TRUE, TRUE, TRUE)
+ON DUPLICATE KEY UPDATE
+    `POLICY_DEADLINE_NOTIFICATION_YN`=VALUES(`POLICY_DEADLINE_NOTIFICATION_YN`),
+    `FINANCIAL_CHANGE_NOTIFICATION_YN`=VALUES(`FINANCIAL_CHANGE_NOTIFICATION_YN`),
+    `PLAN_DEVIATION_NOTIFICATION_YN`=VALUES(`PLAN_DEVIATION_NOTIFICATION_YN`),
+    `SERVICE_NOTICE_NOTIFICATION_YN`=VALUES(`SERVICE_NOTICE_NOTIFICATION_YN`);
+
+-- ---------------------------------------------------------
+-- 4. 사용자 버티 정보 (USER_BUTTIE)
 -- ---------------------------------------------------------
 INSERT INTO `USER_BUTTIE`
 (`USER_ID`, `BUTTIE_TOTAL_EXP`, `BUTTIE_LEVEL`) VALUES
@@ -66,7 +80,7 @@ ON DUPLICATE KEY UPDATE
     `BUTTIE_TOTAL_EXP`=VALUES(`BUTTIE_TOTAL_EXP`), `BUTTIE_LEVEL`=VALUES(`BUTTIE_LEVEL`);
 
 -- ---------------------------------------------------------
--- 4. 취업 준비 정보 (EMPLOYMENT_PREPARATIONS)
+-- 5. 취업 준비 정보 (EMPLOYMENT_PREPARATIONS)
 -- ---------------------------------------------------------
 INSERT INTO `EMPLOYMENT_PREPARATIONS`
 (`USER_ID`, `BIRTH_DATE`, `EMPLOYMENT_PREP_REGION`, `FAMILY_COUNT`, `EMPLOYMENT_PREP_TYPE`,
@@ -79,7 +93,7 @@ ON DUPLICATE KEY UPDATE
     `LIVING_FUND_THRESHOLD`=VALUES(`LIVING_FUND_THRESHOLD`);
 
 -- ---------------------------------------------------------
--- 5. 약관 동의 (USER_CONSENTS)
+-- 6. 약관 동의 (USER_CONSENTS)
 -- ---------------------------------------------------------
 INSERT INTO `USER_CONSENTS`
 (`USER_ID`, `TERMS_AGREED_AT`, `PRIVACY_AGREED_AT`, `FINANCIAL_INFO_AGREED_AT`) VALUES
@@ -90,7 +104,7 @@ ON DUPLICATE KEY UPDATE
     `FINANCIAL_INFO_AGREED_AT`=VALUES(`FINANCIAL_INFO_AGREED_AT`);
 
 -- ---------------------------------------------------------
--- 6. 마이데이터 연결 (MYDATA)
+-- 7. 마이데이터 연결 (MYDATA)
 -- ---------------------------------------------------------
 INSERT INTO `MYDATA`
 (`MYDATA_ID`, `USER_ID`, `PROVIDER`, `REFRESH_TOKEN_ENCRYPTED`,
@@ -103,7 +117,7 @@ ON DUPLICATE KEY UPDATE
     `MYDATA_STATUS`=VALUES(`MYDATA_STATUS`), `LAST_SYNCED_AT`=VALUES(`LAST_SYNCED_AT`);
 
 -- ---------------------------------------------------------
--- 7. 계좌 (ACCOUNT)
+-- 8. 계좌 (ACCOUNT)
 -- ---------------------------------------------------------
 INSERT INTO `ACCOUNT`
 (`ACCOUNT_ID`, `USER_ID`, `EXTERNAL_ACCOUNT_ID`, `INSTITUTION_NAME`,
@@ -117,7 +131,7 @@ ON DUPLICATE KEY UPDATE
     `BALANCE`=VALUES(`BALANCE`), `IS_ACTIVE`=VALUES(`IS_ACTIVE`), `SYNCED_AT`=VALUES(`SYNCED_AT`);
 
 -- ---------------------------------------------------------
--- 8. 카드 (CARD)  CARD_TYPE: CREDIT(신용)/DEBIT(체크)/PREPAID(선불)
+-- 9. 카드 (CARD)  CARD_TYPE: CREDIT(신용)/DEBIT(체크)/PREPAID(선불)
 -- ---------------------------------------------------------
 INSERT INTO `CARD`
 (`CARD_ID`, `USER_ID`, `EXTERNAL_CARD_ID`, `CARD_INSTITUTION_NAME`,
