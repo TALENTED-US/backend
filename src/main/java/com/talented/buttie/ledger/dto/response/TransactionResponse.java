@@ -8,12 +8,14 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.validation.constraints.NotBlank;
 import lombok.Builder;
 
 @ApiModel(description = "거래 목록 조회 응답")
 @Builder
-public record TransactionResponseDTO(
+public record TransactionResponse(
     @ApiModelProperty(value = "거래 내용", example = "세종대학교 학식당")
+    @NotBlank(message = "거래 내용은 필수입니다.")
     String transactionContent,
 
     @ApiModelProperty(value = "지출 유형", example = "지출")
@@ -33,8 +35,8 @@ public record TransactionResponseDTO(
     String transactionMemo
 ) {
 
-    public static TransactionResponseDTO from(TransactionVO vo) {
-        return TransactionResponseDTO.builder()
+    public static TransactionResponse from(TransactionVO vo) {
+        return TransactionResponse.builder()
             .transactionContent(vo.getTransactionContent())
             .transactionType(vo.getTransactionType())
             .expenseCategory(vo.getExpenseCategory())
@@ -44,10 +46,10 @@ public record TransactionResponseDTO(
             .build();
     }
 
-    public static List<TransactionResponseDTO> fromList(List<TransactionVO> voList){
+    public static List<TransactionResponse> fromList(List<TransactionVO> voList){
         if(voList == null || voList.isEmpty()){
             return List.of();
         }
-        return voList.stream().map(TransactionResponseDTO::from).toList();
+        return voList.stream().map(TransactionResponse::from).toList();
     }
 }
