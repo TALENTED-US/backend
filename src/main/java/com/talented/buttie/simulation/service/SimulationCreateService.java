@@ -4,6 +4,7 @@ import com.talented.buttie.catalog.domain.PolicyVO;
 import com.talented.buttie.catalog.exception.CatalogErrorCode;
 import com.talented.buttie.catalog.mapper.PolicyMapper;
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.ledger.domain.ExpenseCategory;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemCategory;
 import com.talented.buttie.simulation.domain.SimulationRecurrenceType;
@@ -166,7 +167,7 @@ public class SimulationCreateService {
             )
             .itemEffect(
                 ItemEffectPreviewDTO.builder()
-                    .itemName(request.itemName())
+                    .itemName(resolveSimulationItemName(request))
                     .category(request.simulationItemCategory())
                     .monthlyEffectAmount(monthlyEffectAmount)
                     .onceEffectAmount(onceEffectAmount)
@@ -179,6 +180,16 @@ public class SimulationCreateService {
         if(request.simulationItemCategory() == SimulationItemCategory.POLICY){
             if(request.policyId() == null) throw ApplicationException.from(SimulationErrorCode.INVALID_PREVIEW_ITEM);
         }else if(request.amount() == null){
+            throw ApplicationException.from(SimulationErrorCode.INVALID_PREVIEW_ITEM);
+        }
+
+        if(request.simulationItemCategory() == SimulationItemCategory.EXPENSE
+            && request.simulationItemExpenseCategory() == null){
+            throw ApplicationException.from(SimulationErrorCode.INVALID_PREVIEW_ITEM);
+        }
+
+        if(request.simulationItemCategory() != SimulationItemCategory.EXPENSE
+            && (request.itemName() == null || request.itemName().isBlank())){
             throw ApplicationException.from(SimulationErrorCode.INVALID_PREVIEW_ITEM);
         }
 
@@ -212,6 +223,27 @@ public class SimulationCreateService {
         if(policy == null) throw ApplicationException.from(CatalogErrorCode.POLICY_NOT_FOUND);
 
         return valueOf(policy.getPolicySupportAmount());
+    }
+
+    private String resolveSimulationItemName(PreviewItemRequestDTO request){
+        if(request.simulationItemCategory() == SimulationItemCategory.EXPENSE){
+            return toKoreanExpenseCategoryName(request.simulationItemExpenseCategory()) + " 줄이기";
+        }
+
+        return request.itemName();
+    }
+
+    private String toKoreanExpenseCategoryName(ExpenseCategory expenseCategory){
+        return switch (expenseCategory) {
+            case FOOD -> "식비";
+            case TRANSPORT -> "교통비";
+            case HOUSING -> "주거비";
+            case COMMUNICATION -> "통신비";
+            case SUBSCRIPTION -> "구독비";
+            case EDUCATION -> "교육비";
+            case CERTIFICATE -> "자격증 비용";
+            case ETC_EXPENSE -> "기타 비용";
+        };
     }
 
     private int calculateMonthlyEffect(PreviewItemRequestDTO request, LocalDate projectionMonth, int effectAmount){

@@ -12,6 +12,7 @@ import com.talented.buttie.catalog.domain.PolicyVO;
 import com.talented.buttie.catalog.exception.CatalogErrorCode;
 import com.talented.buttie.catalog.mapper.PolicyMapper;
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.ledger.domain.ExpenseCategory;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemCategory;
 import com.talented.buttie.simulation.domain.SimulationRecurrenceType;
@@ -210,6 +211,7 @@ class SimulationCreateServiceTest {
         PreviewItemRequestDTO request = PreviewItemRequestDTO.builder()
             .simulationItemCategory(SimulationItemCategory.EXPENSE)
             .itemName("식비 절약")
+            .simulationItemExpenseCategory(ExpenseCategory.FOOD)
             .amount(50_000)
             .applyStartDate(LocalDate.of(2026, 8, 15))
             .applyEndDate(LocalDate.of(2026, 9, 30))
@@ -234,7 +236,7 @@ class SimulationCreateServiceTest {
         assertEquals(1_950_000, result.cashflow().afterMonthlyExpense());
         assertEquals(50_000, result.cashflow().netCashFlowDelta());
 
-        assertEquals("식비 절약", result.itemEffect().itemName());
+        assertEquals("식비 줄이기", result.itemEffect().itemName());
         assertEquals(SimulationItemCategory.EXPENSE, result.itemEffect().category());
         assertEquals(50_000, result.itemEffect().monthlyEffectAmount());
         assertEquals(0, result.itemEffect().onceEffectAmount());

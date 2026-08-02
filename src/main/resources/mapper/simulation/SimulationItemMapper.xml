@@ -8,7 +8,10 @@
   <select id="findAllActiveBySimulationId"
     resultType="com.talented.buttie.simulation.domain.SimulationItemVO">
     select SIMULATION_ITEM_ID, SIMULATION_ITEM_CATEGORY,
-           SIMULATION_ITEM_APPLY_AMOUNT, RECURRENCE_TYPE
+           SIMULATION_ITEM_NAME, SIMULATION_ITEM_EXPENSE_CATEGORY,
+           SIMULATION_ITEM_APPLY_AMOUNT,
+           APPLY_START_DATE, APPLY_END_DATE, POLICY_ID,
+           DETAIL_VALUE, RECURRENCE_TYPE, IS_DELETED
     from SIMULATION_ITEM
     where SIMULATION_ID = #{simulationId}
         and IS_DELETED is false

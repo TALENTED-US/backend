@@ -69,7 +69,7 @@ public record PreviewItemResponseDTO(
     @ApiModel("항목 효과 미리보기")
     @Builder
     public record ItemEffectPreviewDTO(
-        @ApiModelProperty(value = "항목 이름", example = "식비 절약")
+        @ApiModelProperty(value = "항목 이름", example = "식비 줄이기")
         String itemName,
 
         @ApiModelProperty(value = "항목 카테고리", example = "EXPENSE")
