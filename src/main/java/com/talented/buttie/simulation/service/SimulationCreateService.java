@@ -187,7 +187,9 @@ public class SimulationCreateService {
             throw ApplicationException.from(SimulationErrorCode.INVALID_PREVIEW_ITEM);
         }
 
-        if(request.recurrenceType() == SimulationRecurrenceType.MONTHLY && request.recurrenceDay() == null){
+        if(request.recurrenceType() == SimulationRecurrenceType.MONTHLY
+            && request.simulationItemCategory() != SimulationItemCategory.EXPENSE
+            && request.recurrenceDay() == null){
             throw ApplicationException.from(SimulationErrorCode.INVALID_PREVIEW_ITEM);
         }
 
@@ -228,6 +230,10 @@ public class SimulationCreateService {
         if(targetMonth.isBefore(applyStartMonth) || targetMonth.isAfter(applyEndMonth)) return 0;
 
         if(request.recurrenceType() == SimulationRecurrenceType.MONTHLY){
+            if(request.simulationItemCategory() == SimulationItemCategory.EXPENSE){
+                return effectAmount;
+            }
+
             int day = Math.min(request.recurrenceDay(), targetMonth.lengthOfMonth());
             LocalDate effectDate = targetMonth.atDay(day);
 

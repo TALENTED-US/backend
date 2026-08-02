@@ -1,6 +1,5 @@
 package com.talented.buttie.simulation.dto.response;
 
-import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemCategory;
 import java.time.LocalDate;
 import java.util.List;
