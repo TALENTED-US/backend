@@ -20,7 +20,8 @@ public enum AuthErrorCode  implements BaseErrorCode {
     EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH_009", "아이디를 찾을 수 없습니다."),
     PASSWORD_NOT_MATCH(HttpStatus.UNAUTHORIZED, "AUTH_010", "비밀번호가 일치하지 않습니다."),
     REFRESH_TOKEN_SAVE_FAILED(HttpStatus.SERVICE_UNAVAILABLE, "AUTH_011", "로그인 토큰 저장에 실패했습니다."),
-    REFRESH_TOKEN_DELETE_FAILED(HttpStatus.SERVICE_UNAVAILABLE, "AUTH_012", "로그인 토큰 삭제에 실패했습니다.");
+    REFRESH_TOKEN_DELETE_FAILED(HttpStatus.SERVICE_UNAVAILABLE, "AUTH_012", "로그인 토큰 삭제에 실패했습니다."),
+    COOKIE_CREATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH_013", "인증 쿠키 생성에 실패했습니다.");
 
 
     private final HttpStatus httpStatus;

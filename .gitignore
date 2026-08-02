@@ -44,3 +44,4 @@ bin/
 ### Environment variables ###
 .env
 !.env.example
+/postman/
