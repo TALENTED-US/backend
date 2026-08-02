@@ -1,4 +1,4 @@
-package com.talented.buttie.user.dto.request;
+package com.talented.buttie.user.dto.request.auth;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
