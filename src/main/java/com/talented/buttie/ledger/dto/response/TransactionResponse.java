@@ -51,11 +51,4 @@ public record TransactionResponse(
             .transactionMemo(vo.getTransactionMemo())
             .build();
     }
-
-    public static List<TransactionResponse> fromList(List<TransactionVO> voList){
-        if(voList == null || voList.isEmpty()){
-            return List.of();
-        }
-        return voList.stream().map(TransactionResponse::from).toList();
-    }
 }

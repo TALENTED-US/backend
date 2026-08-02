@@ -9,7 +9,7 @@ import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
 import com.talented.buttie.ledger.domain.TransactionType;
 import com.talented.buttie.ledger.domain.TransactionVO;
-import com.talented.buttie.ledger.dto.request.RegisterTransactionRequest;
+import com.talented.buttie.ledger.dto.request.CreateTransactionRequest;
 import com.talented.buttie.ledger.exception.LedgerErrorCode;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
 import java.time.LocalDateTime;
@@ -22,48 +22,50 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class RegisterTransactionServiceTest {
+class CreateTransactionServiceTest {
     @Mock
     private TransactionMapper transactionMapper;
 
     @InjectMocks
-    private RegisterTransactionService registerTransactionService;
+    private CreateTransactionService createTransactionService;
 
     private Long userId;
-    private RegisterTransactionRequest request;
+    private CreateTransactionRequest request;
 
     @BeforeEach
     void setUp(){
         userId = 1L;
-        request = RegisterTransactionRequest.builder()
-            .type(TransactionType.EXPENSE)
-            .amount(10000)
-            .category(ExpenseCategory.FOOD)
+        request = CreateTransactionRequest.builder()
+            .transactionContent("세종대학교 학식당")
+            .transactionType(TransactionType.EXPENSE)
+            .transactionAmount(10000)
+            .expenseCategory(ExpenseCategory.FOOD)
             .transactionDate(LocalDateTime.parse("2026-07-28T00:00:00"))
-            .memo("학식당에서 스팸치즈순두부찌개")
+            .transactionMemo("학식당에서 스팸치즈순두부찌개")
             .build();
     }
 
     @Test
     @DisplayName("거래 수동 추가 성공")
-    void registerTransaction(){
-        given(transactionMapper.insertTransaction(any(TransactionVO.class))).willReturn(1);
+    void createTransaction(){
+        given(transactionMapper.insertTransaction(any(TransactionVO.class))).willAnswer(invocation -> {
+            TransactionVO vo = invocation.getArgument(0);
+            vo.setTransactionId(100L);
+            return 1;
+        });
 
-        TransactionVO result = registerTransactionService.registerTransaction(userId, request);
+        Long result = createTransactionService.createTransaction(userId, request);
 
         assertNotNull(result);
-        assertEquals(userId, result.getUserId());
-        assertEquals(10000, result.getTransactionAmount());
-        assertEquals("학식당에서 스팸치즈순두부찌개", result.getTransactionMemo());
+        assertEquals(100L, result);
 
         verify(transactionMapper).insertTransaction(any(TransactionVO.class));
-
     }
 
     @Test
     @DisplayName("요청이 null인 경우 예외가 발생한다.")
     void whenRequestNull(){
-        ApplicationException exception = assertThrows(ApplicationException.class, ()-> registerTransactionService.registerTransaction(userId, null));
+        ApplicationException exception = assertThrows(ApplicationException.class, ()-> createTransactionService.createTransaction(userId, null));
 
         assertEquals(LedgerErrorCode.TRANSACTION_BAD_REQUEST.getMessage(), exception.getMessage());
         assertEquals(LedgerErrorCode.TRANSACTION_BAD_REQUEST, exception.getCode());

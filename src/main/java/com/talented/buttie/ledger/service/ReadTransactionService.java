@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class GetTransactionService {
+public class ReadTransactionService {
     private final TransactionMapper transactionMapper;
 
     public List<TransactionVO> getAllTransactions(Long userId){

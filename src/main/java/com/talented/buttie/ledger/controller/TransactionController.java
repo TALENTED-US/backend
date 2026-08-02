@@ -4,16 +4,15 @@ import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.annotation.AuthUser;
 import com.talented.buttie.ledger.domain.TransactionVO;
-import com.talented.buttie.ledger.dto.request.RegisterTransactionRequest;
+import com.talented.buttie.ledger.dto.request.CreateTransactionRequest;
 import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequest;
 import com.talented.buttie.ledger.dto.request.UpdateTransactionRequest;
 import com.talented.buttie.ledger.dto.response.TransactionResponse;
-import com.talented.buttie.ledger.service.GetTransactionService;
-import com.talented.buttie.ledger.service.RegisterTransactionService;
+import com.talented.buttie.ledger.service.ReadTransactionService;
+import com.talented.buttie.ledger.service.CreateTransactionService;
 import com.talented.buttie.ledger.service.UpdateTransactionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Api(tags = "Transactions")
 public class TransactionController {
-    private final GetTransactionService getTransactionService;
-    private final RegisterTransactionService registerTransactionService;
+    private final ReadTransactionService readTransactionService;
+    private final CreateTransactionService createTransactionService;
     private final UpdateTransactionService updateTransactionService;
 
     @ApiOperation("거래 목록 조회")
@@ -40,25 +39,26 @@ public class TransactionController {
         @AuthUser AuthenticationUser user
     ){
         Long targetUserId = user.userId();
-        List<TransactionVO> transactions = getTransactionService.getAllTransactions(targetUserId);
+        List<TransactionVO> transactions = readTransactionService.getAllTransactions(targetUserId);
 
-        return ApplicationResponse.onSuccess(TransactionResponse.fromList(transactions));
+        List<TransactionResponse> responseList = transactions.stream()
+            .map(TransactionResponse::from)
+            .toList();
+
+        return ApplicationResponse.onSuccess(responseList);
     }
 
     @ApiOperation("수동 거래 내역 등록")
     @PostMapping("")
-    public ApplicationResponse<TransactionResponse> registerTransaction(
+    public ApplicationResponse<Long> createTransaction(
         @AuthUser AuthenticationUser user,
 
-        @ApiParam(value = "수동 거래 추가 정보", required = true)
-        @Valid @RequestBody RegisterTransactionRequest request
+        @Valid @RequestBody CreateTransactionRequest request
     ){
         Long targetUserId = user.userId();
-        TransactionVO transaction = registerTransactionService.registerTransaction(targetUserId, request);
+        Long transactionId = createTransactionService.createTransaction(targetUserId, request);
 
-        TransactionResponse responseDTO = TransactionResponse.from(transaction);
-
-        return ApplicationResponse.onSuccess(responseDTO);
+        return ApplicationResponse.onSuccess(transactionId);
     }
 
     @ApiOperation("수동 거래 내역 수정 (외부거래 ID가 없을 때 사용)")

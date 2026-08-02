@@ -17,16 +17,16 @@ public class UpdateTransactionService {
 
     private final TransactionMapper transactionMapper;
 
-    /**
-     * 수동 등록 거래 전체 수정 (외부거래 ID가 없을 때 사용)
-     * UpdateTransactionRequestDTO 수신
-     * 외부거래 ID가 존재하는 경우 EXTERNAL_TRANSACTION_UNMODIFIABLE 예외 발생
-     */
     @Transactional
     public TransactionVO updateTransaction(Long userId, Long transactionId, UpdateTransactionRequest request) {
         TransactionVO original = transactionMapper.findById(transactionId);
-        if (original == null || !original.getUserId().equals(userId)) {
+
+        if(original == null){
             throw ApplicationException.from(LedgerErrorCode.TRANSACTION_NOT_FOUND);
+        }
+
+        if (!original.getUserId().equals(userId)) {
+            throw ApplicationException.from(LedgerErrorCode.TRANSACTION_USER_ID_MISMATCH);
         }
 
         boolean isExternal = original.getExternalTransactionId() != null
@@ -37,38 +37,26 @@ public class UpdateTransactionService {
             throw ApplicationException.from(LedgerErrorCode.EXTERNAL_TRANSACTION_UNMODIFIABLE);
         }
 
-        LocalDateTime newTransactionAt = request.transactionDate() != null
-            ? request.transactionDate()
-            : original.getTransactionAt();
-
-        TransactionVO updated = original.toBuilder()
-            .transactionAmount(request.transactionAmount() != null ? request.transactionAmount() : original.getTransactionAmount())
-            .expenseCategory(request.expenseCategory() != null ? request.expenseCategory() : original.getExpenseCategory())
-            .transactionAt(newTransactionAt)
-            .transactionMemo(request.transactionMemo())
-            .build();
+        TransactionVO updated = TransactionVO.updateTransaction(original, request);
 
         transactionMapper.updateTransaction(updated);
         return updated;
     }
 
-    /**
-     * 외부 연동 거래 메모 단일 수정 (외부거래 ID가 있을 때 사용)
-     * UpdateTransactionMemoRequestDTO 수신
-     */
+
     @Transactional
     public TransactionVO updateTransactionMemo(Long userId, Long transactionId, UpdateTransactionMemoRequest request) {
         TransactionVO original = transactionMapper.findById(transactionId);
-        if (original == null || !original.getUserId().equals(userId)) {
-            throw ApplicationException.from(LedgerErrorCode.TRANSACTION_NOT_FOUND);
+
+        if(original == null){
+            throw ApplicationException.from(LedgerErrorCode.TRANSACTION_BAD_REQUEST);
+        }
+        if (!original.getUserId().equals(userId)) {
+            throw ApplicationException.from(LedgerErrorCode.TRANSACTION_USER_ID_MISMATCH);
         }
 
-        String newMemo = request != null ? request.memo() : null;
+        transactionMapper.updateTransactionMemo(transactionId, request.memo());
 
-        transactionMapper.updateTransactionMemo(transactionId, newMemo);
-
-        return original.toBuilder()
-            .transactionMemo(newMemo)
-            .build();
+        return TransactionVO.updateTransactionMemo(original, request);
     }
 }
