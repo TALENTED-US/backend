@@ -1,6 +1,7 @@
 package com.talented.buttie.simulation.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
@@ -32,10 +33,35 @@ class ProjectionEngineTest {
     }
 
     @Test
+    @DisplayName("스냅샷 기준으로 최초 예상 재정 계획을 생성한다.")
+    void createInitialProjections() {
+        List<MonthlyProjectionVO> result = projectionEngine.createInitialProjections(
+            simulationId, LocalDate.of(2026, 8, 1), LocalDate.of(2026, 10, 31),
+            5_000_000, 1_000_000, 3_000_000, 2_000_000
+        );
+        assertEquals(3, result.size());
+        assertEquals(LocalDate.of(2026, 8, 1), result.get(0).getProjectionMonth());
+
+        assertEquals(5_000_000, result.get(0).getOpeningBalance());
+        assertEquals(1_000_000, result.get(0).getExpectedIncome());
+        assertEquals(3_000_000, result.get(0).getExpectedExpense());
+        assertEquals(3_000_000, result.get(0).getClosingBalance());
+        assertFalse(result.get(0).getAdjustmentRequired());
+
+        assertEquals(3_000_000, result.get(1).getOpeningBalance());
+        assertEquals(1_000_000, result.get(1).getClosingBalance());
+        assertTrue(result.get(1).getAdjustmentRequired());
+
+        assertEquals(1_000_000, result.get(2).getOpeningBalance());
+        assertEquals(-1_000_000, result.get(2).getClosingBalance());
+        assertTrue(result.get(2).getAdjustmentRequired());
+    }
+
+    @Test
     @DisplayName("시작일부터 종료일까지 월 목록을 생성한다.")
     void createProjectionMonthsFromStartToDueDate() {
         List<MonthlyProjectionVO> result = projectionEngine.recalculateProjections(
-            simulationId, simulationStartDate, simulationDueDate, existingProjections
+            simulationId, simulationStartDate, simulationDueDate, existingProjections, 1_000_000
         );
         List<LocalDate> projectionMonths = result.stream()
             .map(MonthlyProjectionVO::getProjectionMonth)
@@ -57,7 +83,7 @@ class ProjectionEngineTest {
         LocalDate shortenedDueDate = LocalDate.of(2026, 10, 5);
 
         List<MonthlyProjectionVO> result = projectionEngine.recalculateProjections(
-            simulationId, shortenedStartDate, shortenedDueDate, existingProjections
+            simulationId, shortenedStartDate, shortenedDueDate, existingProjections, 1_000_000
         );
 
         assertEquals(2, result.size());
@@ -75,7 +101,7 @@ class ProjectionEngineTest {
         LocalDate extendedDueDate = LocalDate.of(2026, 12, 5);
 
         List<MonthlyProjectionVO> result = projectionEngine.recalculateProjections(
-            simulationId, extendedStartDate, extendedDueDate, existingProjections
+            simulationId, extendedStartDate, extendedDueDate, existingProjections, 1_000_000
         );
 
         assertEquals(6, result.size());
@@ -92,7 +118,7 @@ class ProjectionEngineTest {
         LocalDate boundaryDueDate = LocalDate.of(2026, 10, 1);
 
         List<MonthlyProjectionVO> result = projectionEngine.recalculateProjections(
-            simulationId, boundaryStartDate, boundaryDueDate, existingProjections
+            simulationId, boundaryStartDate, boundaryDueDate, existingProjections, 1_000_000
         );
 
         List<LocalDate> projectionMonths = result.stream()

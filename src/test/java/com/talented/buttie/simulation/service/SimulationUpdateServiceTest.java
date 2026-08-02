@@ -19,6 +19,7 @@ import com.talented.buttie.simulation.dto.request.UpdateSimulationPeriodRequestD
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
+import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +41,9 @@ class SimulationUpdateServiceTest {
 
     @Mock
     private ProjectionEngine projectionEngine;
+
+    @Mock
+    private EmploymentPreparationMapper employmentPreparationMapper;
 
     @InjectMocks
     private SimulationUpdateService simulationUpdateService;
@@ -79,8 +83,10 @@ class SimulationUpdateServiceTest {
             .willReturn(activeSimulation);
         given(monthlyProjectionMapper.findAllBySimulationId(simulationId))
             .willReturn(existingProjections);
+        given(employmentPreparationMapper.getLivingThresholdByUserId(userId))
+            .willReturn(1_000_000);
         given(projectionEngine.recalculateProjections(
-            simulationId, request.simulationStartDate(), request.simulationDueDate(), existingProjections
+            simulationId, request.simulationStartDate(), request.simulationDueDate(), existingProjections, 1_000_000
         )).willReturn(recalculatedProjections);
         given(simulationMapper.updateSimulationPeriod(
             simulationId, request.simulationStartDate(), request.simulationDueDate(), 3_000_000
@@ -113,7 +119,7 @@ class SimulationUpdateServiceTest {
         );
 
         assertEquals(SimulationErrorCode.INVALID_SIMULATION_PERIOD, exception.getCode());
-        verifyNoInteractions(simulationMapper, monthlyProjectionMapper, projectionEngine);
+        verifyNoInteractions(simulationMapper, monthlyProjectionMapper, projectionEngine, employmentPreparationMapper);
     }
 
     @Test
@@ -130,7 +136,7 @@ class SimulationUpdateServiceTest {
         );
 
         assertEquals(SimulationErrorCode.SIMULATION_PROJECTION_NOT_FOUND, exception.getCode());
-        verifyNoInteractions(projectionEngine);
+        verifyNoInteractions(projectionEngine, employmentPreparationMapper);
         verify(simulationMapper, never()).updateSimulationPeriod(anyLong(), any(), any(), anyInt());
         verify(monthlyProjectionMapper, never()).deleteAllBySimulationId(anyLong());
         verify(monthlyProjectionMapper, never()).saveAll(anyList());
@@ -153,7 +159,7 @@ class SimulationUpdateServiceTest {
             SimulationErrorCode.CONFIRMED_SIMULATION_CANNOT_BE_UPDATED,
             exception.getCode()
         );
-        verifyNoInteractions(monthlyProjectionMapper, projectionEngine);
+        verifyNoInteractions(monthlyProjectionMapper, projectionEngine, employmentPreparationMapper);
     }
 
     @Test
@@ -170,7 +176,7 @@ class SimulationUpdateServiceTest {
         );
 
         assertEquals(SimulationErrorCode.SIMULATION_NOT_FOUND, exception.getCode());
-        verifyNoInteractions(monthlyProjectionMapper, projectionEngine);
+        verifyNoInteractions(monthlyProjectionMapper, projectionEngine, employmentPreparationMapper);
     }
 
     @Test
@@ -180,8 +186,10 @@ class SimulationUpdateServiceTest {
             .willReturn(activeSimulation);
         given(monthlyProjectionMapper.findAllBySimulationId(simulationId))
             .willReturn(existingProjections);
+        given(employmentPreparationMapper.getLivingThresholdByUserId(userId))
+            .willReturn(1_000_000);
         given(projectionEngine.recalculateProjections(
-            simulationId, request.simulationStartDate(), request.simulationDueDate(), existingProjections
+            simulationId, request.simulationStartDate(), request.simulationDueDate(), existingProjections, 1_000_000
         )).willReturn(recalculatedProjections);
         given(simulationMapper.updateSimulationPeriod(
             simulationId, request.simulationStartDate(), request.simulationDueDate(), 3_000_000
@@ -190,7 +198,8 @@ class SimulationUpdateServiceTest {
         simulationUpdateService.updateSimulationPeriod(userId, request);
 
         verify(projectionEngine).recalculateProjections(
-            simulationId, request.simulationStartDate(), request.simulationDueDate(), existingProjections);
+            simulationId, request.simulationStartDate(), request.simulationDueDate(), existingProjections, 1_000_000
+        );
         verify(monthlyProjectionMapper).deleteAllBySimulationId(simulationId);
         verify(monthlyProjectionMapper).saveAll(recalculatedProjections);
     }

@@ -15,7 +15,6 @@ public class TransactionVO {
     private Integer transactionAmount;
     private LocalDateTime transactionAt;
     private String transactionMemo;
-    private Boolean analysisExcluded;
     private Boolean isDeleted;
     private LocalDateTime transactionCreatedAt;
     private LocalDateTime transactionUpdatedAt;
