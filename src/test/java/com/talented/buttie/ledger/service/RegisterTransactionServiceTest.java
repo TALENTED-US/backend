@@ -3,6 +3,7 @@ package com.talented.buttie.ledger.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import com.talented.buttie.common.exception.ApplicationException;
@@ -40,7 +41,7 @@ class RegisterTransactionServiceTest {
             .type(TransactionType.EXPENSE)
             .amount(10000)
             .category(ExpenseCategory.FOOD)
-            .transactionDate("2026-07-28T00:00:00")
+            .transactionDate(LocalDateTime.parse("2026-07-28T00:00:00"))
             .memo("학식당에서 스팸치즈순두부찌개")
             .build();
     }
@@ -69,6 +70,6 @@ class RegisterTransactionServiceTest {
         assertEquals(LedgerErrorCode.TRANSACTION_BAD_REQUEST.getMessage(), exception.getMessage());
         assertEquals(LedgerErrorCode.TRANSACTION_BAD_REQUEST, exception.getCode());
 
-        verify(transactionMapper).insertTransaction(any(TransactionVO.class));
+        verify(transactionMapper, never()).insertTransaction(any(TransactionVO.class));
     }
 }

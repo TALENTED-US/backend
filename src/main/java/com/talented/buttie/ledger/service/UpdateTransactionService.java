@@ -37,8 +37,8 @@ public class UpdateTransactionService {
             throw ApplicationException.from(LedgerErrorCode.EXTERNAL_TRANSACTION_UNMODIFIABLE);
         }
 
-        LocalDateTime newTransactionAt = (request.transactionDate() != null && !request.transactionDate().isBlank())
-            ? LocalDateTime.parse(request.transactionDate().replace(" ", "T"))
+        LocalDateTime newTransactionAt = request.transactionDate() != null
+            ? request.transactionDate()
             : original.getTransactionAt();
 
         TransactionVO updated = original.toBuilder()

@@ -12,6 +12,8 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import lombok.Builder;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @ApiModel(description = "거래 목록 수동 추가 요청")
 @Builder
 public record RegisterTransactionRequestDTO(
@@ -53,8 +55,9 @@ public record RegisterTransactionRequestDTO(
         example = "2026-07-28T00:00:00",
         required = true
     )
-    @NotBlank(message = "거래 일시는 필수입니다.")
-    String transactionDate,
+    @NotNull(message = "거래 일시는 필수입니다.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    LocalDateTime transactionDate,
 
     @ApiModelProperty(
         value = "메모",
@@ -71,7 +74,7 @@ public record RegisterTransactionRequestDTO(
             .transactionType(this.type)
             .transactionAmount(this.amount)
             .expenseCategory(this.category)
-            .transactionAt(LocalDateTime.parse(transactionDate.replace(" ", "T")))
+            .transactionAt(this.transactionDate)
             .transactionMemo(this.memo)
             .build();
     }

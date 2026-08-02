@@ -10,6 +10,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
+
 @ApiModel(description = "수동 거래 목록 수정 요청 (외부거래 ID가 없을 때 사용)")
 @Builder
 public record UpdateTransactionRequestDTO(
@@ -23,8 +26,9 @@ public record UpdateTransactionRequestDTO(
     ExpenseCategory expenseCategory,
 
     @ApiModelProperty(value = "거래일시 (yyyy-MM-ddTHH:mm:ss)", example = "2026-07-28T00:00:00", required = true)
-    @NotBlank(message = "거래 일시는 필수입니다.")
-    String transactionDate,
+    @NotNull(message = "거래 일시는 필수입니다.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    LocalDateTime transactionDate,
 
     @ApiModelProperty(value = "메모", example = "학식당에서 스팸치즈순두부찌개", required = false)
     @Size(max = 255, message = "메모는 최대 255자까지 입력 가능합니다.")

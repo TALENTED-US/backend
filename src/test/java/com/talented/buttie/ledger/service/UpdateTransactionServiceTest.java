@@ -48,7 +48,7 @@ class UpdateTransactionServiceTest {
         UpdateTransactionRequestDTO request = UpdateTransactionRequestDTO.builder()
             .transactionAmount(10000)
             .expenseCategory(ExpenseCategory.FOOD)
-            .transactionDate("2026-07-28T15:30:00")
+            .transactionDate(LocalDateTime.parse("2026-07-28T15:30:00"))
             .transactionMemo("변경 시도")
             .build();
 
@@ -107,7 +107,7 @@ class UpdateTransactionServiceTest {
         UpdateTransactionRequestDTO request = UpdateTransactionRequestDTO.builder()
             .transactionAmount(5000)
             .expenseCategory(ExpenseCategory.FOOD)
-            .transactionDate("2026-07-01T12:00:00")
+            .transactionDate(LocalDateTime.parse("2026-07-01T12:00:00"))
             .transactionMemo("변경 시도")
             .build();
 
@@ -129,7 +129,7 @@ class UpdateTransactionServiceTest {
         UpdateTransactionRequestDTO request = UpdateTransactionRequestDTO.builder()
             .transactionAmount(10000)
             .expenseCategory(ExpenseCategory.FOOD)
-            .transactionDate("2026-07-28T00:00:00")
+            .transactionDate(LocalDateTime.parse("2026-07-28T00:00:00"))
             .transactionMemo("테스트")
             .build();
 

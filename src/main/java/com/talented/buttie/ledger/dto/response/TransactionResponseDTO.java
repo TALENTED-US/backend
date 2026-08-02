@@ -1,5 +1,6 @@
 package com.talented.buttie.ledger.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
 import com.talented.buttie.ledger.domain.TransactionType;
 import com.talented.buttie.ledger.domain.TransactionVO;
@@ -25,7 +26,8 @@ public record TransactionResponseDTO(
     Integer transactionAmount,
 
     @ApiModelProperty(value = "거래 일시", example = "2026-07-25T00:00:00")
-    String transactionAt,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    LocalDateTime transactionAt,
 
     @ApiModelProperty(value = "거래 메모", example = "학식당에서 스팸순두부찌개")
     String transactionMemo
@@ -37,7 +39,7 @@ public record TransactionResponseDTO(
             .transactionType(vo.getTransactionType())
             .expenseCategory(vo.getExpenseCategory())
             .transactionAmount(vo.getTransactionAmount())
-            .transactionAt(vo.getTransactionAt() != null ? vo.getTransactionAt().toString() : null)
+            .transactionAt(vo.getTransactionAt())
             .transactionMemo(vo.getTransactionMemo())
             .build();
     }
