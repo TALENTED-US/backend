@@ -7,6 +7,7 @@ import com.talented.buttie.simulation.dto.request.UpdateSimulationPeriodRequestD
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
+import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class SimulationUpdateService {
     private final SimulationMapper simulationMapper;
     private final MonthlyProjectionMapper monthlyProjectionMapper;
     private final ProjectionEngine projectionEngine;
+    private final EmploymentPreparationMapper employmentPreparationMapper;
 
     @Transactional
     public void updateSimulationPeriod(
@@ -34,12 +36,12 @@ public class SimulationUpdateService {
 
         validateProjectionExists(existingProjections);
 
+        Integer livingThreshold = employmentPreparationMapper.getLivingThresholdByUserId(userId);
+
         List<MonthlyProjectionVO> recalculatedProjections =
             projectionEngine.recalculateProjections(
-                simulation.getSimulationId(),
-                request.simulationStartDate(),
-                request.simulationDueDate(),
-                existingProjections
+                simulation.getSimulationId(), request.simulationStartDate(), request.simulationDueDate(),
+                existingProjections, valueOf(livingThreshold)
             );
 
         int simulationEndAmount = recalculatedProjections
@@ -99,5 +101,9 @@ public class SimulationUpdateService {
                 SimulationErrorCode.SIMULATION_PROJECTION_NOT_FOUND
             );
         }
+    }
+
+    private int valueOf(Integer value){
+        return value == null ? 0 : value;
     }
 }

@@ -13,6 +13,7 @@ import io.jsonwebtoken.security.Keys;
 import java.time.Instant;
 import java.util.Date;
 import javax.crypto.SecretKey;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,7 @@ public class JwtTokenProvider {
 
     private final SecretKey signingKey;
     private final long accessTokenExpiration;
+    @Getter
     private final long refreshTokenExpiration;
 
     public JwtTokenProvider(
@@ -174,11 +176,9 @@ public class JwtTokenProvider {
                 "Refresh Token이 아닙니다."
             );
         }
-        Long accountId;
+        long accountId;
         try {
-            accountId = Long.valueOf(
-                claims.getSubject()
-            );
+            accountId = Long.parseLong(claims.getSubject());
         } catch (NumberFormatException | NullPointerException e) {
             throw new IllegalArgumentException(
                 "토큰의 계정 식별자가 올바르지 않습니다.",

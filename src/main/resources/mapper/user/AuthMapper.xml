@@ -42,12 +42,25 @@
       WHERE USER_EMAIL = #{email} AND USER_STATUS != 'WITHDRAWN'
     )
   </select>
+
   <select id="existsByNickName" resultType="java.lang.Boolean">
     SELECT EXISTS (
       SELECT 1
       FROM `USER`
-      WHERE USER_NICKNAME = #{nickName} AND USER_STATUS != 'WITHDRAWN'
+      WHERE USER_NICKNAME = #{userNickname} AND USER_STATUS != 'WITHDRAWN'
     )
+  </select>
+
+  <select id="getPasswordByUserEmail" resultType="java.lang.String">
+    SELECT USER_PASSWORD_HASH
+    FROM `USER`
+    WHERE USER_EMAIL = #{email} AND USER_STATUS != 'WITHDRAWN'
+  </select>
+
+  <select id="getUserIdByUserEmail" resultType="java.lang.Long">
+    SELECT USER_ID
+    FROM `USER`
+    WHERE USER_EMAIL = #{email} AND USER_STATUS != 'WITHDRAWN'
   </select>
 
 </mapper>

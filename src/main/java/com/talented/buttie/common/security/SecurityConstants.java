@@ -14,6 +14,12 @@ public final class SecurityConstants {
     public static final String REFRESH_TOKEN_COOKIE_NAME =
         "refreshToken";
 
+    public static final String CSRF_TOKEN_COOKIE_NAME =
+        "csrfToken";
+
+    public static final String CSRF_TOKEN_HEADER_NAME =
+        "X-CSRF-Token";
+
     public static final String ROLE_PREFIX =
         "ROLE_";
 
