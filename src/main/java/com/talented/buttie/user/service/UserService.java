@@ -3,18 +3,21 @@ package com.talented.buttie.user.service;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.user.domain.UserProfileVO;
 import com.talented.buttie.user.exception.UserErrorCode;
 import com.talented.buttie.user.mapper.UserMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+
 
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final EmploymentPreparationMapper employmentPreparationMapper;
+    private final UserMapper userMapper;
+
     public EmploymentPreparationVO saveEmploymentPreparation(Long userId, UpdateEmploymentPreparationRequestDTO request) {
 
         EmploymentPreparationVO employmentPreparation =
@@ -26,9 +29,17 @@ public class UserService {
         }
         return employmentPreparation;
     }
+    public EmploymentPreparationVO getEmploymentPreparation(Long userId) {
+        EmploymentPreparationVO employmentPreparation =
+            employmentPreparationMapper.selectEmploymentPreparation(userId);
 
+        if (employmentPreparation == null) {
+            throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_NOT_FOUND);
+        }
 
-    private final UserMapper userMapper;
+        return employmentPreparation;
+    }
+
 
     public UserProfileVO getUserProfile(Long userId) {
         UserProfileVO vo = userMapper.selectUserProfile(userId);

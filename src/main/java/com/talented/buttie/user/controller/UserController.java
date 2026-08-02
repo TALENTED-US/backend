@@ -4,12 +4,13 @@ import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.user.domain.UserProfileVO;
 import com.talented.buttie.user.dto.response.GetUserProfileResponseDTO;
 import com.talented.buttie.user.service.UserService;
+import com.talented.buttie.common.security.AuthenticationUser;
+import com.talented.buttie.common.security.annotation.AuthUser;
 import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
 import com.talented.buttie.user.dto.response.UserPKResponseDTO;
-import com.talented.buttie.common.security.annotation.AuthUser;
-import com.talented.buttie.common.security.AuthenticationUser;
+import com.talented.buttie.user.dto.response.GetEmploymentPreparationResponseDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,5 +50,15 @@ public class UserController {
         Long targetUserId = user.userId();
         UserProfileVO userProfile = userService.getUserProfile(targetUserId);
         return ApplicationResponse.onSuccess(GetUserProfileResponseDTO.from(userProfile));
+    }
+
+    @GetMapping("/employment-preparation")
+    @ApiOperation("취업 준비 정보 조회")
+    public ApplicationResponse<GetEmploymentPreparationResponseDTO> getEmploymentPreparation(
+        @AuthUser AuthenticationUser user
+    ){
+        Long targetUserId = user.userId();
+        EmploymentPreparationVO employmentPreparation = userService.getEmploymentPreparation(targetUserId);
+        return ApplicationResponse.onSuccess(GetEmploymentPreparationResponseDTO.from(employmentPreparation));
     }
 }
