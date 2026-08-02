@@ -3,6 +3,11 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.talented.buttie.user.mapper.EmploymentPreparationMapper">
+  <select id="getLivingThresholdByUserId" resultType="java.lang.Integer">
+    select LIVING_FUND_THRESHOLD
+    from EMPLOYMENT_PREPARATIONS
+    where USER_ID = #{userId}
+  </select>
   <update id="updateEmploymentPreparation">
     UPDATE EMPLOYMENT_PREPARATIONS
     SET
