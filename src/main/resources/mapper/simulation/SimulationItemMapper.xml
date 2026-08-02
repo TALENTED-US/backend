@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.talented.buttie.simulation.mapper.SimulationItemMapper">
+
+  <select id="findAllActiveBySimulationId"
+    resultType="com.talented.buttie.simulation.domain.SimulationItemVO">
+    select SIMULATION_ITEM_ID, SIMULATION_ITEM_CATEGORY,
+           SIMULATION_ITEM_APPLY_AMOUNT, RECURRENCE_TYPE
+    from SIMULATION_ITEM
+    where SIMULATION_ID = #{simulationId}
+        and IS_DELETED is false
+  </select>
+</mapper>
