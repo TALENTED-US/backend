@@ -19,6 +19,8 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.flywaydb.core.Flyway;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @PropertySource({"classpath:/application.properties"})
@@ -85,15 +87,15 @@ public class RootConfig {
     @Bean
     @DependsOn("flyway")
     public SqlSessionFactory sqlSessionFactory() throws Exception {
+    public SqlSessionFactory sqlSessionFactory(ApplicationContext applicationContext) throws Exception {
         SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
         sqlSessionFactory.setConfigLocation(applicationContext.getResource("classpath:/mybatis-config.xml"));
         sqlSessionFactory.setDataSource(dataSource());
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        java.util.List<org.springframework.core.io.Resource> resources = new java.util.ArrayList<>();
-        resources.addAll(java.util.Arrays.asList(resolver.getResources("classpath*:mapper/**/*.xml")));
-        resources.addAll(java.util.Arrays.asList(resolver.getResources("classpath*:com/talented/buttie/mapper/**/*.xml")));
-
-        sqlSessionFactory.setMapperLocations(resources.toArray(new org.springframework.core.io.Resource[0]));
+        sqlSessionFactory.setMapperLocations(
+            new PathMatchingResourcePatternResolver()
+                .getResources("classpath*:com/talented/buttie/mapper/**/*.xml")
+        );
+        sqlSessionFactory.setMapperLocations(applicationContext.getResources("classpath*:mapper/**/*.xml"));
         return sqlSessionFactory.getObject();
     }
 
@@ -101,6 +103,12 @@ public class RootConfig {
     public DataSourceTransactionManager transactionManager(){
         DataSourceTransactionManager manager = new DataSourceTransactionManager(dataSource());
         return manager;
+        return new DataSourceTransactionManager(dataSource());
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 }
