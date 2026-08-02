@@ -9,8 +9,8 @@ import static org.mockito.Mockito.verify;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
 import com.talented.buttie.ledger.domain.TransactionVO;
-import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequestDTO;
-import com.talented.buttie.ledger.dto.request.UpdateTransactionRequestDTO;
+import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequest;
+import com.talented.buttie.ledger.dto.request.UpdateTransactionRequest;
 import com.talented.buttie.ledger.exception.LedgerErrorCode;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
 import java.time.LocalDateTime;
@@ -45,7 +45,7 @@ class UpdateTransactionServiceTest {
             .transactionMemo("수동 거래 메모")
             .build();
 
-        UpdateTransactionRequestDTO request = UpdateTransactionRequestDTO.builder()
+        UpdateTransactionRequest request = UpdateTransactionRequest.builder()
             .transactionAmount(10000)
             .expenseCategory(ExpenseCategory.FOOD)
             .transactionDate(LocalDateTime.parse("2026-07-28T15:30:00"))
@@ -68,7 +68,7 @@ class UpdateTransactionServiceTest {
     void updateTransactionMemo() {
         Long userId = 1L;
         Long transactionId = 100L;
-        UpdateTransactionMemoRequestDTO memoRequest = new UpdateTransactionMemoRequestDTO("외부 연동 거래 수정된 메모");
+        UpdateTransactionMemoRequest memoRequest = new UpdateTransactionMemoRequest("외부 연동 거래 수정된 메모");
 
         TransactionVO existingTransaction = TransactionVO.builder()
             .transactionId(transactionId)
@@ -104,7 +104,7 @@ class UpdateTransactionServiceTest {
             .transactionMemo("외부 거래 메모")
             .build();
 
-        UpdateTransactionRequestDTO request = UpdateTransactionRequestDTO.builder()
+        UpdateTransactionRequest request = UpdateTransactionRequest.builder()
             .transactionAmount(5000)
             .expenseCategory(ExpenseCategory.FOOD)
             .transactionDate(LocalDateTime.parse("2026-07-01T12:00:00"))
@@ -126,7 +126,7 @@ class UpdateTransactionServiceTest {
     void whenNotFound(){
         Long userId = 1L;
         Long transactionId = 999L;
-        UpdateTransactionRequestDTO request = UpdateTransactionRequestDTO.builder()
+        UpdateTransactionRequest request = UpdateTransactionRequest.builder()
             .transactionAmount(10000)
             .expenseCategory(ExpenseCategory.FOOD)
             .transactionDate(LocalDateTime.parse("2026-07-28T00:00:00"))

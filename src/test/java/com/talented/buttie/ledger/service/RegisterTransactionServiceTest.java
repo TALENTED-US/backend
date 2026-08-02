@@ -3,20 +3,18 @@ package com.talented.buttie.ledger.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
 import com.talented.buttie.ledger.domain.TransactionType;
 import com.talented.buttie.ledger.domain.TransactionVO;
-import com.talented.buttie.ledger.dto.request.RegisterTransactionRequestDTO;
+import com.talented.buttie.ledger.dto.request.RegisterTransactionRequest;
 import com.talented.buttie.ledger.exception.LedgerErrorCode;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,12 +30,12 @@ class RegisterTransactionServiceTest {
     private RegisterTransactionService registerTransactionService;
 
     private Long userId;
-    private RegisterTransactionRequestDTO request;
+    private RegisterTransactionRequest request;
 
     @BeforeEach
     void setUp(){
         userId = 1L;
-        request = RegisterTransactionRequestDTO.builder()
+        request = RegisterTransactionRequest.builder()
             .type(TransactionType.EXPENSE)
             .amount(10000)
             .category(ExpenseCategory.FOOD)

@@ -3,8 +3,8 @@ package com.talented.buttie.ledger.service;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.ledger.exception.LedgerErrorCode;
 import com.talented.buttie.ledger.domain.TransactionVO;
-import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequestDTO;
-import com.talented.buttie.ledger.dto.request.UpdateTransactionRequestDTO;
+import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequest;
+import com.talented.buttie.ledger.dto.request.UpdateTransactionRequest;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class UpdateTransactionService {
      * 외부거래 ID가 존재하는 경우 EXTERNAL_TRANSACTION_UNMODIFIABLE 예외 발생
      */
     @Transactional
-    public TransactionVO updateTransaction(Long userId, Long transactionId, UpdateTransactionRequestDTO request) {
+    public TransactionVO updateTransaction(Long userId, Long transactionId, UpdateTransactionRequest request) {
         TransactionVO original = transactionMapper.findById(transactionId);
         if (original == null || !original.getUserId().equals(userId)) {
             throw ApplicationException.from(LedgerErrorCode.TRANSACTION_NOT_FOUND);
@@ -57,7 +57,7 @@ public class UpdateTransactionService {
      * UpdateTransactionMemoRequestDTO 수신
      */
     @Transactional
-    public TransactionVO updateTransactionMemo(Long userId, Long transactionId, UpdateTransactionMemoRequestDTO request) {
+    public TransactionVO updateTransactionMemo(Long userId, Long transactionId, UpdateTransactionMemoRequest request) {
         TransactionVO original = transactionMapper.findById(transactionId);
         if (original == null || !original.getUserId().equals(userId)) {
             throw ApplicationException.from(LedgerErrorCode.TRANSACTION_NOT_FOUND);

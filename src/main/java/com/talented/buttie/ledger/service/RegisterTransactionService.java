@@ -2,7 +2,7 @@ package com.talented.buttie.ledger.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.ledger.domain.TransactionVO;
-import com.talented.buttie.ledger.dto.request.RegisterTransactionRequestDTO;
+import com.talented.buttie.ledger.dto.request.RegisterTransactionRequest;
 import com.talented.buttie.ledger.exception.LedgerErrorCode;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ public class RegisterTransactionService {
     private final TransactionMapper transactionMapper;
 
     @Transactional
-    public TransactionVO registerTransaction(Long userId, RegisterTransactionRequestDTO request){
+    public TransactionVO registerTransaction(Long userId, RegisterTransactionRequest request){
         if(request == null){
             throw ApplicationException.from(LedgerErrorCode.TRANSACTION_BAD_REQUEST);
         }

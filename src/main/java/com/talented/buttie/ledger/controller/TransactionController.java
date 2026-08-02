@@ -4,9 +4,9 @@ import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.annotation.AuthUser;
 import com.talented.buttie.ledger.domain.TransactionVO;
-import com.talented.buttie.ledger.dto.request.RegisterTransactionRequestDTO;
-import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequestDTO;
-import com.talented.buttie.ledger.dto.request.UpdateTransactionRequestDTO;
+import com.talented.buttie.ledger.dto.request.RegisterTransactionRequest;
+import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequest;
+import com.talented.buttie.ledger.dto.request.UpdateTransactionRequest;
 import com.talented.buttie.ledger.dto.response.TransactionResponse;
 import com.talented.buttie.ledger.service.GetTransactionService;
 import com.talented.buttie.ledger.service.RegisterTransactionService;
@@ -51,7 +51,7 @@ public class TransactionController {
         @AuthUser AuthenticationUser user,
 
         @ApiParam(value = "수동 거래 추가 정보", required = true)
-        @Valid @RequestBody RegisterTransactionRequestDTO request
+        @Valid @RequestBody RegisterTransactionRequest request
     ){
         Long targetUserId = user.userId();
         TransactionVO transaction = registerTransactionService.registerTransaction(targetUserId, request);
@@ -66,7 +66,7 @@ public class TransactionController {
     public ApplicationResponse<TransactionResponse> updateTransaction(
         @PathVariable Long transactionId,
         @AuthUser AuthenticationUser user,
-        @Valid @RequestBody UpdateTransactionRequestDTO request
+        @Valid @RequestBody UpdateTransactionRequest request
     ){
         Long targetUserId = user.userId();
         TransactionVO transaction = updateTransactionService.updateTransaction(targetUserId, transactionId, request);
@@ -78,7 +78,7 @@ public class TransactionController {
     public ApplicationResponse<TransactionResponse> updateTransactionMemo(
         @PathVariable Long transactionId,
         @AuthUser AuthenticationUser user,
-        @Valid @RequestBody UpdateTransactionMemoRequestDTO request
+        @Valid @RequestBody UpdateTransactionMemoRequest request
     ){
         Long targetUserId = user.userId();
         TransactionVO transactionMemo = updateTransactionService.updateTransactionMemo(targetUserId, transactionId, request);
