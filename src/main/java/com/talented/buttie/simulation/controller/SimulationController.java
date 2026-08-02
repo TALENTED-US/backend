@@ -5,8 +5,10 @@ import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.annotation.AuthUser;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.request.CreateSimulationRequestDTO;
+import com.talented.buttie.simulation.dto.request.PreviewItemRequestDTO;
 import com.talented.buttie.simulation.dto.request.UpdateSimulationPeriodRequestDTO;
 import com.talented.buttie.simulation.dto.response.ConfirmedSimulationResponseDTO;
+import com.talented.buttie.simulation.dto.response.PreviewItemResponseDTO;
 import com.talented.buttie.simulation.dto.response.SimulationDetailResponseDTO;
 import com.talented.buttie.simulation.dto.response.SimulationResponseDTO;
 import com.talented.buttie.simulation.service.SimulationCreateService;
@@ -37,9 +39,7 @@ public class SimulationController {
     @PostMapping
     public ApplicationResponse<SimulationResponseDTO> createSimulation(
         @AuthUser AuthenticationUser authUser,
-
-        @Valid
-        @RequestBody CreateSimulationRequestDTO request
+        @Valid @RequestBody CreateSimulationRequestDTO request
     ) {
         SimulationVO simulation = simulationCreateService.createSimulation(authUser.userId(), request);
 
@@ -64,9 +64,7 @@ public class SimulationController {
     @PatchMapping("/period")
     public ApplicationResponse<Void> updateSimulationPeriod(
         @AuthUser AuthenticationUser authUser,
-
-        @Valid
-        @RequestBody UpdateSimulationPeriodRequestDTO request
+        @Valid @RequestBody UpdateSimulationPeriodRequestDTO request
     ) {
         simulationUpdateService.updateSimulationPeriod(authUser.userId(), request);
 
@@ -78,12 +76,20 @@ public class SimulationController {
     public ApplicationResponse<ConfirmedSimulationResponseDTO> getLatestConfirmedSimulation(
         @AuthUser AuthenticationUser authUser
     ){
-        SimulationVO simulation =
-            simulationReadService.getLatestConfirmedSimulation(authUser.userId());
+        SimulationVO simulation = simulationReadService.getLatestConfirmedSimulation(authUser.userId());
 
-        return ApplicationResponse.onSuccess(
-            ConfirmedSimulationResponseDTO.from(simulation)
-        );
+        return ApplicationResponse.onSuccess(ConfirmedSimulationResponseDTO.from(simulation));
+    }
+
+
+    @ApiOperation("시뮬레이션 항목 대입 미리보기")
+    @PostMapping("/preview")
+    public ApplicationResponse<PreviewItemResponseDTO> previewItemResultSimulation(
+        @AuthUser AuthenticationUser authUser,
+        @Valid @RequestBody PreviewItemRequestDTO request
+    ){
+        PreviewItemResponseDTO response = simulationCreateService.previewItemResultSimulation(authUser.userId(), request);
+        return ApplicationResponse.onSuccess(response);
     }
 
 }
