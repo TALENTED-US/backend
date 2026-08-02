@@ -38,10 +38,12 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
         characterEncodingFilter.setForceEncoding(true);
 
         DelegatingFilterProxy jwtAuthenticationFilter = new DelegatingFilterProxy("jwtAuthenticationFilter");
+        DelegatingFilterProxy csrfProtectionFilter = new DelegatingFilterProxy("csrfProtectionFilter");
 
         return new Filter[]{
-            characterEncodingFilter
-            , jwtAuthenticationFilter
+            characterEncodingFilter,
+            csrfProtectionFilter,
+            jwtAuthenticationFilter
         };
     }
 
