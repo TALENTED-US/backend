@@ -18,7 +18,7 @@ public record GetUserProfileResponseDTO(
     Integer buttieLevel,
 
     @ApiModelProperty(value = "이름", example = "홍길동")
-    String username,
+    String userName,
 
     @ApiModelProperty(value = "생년월일", example = "2002-03-29")
     LocalDate birthDate,

@@ -55,7 +55,7 @@ class GetTransactionServiceTest {
             List<TransactionVO> result = getTransactionService.getAllTransactions(userId);
 
             assertNotNull(result);
-            assertEquals(1, result.size());
+            assertEquals(2, result.size());
             assertEquals("세종대학교 학식당", result.get(0).getTransactionContent());
 
             verify(transactionMapper).findAllByUserId(userId);

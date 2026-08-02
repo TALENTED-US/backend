@@ -8,4 +8,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface MonthlyProjectionMapper {
     List<MonthlyProjectionVO> findAllBySimulationId(@Param("simulationId") Long simulationId);
+    int deleteAllBySimulationId(@Param("simulationId") Long simulationId);
+    void saveAll(@Param("projections") List<MonthlyProjectionVO> projections);
 }

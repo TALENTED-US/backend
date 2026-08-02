@@ -88,17 +88,15 @@ class UserServiceTest {
     @Test
     @DisplayName("회원 프로필을 조회하면 해당 사용자의 프로필 정보를 반환한다.")
     void getUserProfile() {
-        // given
+
         Long userId = 1L;
         UserProfileVO mockVO = new UserProfileVO();
 
         given(userMapper.selectUserProfile(userId))
             .willReturn(mockVO);
 
-        // when
         UserProfileVO result = userService.getUserProfile(userId);
 
-        // then
         assertNotNull(result);
         verify(userMapper).selectUserProfile(userId);
     }
@@ -106,13 +104,11 @@ class UserServiceTest {
     @Test
     @DisplayName("회원 프로필 조회 시 해당 사용자가 없으면 예외가 발생한다.")
     void throwWhenGetUserProfileNotFound() {
-        // given
         Long userId = 999L;
 
         given(userMapper.selectUserProfile(userId))
             .willReturn(null);
 
-        // when & then
         ApplicationException exception = assertThrows(
             ApplicationException.class,
             () -> userService.getUserProfile(userId)
