@@ -6,91 +6,115 @@
 
   <select id="findAllByUserId" resultType="com.talented.buttie.ledger.domain.TransactionVO">
     SELECT
-      transaction_id          AS transactionId,
-      user_id                 AS userId,
-      account_id              AS accountId,
-      external_transaction_id AS externalTransactionId,
-      content,
-      transaction_type        AS transactionType,
-      category,
-      amount,
-      transaction_at          AS transactionAt,
-      memo,
-      analysis_excluded       AS analysisExcluded,
-      is_deleted              AS isDeleted,
-      deleted_at              AS deletedAt,
-      created_at              AS createdAt,
-      updated_at              AS updatedAt
-    FROM transaction
-    WHERE user_id = #{userId}
-      AND is_deleted = false  ORDER BY transaction_at DESC
+      TRANSACTION_ID          AS transactionId,
+      USER_ID                 AS userId,
+      ACCOUNT_ID              AS accountId,
+      EXTERNAL_TRANSACTION_ID AS externalTransactionId,
+      TRANSACTION_CONTENT     AS transactionContent,
+      TRANSACTION_TYPE        AS transactionType,
+      EXPENSE_CATEGORY        AS expenseCategory,
+      TRANSACTION_AMOUNT      AS transactionAmount,
+      TRANSACTION_AT          AS transactionAt,
+      TRANSACTION_MEMO        AS transactionMemo,
+      ANALYSIS_EXCLUDED       AS analysisExcluded,
+      IS_DELETED              AS isDeleted,
+      TRANSACTION_CREATED_AT  AS transactionCreatedAt,
+      TRANSACTION_UPDATED_AT  AS transactionUpdatedAt
+    FROM `TRANSACTION`
+    WHERE USER_ID = #{userId}
+      AND IS_DELETED = false
+    ORDER BY TRANSACTION_AT DESC
   </select>
 
   <insert id="insertTransaction"
     parameterType="com.talented.buttie.ledger.domain.TransactionVO"
     useGeneratedKeys="true"
     keyProperty="transactionId">
-    INSERT INTO transactions (
-      user_id,
-      transaction_type,
-      amount,
-      category,
-      transaction_at,
-      memo,
-      created_at,
-      updated_at
+    INSERT INTO `TRANSACTION` (
+      USER_ID,
+      ACCOUNT_ID,
+      EXTERNAL_TRANSACTION_ID,
+      TRANSACTION_CONTENT,
+      TRANSACTION_TYPE,
+      EXPENSE_CATEGORY,
+      TRANSACTION_AMOUNT,
+      TRANSACTION_AT,
+      TRANSACTION_MEMO,
+      ANALYSIS_EXCLUDED,
+      IS_DELETED,
+      TRANSACTION_CREATED_AT,
+      TRANSACTION_UPDATED_AT
     ) VALUES (
-               #{userId},
-               #{transactionType},
-               #{amount},
-               #{category},
-               #{transactionAt},
-               #{memo},
-               NOW(),
-               NOW()
-             )
+      #{userId},
+      #{accountId},
+      #{externalTransactionId},
+      #{transactionContent},
+      #{transactionType},
+      #{expenseCategory},
+      #{transactionAmount},
+      #{transactionAt},
+      #{transactionMemo},
+      COALESCE(#{analysisExcluded}, false),
+      false,
+      NOW(),
+      NOW()
+    )
   </insert>
 
   <select id="findById" resultType="com.talented.buttie.ledger.domain.TransactionVO">
     SELECT
-      transaction_id AS transactionId,
-      user_id AS userId,
-      account_id AS accountId,
-      external_transaction_id AS externalTransactionId,
-      transaction_content AS transactionContent,
-      transaction_type AS transactionType,
-      expense_category AS expenseCategory,
-      transaction_amount AS transactionAmount,
-      transaction_at AS transactionAt,
-      transaction_memo AS transactionMemo,
-      analysis_excluded AS analysisExcluded,
-      is_deleted AS isDeleted,
-      transaction_created_at AS transactionCreatedAt,
-      transaction_updated_at AS transactionUpdatedAt
-    FROM transactions
-    WHERE transaction_id = #{transactionId}
-      AND is_deleted = false
+      TRANSACTION_ID          AS transactionId,
+      USER_ID                 AS userId,
+      ACCOUNT_ID              AS accountId,
+      EXTERNAL_TRANSACTION_ID AS externalTransactionId,
+      TRANSACTION_CONTENT     AS transactionContent,
+      TRANSACTION_TYPE        AS transactionType,
+      EXPENSE_CATEGORY        AS expenseCategory,
+      TRANSACTION_AMOUNT      AS transactionAmount,
+      TRANSACTION_AT          AS transactionAt,
+      TRANSACTION_MEMO        AS transactionMemo,
+      ANALYSIS_EXCLUDED       AS analysisExcluded,
+      IS_DELETED              AS isDeleted,
+      TRANSACTION_CREATED_AT  AS transactionCreatedAt,
+      TRANSACTION_UPDATED_AT  AS transactionUpdatedAt
+    FROM `TRANSACTION`
+    WHERE TRANSACTION_ID = #{transactionId}
+      AND IS_DELETED = false
   </select>
 
+  <!-- 수동 등록 거래 전체 수정 (외부거래 ID가 없을 때 사용) -->
   <update id="updateTransaction" parameterType="com.talented.buttie.ledger.domain.TransactionVO">
-    UPDATE transactions
+    UPDATE `TRANSACTION`
     <set>
+      <if test="transactionContent != null">
+        TRANSACTION_CONTENT = #{transactionContent},
+      </if>
       <if test="transactionAmount != null">
-        transaction_amount = #{transactionAmount},
+        TRANSACTION_AMOUNT = #{transactionAmount},
       </if>
       <if test="expenseCategory != null">
-        expense_category = #{expenseCategory},
+        EXPENSE_CATEGORY = #{expenseCategory},
       </if>
       <if test="transactionAt != null">
-        transaction_at = #{transactionAt},
+        TRANSACTION_AT = #{transactionAt},
       </if>
       <if test="transactionMemo != null">
-        transaction_memo = #{transactionMemo},
+        TRANSACTION_MEMO = #{transactionMemo},
       </if>
-
-      transaction_updated_at = NOW()
+      <if test="analysisExcluded != null">
+        ANALYSIS_EXCLUDED = #{analysisExcluded},
+      </if>
+      TRANSACTION_UPDATED_AT = NOW()
     </set>
-    WHERE transaction_id = #{transactionId}
+    WHERE TRANSACTION_ID = #{transactionId}
+  </update>
+
+  <!-- 외부 연동 거래 메모 단일 수정 (외부거래 ID가 있을 때 사용) -->
+  <update id="updateTransactionMemo">
+    UPDATE `TRANSACTION`
+    SET TRANSACTION_MEMO = #{transactionMemo},
+        TRANSACTION_UPDATED_AT = NOW()
+    WHERE TRANSACTION_ID = #{transactionId}
   </update>
 
 </mapper>

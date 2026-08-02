@@ -88,10 +88,12 @@ public class RootConfig {
         SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
         sqlSessionFactory.setConfigLocation(applicationContext.getResource("classpath:/mybatis-config.xml"));
         sqlSessionFactory.setDataSource(dataSource());
-        sqlSessionFactory.setMapperLocations(
-            new PathMatchingResourcePatternResolver()
-                .getResources("classpath*:com/talented/buttie/mapper/**/*.xml")
-        );
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        java.util.List<org.springframework.core.io.Resource> resources = new java.util.ArrayList<>();
+        resources.addAll(java.util.Arrays.asList(resolver.getResources("classpath*:mapper/**/*.xml")));
+        resources.addAll(java.util.Arrays.asList(resolver.getResources("classpath*:com/talented/buttie/mapper/**/*.xml")));
+
+        sqlSessionFactory.setMapperLocations(resources.toArray(new org.springframework.core.io.Resource[0]));
         return sqlSessionFactory.getObject();
     }
 

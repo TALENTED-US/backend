@@ -6,6 +6,7 @@ import com.talented.buttie.ledger.domain.TransactionVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
@@ -15,8 +16,16 @@ import lombok.Builder;
 @Builder
 public record RegisterTransactionRequestDTO(
     @ApiModelProperty(
-        value = "지출 유형",
-        example = "지출",
+        value = "거래 내용",
+        example = "세종대학교 학식당",
+        required = true
+    )
+    @NotBlank(message = "거래 내용은 필수입니다.")
+    String transactionContent,
+
+    @ApiModelProperty(
+        value = "지출 유형 (EXPENSE, INCOME, FIXED)",
+        example = "EXPENSE",
         required = true
     )
     @NotNull(message = "수입인지 지출인지 구분해야 합니다.")
@@ -32,20 +41,20 @@ public record RegisterTransactionRequestDTO(
     Integer amount,
 
     @ApiModelProperty(
-        value = "카테고리",
-        example = "식비",
+        value = "카테고리 (FOOD, TRANSPORT, HOUSING, COMMUNICATION, SUBSCRIPTION, EDUCATION, CERTIFICATE, ETC_EXPENSE)",
+        example = "FOOD",
         required = true
     )
     @NotNull(message = "지출 카테고리 선택은 필수입니다.")
     ExpenseCategory category,
 
     @ApiModelProperty(
-        value = "거래일시",
+        value = "거래일시 (yyyy-MM-ddTHH:mm:ss)",
         example = "2026-07-28T00:00:00",
         required = true
     )
-    @NotNull(message = "거래 일시는 필수입니다.")
-    LocalDateTime transactionDate,
+    @NotBlank(message = "거래 일시는 필수입니다.")
+    String transactionDate,
 
     @ApiModelProperty(
         value = "메모",
@@ -58,10 +67,11 @@ public record RegisterTransactionRequestDTO(
     public TransactionVO toVO(Long userId){
         return TransactionVO.builder()
             .userId(userId)
+            .transactionContent(transactionContent)
             .transactionType(this.type)
             .transactionAmount(this.amount)
             .expenseCategory(this.category)
-            .transactionAt(this.transactionDate)
+            .transactionAt(LocalDateTime.parse(transactionDate.replace(" ", "T")))
             .transactionMemo(this.memo)
             .build();
     }

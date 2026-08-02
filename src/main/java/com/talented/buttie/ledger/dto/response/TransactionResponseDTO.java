@@ -24,8 +24,8 @@ public record TransactionResponseDTO(
     @ApiModelProperty(value = "거래 금액", example = "10000")
     Integer transactionAmount,
 
-    @ApiModelProperty(value = "거래 일시", example = "2026-07-25T:00:00:00")
-    LocalDateTime transactionAt,
+    @ApiModelProperty(value = "거래 일시", example = "2026-07-25T00:00:00")
+    String transactionAt,
 
     @ApiModelProperty(value = "거래 메모", example = "학식당에서 스팸순두부찌개")
     String transactionMemo
@@ -37,7 +37,7 @@ public record TransactionResponseDTO(
             .transactionType(vo.getTransactionType())
             .expenseCategory(vo.getExpenseCategory())
             .transactionAmount(vo.getTransactionAmount())
-            .transactionAt(vo.getTransactionAt())
+            .transactionAt(vo.getTransactionAt() != null ? vo.getTransactionAt().toString() : null)
             .transactionMemo(vo.getTransactionMemo())
             .build();
     }

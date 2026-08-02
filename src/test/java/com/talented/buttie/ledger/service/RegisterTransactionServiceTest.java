@@ -40,7 +40,7 @@ class RegisterTransactionServiceTest {
             .type(TransactionType.EXPENSE)
             .amount(10000)
             .category(ExpenseCategory.FOOD)
-            .transactionDate(LocalDateTime.now())
+            .transactionDate("2026-07-28T00:00:00")
             .memo("학식당에서 스팸치즈순두부찌개")
             .build();
     }
