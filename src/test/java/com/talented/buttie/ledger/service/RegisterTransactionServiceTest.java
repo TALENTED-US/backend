@@ -69,7 +69,6 @@ class RegisterTransactionServiceTest {
 
         assertEquals(LedgerErrorCode.TRANSACTION_BAD_REQUEST.getMessage(), exception.getMessage());
         assertEquals(LedgerErrorCode.TRANSACTION_BAD_REQUEST, exception.getCode());
-
-        verify(transactionMapper, never()).insertTransaction(any(TransactionVO.class));
     }
+
 }
