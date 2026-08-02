@@ -34,7 +34,7 @@ public record GetUserProfileResponseDTO(
             vo.getUserNickname(),
             vo.getButtieTotalExp(),
             vo.getButtieLevel(),
-            vo.getUsername(),
+            vo.getUserName(),
             vo.getBirthDate(),
             vo.getUserPhoneNumber(),
             vo.getUserEmail()
