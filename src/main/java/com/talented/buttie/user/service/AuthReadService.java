@@ -44,7 +44,7 @@ public class AuthReadService {
 
     public boolean isEmailDuplicate(String email) {
         boolean isDuplicate = authMapper.existsByEmail(email);
-        if (!isDuplicate) {
+        if (isDuplicate) {
             throw ApplicationException.from(AuthErrorCode.EMAIL_ALREADY_EXISTS);
         }
         return isDuplicate;
@@ -52,7 +52,7 @@ public class AuthReadService {
 
     public boolean isNicknameDuplicate(String nickname) {
         boolean isDuplicate = authMapper.existsByNickName(nickname);
-        if (!isDuplicate) {
+        if (isDuplicate) {
             throw ApplicationException.from(AuthErrorCode.NICKNAME_ALREADY_EXISTS);
         }
         return isDuplicate;
