@@ -1,6 +1,7 @@
 package com.talented.buttie.user.controller;
 
 import com.talented.buttie.common.response.ApplicationResponse;
+import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
 import com.talented.buttie.user.dto.response.UserPKResponseDTO;
@@ -32,7 +33,7 @@ public class UserController {
         @Valid @RequestBody UpdateEmploymentPreparationRequestDTO request
     ) {
         EmploymentPreparationVO employmentPreparation = userService.saveEmploymentPreparation(userId, request);
-        return ApplicationResponse.onSuccess(new UserPKResponseDTO(employmentPreparation.getUserId()));
+        return ApplicationResponse.onSuccess(new UserPKResponseDTO(PKCrypto.encrypt(employmentPreparation.getUserId())));
     }
 
     @GetMapping("/employment-preparation")
