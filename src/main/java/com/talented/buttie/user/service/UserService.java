@@ -12,6 +12,7 @@ import com.talented.buttie.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -38,6 +39,16 @@ public class UserService {
         if (updated == 0) {
             throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_NOT_FOUND);
         }
+        return employmentPreparation;
+    }
+    public EmploymentPreparationVO getEmploymentPreparation(Long userId) {
+        EmploymentPreparationVO employmentPreparation =
+            employmentPreparationMapper.selectEmploymentPreparation(userId);
+
+        if (employmentPreparation == null) {
+            throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_NOT_FOUND);
+        }
+
         return employmentPreparation;
     }
 
