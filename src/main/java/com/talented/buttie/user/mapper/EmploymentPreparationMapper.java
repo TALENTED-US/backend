@@ -9,4 +9,6 @@ public interface EmploymentPreparationMapper {
 
 
     int insertEmploymentPreparation(@Param("employmentPreparation") EmploymentPreparationVO employmentPreparation);
+
+    EmploymentPreparationVO selectEmploymentPreparation(@Param("userId") Long userId);
 }

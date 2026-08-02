@@ -24,6 +24,16 @@ public class UserService {
         }
         return employmentPreparation;
     }
+    public EmploymentPreparationVO getEmploymentPreparation(Long userId) {
+        EmploymentPreparationVO employmentPreparation =
+            employmentPreparationMapper.selectEmploymentPreparation(userId);
+
+        if (employmentPreparation == null) {
+            throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_NOT_FOUND);
+        }
+
+        return employmentPreparation;
+    }
     public Long createEmploymentPreparation(Long userId, CreateEmploymentPreparationRequestDTO request) {
 
         EmploymentPreparationVO employmentPreparation =
