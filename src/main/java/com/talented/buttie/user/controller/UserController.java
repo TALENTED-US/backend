@@ -9,10 +9,7 @@ import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDT
 import com.talented.buttie.user.dto.response.UserPKResponseDTO;
 import com.talented.buttie.user.service.UserService;
 import com.talented.buttie.user.dto.request.CreateEmploymentPreparationRequestDTO;
-import com.talented.buttie.common.security.annotation.AuthUser;
-import com.talented.buttie.common.security.AuthenticationUser;
 import org.springframework.web.bind.annotation.PostMapping;
-import io.swagger.annotations.ApiOperation;
 import com.talented.buttie.user.dto.response.GetEmploymentPreparationResponseDTO;
 
 import io.swagger.annotations.Api;
@@ -20,7 +17,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,10 +32,11 @@ public class UserController {
 
     @PatchMapping("/employment-preparation")
     public ApplicationResponse<UserPKResponseDTO> saveEmploymentPreparation(
-        @RequestParam Long userId,
+        @AuthUser AuthenticationUser user,
         @Valid @RequestBody UpdateEmploymentPreparationRequestDTO request
     ) {
-        EmploymentPreparationVO employmentPreparation = userService.saveEmploymentPreparation(userId, request);
+        Long targetUserId = user.userId();
+        EmploymentPreparationVO employmentPreparation = userService.saveEmploymentPreparation(targetUserId, request);
         return ApplicationResponse.onSuccess(new UserPKResponseDTO(PKCrypto.encrypt(employmentPreparation.getUserId())));
     }
 
