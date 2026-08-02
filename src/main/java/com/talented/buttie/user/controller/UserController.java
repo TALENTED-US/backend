@@ -1,15 +1,17 @@
 package com.talented.buttie.user.controller;
 
 import com.talented.buttie.common.response.ApplicationResponse;
+import com.talented.buttie.common.security.AuthenticationUser;
+import com.talented.buttie.common.security.annotation.AuthUser;
 import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
 import com.talented.buttie.user.dto.response.UserPKResponseDTO;
 import com.talented.buttie.user.service.UserService;
-import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.dto.response.GetEmploymentPreparationResponseDTO;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,10 +39,12 @@ public class UserController {
     }
 
     @GetMapping("/employment-preparation")
+    @ApiOperation("취업 준비 정보 조회")
     public ApplicationResponse<GetEmploymentPreparationResponseDTO> getEmploymentPreparation(
-        @RequestParam Long userId
-    ) {
-        EmploymentPreparationVO employmentPreparation = userService.getEmploymentPreparation(userId);
+        @AuthUser AuthenticationUser user
+    ){
+        Long targetUserId = user.userId();
+        EmploymentPreparationVO employmentPreparation = userService.getEmploymentPreparation(targetUserId);
         return ApplicationResponse.onSuccess(GetEmploymentPreparationResponseDTO.from(employmentPreparation));
     }
 }
