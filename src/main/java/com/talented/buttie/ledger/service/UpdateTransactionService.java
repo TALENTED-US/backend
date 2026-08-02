@@ -49,10 +49,10 @@ public class UpdateTransactionService {
         TransactionVO original = transactionMapper.findById(transactionId);
 
         if(original == null){
-            throw ApplicationException.from(LedgerErrorCode.TRANSACTION_BAD_REQUEST);
+            throw ApplicationException.from(LedgerErrorCode.TRANSACTION_NOT_FOUND);
         }
         if (!original.getUserId().equals(userId)) {
-            throw ApplicationException.from(LedgerErrorCode.TRANSACTION_USER_ID_MISMATCH);
+            throw ApplicationException.from(LedgerErrorCode.TRANSACTION_MEMO_USER_ID_MISMATCH);
         }
 
         transactionMapper.updateTransactionMemo(transactionId, request.memo());
