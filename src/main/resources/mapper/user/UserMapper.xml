@@ -8,8 +8,8 @@
     SELECT
       u.USER_ID,
       u.USER_NICKNAME,
-      u.BUTTIE_TOTAL_EXP,
-      u.BUTTIE_LEVEL,
+      ub.BUTTIE_TOTAL_EXP,
+      ub.BUTTIE_LEVEL,
       u.USER_NAME,
       u.USER_PHONE_NUMBER,
       u.USER_EMAIL,
@@ -22,15 +22,15 @@
 
   <update id="updateUser">
     UPDATE USER
-    SET NICKNAME = #{user.nickname},
-        UPDATED_AT = NOW()
+    SET USER_NICKNAME = #{user.userNickname},
+        USER_UPDATED_AT = NOW()
     WHERE USER_ID = #{user.userId}
   </update>
 
   <select id="countByNickname" resultType="int">
     SELECT COUNT(*)
     FROM USER
-    WHERE NICKNAME = #{nickname}
+    WHERE USER_NICKNAME = #{nickname}
   </select>
 
 </mapper>

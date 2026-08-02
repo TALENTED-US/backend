@@ -10,7 +10,7 @@ public class UserProfileVO {
     private String userNickname;
     private Integer buttieTotalExp;
     private Integer buttieLevel;
-    private String username;
+    private String userName;
     private LocalDate birthDate;
     private String userPhoneNumber;
     private String userEmail;

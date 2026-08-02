@@ -6,16 +6,19 @@ import javax.sql.DataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.flywaydb.core.Flyway;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @PropertySource({"classpath:/application.properties"})
@@ -32,7 +35,12 @@ import org.springframework.context.annotation.DependsOn;
     "com.talented.buttie.quest.service",
     "com.talented.buttie.catalog.service",
     "com.talented.buttie.catalog.elasticsearch",
-    "com.talented.buttie.notification.service"
+    "com.talented.buttie.notification.service",
+    "com.talented.buttie.common.security",
+    "com.talented.buttie.common.util"
+})
+@Import({
+    RedisConfig.class
 })
 @MapperScan(basePackages = {"com.talented.buttie"})
 public class RootConfig {
@@ -62,20 +70,34 @@ public class RootConfig {
             .load();
     }
 
-    @Autowired
-    ApplicationContext applicationContext;
+    @Bean
+
+    public static PropertySourcesPlaceholderConfigurer
+    propertySourcesPlaceholderConfigurer() {
+        PropertySourcesPlaceholderConfigurer configurer =
+            new PropertySourcesPlaceholderConfigurer();
+        configurer.setIgnoreUnresolvablePlaceholders(false);
+        return configurer;
+    }
+
     @Bean
     @DependsOn("flyway")
-    public SqlSessionFactory sqlSessionFactory() throws Exception {
+    public SqlSessionFactory sqlSessionFactory(ApplicationContext applicationContext) throws Exception {
         SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
         sqlSessionFactory.setConfigLocation(applicationContext.getResource("classpath:/mybatis-config.xml"));
         sqlSessionFactory.setDataSource(dataSource());
-        return (SqlSessionFactory) sqlSessionFactory.getObject();
+        sqlSessionFactory.setMapperLocations(applicationContext.getResources("classpath*:mapper/**/*.xml"));
+        return sqlSessionFactory.getObject();
     }
+
     @Bean
     public DataSourceTransactionManager transactionManager(){
-        DataSourceTransactionManager manager = new DataSourceTransactionManager(dataSource());
-        return manager;
+        return new DataSourceTransactionManager(dataSource());
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 }

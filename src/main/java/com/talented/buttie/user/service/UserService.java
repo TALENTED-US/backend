@@ -41,7 +41,7 @@ public class UserService {
         return employmentPreparation;
     }
 
-    public UserVO modifyUserProfile(Long userId, ModifyUserProfileRequestDTO request) {
+    public Long modifyUserProfile(Long userId, ModifyUserProfileRequestDTO request) {
         if (userMapper.countByNickname(request.nickname()) > 0) {
             throw ApplicationException.from(UserErrorCode.DUPLICATE_NICKNAME);
         }
@@ -53,6 +53,6 @@ public class UserService {
             throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
         }
 
-        return user;
+        return userId;
     }
 }

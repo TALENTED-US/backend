@@ -20,4 +20,35 @@
     where SIMULATION_ID = #{simulationId}
     order by PROJECTION_MONTH
   </select>
+
+  <insert id="saveAll">
+    insert into PROJECTION(
+        SIMULATION_ID,
+        PROJECTION_MONTH,
+        OPENING_BALANCE,
+        EXPECTED_INCOME,
+        EXPECTED_EXPENSE,
+        CLOSING_BALANCE,
+        ADJUSTMENT_REQUIRED,
+        ADJUSTMENT_REASON
+    )
+    values
+    <foreach collection="projections" item="projection" separator=",">
+      (
+        #{projection.simulationId},
+        #{projection.projectionMonth},
+        #{projection.openingBalance},
+        #{projection.expectedIncome},
+        #{projection.expectedExpense},
+        #{projection.closingBalance},
+        #{projection.adjustmentRequired},
+        #{projection.adjustmentReason}
+      )
+    </foreach>
+  </insert>
+
+  <delete id="deleteAllBySimulationId">
+    delete from PROJECTION
+    where SIMULATION_ID = #{simulationId}
+  </delete>
 </mapper>

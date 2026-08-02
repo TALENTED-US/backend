@@ -90,7 +90,7 @@ class UserServiceTest {
         );
     }
     @Test
-    @DisplayName("닉네임을 수정하면 수정된 사용자 VO를 반환한다.")
+    @DisplayName("닉네임을 수정하면 수정된 사용자 ID를 반환한다.")
     void modifyUserProfile() {
         Long userId = 1L;
         ModifyUserProfileRequestDTO request = new ModifyUserProfileRequestDTO("새닉네임");
@@ -100,11 +100,9 @@ class UserServiceTest {
         given(userMapper.updateUser(any(UserVO.class)))
             .willReturn(1);
 
-        UserVO result = userService.modifyUserProfile(userId, request);
+        Long result = userService.modifyUserProfile(userId, request);
 
-        assertNotNull(result);
-        assertEquals(userId, result.getUserId());
-        assertEquals("새닉네임", result.getUserNickname());
+        assertEquals(userId, result);
         verify(userMapper).countByNickname("새닉네임");
         verify(userMapper).updateUser(any(UserVO.class));
     }

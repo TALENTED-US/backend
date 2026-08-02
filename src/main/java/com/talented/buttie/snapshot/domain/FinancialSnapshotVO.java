@@ -13,6 +13,8 @@ public class FinancialSnapshotVO {
     private Integer liquidAssets;
     private Integer monthlyNetCashflow;
     private BigDecimal prepPossibleMonths;
+    private BigDecimal avgMonthlyExpense;
+    private BigDecimal avgMonthlyIncome;
     private BigDecimal avgWeekendExpense;
     private BigDecimal avgWeekendIncome;
     private BigDecimal avgWeekExpense;
