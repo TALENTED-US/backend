@@ -1,5 +1,6 @@
 package com.talented.buttie.simulation.dto.response;
 
+import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,8 +16,8 @@ public record SimulationDetailResponseDTO(
     @ApiModelProperty(value = "시뮬레이션 ID", example = "1")
     Long simulationId,
 
-    @ApiModelProperty(value = "사용자 ID", example = "1")
-    Long userId,
+    @ApiModelProperty(value = "암호화된 사용자 ID", example = "qwe123...")
+    String userId,
 
     @ApiModelProperty(value = "기준 스냅샷 ID", example = "10")
     Long snapshotId,
@@ -39,7 +40,7 @@ public record SimulationDetailResponseDTO(
     public static SimulationDetailResponseDTO from(SimulationVO simulation){
         return SimulationDetailResponseDTO.builder()
             .simulationId(simulation.getSimulationId())
-            .userId(simulation.getUserId())
+            .userId(PKCrypto.encrypt(simulation.getUserId()))
             .snapshotId(simulation.getSnapshotId())
             .simulationStartDate(simulation.getSimulationStartDate())
             .simulationDueDate(simulation.getSimulationDueDate())
