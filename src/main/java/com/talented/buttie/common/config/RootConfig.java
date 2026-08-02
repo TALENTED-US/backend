@@ -19,6 +19,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.flywaydb.core.Flyway;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -88,12 +89,16 @@ public class RootConfig {
     @DependsOn("flyway")
     public SqlSessionFactory sqlSessionFactory() throws Exception {
         SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        Resource[] packageMappers = resolver.getResources("classpath*:com/talented/buttie/mapper/**/*.xml");
+        Resource[] resourceMappers = resolver.getResources("classpath*:mapper/**/*.xml");
+        Resource[] mapperLocations = new Resource[packageMappers.length + resourceMappers.length];
+        System.arraycopy(packageMappers, 0, mapperLocations, 0, packageMappers.length);
+        System.arraycopy(resourceMappers, 0, mapperLocations, packageMappers.length, resourceMappers.length);
+
         sqlSessionFactory.setConfigLocation(applicationContext.getResource("classpath:/mybatis-config.xml"));
         sqlSessionFactory.setDataSource(dataSource());
-        sqlSessionFactory.setMapperLocations(
-            new PathMatchingResourcePatternResolver()
-                .getResources("classpath*:com/talented/buttie/mapper/**/*.xml")
-        );
+        sqlSessionFactory.setMapperLocations(mapperLocations);
         return sqlSessionFactory.getObject();
     }
 
