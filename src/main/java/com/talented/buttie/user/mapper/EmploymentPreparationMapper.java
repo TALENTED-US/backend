@@ -6,4 +6,7 @@ import org.apache.ibatis.annotations.Param;
 public interface EmploymentPreparationMapper {
 
     int updateEmploymentPreparation(@Param("employmentPreparation") EmploymentPreparationVO employmentPreparation);
+
+
+    int insertEmploymentPreparation(@Param("employmentPreparation") EmploymentPreparationVO employmentPreparation);
 }

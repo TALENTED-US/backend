@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.user.exception.UserErrorCode;
+import com.talented.buttie.user.dto.request.CreateEmploymentPreparationRequestDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -22,5 +23,16 @@ public class UserService {
             throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_NOT_FOUND);
         }
         return employmentPreparation;
+    }
+    public Long createEmploymentPreparation(Long userId, CreateEmploymentPreparationRequestDTO request) {
+
+        EmploymentPreparationVO employmentPreparation =
+            EmploymentPreparationVO.createEmploymentPreparation(userId, request);
+
+        int inserted = employmentPreparationMapper.insertEmploymentPreparation(employmentPreparation);
+        if (inserted == 0) {
+            throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_CREATE_FAILED);
+        }
+        return userId;
     }
 }
