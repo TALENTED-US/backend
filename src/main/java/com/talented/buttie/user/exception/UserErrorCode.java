@@ -14,8 +14,8 @@ public enum UserErrorCode implements BaseErrorCode {
     EMPLOYMENT_PREPARATION_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_003", "취업 준비 정보를 찾을 수 없습니다."),
     DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "USER_004", "이미 사용 중인 닉네임입니다."),
     PASSWORD_MISMATCH(HttpStatus.UNAUTHORIZED, "USER_005", "비밀번호가 일치하지 않습니다."),
+    EMPLOYMENT_PREPARATION_CREATE_FAILED(HttpStatus.BAD_REQUEST, "USER_006", "취업 준비 정보 등록에 실패했습니다."),
     ;
-
     private final HttpStatus httpStatus;
     private final String customCode;
     private final String message;

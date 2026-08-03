@@ -107,4 +107,12 @@
     WHERE TRANSACTION_ID = #{transactionId}
   </update>
 
+  <!-- 수동 등록 거래 삭제 (Soft Delete) -->
+  <update id="deleteTransaction">
+    UPDATE `TRANSACTION`
+    SET IS_DELETED = true,
+        TRANSACTION_UPDATED_AT = NOW()
+    WHERE TRANSACTION_ID = #{transactionId}
+  </update>
+
 </mapper>

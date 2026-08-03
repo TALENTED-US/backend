@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.user.domain.EmploymentPreparationType;
@@ -16,6 +17,7 @@ import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDT
 import com.talented.buttie.user.dto.request.WithdrawUserRequestDTO;
 import com.talented.buttie.user.exception.UserErrorCode;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
+import com.talented.buttie.user.dto.request.ModifyUserProfileRequestDTO;
 import com.talented.buttie.user.mapper.UserMapper;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
@@ -32,10 +34,8 @@ class UserServiceTest {
 
     @Mock
     private EmploymentPreparationMapper employmentPreparationMapper;
-
     @Mock
     private UserMapper userMapper;
-
     @InjectMocks
     private UserService userService;
 
@@ -93,6 +93,66 @@ class UserServiceTest {
             exception.getCode()
         );
     }
+    @Test
+    @DisplayName("닉네임을 수정하면 수정된 사용자 ID를 반환한다.")
+    void modifyUserProfile() {
+        Long userId = 1L;
+        ModifyUserProfileRequestDTO request = new ModifyUserProfileRequestDTO("새닉네임");
+
+        given(userMapper.countByNickname("새닉네임"))
+            .willReturn(0);
+        given(userMapper.updateUser(any(UserVO.class)))
+            .willReturn(1);
+
+        Long result = userService.modifyUserProfile(userId, request);
+
+        assertEquals(userId, result);
+        verify(userMapper).countByNickname("새닉네임");
+        verify(userMapper).updateUser(any(UserVO.class));
+    }
+
+    @Test
+    @DisplayName("이미 사용 중인 닉네임이면 예외가 발생한다.")
+    void throwWhenDuplicateNickname() {
+        Long userId = 1L;
+        ModifyUserProfileRequestDTO request = new ModifyUserProfileRequestDTO("중복닉네임");
+
+        given(userMapper.countByNickname("중복닉네임"))
+            .willReturn(1);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> userService.modifyUserProfile(userId, request)
+        );
+
+        assertEquals(
+            UserErrorCode.DUPLICATE_NICKNAME,
+            exception.getCode()
+        );
+        verify(userMapper, never()).updateUser(any(UserVO.class));
+    }
+    @Test
+    @DisplayName("프로필 수정 시 해당 사용자가 없으면 예외가 발생한다.")
+    void throwWhenModifyProfileTargetNotFound() {
+        Long userId = 999L;
+        ModifyUserProfileRequestDTO request = new ModifyUserProfileRequestDTO("새닉네임");
+
+        given(userMapper.countByNickname("새닉네임"))
+            .willReturn(0);
+        given(userMapper.updateUser(any(UserVO.class)))
+            .willReturn(0);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> userService.modifyUserProfile(userId, request)
+        );
+
+        assertEquals(
+            UserErrorCode.USER_NOT_FOUND,
+            exception.getCode()
+        );
+    }
+
     @Test
     @DisplayName("회원 프로필을 조회하면 해당 사용자의 프로필 정보를 반환한다.")
     void getUserProfile() {

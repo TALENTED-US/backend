@@ -1,27 +1,39 @@
 package com.talented.buttie.user.service;
 
-import com.talented.buttie.user.domain.EmploymentPreparationVO;
-import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
-import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.domain.UserProfileVO;
-import com.talented.buttie.user.exception.UserErrorCode;
 import com.talented.buttie.user.domain.UserVO;
+import com.talented.buttie.user.dto.request.CreateEmploymentPreparationRequestDTO;
+import com.talented.buttie.user.dto.request.ModifyUserProfileRequestDTO;
+import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
 import com.talented.buttie.user.dto.request.WithdrawUserRequestDTO;
+import com.talented.buttie.user.exception.UserErrorCode;
+import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import com.talented.buttie.user.mapper.UserMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final EmploymentPreparationMapper employmentPreparationMapper;
+
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final EmploymentPreparationMapper employmentPreparationMapper;
+
+    public UserProfileVO getUserProfile(Long userId) {
+        UserProfileVO userProfile = userMapper.selectUserProfile(userId);
+
+        if (userProfile == null) {
+            throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
+        }
+
+        return userProfile;
+    }
 
     public Long modifyEmploymentPreparation(Long userId, UpdateEmploymentPreparationRequestDTO request) {
-
         EmploymentPreparationVO employmentPreparation =
             EmploymentPreparationVO.createEmploymentPreparation(userId, request);
 
@@ -31,7 +43,6 @@ public class UserService {
         }
         return userId;
     }
-
     public EmploymentPreparationVO getEmploymentPreparation(Long userId) {
         EmploymentPreparationVO employmentPreparation =
             employmentPreparationMapper.selectEmploymentPreparation(userId);
@@ -60,14 +71,30 @@ public class UserService {
         return userId;
     }
 
+    public Long createEmploymentPreparation(Long userId, CreateEmploymentPreparationRequestDTO request) {
 
-    public UserProfileVO getUserProfile(Long userId) {
-        UserProfileVO vo = userMapper.selectUserProfile(userId);
+        EmploymentPreparationVO employmentPreparation =
+            EmploymentPreparationVO.createEmploymentPreparation(userId, request);
 
-        if (vo == null) {
+        int inserted = employmentPreparationMapper.insertEmploymentPreparation(employmentPreparation);
+        if (inserted == 0) {
+            throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_CREATE_FAILED);
+        }
+        return userId;
+    }
+
+    public Long modifyUserProfile(Long userId, ModifyUserProfileRequestDTO request) {
+        if (userMapper.countByNickname(request.nickname()) > 0) {
+            throw ApplicationException.from(UserErrorCode.DUPLICATE_NICKNAME);
+        }
+
+        UserVO user = UserVO.createModifiedUser(userId, request.nickname());
+        int updatedUserId = userMapper.updateUser(user);
+
+        if (updatedUserId == 0) {
             throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
         }
 
-        return vo;
+        return userId;
     }
 }

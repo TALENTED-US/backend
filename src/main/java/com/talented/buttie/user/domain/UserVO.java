@@ -27,4 +27,11 @@ public class UserVO {
             .userWithdrawnAt(LocalDateTime.now())
             .build();
     }
+
+    public static UserVO createModifiedUser(Long userId, String nickname) {
+        return UserVO.builder()
+            .userId(userId)
+            .userNickname(nickname)
+            .build();
+    }
 }

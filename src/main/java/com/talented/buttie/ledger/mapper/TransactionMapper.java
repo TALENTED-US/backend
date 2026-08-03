@@ -18,4 +18,7 @@ public interface TransactionMapper {
 
     // 외부 연동 거래 메모 단일 수정 (외부거래 ID가 있을 때 사용)
     int updateTransactionMemo(@Param("transactionId") Long transactionId, @Param("transactionMemo") String transactionMemo);
+
+    // 수동 등록 거래 삭제
+    int deleteTransaction(@Param("transactionId") Long transactionId);
 }
