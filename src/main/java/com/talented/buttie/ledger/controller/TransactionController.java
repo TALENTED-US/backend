@@ -6,7 +6,6 @@ import com.talented.buttie.common.security.annotation.AuthUser;
 import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.ledger.domain.TransactionVO;
 import com.talented.buttie.ledger.dto.request.CreateTransactionRequest;
-import com.talented.buttie.ledger.dto.request.DeleteTransactionRequest;
 import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequest;
 import com.talented.buttie.ledger.dto.request.UpdateTransactionRequest;
 import com.talented.buttie.ledger.dto.response.TransactionResponse;
@@ -95,11 +94,11 @@ public class TransactionController {
     @ApiOperation("수동 거래 내역 삭제 (외부거래 ID가 없을 때 사용)")
     @DeleteMapping("/{transactionId}")
     public ApplicationResponse<Long> deleteTransaction(
-        @AuthUser AuthenticationUser user,
-        @Valid @RequestBody DeleteTransactionRequest request
+        @PathVariable Long transactionId,
+        @AuthUser AuthenticationUser user
     ){
         Long targetUserId = user.userId();
-        Long deleteUserId = deleteTransactionService.deleteTransaction(targetUserId, request);
+        Long deleteUserId = deleteTransactionService.deleteTransaction(targetUserId, transactionId);
         return ApplicationResponse.onSuccess(deleteUserId);
     }
 }

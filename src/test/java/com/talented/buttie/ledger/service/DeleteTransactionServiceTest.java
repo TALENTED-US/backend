@@ -8,7 +8,6 @@ import static org.mockito.Mockito.verify;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.ledger.domain.TransactionVO;
-import com.talented.buttie.ledger.dto.request.DeleteTransactionRequest;
 import com.talented.buttie.ledger.exception.LedgerErrorCode;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,15 +29,11 @@ class DeleteTransactionServiceTest {
 
     private Long userId;
     private Long transactionId;
-    private DeleteTransactionRequest request;
 
     @BeforeEach
     void setUp() {
         userId = 1L;
         transactionId = 100L;
-        request = DeleteTransactionRequest.builder()
-            .transactionId(transactionId)
-            .build();
     }
 
     @Test
@@ -53,7 +48,7 @@ class DeleteTransactionServiceTest {
         given(transactionMapper.findById(transactionId)).willReturn(existingTransaction);
         given(transactionMapper.deleteTransaction(transactionId)).willReturn(1);
 
-        Long result = deleteTransactionService.deleteTransaction(userId, request);
+        Long result = deleteTransactionService.deleteTransaction(userId, transactionId);
 
         assertEquals(userId, result);
         verify(transactionMapper).deleteTransaction(transactionId);
@@ -65,7 +60,7 @@ class DeleteTransactionServiceTest {
         given(transactionMapper.findById(transactionId)).willReturn(null);
 
         ApplicationException exception = assertThrows(ApplicationException.class,
-            () -> deleteTransactionService.deleteTransaction(userId, request));
+            () -> deleteTransactionService.deleteTransaction(userId, transactionId));
 
         assertEquals(LedgerErrorCode.TRANSACTION_NOT_FOUND, exception.getCode());
         verify(transactionMapper, never()).deleteTransaction(anyLong());
@@ -83,7 +78,7 @@ class DeleteTransactionServiceTest {
         given(transactionMapper.findById(transactionId)).willReturn(otherUserTransaction);
 
         ApplicationException exception = assertThrows(ApplicationException.class,
-            () -> deleteTransactionService.deleteTransaction(userId, request));
+            () -> deleteTransactionService.deleteTransaction(userId, transactionId));
 
         assertEquals(LedgerErrorCode.TRANSACTION_DELETE_USER_ID_MISMATCH, exception.getCode());
         verify(transactionMapper, never()).deleteTransaction(anyLong());
@@ -101,7 +96,7 @@ class DeleteTransactionServiceTest {
         given(transactionMapper.findById(transactionId)).willReturn(externalTransaction);
 
         ApplicationException exception = assertThrows(ApplicationException.class,
-            () -> deleteTransactionService.deleteTransaction(userId, request));
+            () -> deleteTransactionService.deleteTransaction(userId, transactionId));
 
         assertEquals(LedgerErrorCode.EXTERNAL_TRANSACTION_UNDELETABLE, exception.getCode());
         verify(transactionMapper, never()).deleteTransaction(anyLong());
