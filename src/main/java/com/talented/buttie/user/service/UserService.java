@@ -56,9 +56,9 @@ public class UserService {
         }
 
         UserVO user = UserVO.createModifiedUser(userId, request.nickname());
-        int updatedRows = userMapper.updateUser(user);
+        int updatedUserId = userMapper.updateUser(user);
 
-        if (updatedRows == 0) {
+        if (updatedUserId == 0) {
             throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
         }
 
