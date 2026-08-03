@@ -3,21 +3,11 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.talented.buttie.user.mapper.UserMapper">
-  <select id="selectUserById" resultType="com.talented.buttie.user.domain.UserVO">
-    SELECT
-      USER_ID,
-      USER_NAME,
-      USER_EMAIL,
-      USER_PASSWORD_HASH,
-      USER_NICKNAME,
-      USER_PHONE_NUMBER,
-      USER_ONBOARDING_COMPLETED,
-      USER_STATUS,
-      USER_WITHDRAWN_AT,
-      USER_CREATED_AT,
-      USER_UPDATED_AT
+  <select id="getPasswordByUserId" resultType="String">
+    SELECT USER_PASSWORD_HASH
     FROM `USER`
     WHERE USER_ID = #{userId}
+      AND USER_STATUS != 'WITHDRAWN'
   </select>
   <select id="selectUserProfile" resultType="com.talented.buttie.user.domain.UserProfileVO">
     SELECT
