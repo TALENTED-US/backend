@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -92,13 +93,13 @@ public class TransactionController {
     }
 
     @ApiOperation("수동 거래 내역 삭제 (외부거래 ID가 없을 때 사용)")
-    @DeleteMapping("")
-    public ApplicationResponse<UserPKResponseDTO> deleteTransaction(
+    @DeleteMapping("/{transactionId}")
+    public ApplicationResponse<Long> deleteTransaction(
         @AuthUser AuthenticationUser user,
         @Valid @RequestBody DeleteTransactionRequest request
     ){
         Long targetUserId = user.userId();
         Long deleteUserId = deleteTransactionService.deleteTransaction(targetUserId, request);
-        return ApplicationResponse.onSuccess(new UserPKResponseDTO(PKCrypto.encrypt(deleteUserId)));
+        return ApplicationResponse.onSuccess(deleteUserId);
     }
 }

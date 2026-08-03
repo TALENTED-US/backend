@@ -53,8 +53,9 @@ class DeleteTransactionServiceTest {
         given(transactionMapper.findById(transactionId)).willReturn(existingTransaction);
         given(transactionMapper.deleteTransaction(transactionId)).willReturn(1);
 
-        assertDoesNotThrow(() -> deleteTransactionService.deleteTransaction(userId, request));
+        Long result = deleteTransactionService.deleteTransaction(userId, request);
 
+        assertEquals(userId, result);
         verify(transactionMapper).deleteTransaction(transactionId);
     }
 
