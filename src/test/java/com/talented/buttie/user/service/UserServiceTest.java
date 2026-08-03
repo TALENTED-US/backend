@@ -39,8 +39,8 @@ class UserServiceTest {
     private UserService userService;
 
     @Test
-    @DisplayName("취업 준비 정보를 저장하면 수정된 VO를 반환한다.")
-    void saveEmploymentPreparation() {
+    @DisplayName("취업 준비 정보를 수정하면 수정된 사용자의 ID를 반환한다.")
+    void modifyEmploymentPreparation() {
         Long userId = 1L;
         UpdateEmploymentPreparationRequestDTO request = new UpdateEmploymentPreparationRequestDTO(
             LocalDate.of(1999, 3, 15),
@@ -55,17 +55,16 @@ class UserServiceTest {
         given(employmentPreparationMapper.updateEmploymentPreparation(any(EmploymentPreparationVO.class)))
             .willReturn(1);
 
-        EmploymentPreparationVO result = userService.saveEmploymentPreparation(userId, request);
+        Long result = userService.modifyEmploymentPreparation(userId, request);
 
         assertNotNull(result);
-        assertEquals(userId, result.getUserId());
-        assertEquals("서울특별시", result.getEmploymentPrepRegion());
+        assertEquals(userId, result);
         verify(employmentPreparationMapper).updateEmploymentPreparation(any(EmploymentPreparationVO.class));
     }
 
     @Test
-    @DisplayName("취업 준비 정보 저장 시 해당 사용자가 없으면 예외가 발생한다.")
-    void throwWhenSaveTargetNotFound() {
+    @DisplayName("취업 준비 정보 수정 시 해당 사용자가 없으면 예외가 발생한다.")
+    void throwWhenModifyTargetNotFound() {
         Long userId = 999L;
         UpdateEmploymentPreparationRequestDTO request = new UpdateEmploymentPreparationRequestDTO(
             LocalDate.of(1999, 3, 15),
@@ -82,7 +81,7 @@ class UserServiceTest {
 
         ApplicationException exception = assertThrows(
             ApplicationException.class,
-            () -> userService.saveEmploymentPreparation(userId, request)
+            () -> userService.modifyEmploymentPreparation(userId, request)
         );
 
         assertEquals(
@@ -130,7 +129,7 @@ class UserServiceTest {
     }
     @Test
     @DisplayName("프로필 수정 시 해당 사용자가 없으면 예외가 발생한다.")
-    void throwWhenModifyTargetNotFound() {
+    void throwWhenModifyProfileTargetNotFound() {
         Long userId = 999L;
         ModifyUserProfileRequestDTO request = new ModifyUserProfileRequestDTO("새닉네임");
 
