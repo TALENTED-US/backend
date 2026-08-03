@@ -7,15 +7,19 @@ import com.talented.buttie.ledger.domain.TransactionVO;
 import com.talented.buttie.ledger.dto.request.CreateTransactionRequest;
 import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequest;
 import com.talented.buttie.ledger.dto.request.UpdateTransactionRequest;
+import com.talented.buttie.ledger.dto.response.TransactionDetailResponse;
 import com.talented.buttie.ledger.dto.response.TransactionResponse;
-import com.talented.buttie.ledger.service.ReadTransactionService;
 import com.talented.buttie.ledger.service.CreateTransactionService;
+import com.talented.buttie.ledger.service.DeleteTransactionService;
+import com.talented.buttie.ledger.service.ReadTransactionService;
+import com.talented.buttie.ledger.service.ReadTransactionDetailService;
 import com.talented.buttie.ledger.service.UpdateTransactionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +36,8 @@ public class TransactionController {
     private final ReadTransactionService readTransactionService;
     private final CreateTransactionService createTransactionService;
     private final UpdateTransactionService updateTransactionService;
+    private final DeleteTransactionService deleteTransactionService;
+    private final ReadTransactionDetailService readTransactionDetailService;
 
     @ApiOperation("거래 목록 조회")
     @GetMapping("")
@@ -99,11 +105,11 @@ public class TransactionController {
     @ApiOperation("거래 상세 조회")
     @GetMapping("/{transactionId}")
     public ApplicationResponse<TransactionDetailResponse> getTransactionDetail(
-        @PathVariable Long transactionId,
+        @PathVariable("transactionId") Long transactionId,
         @AuthUser AuthenticationUser user
     ){
         Long targetUserId = user.userId();
-        TransactionDetailResponse response = transactionDetailService.getTransactionDetail(targetUserId, transactionId);
+        TransactionDetailResponse response = readTransactionDetailService.getTransactionDetail(targetUserId, transactionId);
         return ApplicationResponse.onSuccess(response);
     }
 }

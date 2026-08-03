@@ -18,13 +18,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class TransactionDetailServiceTest {
+class ReadTransactionDetailServiceTest {
 
     @Mock
     private TransactionMapper transactionMapper;
 
     @InjectMocks
-    private TransactionDetailService transactionDetailService;
+    private ReadTransactionDetailService readTransactionDetailService;
 
     private Long userId;
     private Long transactionId;
@@ -49,7 +49,7 @@ class TransactionDetailServiceTest {
     void getTransactionDetailSuccess() {
         given(transactionMapper.findById(transactionId)).willReturn(sampleTransaction);
 
-        TransactionDetailResponse response = transactionDetailService.getTransactionDetail(userId, transactionId);
+        TransactionDetailResponse response = readTransactionDetailService.getTransactionDetail(userId, transactionId);
 
         assertNotNull(response);
         assertEquals("점심 식사", response.transactionContent());
@@ -64,7 +64,7 @@ class TransactionDetailServiceTest {
         given(transactionMapper.findById(transactionId)).willReturn(null);
 
         ApplicationException exception = assertThrows(ApplicationException.class,
-            () -> transactionDetailService.getTransactionDetail(userId, transactionId));
+            () -> readTransactionDetailService.getTransactionDetail(userId, transactionId));
 
         assertEquals(LedgerErrorCode.TRANSACTION_NOT_FOUND, exception.getCode());
     }
@@ -79,7 +79,7 @@ class TransactionDetailServiceTest {
         given(transactionMapper.findById(transactionId)).willReturn(otherUserTransaction);
 
         ApplicationException exception = assertThrows(ApplicationException.class,
-            () -> transactionDetailService.getTransactionDetail(userId, transactionId));
+            () -> readTransactionDetailService.getTransactionDetail(userId, transactionId));
 
         assertEquals(LedgerErrorCode.TRANSACTION_USER_ID_MISMATCH, exception.getCode());
     }
