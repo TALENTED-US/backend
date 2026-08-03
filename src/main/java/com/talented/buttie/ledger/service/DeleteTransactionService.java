@@ -17,9 +17,6 @@ public class DeleteTransactionService {
 
     @Transactional
     public Long deleteTransaction(Long userId, DeleteTransactionRequest request) {
-        if (request == null || request.transactionId() == null || userId == null) {
-            throw ApplicationException.from(LedgerErrorCode.TRANSACTION_BAD_REQUEST);
-        }
 
         TransactionVO original = transactionMapper.findById(request.transactionId());
 
