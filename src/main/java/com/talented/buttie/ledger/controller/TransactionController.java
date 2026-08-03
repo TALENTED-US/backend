@@ -3,25 +3,30 @@ package com.talented.buttie.ledger.controller;
 import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.annotation.AuthUser;
+import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.ledger.domain.TransactionVO;
 import com.talented.buttie.ledger.dto.request.CreateTransactionRequest;
 import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequest;
 import com.talented.buttie.ledger.dto.request.UpdateTransactionRequest;
 import com.talented.buttie.ledger.dto.response.TransactionResponse;
-import com.talented.buttie.ledger.service.ReadTransactionService;
 import com.talented.buttie.ledger.service.CreateTransactionService;
+import com.talented.buttie.ledger.service.DeleteTransactionService;
+import com.talented.buttie.ledger.service.ReadTransactionService;
 import com.talented.buttie.ledger.service.UpdateTransactionService;
+import com.talented.buttie.user.dto.response.UserPKResponseDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -32,6 +37,7 @@ public class TransactionController {
     private final ReadTransactionService readTransactionService;
     private final CreateTransactionService createTransactionService;
     private final UpdateTransactionService updateTransactionService;
+    private final DeleteTransactionService deleteTransactionService;
 
     @ApiOperation("거래 목록 조회")
     @GetMapping("")
@@ -83,5 +89,16 @@ public class TransactionController {
         Long targetUserId = user.userId();
         TransactionVO transactionMemo = updateTransactionService.updateTransactionMemo(targetUserId, transactionId, request);
         return ApplicationResponse.onSuccess(TransactionResponse.from(transactionMemo));
+    }
+
+    @ApiOperation("수동 거래 내역 삭제 (외부거래 ID가 없을 때 사용)")
+    @DeleteMapping("/{transactionId}")
+    public ApplicationResponse<Long> deleteTransaction(
+        @PathVariable Long transactionId,
+        @AuthUser AuthenticationUser user
+    ){
+        Long targetUserId = user.userId();
+        Long deleteUserId = deleteTransactionService.deleteTransaction(targetUserId, transactionId);
+        return ApplicationResponse.onSuccess(deleteUserId);
     }
 }
