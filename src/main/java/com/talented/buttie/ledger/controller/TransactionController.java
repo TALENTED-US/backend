@@ -99,6 +99,6 @@ public class TransactionController {
     ){
         Long targetUserId = user.userId();
         Long deleteUserId = deleteTransactionService.deleteTransaction(targetUserId, request);
-        return ApplicationResponse.onSuccess(new UserPKResponseDTO(PKCrypto.encrypt(targetUserId)));
+        return ApplicationResponse.onSuccess(new UserPKResponseDTO(PKCrypto.encrypt(deleteUserId)));
     }
 }
