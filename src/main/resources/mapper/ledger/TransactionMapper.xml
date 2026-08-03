@@ -78,6 +78,62 @@
       AND IS_DELETED = false
   </select>
 
+  <select id="aggregateSnapshotTransactions"
+          resultType="com.talented.buttie.snapshot.dto.response.SnapshotTransactionAggregateResponse">
+    select
+        coalesce(sum(
+            case
+                when TRANSACTION_TYPE = 'INCOME'
+                    and dayofweek(TRANSACTION_AT) between 2 and 6
+                then TRANSACTION_AMOUNT
+                else 0
+            end
+        ), 0) as weekIncomeTotal,
+        coalesce(sum(
+            case
+                when TRANSACTION_TYPE in ('EXPENSE', 'FIXED')
+                    and dayofweek(TRANSACTION_AT) between 2 and 6
+                then TRANSACTION_AMOUNT
+                else 0
+            end
+        ), 0) as weekExpenseTotal,
+        coalesce(sum(
+            case
+                when TRANSACTION_TYPE = 'INCOME'
+                    and dayofweek(TRANSACTION_AT) in (1, 7)
+                then TRANSACTION_AMOUNT
+                else 0
+            end
+        ), 0) as weekendIncomeTotal,
+        coalesce(sum(
+            case
+                when TRANSACTION_TYPE in ('EXPENSE', 'FIXED')
+                    and dayofweek(TRANSACTION_AT) in (1, 7)
+                then TRANSACTION_AMOUNT
+                else 0
+            end
+        ), 0) as weekendExpenseTotal,
+        coalesce(sum(
+            case
+                when TRANSACTION_TYPE = 'INCOME'
+                then TRANSACTION_AMOUNT
+                else 0
+            end
+        ), 0) as monthlyIncomeTotal,
+        coalesce(sum(
+            case
+                when TRANSACTION_TYPE in ('EXPENSE', 'FIXED')
+                then TRANSACTION_AMOUNT
+                else 0
+            end
+        ), 0) as monthlyExpenseTotal
+    from `TRANSACTION`
+    where USER_ID = #{userId}
+    and IS_DELETED = false
+    and TRANSACTION_AT >= #{fromDateTime}
+    and TRANSACTION_AT < #{toDateTime}
+  </select>
+
   <!-- 수동 등록 거래 전체 수정 (외부거래 ID가 없을 때 사용) -->
   <update id="updateTransaction" parameterType="com.talented.buttie.ledger.domain.TransactionVO">
     UPDATE `TRANSACTION`

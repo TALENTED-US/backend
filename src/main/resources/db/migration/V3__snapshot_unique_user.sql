@@ -1,0 +1,22 @@
+DELETE s
+FROM `SNAPSHOT` s
+JOIN (
+    SELECT SNAPSHOT_ID
+    FROM (
+        SELECT
+            SNAPSHOT_ID,
+            ROW_NUMBER() OVER (
+                PARTITION BY USER_ID
+                ORDER BY SNAPSHOT_BASE_DATE DESC, SNAPSHOT_CREATED_AT DESC, SNAPSHOT_ID DESC
+            ) AS rn
+        FROM `SNAPSHOT`
+    ) ranked
+    WHERE ranked.rn > 1
+) duplicate_snapshot
+ON s.SNAPSHOT_ID = duplicate_snapshot.SNAPSHOT_ID;
+
+ALTER TABLE `SNAPSHOT`
+    DROP INDEX `UK_SNAPSHOT_USER_BASE_DATE`;
+
+ALTER TABLE `SNAPSHOT`
+    ADD UNIQUE KEY `UK_SNAPSHOT_USER` (`USER_ID`);
