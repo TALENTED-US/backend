@@ -11,6 +11,8 @@ import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.dto.request.ModifyUserProfileRequestDTO;
 import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
 import com.talented.buttie.user.dto.response.UserPKResponseDTO;
+import com.talented.buttie.user.dto.request.CreateEmploymentPreparationRequestDTO;
+import org.springframework.web.bind.annotation.PostMapping;
 import com.talented.buttie.user.dto.response.GetEmploymentPreparationResponseDTO;
 
 import io.swagger.annotations.Api;
@@ -45,6 +47,17 @@ public class UserController {
         return ApplicationResponse.onSuccess(new UserPKResponseDTO(PKCrypto.encrypt(userId)));
     }
 
+
+    @PostMapping("/employment-preparation")
+    @ApiOperation("취업 준비 정보 등록")
+    public ApplicationResponse<UserPKResponseDTO> createEmploymentPreparation(
+        @AuthUser AuthenticationUser user,
+        @Valid @RequestBody CreateEmploymentPreparationRequestDTO request
+    ) {
+        Long targetUserId = user.userId();
+        Long userId = userService.createEmploymentPreparation(targetUserId, request);
+        return ApplicationResponse.onSuccess(new UserPKResponseDTO(PKCrypto.encrypt(userId)));
+    }
     @GetMapping
     @ApiOperation("회원 프로필 조회")
     public ApplicationResponse<GetUserProfileResponseDTO> getUserProfile(

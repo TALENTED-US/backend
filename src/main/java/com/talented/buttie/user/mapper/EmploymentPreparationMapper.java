@@ -7,5 +7,8 @@ public interface EmploymentPreparationMapper {
     Integer getLivingThresholdByUserId(@Param("userId") Long userId);
     int updateEmploymentPreparation(@Param("employmentPreparation") EmploymentPreparationVO employmentPreparation);
 
+
+    int insertEmploymentPreparation(@Param("employmentPreparation") EmploymentPreparationVO employmentPreparation);
+
     EmploymentPreparationVO selectEmploymentPreparation(@Param("userId") Long userId);
 }

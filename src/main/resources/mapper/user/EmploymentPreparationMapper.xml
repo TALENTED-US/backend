@@ -12,7 +12,7 @@
     UPDATE EMPLOYMENT_PREPARATIONS
     SET
       BIRTH_DATE = #{employmentPreparation.birthDate},
-      EMPLOYMENT_PREP_REGION = #{employmentPreparation.employmentPrepRegion},
+      EMPLOYMENT_PREP_REGION  = #{employmentPreparation.employmentPrepRegion},
       FAMILY_COUNT = #{employmentPreparation.familyCount},
       EMPLOYMENT_PREP_TYPE = #{employmentPreparation.employmentPrepType},
       PREP_START_DATE = #{employmentPreparation.prepStartDate},
@@ -20,6 +20,28 @@
       LIVING_FUND_THRESHOLD = #{employmentPreparation.livingFundThreshold}
     WHERE USER_ID = #{employmentPreparation.userId}
   </update>
+
+  <insert id="insertEmploymentPreparation">
+    INSERT INTO EMPLOYMENT_PREPARATIONS (
+      USER_ID,
+      BIRTH_DATE,
+      EMPLOYMENT_PREP_REGION,
+      FAMILY_COUNT,
+      EMPLOYMENT_PREP_TYPE,
+      PREP_START_DATE,
+      TARGET_EMPLOYMENT_DATE,
+      LIVING_FUND_THRESHOLD
+    ) VALUES (
+               #{employmentPreparation.userId},
+               #{employmentPreparation.birthDate},
+               #{employmentPreparation.employmentPrepRegion},
+               #{employmentPreparation.familyCount},
+               #{employmentPreparation.employmentPrepType},
+               #{employmentPreparation.prepStartDate},
+               #{employmentPreparation.targetEmploymentDate},
+               #{employmentPreparation.livingFundThreshold}
+             )
+  </insert>
 
   <select id="selectEmploymentPreparation" resultType="com.talented.buttie.user.domain.EmploymentPreparationVO">
     SELECT
