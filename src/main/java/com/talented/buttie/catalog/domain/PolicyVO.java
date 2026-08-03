@@ -1,5 +1,6 @@
 package com.talented.buttie.catalog.domain;
 
+import com.talented.buttie.simulation.domain.SimulationRecurrenceType;
 import java.time.LocalDateTime;
 import lombok.*;
 
@@ -12,6 +13,7 @@ public class PolicyVO {
     private Integer policyMaxAge;
     private String policyRegion;
     private Integer policySupportAmount;
+    private SimulationRecurrenceType policyRecurrenceType;
     private LocalDateTime dueDate;
     private String requiredDocument;
     private String employmentPrepStatus;
