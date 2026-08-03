@@ -29,8 +29,7 @@ public class UserService {
         return userProfile;
     }
 
-    public EmploymentPreparationVO saveEmploymentPreparation(Long userId, UpdateEmploymentPreparationRequestDTO request) {
-
+    public Long modifyEmploymentPreparation(Long userId, UpdateEmploymentPreparationRequestDTO request) {
         EmploymentPreparationVO employmentPreparation =
             EmploymentPreparationVO.createEmploymentPreparation(userId, request);
 
@@ -38,7 +37,7 @@ public class UserService {
         if (updated == 0) {
             throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_NOT_FOUND);
         }
-        return employmentPreparation;
+        return userId;
     }
     public EmploymentPreparationVO getEmploymentPreparation(Long userId) {
         EmploymentPreparationVO employmentPreparation =
