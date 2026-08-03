@@ -1,9 +1,11 @@
 package com.talented.buttie.ledger.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
 import com.talented.buttie.ledger.domain.TransactionVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
@@ -12,7 +14,7 @@ import lombok.Builder;
 @Builder
 public record FixedExpenseDetailResponse(
     @ApiModelProperty(value = "거래 내용", example = "월세")
-    @NotBlank (message = "거래 내용은 필수입니다.")
+    @NotBlank(message = "거래 내용은 필수입니다.")
     String transactionContent,
 
     @ApiModelProperty(value = "거래 금액", example = "500000")
@@ -21,7 +23,11 @@ public record FixedExpenseDetailResponse(
 
     @ApiModelProperty(value = "지출 카테고리", example = "HOUSING")
     @NotNull
-    ExpenseCategory expenseCategory
+    ExpenseCategory expenseCategory,
+
+    @ApiModelProperty(value = "거래 일시", example = "2026-08-03T12:30:00")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    LocalDateTime transactionAt
 ) {
 
     public static FixedExpenseDetailResponse from(TransactionVO vo) {
@@ -29,6 +35,7 @@ public record FixedExpenseDetailResponse(
             .transactionContent(vo.getTransactionContent())
             .transactionAmount(vo.getTransactionAmount())
             .expenseCategory(vo.getExpenseCategory())
+            .transactionAt(vo.getTransactionAt())
             .build();
     }
 }
