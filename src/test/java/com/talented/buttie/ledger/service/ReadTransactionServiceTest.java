@@ -18,13 +18,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class GetTransactionServiceTest {
+class ReadTransactionServiceTest {
 
     @Mock
     private TransactionMapper transactionMapper;
 
     @InjectMocks
-    private GetTransactionService getTransactionService;
+    private ReadTransactionService readTransactionService;
 
     private Long userId;
 
@@ -52,7 +52,7 @@ class GetTransactionServiceTest {
 
             given(transactionMapper.findAllByUserId(userId)).willReturn(mockList);
 
-            List<TransactionVO> result = getTransactionService.getAllTransactions(userId);
+            List<TransactionVO> result = readTransactionService.getAllTransactions(userId);
 
             assertNotNull(result);
             assertEquals(2, result.size());
@@ -66,7 +66,7 @@ class GetTransactionServiceTest {
     void ThrowsWhenNull(){
         given(transactionMapper.findAllByUserId(userId)).willReturn(null);
 
-        ApplicationException exception = assertThrows(ApplicationException.class, () -> getTransactionService.getAllTransactions(userId));
+        ApplicationException exception = assertThrows(ApplicationException.class, () -> readTransactionService.getAllTransactions(userId));
 
         assertEquals(LedgerErrorCode.TRANSACTION_NOT_FOUND.getMessage(), exception.getMessage());
         assertEquals(LedgerErrorCode.TRANSACTION_NOT_FOUND, exception.getCode());

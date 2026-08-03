@@ -15,10 +15,11 @@
       u.USER_EMAIL,
       ep.BIRTH_DATE
     FROM USER u
-            JOIN USER_BUTTIE ub ON u.USER_ID = ub.USER_ID
+           JOIN USER_BUTTIE ub ON u.USER_ID = ub.USER_ID
            JOIN EMPLOYMENT_PREPARATIONS ep ON u.USER_ID = ep.USER_ID
     WHERE u.USER_ID = #{userId}
   </select>
+
 
   <update id="updateUser">
     UPDATE USER

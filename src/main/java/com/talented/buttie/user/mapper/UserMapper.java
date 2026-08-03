@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import com.talented.buttie.user.domain.UserProfileVO;
 import com.talented.buttie.user.domain.UserVO;
 
+
 @Mapper
 public interface UserMapper {
 
@@ -13,4 +14,5 @@ public interface UserMapper {
     int updateUser(@Param("user") UserVO user);
 
     int countByNickname(@Param("nickname") String nickname);
+
 }

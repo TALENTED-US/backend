@@ -4,7 +4,7 @@ import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.common.security.AccountType;
 import com.talented.buttie.common.security.jwt.JwtTokenProvider;
 import com.talented.buttie.common.security.redis.RefreshTokenRepository;
-import com.talented.buttie.user.dto.response.auth.TokenResponseDTO;
+import com.talented.buttie.user.dto.response.auth.AuthTokenResponseDTO;
 import com.talented.buttie.user.exception.AuthErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
@@ -18,8 +18,8 @@ public class AuthTokenService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
-    
-    public TokenResponseDTO createToken(Long  userId) {
+
+    public AuthTokenResponseDTO createToken(Long userId) {
         String accessToken = jwtTokenProvider.createUserAccessToken(userId);
         String refreshToken = jwtTokenProvider.createRefreshToken(userId, AccountType.USER);
         long refreshTokenExpiration = jwtTokenProvider.getRefreshTokenExpiration();
@@ -34,12 +34,12 @@ public class AuthTokenService {
         } catch (DataAccessException e) {
             throw ApplicationException.from(AuthErrorCode.REFRESH_TOKEN_SAVE_FAILED);
         }
-        
-        return new TokenResponseDTO(accessToken, refreshToken, refreshTokenExpiration);
+
+        return new AuthTokenResponseDTO(accessToken, refreshToken, refreshTokenExpiration);
     }
 
     public Long expirationToken(Long targetUserId) {
-        try{
+        try {
             refreshTokenRepository.delete(targetUserId, AccountType.USER);
         } catch (DataAccessException e) {
             throw ApplicationException.from(AuthErrorCode.REFRESH_TOKEN_DELETE_FAILED);

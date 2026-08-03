@@ -31,6 +31,7 @@ dependencies {
     implementation ("org.springframework:spring-context:${springVersion}")
             { exclude group: 'commons-logging', module: 'commons-logging' }
     implementation "org.springframework:spring-webmvc:${springVersion}"
+    implementation "org.springframework.security:spring-security-crypto:5.8.14"
     implementation 'javax.inject:javax.inject:1'
     // AOP
     implementation 'org.aspectj:aspectjrt:1.9.20'
