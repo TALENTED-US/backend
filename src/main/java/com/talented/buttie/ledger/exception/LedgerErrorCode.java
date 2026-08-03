@@ -15,7 +15,9 @@ public enum LedgerErrorCode implements BaseErrorCode {
 
     TRANSACTION_USER_ID_MISMATCH(HttpStatus.FORBIDDEN, "LEDGER_003", "다른 사용자의 거래를 수정할 권한이 없습니다."),
     TRANSACTION_MEMO_USER_ID_MISMATCH(HttpStatus.FORBIDDEN, "LEDGER_004", "다른 사용자의 거래 메모를 수정할 권한이 없습니다."),
-    EXTERNAL_TRANSACTION_UNMODIFIABLE(HttpStatus.FORBIDDEN, "LEDGER_008", "외부 기관에서 연동된 거래는 금액, 카테고리, 일시를 수정할 수 없습니다. (메모만 수정 가능)");
+    TRANSACTION_DELETE_USER_ID_MISMATCH(HttpStatus.FORBIDDEN, "LEDGER_005", "다른 사용자의 거래를 삭제할 권한이 없습니다."),
+    EXTERNAL_TRANSACTION_UNMODIFIABLE(HttpStatus.FORBIDDEN, "LEDGER_008", "외부 기관에서 연동된 거래는 금액, 카테고리, 일시를 수정할 수 없습니다. (메모만 수정 가능)"),
+    EXTERNAL_TRANSACTION_UNDELETABLE(HttpStatus.FORBIDDEN, "LEDGER_009", "외부 기관에서 연동된 거래는 삭제할 수 없습니다.");
     private final HttpStatus httpStatus;
     private final String customCode;
     private final String message;
