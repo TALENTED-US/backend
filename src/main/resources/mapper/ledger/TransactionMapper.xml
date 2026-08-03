@@ -82,6 +82,9 @@
   <update id="updateTransaction" parameterType="com.talented.buttie.ledger.domain.TransactionVO">
     UPDATE `TRANSACTION`
     <set>
+      <if test="transactionType != null">
+        TRANSACTION_TYPE = #{transactionType},
+      </if>
       <if test="transactionAmount != null">
         TRANSACTION_AMOUNT = #{transactionAmount},
       </if>

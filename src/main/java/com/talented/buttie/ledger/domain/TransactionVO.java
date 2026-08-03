@@ -61,4 +61,11 @@ public class TransactionVO {
             .build();
     }
 
+    public static TransactionVO createFixedExpense(
+        TransactionVO original
+    ){
+        return original.toBuilder()
+            .transactionType(TransactionType.FIXED)
+            .build();
+    }
 }
