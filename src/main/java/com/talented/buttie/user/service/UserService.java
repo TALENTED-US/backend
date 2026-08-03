@@ -6,12 +6,16 @@ import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.user.domain.UserProfileVO;
 import com.talented.buttie.user.exception.UserErrorCode;
+import com.talented.buttie.user.mapper.UserMapper;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final EmploymentPreparationMapper employmentPreparationMapper;
+    private final UserMapper userMapper;
+
     public Long modifyEmploymentPreparation(Long userId, UpdateEmploymentPreparationRequestDTO request) {
 
         EmploymentPreparationVO employmentPreparation =
@@ -32,5 +36,15 @@ public class UserService {
         }
 
         return employmentPreparation;
+    }
+
+    public UserProfileVO getUserProfile(Long userId) {
+        UserProfileVO vo = userMapper.selectUserProfile(userId);
+
+        if (vo == null) {
+            throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
+        }
+
+        return vo;
     }
 }
