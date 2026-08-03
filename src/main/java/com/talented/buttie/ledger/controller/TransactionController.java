@@ -7,9 +7,11 @@ import com.talented.buttie.ledger.domain.TransactionVO;
 import com.talented.buttie.ledger.dto.request.CreateTransactionRequest;
 import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequest;
 import com.talented.buttie.ledger.dto.request.UpdateTransactionRequest;
+import com.talented.buttie.ledger.dto.response.TransactionDetailResponse;
 import com.talented.buttie.ledger.dto.response.TransactionResponse;
 import com.talented.buttie.ledger.service.ReadTransactionService;
 import com.talented.buttie.ledger.service.CreateTransactionService;
+import com.talented.buttie.ledger.service.TransactionDetailService;
 import com.talented.buttie.ledger.service.UpdateTransactionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,6 +34,7 @@ public class TransactionController {
     private final ReadTransactionService readTransactionService;
     private final CreateTransactionService createTransactionService;
     private final UpdateTransactionService updateTransactionService;
+    private final TransactionDetailService transactionDetailService;
 
     @ApiOperation("거래 목록 조회")
     @GetMapping("")
@@ -83,5 +86,16 @@ public class TransactionController {
         Long targetUserId = user.userId();
         TransactionVO transactionMemo = updateTransactionService.updateTransactionMemo(targetUserId, transactionId, request);
         return ApplicationResponse.onSuccess(TransactionResponse.from(transactionMemo));
+    }
+
+    @ApiOperation("거래 상세 조회")
+    @GetMapping("/{transactionId}")
+    public ApplicationResponse<TransactionDetailResponse> getTransactionDetail(
+        @PathVariable Long transactionId,
+        @AuthUser AuthenticationUser user
+    ){
+        Long targetUserId = user.userId();
+        TransactionDetailResponse response = transactionDetailService.getTransactionDetail(targetUserId, transactionId);
+        return ApplicationResponse.onSuccess(response);
     }
 }
