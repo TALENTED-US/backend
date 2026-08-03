@@ -55,13 +55,13 @@ public class UserService {
     }
 
     public Long withdrawUser(Long userId, WithdrawUserRequestDTO request) {
-        UserVO user = userMapper.selectUserById(userId);
+        String passwordHash = userMapper.getPasswordByUserId(userId);
 
-        if (user == null) {
+        if (passwordHash == null) {
             throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
         }
 
-        if (!passwordEncoder.matches(request.password(), user.getUserPasswordHash())){
+        if (!passwordEncoder.matches(request.password(), passwordHash)){
             throw ApplicationException.from(UserErrorCode.PASSWORD_MISMATCH);
         }
 

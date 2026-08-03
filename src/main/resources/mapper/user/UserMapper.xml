@@ -3,7 +3,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.talented.buttie.user.mapper.UserMapper">
-  <select id="getPasswordByUserId" resultType="String">
+  <select id="getPasswordByUserId" resultType="string">
     SELECT USER_PASSWORD_HASH
     FROM `USER`
     WHERE USER_ID = #{userId}
