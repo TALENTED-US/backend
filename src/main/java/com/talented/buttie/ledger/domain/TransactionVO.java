@@ -60,4 +60,5 @@ public class TransactionVO {
             .transactionMemo(request.memo())
             .build();
     }
+
 }
