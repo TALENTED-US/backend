@@ -49,5 +49,6 @@ bin/
 ### Environment variables ###
 .env
 !.env.example
+hs_err_pid*.log
 application.properties
 /postman/
