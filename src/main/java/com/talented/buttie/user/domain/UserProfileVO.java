@@ -7,11 +7,11 @@ import java.time.LocalDate;
 public class UserProfileVO {
 
     private Long userId;
-    private String nickname;
+    private String userNickname;
     private Integer buttieTotalExp;
     private Integer buttieLevel;
-    private String username;
+    private String userName;
     private LocalDate birthDate;
-    private String phoneNumber;
-    private String email;
+    private String userPhoneNumber;
+    private String userEmail;
 }

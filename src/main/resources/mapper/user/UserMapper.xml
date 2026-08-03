@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.talented.buttie.user.mapper.UserMapper">
   <select id="selectUserById" resultType="com.talented.buttie.user.domain.UserVO">
     SELECT
@@ -18,10 +19,26 @@
     FROM `USER`
     WHERE USER_ID = #{userId}
   </select>
+  <select id="selectUserProfile" resultType="com.talented.buttie.user.domain.UserProfileVO">
+    SELECT
+      u.USER_ID,
+      u.USER_NICKNAME,
+      ub.BUTTIE_TOTAL_EXP,
+      ub.BUTTIE_LEVEL,
+      u.USER_NAME,
+      u.USER_PHONE_NUMBER,
+      u.USER_EMAIL,
+      ep.BIRTH_DATE
+    FROM USER u
+           JOIN USER_BUTTIE ub ON u.USER_ID = ub.USER_ID
+           JOIN EMPLOYMENT_PREPARATIONS ep ON u.USER_ID = ep.USER_ID
+    WHERE u.USER_ID = #{userId}
+  </select>
   <update id="updateWithdrawnUser">
     UPDATE `USER`
     SET USER_STATUS = #{user.userStatus},
         USER_WITHDRAWN_AT = #{user.userWithdrawnAt}
     WHERE USER_ID = #{user.userId}
   </update>
+
 </mapper>
