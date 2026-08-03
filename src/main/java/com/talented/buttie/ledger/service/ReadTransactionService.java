@@ -14,10 +14,6 @@ public class ReadTransactionService {
     private final TransactionMapper transactionMapper;
 
     public List<TransactionVO> getAllTransactions(Long userId){
-        if(userId == null){
-            throw ApplicationException.from(LedgerErrorCode.TRANSACTION_BAD_REQUEST);
-        }
-
         List<TransactionVO> transactions = transactionMapper.findAllByUserId(userId);
 
         if(transactions == null){

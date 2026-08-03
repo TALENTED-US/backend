@@ -16,10 +16,6 @@ public class CreateTransactionService {
 
     @Transactional
     public Long createTransaction(Long userId, CreateTransactionRequest request){
-        if(request == null || userId == null){
-            throw ApplicationException.from(LedgerErrorCode.TRANSACTION_BAD_REQUEST);
-        }
-
         TransactionVO transaction = TransactionVO.createTransaction(userId, request);
 
         int result = transactionMapper.insertTransaction(transaction);
