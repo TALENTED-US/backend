@@ -5,9 +5,14 @@ build/
 !**/src/test/**/build/
 
 ### IntelliJ IDEA ###
+.idea/
 .idea/modules.xml
 .idea/jarRepositories.xml
 .idea/compiler.xml
+.idea/sqldialects.xml
+.idea/dataSources.xml
+.idea/vcs.xml
+.idea/artifacts/Gradle___com_talented_buttie___backend_1_0_SNAPSHOT_war__exploded_.xml
 .idea/libraries/
 *.iws
 *.iml
@@ -44,4 +49,5 @@ bin/
 ### Environment variables ###
 .env
 !.env.example
+application.properties
 /postman/

@@ -2,7 +2,6 @@ package com.talented.buttie.ledger.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.ledger.domain.TransactionVO;
-import com.talented.buttie.ledger.dto.response.TransactionResponseDTO;
 import com.talented.buttie.ledger.exception.LedgerErrorCode;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
 import java.util.List;
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class GetTransactionService {
+public class ReadTransactionService {
     private final TransactionMapper transactionMapper;
 
     public List<TransactionVO> getAllTransactions(Long userId){
