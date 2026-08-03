@@ -1,6 +1,7 @@
 package com.talented.buttie.ledger.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
 import com.talented.buttie.ledger.domain.TransactionVO;
 import io.swagger.annotations.ApiModel;
@@ -13,6 +14,9 @@ import lombok.Builder;
 @ApiModel(description = "고정 지출 상세 조회 응답")
 @Builder
 public record FixedExpenseDetailResponse(
+    @ApiModelProperty(value = "암호화된 사용자 ID", example = "exp123...")
+    String userId,
+
     @ApiModelProperty(value = "거래 내용", example = "월세")
     @NotBlank(message = "거래 내용은 필수입니다.")
     String transactionContent,
@@ -32,6 +36,7 @@ public record FixedExpenseDetailResponse(
 
     public static FixedExpenseDetailResponse from(TransactionVO vo) {
         return FixedExpenseDetailResponse.builder()
+            .userId(PKCrypto.encrypt(vo.getUserId()))
             .transactionContent(vo.getTransactionContent())
             .transactionAmount(vo.getTransactionAmount())
             .expenseCategory(vo.getExpenseCategory())
