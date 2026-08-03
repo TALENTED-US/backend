@@ -3,7 +3,7 @@ package com.talented.buttie.simulation.service;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationVO;
-import com.talented.buttie.simulation.dto.request.UpdateSimulationPeriodRequestDTO;
+import com.talented.buttie.simulation.dto.request.UpdateSimulationPeriodRequest;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
@@ -26,7 +26,7 @@ public class SimulationUpdateService {
     @Transactional
     public void updateSimulationPeriod(
         Long userId,
-        UpdateSimulationPeriodRequestDTO request
+        UpdateSimulationPeriodRequest request
     ) {
         validatePeriod(request.simulationStartDate(), request.simulationDueDate());
 

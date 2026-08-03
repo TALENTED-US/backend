@@ -6,21 +6,23 @@ import com.talented.buttie.simulation.domain.SimulationRecurrenceType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.Builder;
 
 @ApiModel("시뮬레이션 항목 대입 미리보기")
 @Builder
-public record PreviewItemRequestDTO(
+public record PreviewItemRequest(
     @ApiModelProperty(value = "시뮬레이션 항목 카테고리", example = "EXPENSE", required = true)
     @NotNull(message = "시뮬레이션 항목 카테고리는 필수입니다.")
     SimulationItemCategory simulationItemCategory,
 
-    @ApiModelProperty(value = "항목 이름. 지출 절약 항목은 카테고리명 기준으로 자동 생성됩니다.", example = "정기 알바")
+    @ApiModelProperty(value = "항목 이름", example = "식비 절약", required = true)
+    @NotBlank(message = "항목 이름은 필수입니다.")
     String itemName,
 
-    @ApiModelProperty(value = "지출 항목 카테고리. 지출 절약 항목일 때 사용합니다.", example = "FOOD")
+    @ApiModelProperty(value = "지출 줄이기 항목 카테고리", example = "FOOD")
     ExpenseCategory simulationItemExpenseCategory,
 
     @ApiModelProperty(value = "항목 적용 금액. 정책 항목은 서버에서 policyId로 조회한 금액을 사용합니다.", example = "50000")

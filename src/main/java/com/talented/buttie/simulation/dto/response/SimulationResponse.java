@@ -10,7 +10,7 @@ import lombok.Builder;
 
 @ApiModel(description = "시뮬레이션 생성 응답")
 @Builder
-public record SimulationResponseDTO(
+public record SimulationResponse(
 
     @ApiModelProperty(value = "시뮬레이션 ID", example = "1")
     Long simulationId,
@@ -33,8 +33,8 @@ public record SimulationResponseDTO(
     @ApiModelProperty(value = "준비 가능 개월", example = "8.25")
     BigDecimal prepMonths
 ) {
-    public static SimulationResponseDTO from(SimulationVO simulation){
-        return SimulationResponseDTO.builder()
+    public static SimulationResponse from(SimulationVO simulation){
+        return SimulationResponse.builder()
             .simulationId(simulation.getSimulationId())
             .userId(PKCrypto.encrypt(simulation.getUserId()))
             .snapshotId(simulation.getSnapshotId())

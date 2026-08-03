@@ -1,6 +1,6 @@
 package com.talented.buttie.simulation.domain;
 
-import com.talented.buttie.simulation.dto.request.CreateSimulationRequestDTO;
+import com.talented.buttie.simulation.dto.request.CreateSimulationRequest;
 import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -23,7 +23,7 @@ public class SimulationVO {
 
     public static SimulationVO createCurrentSimulation(
         Long userId,
-        CreateSimulationRequestDTO request,
+        CreateSimulationRequest request,
         FinancialSnapshotVO snapshot
     ) {
         return SimulationVO.builder()

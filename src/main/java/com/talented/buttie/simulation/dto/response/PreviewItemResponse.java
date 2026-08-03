@@ -9,19 +9,19 @@ import lombok.Builder;
 
 @ApiModel("시뮬레이션 항목 대입 미리보기 응답")
 @Builder
-public record PreviewItemResponseDTO(
+public record PreviewItemResponse(
     @ApiModelProperty(value = "월별 적용 전/후 잔액 목록")
-    List<MonthlyBalancePreviewDTO> monthlyBalances,
+    List<MonthlyBalancePreview> monthlyBalances,
 
     @ApiModelProperty(value = "월별 현금흐름 적용 전/후 비교")
-    CashFlowPreviewDTO cashflow,
+    CashFlowPreview cashflow,
 
     @ApiModelProperty(value = "미리보기 항목 효과 요약")
-    ItemEffectPreviewDTO itemEffect
+    ItemEffectPreview itemEffect
 ) {
     @ApiModel("월별 잔액 미리보기")
     @Builder
-    public record MonthlyBalancePreviewDTO(
+    public record MonthlyBalancePreview(
         @ApiModelProperty(value = "예측 기준 월", example = "2026-08-01")
         LocalDate projectionMonth,
 
@@ -37,7 +37,7 @@ public record PreviewItemResponseDTO(
 
     @ApiModel("현금흐름 미리보기")
     @Builder
-    public record CashFlowPreviewDTO(
+    public record CashFlowPreview(
        @ApiModelProperty(value = "적용 전 월수입", example = "1000000")
        Integer beforeMonthlyIncome,
 
@@ -68,8 +68,8 @@ public record PreviewItemResponseDTO(
 
     @ApiModel("항목 효과 미리보기")
     @Builder
-    public record ItemEffectPreviewDTO(
-        @ApiModelProperty(value = "항목 이름", example = "식비 줄이기")
+    public record ItemEffectPreview(
+        @ApiModelProperty(value = "항목 이름", example = "식비 절약")
         String itemName,
 
         @ApiModelProperty(value = "항목 카테고리", example = "EXPENSE")

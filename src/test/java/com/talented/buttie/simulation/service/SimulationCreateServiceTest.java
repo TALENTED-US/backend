@@ -17,9 +17,9 @@ import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemCategory;
 import com.talented.buttie.simulation.domain.SimulationRecurrenceType;
 import com.talented.buttie.simulation.domain.SimulationVO;
-import com.talented.buttie.simulation.dto.request.CreateSimulationRequestDTO;
-import com.talented.buttie.simulation.dto.request.PreviewItemRequestDTO;
-import com.talented.buttie.simulation.dto.response.PreviewItemResponseDTO;
+import com.talented.buttie.simulation.dto.request.CreateSimulationRequest;
+import com.talented.buttie.simulation.dto.request.PreviewItemRequest;
+import com.talented.buttie.simulation.dto.response.PreviewItemResponse;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
@@ -64,14 +64,14 @@ class SimulationCreateServiceTest {
     private SimulationCreateService simulationCreateService;
 
     private Long userId;
-    private CreateSimulationRequestDTO request;
+    private CreateSimulationRequest request;
     private SimulationVO activeSimulation;
     private List<MonthlyProjectionVO> baseMonthlyProjections;
 
     @BeforeEach
     void setup(){
         userId = 1L;
-        request = new CreateSimulationRequestDTO(
+        request = new CreateSimulationRequest(
             LocalDate.of(2026, 8, 1),
             LocalDate.of(2027, 1, 31)
         );
@@ -208,7 +208,7 @@ class SimulationCreateServiceTest {
         given(monthlyProjectionMapper.findAllBySimulationId(100L))
             .willReturn(baseMonthlyProjections);
 
-        PreviewItemRequestDTO request = PreviewItemRequestDTO.builder()
+        PreviewItemRequest request = PreviewItemRequest.builder()
             .simulationItemCategory(SimulationItemCategory.EXPENSE)
             .itemName("식비 절약")
             .simulationItemExpenseCategory(ExpenseCategory.FOOD)
@@ -218,7 +218,7 @@ class SimulationCreateServiceTest {
             .recurrenceType(SimulationRecurrenceType.MONTHLY)
             .build();
 
-        PreviewItemResponseDTO result = simulationCreateService.previewItemResultSimulation(userId, request);
+        PreviewItemResponse result = simulationCreateService.previewItemResultSimulation(userId, request);
 
         assertEquals(3, result.monthlyBalances().size());
         assertEquals(4_050_000, result.monthlyBalances().get(0).afterClosingBalance());
@@ -253,7 +253,7 @@ class SimulationCreateServiceTest {
         given(monthlyProjectionMapper.findAllBySimulationId(100L))
             .willReturn(baseMonthlyProjections);
 
-        PreviewItemRequestDTO request = PreviewItemRequestDTO.builder()
+        PreviewItemRequest request = PreviewItemRequest.builder()
             .simulationItemCategory(SimulationItemCategory.INCOME)
             .itemName("정기 알바")
             .amount(300_000)
@@ -263,7 +263,7 @@ class SimulationCreateServiceTest {
             .recurrenceDay(10)
             .build();
 
-        PreviewItemResponseDTO result = simulationCreateService.previewItemResultSimulation(userId, request);
+        PreviewItemResponse result = simulationCreateService.previewItemResultSimulation(userId, request);
 
         assertEquals(4_300_000, result.monthlyBalances().get(0).afterClosingBalance());
         assertEquals(300_000, result.monthlyBalances().get(0).balanceDelta());
@@ -296,7 +296,7 @@ class SimulationCreateServiceTest {
         given(monthlyProjectionMapper.findAllBySimulationId(100L))
             .willReturn(baseMonthlyProjections);
 
-        PreviewItemRequestDTO request = PreviewItemRequestDTO.builder()
+        PreviewItemRequest request = PreviewItemRequest.builder()
             .simulationItemCategory(SimulationItemCategory.INCOME)
             .itemName("단기 알바")
             .amount(500_000)
@@ -304,7 +304,7 @@ class SimulationCreateServiceTest {
             .recurrenceType(SimulationRecurrenceType.ONCE)
             .build();
 
-        PreviewItemResponseDTO result = simulationCreateService.previewItemResultSimulation(userId, request);
+        PreviewItemResponse result = simulationCreateService.previewItemResultSimulation(userId, request);
 
         assertEquals(4_000_000, result.monthlyBalances().get(0).afterClosingBalance());
         assertEquals(0, result.monthlyBalances().get(0).balanceDelta());
@@ -337,7 +337,7 @@ class SimulationCreateServiceTest {
                     .build()
             );
 
-        PreviewItemRequestDTO request = PreviewItemRequestDTO.builder()
+        PreviewItemRequest request = PreviewItemRequest.builder()
             .simulationItemCategory(SimulationItemCategory.POLICY)
             .itemName("청년 지원금")
             .amount(999_999)
@@ -348,7 +348,7 @@ class SimulationCreateServiceTest {
             .recurrenceDay(10)
             .build();
 
-        PreviewItemResponseDTO result = simulationCreateService.previewItemResultSimulation(userId, request);
+        PreviewItemResponse result = simulationCreateService.previewItemResultSimulation(userId, request);
 
         assertEquals(4_300_000, result.monthlyBalances().get(0).afterClosingBalance());
         assertEquals(3_600_000, result.monthlyBalances().get(1).afterClosingBalance());
@@ -376,7 +376,7 @@ class SimulationCreateServiceTest {
                     .build()
             );
 
-        PreviewItemRequestDTO request = PreviewItemRequestDTO.builder()
+        PreviewItemRequest request = PreviewItemRequest.builder()
             .simulationItemCategory(SimulationItemCategory.POLICY)
             .itemName("취업 지원금")
             .policyId(10L)
@@ -384,7 +384,7 @@ class SimulationCreateServiceTest {
             .recurrenceType(SimulationRecurrenceType.ONCE)
             .build();
 
-        PreviewItemResponseDTO result = simulationCreateService.previewItemResultSimulation(userId, request);
+        PreviewItemResponse result = simulationCreateService.previewItemResultSimulation(userId, request);
 
         assertEquals(4_000_000, result.monthlyBalances().get(0).afterClosingBalance());
         assertEquals(3_000_000, result.monthlyBalances().get(1).afterClosingBalance());
@@ -405,7 +405,7 @@ class SimulationCreateServiceTest {
         given(monthlyProjectionMapper.findAllBySimulationId(100L))
             .willReturn(baseMonthlyProjections);
 
-        PreviewItemRequestDTO request = PreviewItemRequestDTO.builder()
+        PreviewItemRequest request = PreviewItemRequest.builder()
             .simulationItemCategory(SimulationItemCategory.INCOME)
             .itemName("단기 알바")
             .amount(100_000)
@@ -431,7 +431,7 @@ class SimulationCreateServiceTest {
         given(monthlyProjectionMapper.findAllBySimulationId(100L))
             .willReturn(baseMonthlyProjections);
 
-        PreviewItemRequestDTO request = PreviewItemRequestDTO.builder()
+        PreviewItemRequest request = PreviewItemRequest.builder()
             .simulationItemCategory(SimulationItemCategory.INCOME)
             .itemName("정기 알바")
             .amount(100_000)
@@ -455,7 +455,7 @@ class SimulationCreateServiceTest {
         given(simulationMapper.findActiveByUserId(userId))
             .willReturn(null);
 
-        PreviewItemRequestDTO request = PreviewItemRequestDTO.builder()
+        PreviewItemRequest request = PreviewItemRequest.builder()
             .simulationItemCategory(SimulationItemCategory.INCOME)
             .itemName("단기 알바")
             .amount(100_000)
@@ -481,7 +481,7 @@ class SimulationCreateServiceTest {
         given(monthlyProjectionMapper.findAllBySimulationId(100L))
             .willReturn(List.of());
 
-        PreviewItemRequestDTO request = PreviewItemRequestDTO.builder()
+        PreviewItemRequest request = PreviewItemRequest.builder()
             .simulationItemCategory(SimulationItemCategory.INCOME)
             .itemName("단기 알바")
             .amount(100_000)
@@ -510,7 +510,7 @@ class SimulationCreateServiceTest {
         given(policyMapper.findById(10L))
             .willReturn(null);
 
-        PreviewItemRequestDTO request = PreviewItemRequestDTO.builder()
+        PreviewItemRequest request = PreviewItemRequest.builder()
             .simulationItemCategory(SimulationItemCategory.POLICY)
             .itemName("청년 지원금")
             .policyId(10L)

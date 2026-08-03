@@ -8,7 +8,7 @@ import lombok.Builder;
 
 @Builder
 @ApiModel(description = "월별 재정 계획 응답")
-public record MonthlyProjectionResponseDTO(
+public record MonthlyProjectionResponse(
 
     @ApiModelProperty(value = "월별 재정 계획 ID", example = "1")
     Long projectionId,
@@ -34,8 +34,8 @@ public record MonthlyProjectionResponseDTO(
     @ApiModelProperty(value = "재정 조정 필요 사유", example = "예상 지출이 예상 수입을 초과합니다.")
     String adjustmentReason
 ) {
-    public static MonthlyProjectionResponseDTO from(MonthlyProjectionVO monthlyProjection){
-        return MonthlyProjectionResponseDTO.builder()
+    public static MonthlyProjectionResponse from(MonthlyProjectionVO monthlyProjection){
+        return MonthlyProjectionResponse.builder()
             .projectionId(monthlyProjection.getProjectionId())
             .projectionMonth(monthlyProjection.getProjectionMonth())
             .openingBalance(monthlyProjection.getOpeningBalance())

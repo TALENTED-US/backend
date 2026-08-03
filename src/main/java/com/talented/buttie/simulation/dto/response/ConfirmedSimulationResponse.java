@@ -12,7 +12,7 @@ import lombok.Builder;
 
 @ApiModel(description = "최근 확정 시뮬레이션 조회 응답")
 @Builder
-public record ConfirmedSimulationResponseDTO(
+public record ConfirmedSimulationResponse(
 
     @ApiModelProperty(value = "시뮬레이션 ID", example = "1")
     Long simulationId,
@@ -39,12 +39,12 @@ public record ConfirmedSimulationResponseDTO(
     LocalDateTime confirmedAt,
 
     @ApiModelProperty(value = "관련 월별 재정 계획 리스트")
-    List<MonthlyProjectionResponseDTO> monthlyProjections
+    List<MonthlyProjectionResponse> monthlyProjections
 ) {
-    public static ConfirmedSimulationResponseDTO from(
+    public static ConfirmedSimulationResponse from(
         SimulationVO simulation
     ) {
-        return ConfirmedSimulationResponseDTO.builder()
+        return ConfirmedSimulationResponse.builder()
             .simulationId(simulation.getSimulationId())
             .userId(PKCrypto.encrypt(simulation.getUserId()))
             .snapshotId(simulation.getSnapshotId())
@@ -55,7 +55,7 @@ public record ConfirmedSimulationResponseDTO(
             .confirmedAt(simulation.getConfirmedAt())
             .monthlyProjections(
                 simulation.getMonthlyProjections().stream()
-                    .map(MonthlyProjectionResponseDTO::from)
+                    .map(MonthlyProjectionResponse::from)
                     .toList()
             )
             .build();

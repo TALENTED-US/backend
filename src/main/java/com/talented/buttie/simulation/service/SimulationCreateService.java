@@ -9,12 +9,12 @@ import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemCategory;
 import com.talented.buttie.simulation.domain.SimulationRecurrenceType;
 import com.talented.buttie.simulation.domain.SimulationVO;
-import com.talented.buttie.simulation.dto.request.CreateSimulationRequestDTO;
-import com.talented.buttie.simulation.dto.request.PreviewItemRequestDTO;
-import com.talented.buttie.simulation.dto.response.PreviewItemResponseDTO;
-import com.talented.buttie.simulation.dto.response.PreviewItemResponseDTO.CashFlowPreviewDTO;
-import com.talented.buttie.simulation.dto.response.PreviewItemResponseDTO.ItemEffectPreviewDTO;
-import com.talented.buttie.simulation.dto.response.PreviewItemResponseDTO.MonthlyBalancePreviewDTO;
+import com.talented.buttie.simulation.dto.request.CreateSimulationRequest;
+import com.talented.buttie.simulation.dto.request.PreviewItemRequest;
+import com.talented.buttie.simulation.dto.response.PreviewItemResponse;
+import com.talented.buttie.simulation.dto.response.PreviewItemResponse.CashFlowPreview;
+import com.talented.buttie.simulation.dto.response.PreviewItemResponse.ItemEffectPreview;
+import com.talented.buttie.simulation.dto.response.PreviewItemResponse.MonthlyBalancePreview;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
@@ -43,7 +43,7 @@ public class SimulationCreateService {
     private final PolicyMapper policyMapper;
 
     @Transactional
-    public SimulationVO createSimulation(Long userId, CreateSimulationRequestDTO request){
+    public SimulationVO createSimulation(Long userId, CreateSimulationRequest request){
         SimulationVO activeSimulation = simulationMapper.findActiveByUserId(userId);
 
         if(activeSimulation != null) return activeSimulation;
@@ -75,7 +75,7 @@ public class SimulationCreateService {
     }
 
     @Transactional(readOnly = true)
-    public PreviewItemResponseDTO previewItemResultSimulation(Long userId, PreviewItemRequestDTO request){
+    public PreviewItemResponse previewItemResultSimulation(Long userId, PreviewItemRequest request){
         SimulationVO simulation = simulationMapper.findActiveByUserId(userId);
 
         if(simulation == null){
@@ -95,7 +95,7 @@ public class SimulationCreateService {
             .sorted(Comparator.comparing(MonthlyProjectionVO::getProjectionMonth))
             .toList();
 
-        List<PreviewItemResponseDTO.MonthlyBalancePreviewDTO> monthlyBalances = new ArrayList<>();
+        List<PreviewItemResponse.MonthlyBalancePreview> monthlyBalances = new ArrayList<>();
 
         int previousAfterClosingBalance = 0;
 
@@ -124,7 +124,7 @@ public class SimulationCreateService {
             previousAfterClosingBalance = afterClosingBalance;
 
             monthlyBalances.add(
-                MonthlyBalancePreviewDTO.builder()
+                MonthlyBalancePreview.builder()
                     .projectionMonth(projection.getProjectionMonth())
                     .beforeClosingBalance(projection.getClosingBalance())
                     .afterClosingBalance(afterClosingBalance)
@@ -150,10 +150,10 @@ public class SimulationCreateService {
             }
         }
 
-        return PreviewItemResponseDTO.builder()
+        return PreviewItemResponse.builder()
             .monthlyBalances(monthlyBalances)
             .cashflow(
-                CashFlowPreviewDTO.builder()
+                CashFlowPreview.builder()
                     .beforeMonthlyIncome(beforeMonthlyIncome)
                     .afterMonthlyIncome(afterMonthlyIncome)
                     .incomeDelta(afterMonthlyIncome - beforeMonthlyIncome)
@@ -166,7 +166,7 @@ public class SimulationCreateService {
                     .build()
             )
             .itemEffect(
-                ItemEffectPreviewDTO.builder()
+                ItemEffectPreview.builder()
                     .itemName(resolveSimulationItemName(request))
                     .category(request.simulationItemCategory())
                     .monthlyEffectAmount(monthlyEffectAmount)
@@ -176,7 +176,7 @@ public class SimulationCreateService {
             .build();
     }
 
-    private void validatePreviewRequest(PreviewItemRequestDTO request, SimulationVO simulation){
+    private void validatePreviewRequest(PreviewItemRequest request, SimulationVO simulation){
         if(request.simulationItemCategory() == SimulationItemCategory.POLICY){
             if(request.policyId() == null) throw ApplicationException.from(SimulationErrorCode.INVALID_PREVIEW_ITEM);
         }else if(request.amount() == null){
@@ -213,7 +213,7 @@ public class SimulationCreateService {
         }
     }
 
-    private int resolveEffectAmount(PreviewItemRequestDTO request){
+    private int resolveEffectAmount(PreviewItemRequest request){
         if (request.simulationItemCategory() != SimulationItemCategory.POLICY){
             return valueOf(request.amount());
         }
@@ -225,7 +225,7 @@ public class SimulationCreateService {
         return valueOf(policy.getPolicySupportAmount());
     }
 
-    private String resolveSimulationItemName(PreviewItemRequestDTO request){
+    private String resolveSimulationItemName(PreviewItemRequest request){
         if(request.simulationItemCategory() == SimulationItemCategory.EXPENSE){
             return toKoreanExpenseCategoryName(request.simulationItemExpenseCategory()) + " 줄이기";
         }
@@ -246,7 +246,7 @@ public class SimulationCreateService {
         };
     }
 
-    private int calculateMonthlyEffect(PreviewItemRequestDTO request, LocalDate projectionMonth, int effectAmount){
+    private int calculateMonthlyEffect(PreviewItemRequest request, LocalDate projectionMonth, int effectAmount){
         YearMonth targetMonth = YearMonth.from(projectionMonth);
         LocalDate applyStartDate = request.applyStartDate();
         LocalDate applyEndDate = request.applyEndDate() == null ? applyStartDate : request.applyEndDate();
