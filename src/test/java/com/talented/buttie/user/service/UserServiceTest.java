@@ -194,7 +194,7 @@ class UserServiceTest {
 
         Long userId = 1L;
         ButiDashboardVO mockVO = new ButiDashboardVO(
-            1, "새싹 버티", 120, 0, "CAUTION", "https://cdn.buttie.com/buttie/lv1_caution.png"
+            1, "새싹 버티",  "이제 막 자산관리를 시작한 기본 버티",120, 0, "CAUTION", "https://cdn.buttie.com/buttie/lv1_caution.png"
         );
 
         given(userMapper.selectButiDashboard(userId))

@@ -12,6 +12,7 @@ public class ButiDashboardVO {
 
     private int buttieLevel;
     private String stageName;
+    private String levelDescription;
     private int buttieTotalExp;
     private int requiredExp;
     private String riskLevel;

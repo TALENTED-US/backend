@@ -49,6 +49,7 @@
     SELECT
         ub.BUTTIE_LEVEL AS buttieLevel,
         bl.STAGE_NAME AS stageName,
+        bl.LEVEL_DESCRIPTION AS levelDescription,
         ub.BUTTIE_TOTAL_EXP AS buttieTotalExp,
         bl.REQUIRED_EXP AS requiredExp,
         COALESCE(s.RISK_LEVEL, 'STABLE') AS riskLevel,
