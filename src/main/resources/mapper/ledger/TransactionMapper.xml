@@ -118,4 +118,19 @@
     WHERE TRANSACTION_ID = #{transactionId}
   </update>
 
+  <!-- 고정 지출 상세 목록 조회 (TransactionType이 FIXED인 항목 - Response 필요 컬럼만 조회) -->
+  <select id="findFixedExpensesByUserId" resultType="com.talented.buttie.ledger.domain.TransactionVO">
+    SELECT
+      TRANSACTION_ID          AS transactionId,
+      TRANSACTION_CONTENT     AS transactionContent,
+      EXPENSE_CATEGORY        AS expenseCategory,
+      TRANSACTION_AMOUNT      AS transactionAmount,
+      TRANSACTION_AT          AS transactionAt
+    FROM `TRANSACTION`
+    WHERE USER_ID = #{userId}
+      AND TRANSACTION_TYPE = 'FIXED'
+      AND IS_DELETED = false
+    ORDER BY TRANSACTION_AT DESC
+  </select>
+
 </mapper>

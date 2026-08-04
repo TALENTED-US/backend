@@ -14,6 +14,7 @@ import com.talented.buttie.user.dto.response.UserPKResponseDTO;
 import com.talented.buttie.user.dto.request.CreateEmploymentPreparationRequestDTO;
 import org.springframework.web.bind.annotation.PostMapping;
 import com.talented.buttie.user.dto.response.GetEmploymentPreparationResponseDTO;
+import com.talented.buttie.user.dto.request.WithdrawUserRequestDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,8 +24,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-
+import org.springframework.web.bind.annotation.DeleteMapping;
 import javax.validation.Valid;
 
 @Api(tags = "User")
@@ -58,6 +58,7 @@ public class UserController {
         Long userId = userService.createEmploymentPreparation(targetUserId, request);
         return ApplicationResponse.onSuccess(new UserPKResponseDTO(PKCrypto.encrypt(userId)));
     }
+
     @GetMapping
     @ApiOperation("회원 프로필 조회")
     public ApplicationResponse<GetUserProfileResponseDTO> getUserProfile(
@@ -87,5 +88,16 @@ public class UserController {
         Long targetUserId = user.userId();
         Long modifiedUserId = userService.modifyUserProfile(targetUserId, request);
         return ApplicationResponse.onSuccess(new UserPKResponseDTO(PKCrypto.encrypt(modifiedUserId)));
+    }
+
+    @DeleteMapping
+    @ApiOperation("회원 탈퇴")
+    public ApplicationResponse<UserPKResponseDTO> withdrawUser(
+        @AuthUser AuthenticationUser user,
+        @Valid @RequestBody WithdrawUserRequestDTO request
+    ) {
+        Long targetUserId = user.userId();
+        Long withdrawnUserId = userService.withdrawUser(targetUserId, request);
+        return ApplicationResponse.onSuccess(new UserPKResponseDTO(PKCrypto.encrypt(withdrawnUserId)));
     }
 }

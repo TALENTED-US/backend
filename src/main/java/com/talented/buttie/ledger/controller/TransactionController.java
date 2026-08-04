@@ -3,17 +3,19 @@ package com.talented.buttie.ledger.controller;
 import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.annotation.AuthUser;
-import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.ledger.domain.TransactionVO;
 import com.talented.buttie.ledger.dto.request.CreateTransactionRequest;
 import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequest;
 import com.talented.buttie.ledger.dto.request.UpdateTransactionRequest;
+import com.talented.buttie.ledger.dto.response.FixedExpenseDetailResponse;
+import com.talented.buttie.ledger.dto.response.TransactionDetailResponse;
 import com.talented.buttie.ledger.dto.response.TransactionResponse;
 import com.talented.buttie.ledger.service.CreateTransactionService;
 import com.talented.buttie.ledger.service.DeleteTransactionService;
+import com.talented.buttie.ledger.service.ReadFixedExpenseDetailService;
+import com.talented.buttie.ledger.service.ReadTransactionDetailService;
 import com.talented.buttie.ledger.service.ReadTransactionService;
 import com.talented.buttie.ledger.service.UpdateTransactionService;
-import com.talented.buttie.user.dto.response.UserPKResponseDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
@@ -26,7 +28,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -38,6 +39,8 @@ public class TransactionController {
     private final CreateTransactionService createTransactionService;
     private final UpdateTransactionService updateTransactionService;
     private final DeleteTransactionService deleteTransactionService;
+    private final ReadTransactionDetailService readTransactionDetailService;
+    private final ReadFixedExpenseDetailService readFixedExpenseDetailService;
 
     @ApiOperation("거래 목록 조회")
     @GetMapping("")
@@ -100,5 +103,31 @@ public class TransactionController {
         Long targetUserId = user.userId();
         Long deleteUserId = deleteTransactionService.deleteTransaction(targetUserId, transactionId);
         return ApplicationResponse.onSuccess(deleteUserId);
+    }
+
+    @ApiOperation("고정 지출 상세 목록 조회")
+    @GetMapping("/fixed")
+    public ApplicationResponse<List<FixedExpenseDetailResponse>> getFixedExpenseDetails(
+        @AuthUser AuthenticationUser user
+    ){
+        Long targetUserId = user.userId();
+        List<TransactionVO> fixedExpenses = readFixedExpenseDetailService.getFixedExpenseDetails(targetUserId);
+
+        List<FixedExpenseDetailResponse> responseList = fixedExpenses.stream()
+            .map(FixedExpenseDetailResponse::from)
+            .toList();
+
+        return ApplicationResponse.onSuccess(responseList);
+    }
+
+    @ApiOperation("거래 상세 조회")
+    @GetMapping("/{transactionId}")
+    public ApplicationResponse<TransactionDetailResponse> getTransactionDetail(
+        @PathVariable("transactionId") Long transactionId,
+        @AuthUser AuthenticationUser user
+    ){
+        Long targetUserId = user.userId();
+        TransactionDetailResponse response = readTransactionDetailService.getTransactionDetail(targetUserId, transactionId);
+        return ApplicationResponse.onSuccess(response);
     }
 }

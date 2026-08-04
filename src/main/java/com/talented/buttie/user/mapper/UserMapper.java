@@ -15,4 +15,7 @@ public interface UserMapper {
 
     int countByNickname(@Param("nickname") String nickname);
 
+    String getPasswordByUserId(@Param("userId") Long userId);
+
+    int updateWithdrawnUser(@Param("user") UserVO user);
 }
