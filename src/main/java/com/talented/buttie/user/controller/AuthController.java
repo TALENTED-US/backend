@@ -5,8 +5,8 @@ import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.SecurityConstants;
 import com.talented.buttie.common.security.annotation.AuthUser;
 import com.talented.buttie.common.util.PKCrypto;
-import com.talented.buttie.user.dto.request.auth.AuthLoginRequestDTO;
-import com.talented.buttie.user.dto.request.auth.AuthSignUpRequestDTO;
+import com.talented.buttie.user.dto.request.auth.AuthLoginRequest;
+import com.talented.buttie.user.dto.request.auth.AuthSignUpRequest;
 import com.talented.buttie.user.dto.response.UserPKResponseDTO;
 import com.talented.buttie.user.dto.response.auth.AuthTokenResponseDTO;
 import com.talented.buttie.user.service.AuthCookieService;
@@ -41,15 +41,15 @@ public class AuthController {
 
     @ApiOperation("사용자 회원 가입")
     @PostMapping("/signUp")
-    public ApplicationResponse<UserPKResponseDTO> signUp(@Valid @RequestBody AuthSignUpRequestDTO authSignUpRequestDTO) {
-        Long userId = authCreateService.createUser(authSignUpRequestDTO);
+    public ApplicationResponse<UserPKResponseDTO> signUp(@Valid @RequestBody AuthSignUpRequest authSignUpRequest) {
+        Long userId = authCreateService.createUser(authSignUpRequest);
         return ApplicationResponse.onSuccess(new UserPKResponseDTO(PKCrypto.encrypt(userId)));
     }
 
     @ApiOperation("사용자 로그인")
     @PostMapping("/login")
-    public ApplicationResponse<AuthTokenResponseDTO> login(@Valid @RequestBody AuthLoginRequestDTO authLoginRequestDTO, HttpServletResponse response) {
-        AuthTokenResponseDTO tokenResponseDTO = authReadService.userLogin(authLoginRequestDTO);
+    public ApplicationResponse<AuthTokenResponseDTO> login(@Valid @RequestBody AuthLoginRequest authLoginRequest, HttpServletResponse response) {
+        AuthTokenResponseDTO tokenResponseDTO = authReadService.userLogin(authLoginRequest);
 
         int maxAge = Math.toIntExact(tokenResponseDTO.refreshTokenExpiration() / 1000);
         response.addCookie(authCookieService.createCookie(SecurityConstants.REFRESH_TOKEN_COOKIE_NAME, tokenResponseDTO.refreshToken(), true, maxAge));

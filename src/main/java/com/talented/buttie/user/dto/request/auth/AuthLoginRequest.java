@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(description = "로그인 요청 DTO")
-public record AuthLoginRequestDTO(
+public record AuthLoginRequest(
 
     @ApiModelProperty(value = "사용자 이메일", example = "abc@example.com")
     String userEmail,
