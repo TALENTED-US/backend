@@ -118,7 +118,7 @@
   <!-- 고정 지출 상세 목록 조회 (TransactionType이 FIXED인 항목 - Response 필요 컬럼만 조회) -->
   <select id="findFixedExpensesByUserId" resultType="com.talented.buttie.ledger.domain.TransactionVO">
     SELECT
-      USER_ID                 AS userId,
+      TRANSACTION_ID          AS transactionId,
       TRANSACTION_CONTENT     AS transactionContent,
       EXPENSE_CATEGORY        AS expenseCategory,
       TRANSACTION_AMOUNT      AS transactionAmount,

@@ -14,8 +14,8 @@ import lombok.Builder;
 @ApiModel(description = "고정 지출 상세 조회 응답")
 @Builder
 public record FixedExpenseDetailResponse(
-    @ApiModelProperty(value = "암호화된 사용자 ID", example = "exp123...")
-    String userId,
+    @ApiModelProperty(value = "암호화된 거래 ID", example = "exp123...")
+    String transactionId,
 
     @ApiModelProperty(value = "거래 내용", example = "월세")
     @NotBlank(message = "거래 내용은 필수입니다.")
@@ -36,7 +36,7 @@ public record FixedExpenseDetailResponse(
 
     public static FixedExpenseDetailResponse from(TransactionVO vo) {
         return FixedExpenseDetailResponse.builder()
-            .userId(PKCrypto.encrypt(vo.getUserId()))
+            .transactionId(PKCrypto.encrypt(vo.getTransactionId()))
             .transactionContent(vo.getTransactionContent())
             .transactionAmount(vo.getTransactionAmount())
             .expenseCategory(vo.getExpenseCategory())
