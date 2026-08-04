@@ -68,4 +68,12 @@ public class TransactionVO {
             .transactionType(TransactionType.FIXED)
             .build();
     }
+
+    public static TransactionVO deleteFixedExpense(
+        TransactionVO transaction
+    ){
+        return transaction.toBuilder()
+            .transactionType(TransactionType.EXPENSE)
+            .build();
+    }
 }

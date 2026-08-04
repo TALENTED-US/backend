@@ -11,8 +11,10 @@ import com.talented.buttie.ledger.dto.request.UpdateTransactionRequest;
 import com.talented.buttie.ledger.dto.response.FixedExpenseDetailResponse;
 import com.talented.buttie.ledger.dto.response.TransactionDetailResponse;
 import com.talented.buttie.ledger.dto.response.TransactionResponse;
+import com.talented.buttie.ledger.dto.request.DeleteFixedExpenseRequest;
 import com.talented.buttie.ledger.service.CreateFixedExpenseService;
 import com.talented.buttie.ledger.service.CreateTransactionService;
+import com.talented.buttie.ledger.service.DeleteFixedExpenseService;
 import com.talented.buttie.ledger.service.DeleteTransactionService;
 import com.talented.buttie.ledger.service.ReadFixedExpenseDetailService;
 import com.talented.buttie.ledger.service.ReadTransactionDetailService;
@@ -44,6 +46,7 @@ public class TransactionController {
     private final ReadTransactionDetailService readTransactionDetailService;
     private final ReadFixedExpenseDetailService readFixedExpenseDetailService;
     private final CreateFixedExpenseService createFixedExpenseService;
+    private final DeleteFixedExpenseService deleteFixedExpenseService;
 
     @ApiOperation("거래 목록 조회")
     @GetMapping("")
@@ -143,6 +146,32 @@ public class TransactionController {
         Long targetUserId = user.userId();
         Long decryptedTransactionId = PKCrypto.decrypt(transactionId);
         Long resultTransactionId = createFixedExpenseService.createFixedExpense(targetUserId, decryptedTransactionId);
+
+        return ApplicationResponse.onSuccess(resultTransactionId);
+    }
+
+    @ApiOperation("고정 지출 삭제(해제) - PathVariable")
+    @PatchMapping("/{transactionId}/fixed/delete")
+    public ApplicationResponse<Long> deleteFixedExpenseByPathVariable(
+        @PathVariable("transactionId") String transactionId,
+        @AuthUser AuthenticationUser user
+    ){
+        Long targetUserId = user.userId();
+        Long decryptedTransactionId = PKCrypto.decrypt(transactionId);
+        Long resultTransactionId = deleteFixedExpenseService.deleteFixedExpense(targetUserId, decryptedTransactionId);
+
+        return ApplicationResponse.onSuccess(resultTransactionId);
+    }
+
+    @ApiOperation("고정 지출 삭제(해제) - RequestBody DTO")
+    @PatchMapping("/fixed/delete")
+    public ApplicationResponse<Long> deleteFixedExpenseByRequestBody(
+        @Valid @RequestBody DeleteFixedExpenseRequest request,
+        @AuthUser AuthenticationUser user
+    ){
+        Long targetUserId = user.userId();
+        Long decryptedTransactionId = PKCrypto.decrypt(request.transactionId());
+        Long resultTransactionId = deleteFixedExpenseService.deleteFixedExpense(targetUserId, decryptedTransactionId);
 
         return ApplicationResponse.onSuccess(resultTransactionId);
     }
