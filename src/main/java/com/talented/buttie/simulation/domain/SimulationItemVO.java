@@ -15,7 +15,6 @@ public class SimulationItemVO {
     private LocalDate applyStartDate;
     private LocalDate applyEndDate;
     private Long policyId;
-    private String detailValue;
     private SimulationRecurrenceType recurrenceType;
     private Boolean isDeleted;
 }

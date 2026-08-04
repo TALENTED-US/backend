@@ -8,4 +8,5 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface SimulationItemMapper {
     List<SimulationItemVO> findAllActiveBySimulationId(@Param("simulationId") Long simulationId);
+    void save(SimulationItemVO item);
 }

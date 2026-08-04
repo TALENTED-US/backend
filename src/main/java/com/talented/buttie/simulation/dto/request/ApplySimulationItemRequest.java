@@ -38,9 +38,6 @@ public record ApplySimulationItemRequest(
     LocalDate applyEndDate,
 
     @ApiModelProperty(value = "반복 유형. 수입/지출 항목일 때 필수입니다. 정책 항목은 서버에서 정책 정보 기준으로 결정합니다.", example = "MONTHLY")
-    SimulationRecurrenceType recurrenceType,
-
-    @ApiModelProperty(value = "항목 상세 조건 값", example = "식비")
-    String detailValue
+    SimulationRecurrenceType recurrenceType
 ) {
 }
