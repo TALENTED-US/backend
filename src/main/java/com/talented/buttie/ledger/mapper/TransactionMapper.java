@@ -21,4 +21,7 @@ public interface TransactionMapper {
 
     // 수동 등록 거래 삭제
     int deleteTransaction(@Param("transactionId") Long transactionId);
+
+    // 고정 지출 상세 목록 조회 (TransactionType이 FIXED인 항목)
+    List<TransactionVO> findFixedExpensesByUserId(@Param("userId") Long userId);
 }
