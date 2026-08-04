@@ -131,27 +131,19 @@
     where USER_ID = #{userId}
     and IS_DELETED = false
     and TRANSACTION_AT >= #{fromDateTime}
-    and TRANSACTION_AT < #{toDateTime}
+    and #{toDateTime} > TRANSACTION_AT
   </select>
 
   <!-- 수동 등록 거래 전체 수정 (외부거래 ID가 없을 때 사용) -->
   <update id="updateTransaction" parameterType="com.talented.buttie.ledger.domain.TransactionVO">
-    UPDATE `TRANSACTION`
-    <set>
-      <if test="transactionAmount != null">
+    UPDATE TRANSACTION
+    SET
+        TRANSACTION_TYPE = #{transactionType},
         TRANSACTION_AMOUNT = #{transactionAmount},
-      </if>
-      <if test="expenseCategory != null">
         EXPENSE_CATEGORY = #{expenseCategory},
-      </if>
-      <if test="transactionAt != null">
         TRANSACTION_AT = #{transactionAt},
-      </if>
-      <if test="transactionMemo != null">
         TRANSACTION_MEMO = #{transactionMemo},
-      </if>
-      TRANSACTION_UPDATED_AT = NOW()
-    </set>
+        TRANSACTION_UPDATED_AT = NOW()
     WHERE TRANSACTION_ID = #{transactionId}
   </update>
 
