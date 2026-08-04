@@ -57,7 +57,7 @@ public class UserService {
     public Long withdrawUser(Long userId, WithdrawUserRequestDTO request) {
         String passwordHash = userMapper.getPasswordByUserId(userId);
 
-        if (passwordHash == null) {
+        if (passwordHash == null || passwordHash.isBlank()) {
             throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
         }
 

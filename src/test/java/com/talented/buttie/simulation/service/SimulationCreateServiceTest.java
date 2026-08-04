@@ -24,7 +24,7 @@ import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
 import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
 import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
-import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
+import com.talented.buttie.snapshot.service.FinancialSnapshotCreateService;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -42,7 +42,7 @@ import org.springframework.http.HttpStatus;
 class SimulationCreateServiceTest {
 
     @Mock
-    private FinancialSnapshotMapper financialSnapshotMapper;
+    private FinancialSnapshotCreateService financialSnapshotCreateService;
 
     @Mock
     private SimulationMapper simulationMapper;
@@ -138,7 +138,7 @@ class SimulationCreateServiceTest {
                 .build()
         );
 
-        given(financialSnapshotMapper.findLatestByUserId(userId))
+        given(financialSnapshotCreateService.createSnapshot(userId))
             .willReturn(snapshot);
         given(employmentPreparationMapper.getLivingThresholdByUserId(userId))
             .willReturn(1_000_000);
@@ -180,14 +180,14 @@ class SimulationCreateServiceTest {
 
         assertSame(activeSimulation, result);
         verify(simulationMapper, never()).save(any(SimulationVO.class));
-        verifyNoInteractions(financialSnapshotMapper, employmentPreparationMapper, projectionEngine, monthlyProjectionMapper);
+        verifyNoInteractions(financialSnapshotCreateService, employmentPreparationMapper, projectionEngine, monthlyProjectionMapper);
     }
 
     @Test
-    @DisplayName("최신 스냅샷이 없으면 예외가 발생한다.")
-    void throwWhenSnapshotNotFound() {
-        given(financialSnapshotMapper.findLatestByUserId(userId))
-            .willReturn(null);
+    @DisplayName("스냅샷 생성에 실패하면 예외가 전파된다.")
+    void throwWhenSnapshotCreateFails() {
+        given(financialSnapshotCreateService.createSnapshot(userId))
+            .willThrow(ApplicationException.from(AnalysisErrorCode.SNAPSHOT_NOT_FOUND));
 
         ApplicationException exception = assertThrows(
             ApplicationException.class,
