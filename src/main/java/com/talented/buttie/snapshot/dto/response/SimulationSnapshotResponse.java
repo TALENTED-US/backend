@@ -1,8 +1,8 @@
-package com.talented.buttie.snapshot.dto.result;
+package com.talented.buttie.snapshot.dto.response;
 
 import java.math.BigDecimal;
 
-public record SimulationSnapshotResultDTO(
+public record SimulationSnapshotResponse(
     Long snapshotId,
     Long userId,
     Integer liquidAssets,
