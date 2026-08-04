@@ -10,7 +10,7 @@ import lombok.Builder;
 
 @ApiModel(description = "시뮬레이션 생성 요청")
 @Builder
-public record CreateSimulationRequestDTO(
+public record CreateSimulationRequest(
     @ApiModelProperty(value = "시뮬레이션 수행 시작일", example = "2026-08-01", required = true)
     @NotNull(message = "시뮬레이션 수행 시작일은 필수입니다.")
     LocalDate simulationStartDate,

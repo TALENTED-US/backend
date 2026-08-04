@@ -11,7 +11,7 @@ import lombok.Builder;
 
 @ApiModel(description = "시뮬레이션 통합 조회 응답")
 @Builder
-public record SimulationDetailResponseDTO(
+public record SimulationDetailResponse(
 
     @ApiModelProperty(value = "시뮬레이션 ID", example = "1")
     Long simulationId,
@@ -35,10 +35,10 @@ public record SimulationDetailResponseDTO(
     BigDecimal prepMonths,
 
     @ApiModelProperty(value = "관련 월별 재정 계획 리스트")
-    List<MonthlyProjectionResponseDTO> monthlyProjections
+    List<MonthlyProjectionResponse> monthlyProjections
 ) {
-    public static SimulationDetailResponseDTO from(SimulationVO simulation){
-        return SimulationDetailResponseDTO.builder()
+    public static SimulationDetailResponse from(SimulationVO simulation){
+        return SimulationDetailResponse.builder()
             .simulationId(simulation.getSimulationId())
             .userId(PKCrypto.encrypt(simulation.getUserId()))
             .snapshotId(simulation.getSnapshotId())
@@ -48,7 +48,7 @@ public record SimulationDetailResponseDTO(
             .prepMonths(simulation.getPrepMonths())
             .monthlyProjections(
                 simulation.getMonthlyProjections().stream()
-                    .map(MonthlyProjectionResponseDTO::from)
+                    .map(MonthlyProjectionResponse::from)
                     .toList()
             )
             .build();

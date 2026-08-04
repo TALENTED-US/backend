@@ -11,7 +11,6 @@ import static org.mockito.Mockito.never;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.user.domain.EmploymentPreparationType;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
-import com.talented.buttie.user.domain.UserStatus;
 import com.talented.buttie.user.domain.UserVO;
 import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
 import com.talented.buttie.user.dto.request.WithdrawUserRequestDTO;
@@ -235,14 +234,9 @@ class UserServiceTest {
         Long userId = 1L;
         String password = "password1234";
         WithdrawUserRequestDTO request = new WithdrawUserRequestDTO(password);
-        UserVO user = UserVO.builder()
-            .userId(userId)
-            .userPasswordHash(password)
-            .userStatus(UserStatus.ACTIVE)
-            .build();
 
-        given(userMapper.selectUserById(userId)).willReturn(user);
-        given(passwordEncoder.matches(password, user.getUserPasswordHash())).willReturn(true);
+        given(userMapper.getPasswordByUserId(userId)).willReturn(password);
+        given(passwordEncoder.matches(password, password)).willReturn(true);
         given(userMapper.updateWithdrawnUser(any(UserVO.class))).willReturn(1);
 
         Long result = userService.withdrawUser(userId, request);
@@ -257,7 +251,7 @@ class UserServiceTest {
         Long userId = 999L;
         WithdrawUserRequestDTO request = new WithdrawUserRequestDTO("password1234");
 
-        given(userMapper.selectUserById(userId)).willReturn(null);
+        given(userMapper.getPasswordByUserId(userId)).willReturn(null);
 
         ApplicationException exception = assertThrows(
             ApplicationException.class,
@@ -272,14 +266,9 @@ class UserServiceTest {
     void throwWhenWithdrawPasswordMismatch() {
         Long userId = 1L;
         WithdrawUserRequestDTO request = new WithdrawUserRequestDTO("wrongPassword");
-        UserVO user = UserVO.builder()
-            .userId(userId)
-            .userPasswordHash("password1234")
-            .userStatus(UserStatus.ACTIVE)
-            .build();
 
-        given(userMapper.selectUserById(userId)).willReturn(user);
-        given(passwordEncoder.matches("wrongPassword", user.getUserPasswordHash())).willReturn(false);
+        given(userMapper.getPasswordByUserId(userId)).willReturn("password1234");
+        given(passwordEncoder.matches("wrongPassword", "password1234")).willReturn(false);
 
         ApplicationException exception = assertThrows(
             ApplicationException.class,

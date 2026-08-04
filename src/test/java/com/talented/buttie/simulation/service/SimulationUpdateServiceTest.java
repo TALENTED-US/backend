@@ -15,7 +15,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationVO;
-import com.talented.buttie.simulation.dto.request.UpdateSimulationPeriodRequestDTO;
+import com.talented.buttie.simulation.dto.request.UpdateSimulationPeriodRequest;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
@@ -50,7 +50,7 @@ class SimulationUpdateServiceTest {
 
     private Long userId;
     private Long simulationId;
-    private UpdateSimulationPeriodRequestDTO request;
+    private UpdateSimulationPeriodRequest request;
     private SimulationVO activeSimulation;
     private List<MonthlyProjectionVO> existingProjections;
     private List<MonthlyProjectionVO> recalculatedProjections;
@@ -59,7 +59,7 @@ class SimulationUpdateServiceTest {
     void setUp() {
         userId = 1L;
         simulationId = 10L;
-        request = new UpdateSimulationPeriodRequestDTO(
+        request = new UpdateSimulationPeriodRequest(
             LocalDate.of(2026, 8, 1),
             LocalDate.of(2027, 1, 31)
         );
@@ -108,7 +108,7 @@ class SimulationUpdateServiceTest {
     @Test
     @DisplayName("시뮬레이션 기간이 올바르지 않으면 예외가 발생한다.")
     void throwWhenPeriodIsInvalid() {
-        UpdateSimulationPeriodRequestDTO errorRequest = UpdateSimulationPeriodRequestDTO.builder()
+        UpdateSimulationPeriodRequest errorRequest = UpdateSimulationPeriodRequest.builder()
             .simulationStartDate(LocalDate.of(2027, 1, 1))
             .simulationDueDate(LocalDate.of(2026, 1, 1))
             .build();
