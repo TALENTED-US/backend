@@ -14,7 +14,7 @@ import lombok.Builder;
 @ApiModel(description = "거래 상세 조회 응답")
 @Builder
 public record TransactionDetailResponse(
-    @ApiModelProperty(value = "암호화된 사용자 ID", example = "exp123...")
+    @ApiModelProperty(value = "암호화된 사용자 ID", example = "ToJn4pdJ9axT1Oay6sf2wQ")
     String userId,
 
     @ApiModelProperty(value = "거래 내용", example = "String", required = true)
