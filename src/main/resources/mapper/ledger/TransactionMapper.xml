@@ -131,7 +131,7 @@
     where USER_ID = #{userId}
     and IS_DELETED = false
     and TRANSACTION_AT >= #{fromDateTime}
-    and TRANSACTION_AT < #{toDateTime}
+    and #{toDateTime} > TRANSACTION_AT
   </select>
 
   <!-- 수동 등록 거래 전체 수정 (외부거래 ID가 없을 때 사용) -->
