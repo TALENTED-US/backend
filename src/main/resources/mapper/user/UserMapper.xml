@@ -3,7 +3,12 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.talented.buttie.user.mapper.UserMapper">
-
+  <select id="getPasswordByUserId" resultType="string">
+    SELECT USER_PASSWORD_HASH
+    FROM `USER`
+    WHERE USER_ID = #{userId}
+      AND USER_STATUS != 'WITHDRAWN'
+  </select>
   <select id="selectUserProfile" resultType="com.talented.buttie.user.domain.UserProfileVO">
     SELECT
       u.USER_ID,
@@ -18,6 +23,26 @@
            JOIN USER_BUTTIE ub ON u.USER_ID = ub.USER_ID
            JOIN EMPLOYMENT_PREPARATIONS ep ON u.USER_ID = ep.USER_ID
     WHERE u.USER_ID = #{userId}
+  </select>
+  <update id="updateWithdrawnUser">
+    UPDATE `USER`
+    SET USER_STATUS = #{user.userStatus},
+        USER_WITHDRAWN_AT = #{user.userWithdrawnAt}
+    WHERE USER_ID = #{user.userId}
+  </update>
+
+
+  <update id="updateUser">
+    UPDATE USER
+    SET USER_NICKNAME = #{user.userNickname},
+        USER_UPDATED_AT = NOW()
+    WHERE USER_ID = #{user.userId}
+  </update>
+
+  <select id="countByNickname" resultType="int">
+    SELECT COUNT(*)
+    FROM USER
+    WHERE USER_NICKNAME = #{nickname}
   </select>
 
 </mapper>

@@ -1,6 +1,7 @@
 package com.talented.buttie.simulation.mapper;
 
 import com.talented.buttie.simulation.domain.SimulationVO;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -15,5 +16,10 @@ public interface SimulationMapper {
         @Param("simulationStartDate") LocalDate simulationStartDate,
         @Param("simulationDueDate") LocalDate simulationDueDate,
         @Param("simulationEndAmount") Integer simulationEndAmount
+    );
+    void updateSummary(
+        @Param("simulationId") Long simulationId,
+        @Param("simulationEndAmount") Integer simulationEndAmount,
+        @Param("prepMonths")BigDecimal prepMonths
     );
 }

@@ -4,11 +4,49 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.talented.buttie.simulation.mapper.SimulationItemMapper">
+  <insert id="save"
+          parameterType="com.talented.buttie.simulation.domain.SimulationItemVO"
+          useGeneratedKeys="true"
+          keyProperty="simulationItemId"
+          keyColumn="SIMULATION_ITEM_ID">
+    insert into SIMULATION_ITEM(
+              SIMULATION_ID,
+              SIMULATION_ITEM_CATEGORY,
+              SIMULATION_ITEM_NAME,
+              SIMULATION_ITEM_EXPENSE_CATEGORY,
+              SIMULATION_ITEM_APPLY_AMOUNT,
+              APPLY_START_DATE,
+              APPLY_END_DATE,
+              POLICY_ID,
+              RECURRENCE_TYPE,
+              IS_DELETED
+    ) values (
+              #{simulationId},
+              #{simulationItemCategory},
+              #{simulationItemName},
+              #{simulationItemExpenseCategory},
+              #{simulationItemApplyAmount},
+              #{applyStartDate},
+              #{applyEndDate},
+              #{policyId},
+              #{recurrenceType},
+              false
+    )
+  </insert>
 
   <select id="findAllActiveBySimulationId"
     resultType="com.talented.buttie.simulation.domain.SimulationItemVO">
-    select SIMULATION_ITEM_ID, SIMULATION_ITEM_CATEGORY,
-           SIMULATION_ITEM_APPLY_AMOUNT, RECURRENCE_TYPE
+    select SIMULATION_ITEM_ID as simulationItemId,
+           SIMULATION_ID as simulationId,
+           SIMULATION_ITEM_CATEGORY as simulationItemCategory,
+           SIMULATION_ITEM_NAME as simulationItemName,
+           SIMULATION_ITEM_EXPENSE_CATEGORY as simulationItemExpenseCategory,
+           SIMULATION_ITEM_APPLY_AMOUNT as simulationItemApplyAmount,
+           APPLY_START_DATE as applyStartDate,
+           APPLY_END_DATE as applyEndDate,
+           POLICY_ID as policyId,
+           RECURRENCE_TYPE as recurrenceType,
+           IS_DELETED as isDeleted
     from SIMULATION_ITEM
     where SIMULATION_ID = #{simulationId}
         and IS_DELETED is false

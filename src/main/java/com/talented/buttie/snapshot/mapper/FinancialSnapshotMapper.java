@@ -7,4 +7,5 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface FinancialSnapshotMapper {
     FinancialSnapshotVO findLatestByUserId(@Param("userId") Long userId);
+    void save(FinancialSnapshotVO financialSnapshot);
 }

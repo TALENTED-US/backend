@@ -7,15 +7,21 @@ import com.talented.buttie.ledger.domain.TransactionVO;
 import com.talented.buttie.ledger.dto.request.CreateTransactionRequest;
 import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequest;
 import com.talented.buttie.ledger.dto.request.UpdateTransactionRequest;
+import com.talented.buttie.ledger.dto.response.FixedExpenseDetailResponse;
+import com.talented.buttie.ledger.dto.response.TransactionDetailResponse;
 import com.talented.buttie.ledger.dto.response.TransactionResponse;
-import com.talented.buttie.ledger.service.ReadTransactionService;
 import com.talented.buttie.ledger.service.CreateTransactionService;
+import com.talented.buttie.ledger.service.DeleteTransactionService;
+import com.talented.buttie.ledger.service.ReadFixedExpenseDetailService;
+import com.talented.buttie.ledger.service.ReadTransactionDetailService;
+import com.talented.buttie.ledger.service.ReadTransactionService;
 import com.talented.buttie.ledger.service.UpdateTransactionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +38,9 @@ public class TransactionController {
     private final ReadTransactionService readTransactionService;
     private final CreateTransactionService createTransactionService;
     private final UpdateTransactionService updateTransactionService;
+    private final DeleteTransactionService deleteTransactionService;
+    private final ReadTransactionDetailService readTransactionDetailService;
+    private final ReadFixedExpenseDetailService readFixedExpenseDetailService;
 
     @ApiOperation("거래 목록 조회")
     @GetMapping("")
@@ -83,5 +92,42 @@ public class TransactionController {
         Long targetUserId = user.userId();
         TransactionVO transactionMemo = updateTransactionService.updateTransactionMemo(targetUserId, transactionId, request);
         return ApplicationResponse.onSuccess(TransactionResponse.from(transactionMemo));
+    }
+
+    @ApiOperation("수동 거래 내역 삭제 (외부거래 ID가 없을 때 사용)")
+    @DeleteMapping("/{transactionId}")
+    public ApplicationResponse<Long> deleteTransaction(
+        @PathVariable Long transactionId,
+        @AuthUser AuthenticationUser user
+    ){
+        Long targetUserId = user.userId();
+        Long deleteUserId = deleteTransactionService.deleteTransaction(targetUserId, transactionId);
+        return ApplicationResponse.onSuccess(deleteUserId);
+    }
+
+    @ApiOperation("고정 지출 상세 목록 조회")
+    @GetMapping("/fixed")
+    public ApplicationResponse<List<FixedExpenseDetailResponse>> getFixedExpenseDetails(
+        @AuthUser AuthenticationUser user
+    ){
+        Long targetUserId = user.userId();
+        List<TransactionVO> fixedExpenses = readFixedExpenseDetailService.getFixedExpenseDetails(targetUserId);
+
+        List<FixedExpenseDetailResponse> responseList = fixedExpenses.stream()
+            .map(FixedExpenseDetailResponse::from)
+            .toList();
+
+        return ApplicationResponse.onSuccess(responseList);
+    }
+
+    @ApiOperation("거래 상세 조회")
+    @GetMapping("/{transactionId}")
+    public ApplicationResponse<TransactionDetailResponse> getTransactionDetail(
+        @PathVariable("transactionId") Long transactionId,
+        @AuthUser AuthenticationUser user
+    ){
+        Long targetUserId = user.userId();
+        TransactionDetailResponse response = readTransactionDetailService.getTransactionDetail(targetUserId, transactionId);
+        return ApplicationResponse.onSuccess(response);
     }
 }

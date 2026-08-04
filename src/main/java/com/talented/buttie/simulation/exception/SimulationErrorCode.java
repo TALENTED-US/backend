@@ -15,7 +15,8 @@ public enum SimulationErrorCode implements BaseErrorCode {
     CONFIRMED_SIMULATION_NOT_FOUND(HttpStatus.NOT_FOUND, "SIMULATION_004", "확정 시뮬레이션을 찾을 수 없습니다."),
     INVALID_SIMULATION_PERIOD(HttpStatus.BAD_REQUEST, "SIMULATION_005", "시뮬레이션 수행 기간이 올바르지 않습니다."),
     CONFIRMED_SIMULATION_CANNOT_BE_UPDATED(HttpStatus.CONFLICT, "SIMULATION_006", "확정 재정 계획은 기간을 수정할 수 없습니다."),
-    INVALID_PREVIEW_ITEM(HttpStatus.BAD_REQUEST, "SIMULATION_007", "미리보기 항목 값이 올바르지 않습니다.");
+    INVALID_PREVIEW_ITEM(HttpStatus.BAD_REQUEST, "SIMULATION_007", "미리보기 항목 값이 올바르지 않습니다."),
+    INVALID_SIMULATION_ITEM(HttpStatus.BAD_REQUEST, "SIMULATION_008", "시뮬레이션 항목 값이 올바르지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String customCode;

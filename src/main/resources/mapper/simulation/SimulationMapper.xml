@@ -41,4 +41,12 @@
       and CONFIRMED_AT is null
   </update>
 
+  <update id="updateSummary">
+    update SIMULATION
+    set SIMULATION_END_AMOUNT = #{simulationEndAmount},
+        PREP_MONTHS = #{prepMonths}
+    where SIMULATION_ID = #{simulationId}
+      and CONFIRMED_AT is null
+  </update>
+
 </mapper>

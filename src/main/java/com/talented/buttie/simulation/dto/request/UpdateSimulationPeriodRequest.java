@@ -8,7 +8,7 @@ import lombok.Builder;
 
 @ApiModel(description = "시뮬레이션 수행 기간 수정 요청")
 @Builder
-public record UpdateSimulationPeriodRequestDTO(
+public record UpdateSimulationPeriodRequest(
 
     @ApiModelProperty(value = "시뮬레이션 수행 시작일", example = "2026-08-01", required = true)
     @NotNull(message = "시뮬레이션 수행 시작일은 필수입니다.")

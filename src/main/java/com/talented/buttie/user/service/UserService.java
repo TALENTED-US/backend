@@ -1,25 +1,40 @@
 package com.talented.buttie.user.service;
 
-import com.talented.buttie.user.domain.EmploymentPreparationVO;
-import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
-import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.domain.UserProfileVO;
+import com.talented.buttie.user.domain.UserVO;
+import com.talented.buttie.user.dto.request.CreateEmploymentPreparationRequestDTO;
+import com.talented.buttie.user.dto.request.ModifyUserProfileRequestDTO;
+import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
+import com.talented.buttie.user.dto.request.WithdrawUserRequestDTO;
 import com.talented.buttie.user.exception.UserErrorCode;
+import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import com.talented.buttie.user.mapper.UserMapper;
-
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final EmploymentPreparationMapper employmentPreparationMapper;
+
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final EmploymentPreparationMapper employmentPreparationMapper;
 
-    public EmploymentPreparationVO saveEmploymentPreparation(Long userId, UpdateEmploymentPreparationRequestDTO request) {
+    public UserProfileVO getUserProfile(Long userId) {
+        UserProfileVO userProfile = userMapper.selectUserProfile(userId);
 
+        if (userProfile == null) {
+            throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
+        }
+
+        return userProfile;
+    }
+
+    public Long modifyEmploymentPreparation(Long userId, UpdateEmploymentPreparationRequestDTO request) {
         EmploymentPreparationVO employmentPreparation =
             EmploymentPreparationVO.createEmploymentPreparation(userId, request);
 
@@ -27,7 +42,7 @@ public class UserService {
         if (updated == 0) {
             throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_NOT_FOUND);
         }
-        return employmentPreparation;
+        return userId;
     }
     public EmploymentPreparationVO getEmploymentPreparation(Long userId) {
         EmploymentPreparationVO employmentPreparation =
@@ -40,14 +55,47 @@ public class UserService {
         return employmentPreparation;
     }
 
+    public Long withdrawUser(Long userId, WithdrawUserRequestDTO request) {
+        String passwordHash = userMapper.getPasswordByUserId(userId);
 
-    public UserProfileVO getUserProfile(Long userId) {
-        UserProfileVO vo = userMapper.selectUserProfile(userId);
-
-        if (vo == null) {
+        if (passwordHash == null || passwordHash.isBlank()) {
             throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
         }
 
-        return vo;
+        if (!passwordEncoder.matches(request.password(), passwordHash)){
+            throw ApplicationException.from(UserErrorCode.PASSWORD_MISMATCH);
+        }
+
+        UserVO withdrawnUser = UserVO.createWithdrawnUser(userId);
+        userMapper.updateWithdrawnUser(withdrawnUser);
+
+        return userId;
+    }
+
+    public Long createEmploymentPreparation(Long userId, CreateEmploymentPreparationRequestDTO request) {
+
+        EmploymentPreparationVO employmentPreparation =
+            EmploymentPreparationVO.createEmploymentPreparation(userId, request);
+
+        int inserted = employmentPreparationMapper.insertEmploymentPreparation(employmentPreparation);
+        if (inserted == 0) {
+            throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_CREATE_FAILED);
+        }
+        return userId;
+    }
+
+    public Long modifyUserProfile(Long userId, ModifyUserProfileRequestDTO request) {
+        if (userMapper.countByNickname(request.nickname()) > 0) {
+            throw ApplicationException.from(UserErrorCode.DUPLICATE_NICKNAME);
+        }
+
+        UserVO user = UserVO.createModifiedUser(userId, request.nickname());
+        int updatedUserId = userMapper.updateUser(user);
+
+        if (updatedUserId == 0) {
+            throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
+        }
+
+        return userId;
     }
 }
