@@ -29,4 +29,6 @@ public interface TransactionMapper {
         @Param("fromDateTime") LocalDateTime fromDateTime,
         @Param("toDateTime") LocalDateTime toDateTime
     );
+    // 고정 지출 상세 목록 조회 (TransactionType이 FIXED인 항목)
+    List<TransactionVO> findFixedExpensesByUserId(@Param("userId") Long userId);
 }

@@ -4,20 +4,24 @@ import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.domain.UserProfileVO;
 import com.talented.buttie.user.domain.UserVO;
+import com.talented.buttie.user.dto.request.CreateEmploymentPreparationRequestDTO;
 import com.talented.buttie.user.dto.request.ModifyUserProfileRequestDTO;
 import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
+import com.talented.buttie.user.dto.request.WithdrawUserRequestDTO;
 import com.talented.buttie.user.exception.UserErrorCode;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import com.talented.buttie.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.talented.buttie.user.dto.request.CreateEmploymentPreparationRequestDTO;
+
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
     private final EmploymentPreparationMapper employmentPreparationMapper;
 
     public UserProfileVO getUserProfile(Long userId) {
@@ -49,6 +53,23 @@ public class UserService {
         }
 
         return employmentPreparation;
+    }
+
+    public Long withdrawUser(Long userId, WithdrawUserRequestDTO request) {
+        String passwordHash = userMapper.getPasswordByUserId(userId);
+
+        if (passwordHash == null || passwordHash.isBlank()) {
+            throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
+        }
+
+        if (!passwordEncoder.matches(request.password(), passwordHash)){
+            throw ApplicationException.from(UserErrorCode.PASSWORD_MISMATCH);
+        }
+
+        UserVO withdrawnUser = UserVO.createWithdrawnUser(userId);
+        userMapper.updateWithdrawnUser(withdrawnUser);
+
+        return userId;
     }
 
     public Long createEmploymentPreparation(Long userId, CreateEmploymentPreparationRequestDTO request) {

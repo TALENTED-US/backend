@@ -20,6 +20,14 @@ public class UserVO {
     private LocalDateTime userCreatedAt;
     private LocalDateTime userUpdatedAt;
 
+    public static UserVO createWithdrawnUser(Long userId) {
+        return UserVO.builder()
+            .userId(userId)
+            .userStatus(UserStatus.WITHDRAWN)
+            .userWithdrawnAt(LocalDateTime.now())
+            .build();
+    }
+
     public static UserVO createModifiedUser(Long userId, String nickname) {
         return UserVO.builder()
             .userId(userId)
