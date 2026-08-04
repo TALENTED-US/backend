@@ -10,6 +10,7 @@ import com.talented.buttie.ledger.dto.request.UpdateTransactionRequest;
 import com.talented.buttie.ledger.dto.response.FixedExpenseDetailResponse;
 import com.talented.buttie.ledger.dto.response.TransactionDetailResponse;
 import com.talented.buttie.ledger.dto.response.TransactionResponse;
+import com.talented.buttie.ledger.service.CreateFixedExpenseService;
 import com.talented.buttie.ledger.service.CreateTransactionService;
 import com.talented.buttie.ledger.service.DeleteTransactionService;
 import com.talented.buttie.ledger.service.ReadFixedExpenseDetailService;
@@ -41,6 +42,7 @@ public class TransactionController {
     private final DeleteTransactionService deleteTransactionService;
     private final ReadTransactionDetailService readTransactionDetailService;
     private final ReadFixedExpenseDetailService readFixedExpenseDetailService;
+    private final CreateFixedExpenseService createFixedExpenseService;
 
     @ApiOperation("거래 목록 조회")
     @GetMapping("")
@@ -129,5 +131,17 @@ public class TransactionController {
         Long targetUserId = user.userId();
         TransactionDetailResponse response = readTransactionDetailService.getTransactionDetail(targetUserId, transactionId);
         return ApplicationResponse.onSuccess(response);
+    }
+
+    @ApiOperation("고정 지출 추가")
+    @PatchMapping("/{transactionId}/fixed")
+    public ApplicationResponse<Long> createFixedExpense(
+        @PathVariable("transactionId") String transactionId,
+        @AuthUser AuthenticationUser user
+    ){
+        Long targetUserId = user.userId();
+        Long resultTransactionId = createFixedExpenseService.createFixedExpense(targetUserId, transactionId);
+
+        return ApplicationResponse.onSuccess(resultTransactionId);
     }
 }

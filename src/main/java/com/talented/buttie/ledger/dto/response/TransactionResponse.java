@@ -16,8 +16,11 @@ import com.talented.buttie.common.util.PKCrypto;
 @ApiModel(description = "거래 목록 조회 응답")
 @Builder
 public record TransactionResponse(
-    @ApiModelProperty(value = "암호화된 사용자 ID", example = "exp123...")
+    @ApiModelProperty(value = "암호화된 사용자 ID", example = "ToJn4pdJ9axT1Oay6sf2wQ")
     String userId,
+
+    @ApiModelProperty(value = "암호화된 거래 ID", example = "xX79VwugC283X2XVQTkp1Q")
+    String transactionId,
 
     @ApiModelProperty(value = "거래 내용", example = "String")
     @NotBlank(message = "거래 내용은 필수입니다.")
@@ -43,6 +46,7 @@ public record TransactionResponse(
     public static TransactionResponse from(TransactionVO vo) {
         return TransactionResponse.builder()
             .userId(PKCrypto.encrypt(vo.getUserId()))
+            .transactionId(PKCrypto.encrypt(vo.getTransactionId()))
             .transactionContent(vo.getTransactionContent())
             .transactionType(vo.getTransactionType())
             .expenseCategory(vo.getExpenseCategory())
