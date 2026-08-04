@@ -3,6 +3,7 @@ package com.talented.buttie.ledger.controller;
 import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.annotation.AuthUser;
+import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.ledger.domain.TransactionVO;
 import com.talented.buttie.ledger.dto.request.CreateTransactionRequest;
 import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequest;
@@ -140,7 +141,8 @@ public class TransactionController {
         @AuthUser AuthenticationUser user
     ){
         Long targetUserId = user.userId();
-        Long resultTransactionId = createFixedExpenseService.createFixedExpense(targetUserId, transactionId);
+        Long decryptedTransactionId = PKCrypto.decrypt(transactionId);
+        Long resultTransactionId = createFixedExpenseService.createFixedExpense(targetUserId, decryptedTransactionId);
 
         return ApplicationResponse.onSuccess(resultTransactionId);
     }

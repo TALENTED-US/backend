@@ -1,7 +1,6 @@
 package com.talented.buttie.ledger.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
-import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.ledger.domain.TransactionType;
 import com.talented.buttie.ledger.domain.TransactionVO;
 import com.talented.buttie.ledger.exception.LedgerErrorCode;
@@ -17,10 +16,8 @@ public class CreateFixedExpenseService {
     private final TransactionMapper transactionMapper;
 
     @Transactional
-    public Long createFixedExpense(Long userId, String transactionId) {
-        Long decryptedTransactionId = PKCrypto.decrypt(transactionId);
-
-        TransactionVO targetTransaction = transactionMapper.findById(decryptedTransactionId);
+    public Long createFixedExpense(Long userId, Long transactionId) {
+        TransactionVO targetTransaction = transactionMapper.findById(transactionId);
 
         if (targetTransaction == null) {
             throw ApplicationException.from(LedgerErrorCode.TRANSACTION_NOT_FOUND);
@@ -35,8 +32,13 @@ public class CreateFixedExpenseService {
         }
 
         TransactionVO fixedExpense = TransactionVO.createFixedExpense(targetTransaction);
-        transactionMapper.updateTransaction(fixedExpense);
 
-        return fixedExpense.getTransactionId();
+        int updatedTransactionId = transactionMapper.updateTransaction(fixedExpense);
+
+        if(updatedTransactionId == 0){
+            throw ApplicationException.from(LedgerErrorCode.TRANSACTION_NOT_FOUND);
+        }
+
+        return transactionId;
     }
 }
