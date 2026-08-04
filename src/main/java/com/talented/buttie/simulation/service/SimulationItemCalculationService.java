@@ -297,7 +297,7 @@ public class SimulationItemCalculationService {
         }
 
         if (request.category() == SimulationItemCategory.EXPENSE) {
-            return toKoreanExpenseCategoryName(request.expenseCategory()) + " 줄이기";
+            return request.expenseCategory().getValue() + " 줄이기";
         }
 
         return null;
@@ -331,19 +331,6 @@ public class SimulationItemCalculationService {
         }
 
         return request.recurrenceType();
-    }
-
-    private String toKoreanExpenseCategoryName(ExpenseCategory expenseCategory) {
-        return switch (expenseCategory) {
-            case FOOD -> "식비";
-            case TRANSPORT -> "교통비";
-            case HOUSING -> "주거비";
-            case COMMUNICATION -> "통신비";
-            case SUBSCRIPTION -> "구독비";
-            case EDUCATION -> "교육비";
-            case CERTIFICATE -> "자격증 비용";
-            case ETC_EXPENSE -> "기타 비용";
-        };
     }
 
     private boolean isBlank(String value) {
