@@ -30,8 +30,8 @@ public record SimulationResponse(
     @ApiModelProperty(value = "종료 예상 잔액", example = "5000000")
     Integer simulationEndAmount,
 
-    @ApiModelProperty(value = "준비 가능 개월", example = "8.25")
-    BigDecimal prepMonths
+    @ApiModelProperty(value = "예상 버티는 기간", example = "8.25")
+    BigDecimal expectPrepMonths
 ) {
     public static SimulationResponse from(SimulationVO simulation){
         return SimulationResponse.builder()
@@ -41,7 +41,7 @@ public record SimulationResponse(
             .simulationStartDate(simulation.getSimulationStartDate())
             .simulationDueDate(simulation.getSimulationDueDate())
             .simulationEndAmount(simulation.getSimulationEndAmount())
-            .prepMonths(simulation.getPrepMonths())
+            .expectPrepMonths(simulation.getExpectPrepMonths())
             .build();
     }
 }

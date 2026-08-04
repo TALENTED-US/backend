@@ -12,7 +12,7 @@ public class FinancialSnapshotVO {
     private LocalDate snapshotBaseDate;
     private Integer liquidAssets;
     private Integer monthlyNetCashflow;
-    private BigDecimal prepPossibleMonths;
+    private BigDecimal currentPrepMonths;
     private BigDecimal avgMonthlyExpense;
     private BigDecimal avgMonthlyIncome;
     private BigDecimal avgWeekendExpense;
