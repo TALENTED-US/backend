@@ -49,5 +49,5 @@ bin/
 ### Environment variables ###
 .env
 !.env.example
-application.properties
+#application.properties
 /postman/
