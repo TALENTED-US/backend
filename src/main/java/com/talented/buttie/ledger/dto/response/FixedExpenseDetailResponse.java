@@ -14,7 +14,7 @@ import lombok.Builder;
 @ApiModel(description = "고정 지출 상세 조회 응답")
 @Builder
 public record FixedExpenseDetailResponse(
-    @ApiModelProperty(value = "암호화된 거래 ID", example = "exp123...")
+    @ApiModelProperty(value = "암호화된 거래 ID", example = "xX79VwugC283X2XVQTkp1Q")
     String transactionId,
 
     @ApiModelProperty(value = "거래 내용", example = "월세")
