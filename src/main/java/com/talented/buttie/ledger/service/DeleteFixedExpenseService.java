@@ -32,12 +32,12 @@ public class DeleteFixedExpenseService {
         }
 
         TransactionVO updatedTransaction = TransactionVO.deleteFixedExpense(targetTransaction);
-        int updatedRows = transactionMapper.updateTransaction(updatedTransaction);
+        int updatedTransactionId = transactionMapper.updateTransaction(updatedTransaction);
 
-        if (updatedRows == 0) {
+        if (updatedTransactionId == 0) {
             throw ApplicationException.from(LedgerErrorCode.TRANSACTION_NOT_FOUND);
         }
 
-        return updatedTransaction.getTransactionId();
+        return transactionId;
     }
 }

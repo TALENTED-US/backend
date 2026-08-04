@@ -11,7 +11,6 @@ import com.talented.buttie.ledger.dto.request.UpdateTransactionRequest;
 import com.talented.buttie.ledger.dto.response.FixedExpenseDetailResponse;
 import com.talented.buttie.ledger.dto.response.TransactionDetailResponse;
 import com.talented.buttie.ledger.dto.response.TransactionResponse;
-import com.talented.buttie.ledger.dto.request.DeleteFixedExpenseRequest;
 import com.talented.buttie.ledger.service.CreateFixedExpenseService;
 import com.talented.buttie.ledger.service.CreateTransactionService;
 import com.talented.buttie.ledger.service.DeleteFixedExpenseService;
@@ -150,27 +149,14 @@ public class TransactionController {
         return ApplicationResponse.onSuccess(resultTransactionId);
     }
 
-    @ApiOperation("고정 지출 삭제(해제) - PathVariable")
+    @ApiOperation("고정 지출 삭제(해제)")
     @PatchMapping("/{transactionId}/fixed/delete")
-    public ApplicationResponse<Long> deleteFixedExpenseByPathVariable(
+    public ApplicationResponse<Long> deleteFixedExpense(
         @PathVariable("transactionId") String transactionId,
         @AuthUser AuthenticationUser user
     ){
         Long targetUserId = user.userId();
         Long decryptedTransactionId = PKCrypto.decrypt(transactionId);
-        Long resultTransactionId = deleteFixedExpenseService.deleteFixedExpense(targetUserId, decryptedTransactionId);
-
-        return ApplicationResponse.onSuccess(resultTransactionId);
-    }
-
-    @ApiOperation("고정 지출 삭제(해제) - RequestBody DTO")
-    @PatchMapping("/fixed/delete")
-    public ApplicationResponse<Long> deleteFixedExpenseByRequestBody(
-        @Valid @RequestBody DeleteFixedExpenseRequest request,
-        @AuthUser AuthenticationUser user
-    ){
-        Long targetUserId = user.userId();
-        Long decryptedTransactionId = PKCrypto.decrypt(request.transactionId());
         Long resultTransactionId = deleteFixedExpenseService.deleteFixedExpense(targetUserId, decryptedTransactionId);
 
         return ApplicationResponse.onSuccess(resultTransactionId);
