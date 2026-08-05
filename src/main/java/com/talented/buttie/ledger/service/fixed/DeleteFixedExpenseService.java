@@ -38,6 +38,6 @@ public class DeleteFixedExpenseService {
             throw ApplicationException.from(LedgerErrorCode.TRANSACTION_NOT_FOUND);
         }
 
-        return updatedTransaction.transactionId;
+        return updatedTransaction.getTransactionId();
     }
 }
