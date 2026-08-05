@@ -1,4 +1,4 @@
-package com.talented.buttie.ledger.dto.request;
+package com.talented.buttie.ledger.dto.request.transaction;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

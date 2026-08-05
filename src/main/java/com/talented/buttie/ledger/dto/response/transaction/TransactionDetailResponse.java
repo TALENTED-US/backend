@@ -1,4 +1,4 @@
-package com.talented.buttie.ledger.dto.response;
+package com.talented.buttie.ledger.dto.response.transaction;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.talented.buttie.common.util.PKCrypto;

@@ -1,8 +1,8 @@
 package com.talented.buttie.ledger.domain;
 
-import com.talented.buttie.ledger.dto.request.CreateTransactionRequest;
-import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequest;
-import com.talented.buttie.ledger.dto.request.UpdateTransactionRequest;
+import com.talented.buttie.ledger.dto.request.transaction.CreateTransactionRequest;
+import com.talented.buttie.ledger.dto.request.transaction.UpdateTransactionMemoRequest;
+import com.talented.buttie.ledger.dto.request.transaction.UpdateTransactionRequest;
 import java.time.LocalDateTime;
 import lombok.*;
 

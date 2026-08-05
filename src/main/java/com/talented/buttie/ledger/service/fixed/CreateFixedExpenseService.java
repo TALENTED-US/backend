@@ -1,4 +1,4 @@
-package com.talented.buttie.ledger.service;
+package com.talented.buttie.ledger.service.fixed;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.ledger.domain.TransactionType;
@@ -11,12 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class DeleteFixedExpenseService {
+public class CreateFixedExpenseService {
 
     private final TransactionMapper transactionMapper;
 
     @Transactional
-    public Long deleteFixedExpense(Long userId, Long transactionId) {
+    public Long createFixedExpense(Long userId, Long transactionId) {
         TransactionVO targetTransaction = transactionMapper.findById(transactionId);
 
         if (targetTransaction == null) {
@@ -27,14 +27,15 @@ public class DeleteFixedExpenseService {
             throw ApplicationException.from(LedgerErrorCode.TRANSACTION_USER_ID_MISMATCH);
         }
 
-        if (targetTransaction.getTransactionType() != TransactionType.FIXED) {
-            throw ApplicationException.from(LedgerErrorCode.NOT_FIXED_EXPENSE);
+        if (targetTransaction.getTransactionType() == TransactionType.FIXED) {
+            throw ApplicationException.from(LedgerErrorCode.ALREADY_FIXED_EXPENSE);
         }
 
-        TransactionVO updatedTransaction = TransactionVO.deleteFixedExpense(targetTransaction);
-        int updatedTransactionId = transactionMapper.updateTransaction(updatedTransaction);
+        TransactionVO fixedExpense = TransactionVO.createFixedExpense(targetTransaction);
 
-        if (updatedTransactionId == 0) {
+        int updatedTransactionId = transactionMapper.updateTransaction(fixedExpense);
+
+        if(updatedTransactionId == 0){
             throw ApplicationException.from(LedgerErrorCode.TRANSACTION_NOT_FOUND);
         }
 

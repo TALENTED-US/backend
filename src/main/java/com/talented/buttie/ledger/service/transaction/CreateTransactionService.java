@@ -1,8 +1,8 @@
-package com.talented.buttie.ledger.service;
+package com.talented.buttie.ledger.service.transaction;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.ledger.domain.TransactionVO;
-import com.talented.buttie.ledger.dto.request.CreateTransactionRequest;
+import com.talented.buttie.ledger.dto.request.transaction.CreateTransactionRequest;
 import com.talented.buttie.ledger.exception.LedgerErrorCode;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
 import lombok.RequiredArgsConstructor;

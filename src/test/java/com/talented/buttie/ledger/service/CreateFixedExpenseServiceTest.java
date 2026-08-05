@@ -11,6 +11,7 @@ import com.talented.buttie.ledger.domain.TransactionType;
 import com.talented.buttie.ledger.domain.TransactionVO;
 import com.talented.buttie.ledger.exception.LedgerErrorCode;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
+import com.talented.buttie.ledger.service.fixed.CreateFixedExpenseService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
