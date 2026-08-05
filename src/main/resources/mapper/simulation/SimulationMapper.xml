@@ -10,8 +10,8 @@
           keyProperty="simulationId"
           keyColumn="SIMULATION_ID"
   >
-    insert into SIMULATION(USER_ID, SNAPSHOT_ID, SIMULATION_START_DATE, SIMULATION_DUE_DATE, SIMULATION_END_AMOUNT, PREP_MONTHS)
-    values(#{userId}, #{snapshotId}, #{simulationStartDate}, #{simulationDueDate}, #{simulationEndAmount}, #{prepMonths})
+    insert into SIMULATION(USER_ID, SNAPSHOT_ID, SIMULATION_START_DATE, SIMULATION_DUE_DATE, SIMULATION_END_AMOUNT, EXPECT_PREP_MONTHS)
+    values(#{userId}, #{snapshotId}, #{simulationStartDate}, #{simulationDueDate}, #{simulationEndAmount}, #{expectPrepMonths})
   </insert>
 
   <select id="findActiveByUserId"
@@ -44,7 +44,7 @@
   <update id="updateSummary">
     update SIMULATION
     set SIMULATION_END_AMOUNT = #{simulationEndAmount},
-        PREP_MONTHS = #{prepMonths}
+        EXPECT_PREP_MONTHS = #{expectPrepMonths}
     where SIMULATION_ID = #{simulationId}
       and CONFIRMED_AT is null
   </update>

@@ -48,7 +48,8 @@ INSERT INTO `USER`
 (`USER_ID`, `USER_NAME`, `USER_EMAIL`, `USER_PASSWORD_HASH`, `USER_NICKNAME`,
  `USER_PHONE_NUMBER`, `USER_ONBOARDING_COMPLETED`, `USER_STATUS`) VALUES
 (1, '홍길동', 'gildong@example.com', '$2a$10$9I2Kh6/aWPJE8MgQ0P/ofe017aq.KlBcAt1N.DLExcsPUEf2VPq0y', 'gildong.hong', '010-1234-5678', TRUE,  'ACTIVE'),
-(2, '김철수', 'chulsoo@example.com', '$2a$10$BmaT1WbjnMKajXBP0HA37OziIIQVQisAKCcoaOjkW3BRvXKVShiXa', 'chulsoo.kim',  '010-2345-6789', FALSE, 'ACTIVE')
+(2, '김철수', 'chulsoo@example.com', '$2a$10$BmaT1WbjnMKajXBP0HA37OziIIQVQisAKCcoaOjkW3BRvXKVShiXa', 'chulsoo.kim',  '010-2345-6789', FALSE, 'ACTIVE'),
+(3, '테스트유저', 'testuser@example.com', '$2y$10$QA8gVrj3i6h8T8vCJne0E.zPXh9XgPYIBIL4HQthj7CJ1MNGkiGGe', 'test.user', '010-9999-0000', TRUE, 'ACTIVE')
 ON DUPLICATE KEY UPDATE
     `USER_NAME`=VALUES(`USER_NAME`), `USER_EMAIL`=VALUES(`USER_EMAIL`),
     `USER_PASSWORD_HASH`=VALUES(`USER_PASSWORD_HASH`), `USER_NICKNAME`=VALUES(`USER_NICKNAME`),
@@ -62,7 +63,8 @@ INSERT INTO `USER_NOTIFICATION`
 (`USER_ID`, `POLICY_DEADLINE_NOTIFICATION_YN`, `FINANCIAL_CHANGE_NOTIFICATION_YN`,
  `PLAN_DEVIATION_NOTIFICATION_YN`, `SERVICE_NOTICE_NOTIFICATION_YN`) VALUES
 (1, TRUE, TRUE, TRUE, TRUE),
-(2, TRUE, TRUE, TRUE, TRUE)
+(2, TRUE, TRUE, TRUE, TRUE),
+(3, TRUE, TRUE, TRUE, TRUE)
 ON DUPLICATE KEY UPDATE
     `POLICY_DEADLINE_NOTIFICATION_YN`=VALUES(`POLICY_DEADLINE_NOTIFICATION_YN`),
     `FINANCIAL_CHANGE_NOTIFICATION_YN`=VALUES(`FINANCIAL_CHANGE_NOTIFICATION_YN`),
@@ -75,7 +77,8 @@ ON DUPLICATE KEY UPDATE
 INSERT INTO `USER_BUTTIE`
 (`USER_ID`, `BUTTIE_TOTAL_EXP`, `BUTTIE_LEVEL`) VALUES
 (1, 120, 1),
-(2, 0,   1)
+(2, 0,   1),
+(3, 0,   1)
 ON DUPLICATE KEY UPDATE
     `BUTTIE_TOTAL_EXP`=VALUES(`BUTTIE_TOTAL_EXP`), `BUTTIE_LEVEL`=VALUES(`BUTTIE_LEVEL`);
 
@@ -85,7 +88,8 @@ ON DUPLICATE KEY UPDATE
 INSERT INTO `EMPLOYMENT_PREPARATIONS`
 (`USER_ID`, `BIRTH_DATE`, `EMPLOYMENT_PREP_REGION`, `FAMILY_COUNT`, `EMPLOYMENT_PREP_TYPE`,
  `PREP_START_DATE`, `TARGET_EMPLOYMENT_DATE`, `LIVING_FUND_THRESHOLD`) VALUES
-(1, '1999-03-15', '서울특별시', 1, 'FIRST_JOB', '2026-06-01', '2026-12-31', 1000000)
+(1, '1999-03-15', '서울특별시', 1, 'FIRST_JOB', '2026-06-01', '2026-12-31', 1000000),
+(3, '1998-01-10', '서울특별시', 1, 'FIRST_JOB', '2026-07-01', '2027-01-31', 1000000)
 ON DUPLICATE KEY UPDATE
     `BIRTH_DATE`=VALUES(`BIRTH_DATE`), `EMPLOYMENT_PREP_REGION`=VALUES(`EMPLOYMENT_PREP_REGION`),
     `FAMILY_COUNT`=VALUES(`FAMILY_COUNT`), `EMPLOYMENT_PREP_TYPE`=VALUES(`EMPLOYMENT_PREP_TYPE`),
@@ -98,7 +102,8 @@ ON DUPLICATE KEY UPDATE
 INSERT INTO `USER_CONSENTS`
 (`USER_ID`, `TERMS_AGREED_AT`, `PRIVACY_AGREED_AT`, `FINANCIAL_INFO_AGREED_AT`) VALUES
 (1, '2026-06-01 09:00:00', '2026-06-01 09:00:00', '2026-06-01 09:00:00'),
-(2, '2026-07-20 14:30:00', '2026-07-20 14:30:00', '2026-07-20 14:30:00')
+(2, '2026-07-20 14:30:00', '2026-07-20 14:30:00', '2026-07-20 14:30:00'),
+(3, '2026-07-01 09:00:00', '2026-07-01 09:00:00', '2026-07-01 09:00:00')
 ON DUPLICATE KEY UPDATE
     `TERMS_AGREED_AT`=VALUES(`TERMS_AGREED_AT`), `PRIVACY_AGREED_AT`=VALUES(`PRIVACY_AGREED_AT`),
     `FINANCIAL_INFO_AGREED_AT`=VALUES(`FINANCIAL_INFO_AGREED_AT`);
@@ -166,18 +171,20 @@ ON DUPLICATE KEY UPDATE
     `IS_DELETED`=VALUES(`IS_DELETED`);
 
 -- ---------------------------------------------------------
--- 10. 재정 스냅샷 (SNAPSHOT)
+-- 10. 재정 스냅샷 (SNAPSHOT)서
 -- ---------------------------------------------------------
 INSERT INTO `SNAPSHOT`
 (`SNAPSHOT_ID`, `USER_ID`, `SNAPSHOT_BASE_DATE`, `LIQUID_ASSETS`, `MONTHLY_NET_CASHFLOW`,
- `PREP_POSSIBLE_MONTHS`, `AVG_MONTHLY_EXPENSE`, `AVG_MONTHLY_INCOME`,
+ `CURRENT_PREP_MONTHS`, `AVG_MONTHLY_EXPENSE`, `AVG_MONTHLY_INCOME`,
  `AVG_WEEKEND_EXPENSE`, `AVG_WEEKEND_INCOME`,
  `AVG_WEEK_EXPENSE`, `AVG_WEEK_INCOME`, `RISK_LEVEL`) VALUES
 (1, 1, '2026-07-23', 5000000, -1400000,
- 3.57, 525000.00, 480000.00, 25000.00, 0.00, 18000.00, 16000.00, 'CAUTION')
+ 3.57, 525000.00, 480000.00, 25000.00, 0.00, 18000.00, 16000.00, 'CAUTION'),
+(2, 3, '2026-07-23', 8000000, -1000000,
+ 8.00, 2500000.00, 1500000.00, 30000.00, 0.00, 20000.00, 15000.00, 'CAUTION')
 ON DUPLICATE KEY UPDATE
     `LIQUID_ASSETS`=VALUES(`LIQUID_ASSETS`), `MONTHLY_NET_CASHFLOW`=VALUES(`MONTHLY_NET_CASHFLOW`),
-    `PREP_POSSIBLE_MONTHS`=VALUES(`PREP_POSSIBLE_MONTHS`),
+    `CURRENT_PREP_MONTHS`=VALUES(`CURRENT_PREP_MONTHS`),
     `AVG_MONTHLY_EXPENSE`=VALUES(`AVG_MONTHLY_EXPENSE`), `AVG_MONTHLY_INCOME`=VALUES(`AVG_MONTHLY_INCOME`),
     `AVG_WEEKEND_EXPENSE`=VALUES(`AVG_WEEKEND_EXPENSE`), `AVG_WEEKEND_INCOME`=VALUES(`AVG_WEEKEND_INCOME`),
     `AVG_WEEK_EXPENSE`=VALUES(`AVG_WEEK_EXPENSE`), `AVG_WEEK_INCOME`=VALUES(`AVG_WEEK_INCOME`),
@@ -195,7 +202,47 @@ INSERT INTO `POLICY`
 (2, '국민취업지원제도',  '취업', 15, 69, '전국', 500000, 'MONTHLY',
  '2026-11-30 23:59:59', '신분증, 구직신청서', '미취업', 1, 'AVAILABLE', 'https://www.work24.go.kr/kua'),
 (3, '서울 청년수당',     '취업', 19, 34, '서울특별시', 500000, 'ONCE',
- '2026-10-15 23:59:59', '신분증, 졸업증명서', '미취업', 1, 'AVAILABLE', 'https://youth.seoul.go.kr/allowance')
+ '2026-10-15 23:59:59', '신분증, 졸업증명서', '미취업', 1, 'AVAILABLE', 'https://youth.seoul.go.kr/allowance'),
+(4, '청년 전세자금 대출 이자지원', '주거', 19, 34, '전국', 300000, 'MONTHLY',
+ '2026-12-31 23:59:59', '임대차계약서, 소득증빙서류', '미취업', 1, 'AVAILABLE', 'https://www.gov.kr/jeonse-interest'),
+(5, '청년 구직활동지원금', '취업', 18, 34, '전국', 500000, 'MONTHLY',
+ '2026-11-30 23:59:59', '신분증, 구직활동계획서', '미취업', 1, 'AVAILABLE', 'https://www.work24.go.kr/jobseek'),
+(6, '희망리턴패키지', '창업', 19, 39, '전국', 1000000, 'ONCE',
+ '2026-12-31 23:59:59', '사업자등록증, 폐업신고서', '미취업', 1, 'AVAILABLE', 'https://www.sbiz.or.kr/hope-return'),
+(7, '청년 마음건강 지원사업', '복지', 19, 34, '전국', 100000, 'ONCE',
+ '2026-12-31 23:59:59', '신분증', '미취업', 1, 'AVAILABLE', 'https://www.gov.kr/youth-mind'),
+(8, '국가기술자격 취득지원금', '교육', 18, 39, '전국', 300000, 'ONCE',
+ '2026-12-31 23:59:59', '자격증 사본, 응시료 영수증', '미취업', 1, 'AVAILABLE', 'https://www.hrdkorea.or.kr/cert'),
+(9, '청년 월세 한시 특별지원', '주거', 19, 34, '전국', 200000, 'MONTHLY',
+ '2026-12-31 23:59:59', '주민등록등본, 임대차계약서', '미취업', 1, 'AVAILABLE', 'https://www.gov.kr/rent-support'),
+(10, '청년내일저축계좌', '자산형성', 19, 34, '전국', 100000, 'MONTHLY',
+ '2026-12-31 23:59:59', '통장사본, 소득증빙서류', '미취업', 1, 'AVAILABLE', 'https://www.bokjiro.go.kr/savings'),
+(11, '청년구직자 취업역량강화 프로그램', '취업', 18, 34, '전국', 250000, 'MONTHLY',
+ '2026-11-30 23:59:59', '신분증, 참여신청서', '미취업', 1, 'AVAILABLE', 'https://www.work24.go.kr/program'),
+(12, '국민내일배움카드', '교육', 15, 69, '전국', 3000000, 'ONCE',
+ '2026-12-31 23:59:59', '신분증, 훈련과정 신청서', '미취업', 1, 'AVAILABLE', 'https://www.hrd.go.kr/card'),
+(13, '청년희망키움통장', '자산형성', 19, 34, '전국', 150000, 'MONTHLY',
+ '2026-12-31 23:59:59', '통장사본, 소득증빙서류', '미취업', 1, 'AVAILABLE', 'https://www.bokjiro.go.kr/hope-savings'),
+(14, '서울시 청년수당', '취업', 19, 34, '서울특별시', 500000, 'ONCE',
+ '2026-10-15 23:59:59', '신분증, 졸업증명서', '미취업', 1, 'AVAILABLE', 'https://youth.seoul.go.kr/allowance2'),
+(15, '경기도 청년 기본소득', '생활안정', 19, 34, '경기도', 250000, 'MONTHLY',
+ '2026-12-31 23:59:59', '주민등록등본', '미취업', 1, 'AVAILABLE', 'https://youth.gg.go.kr/basic-income'),
+(16, '청년 창업사관학교', '창업', 20, 39, '전국', 500000, 'ONCE',
+ '2026-12-31 23:59:59', '사업계획서', '미취업', 1, 'AVAILABLE', 'https://www.k-startup.go.kr/academy'),
+(17, '청년 자격증 취득비용 지원', '교육', 18, 34, '전국', 100000, 'ONCE',
+ '2026-12-31 23:59:59', '자격증 사본, 응시료 영수증', '미취업', 1, 'AVAILABLE', 'https://www.gov.kr/cert-cost'),
+(18, '청년 이사비 지원사업', '주거', 19, 39, '전국', 400000, 'ONCE',
+ '2026-12-31 23:59:59', '이사계약서, 주민등록등본', '미취업', 1, 'AVAILABLE', 'https://www.gov.kr/moving-cost'),
+(19, '청년 대중교통비 지원', '생활안정', 19, 39, '전국', 50000, 'MONTHLY',
+ '2026-12-31 23:59:59', '신분증', '미취업', 1, 'AVAILABLE', 'https://www.gov.kr/transport-support'),
+(20, '청년 취업날개 지원', '취업', 18, 34, '전국', 300000, 'MONTHLY',
+ '2026-11-30 23:59:59', '신분증, 구직신청서', '미취업', 1, 'AVAILABLE', 'https://www.work24.go.kr/wing'),
+(21, '청년 마음건강바우처', '복지', 19, 34, '전국', 200000, 'MONTHLY',
+ '2026-12-31 23:59:59', '신분증', '미취업', 1, 'AVAILABLE', 'https://www.gov.kr/mind-voucher'),
+(22, '청년 도약계좌', '자산형성', 19, 34, '전국', 700000, 'MONTHLY',
+ '2026-12-31 23:59:59', '통장사본, 소득증빙서류', '미취업', 1, 'AVAILABLE', 'https://www.gov.kr/leap-account'),
+(23, '지역정착 지원금', '생활안정', 19, 39, '전국', 300000, 'ONCE',
+ '2026-12-31 23:59:59', '주민등록등본', '미취업', 1, 'AVAILABLE', 'https://www.gov.kr/settlement')
 ON DUPLICATE KEY UPDATE
     `POLICY_NAME`=VALUES(`POLICY_NAME`), `POLICY_CATEGORY`=VALUES(`POLICY_CATEGORY`),
     `POLICY_MIN_AGE`=VALUES(`POLICY_MIN_AGE`), `POLICY_MAX_AGE`=VALUES(`POLICY_MAX_AGE`),
@@ -210,12 +257,13 @@ ON DUPLICATE KEY UPDATE
 -- ---------------------------------------------------------
 INSERT INTO `SIMULATION`
 (`SIMULATION_ID`, `USER_ID`, `SNAPSHOT_ID`, `SIMULATION_START_DATE`, `SIMULATION_DUE_DATE`,
- `SIMULATION_END_AMOUNT`, `PREP_MONTHS`, `CONFIRMED_AT`) VALUES
-(1, 1, 1, '2026-07-23', '2026-12-23', 1799500, 7.81, '2026-07-23 11:00:00')
+ `SIMULATION_END_AMOUNT`, `EXPECT_PREP_MONTHS`, `CONFIRMED_AT`) VALUES
+(1, 1, 1, '2026-07-23', '2026-12-23', 1799500, 7.81, '2026-07-23 11:00:00'),
+(2, 3, 2, '2026-08-01', '2027-01-31', 8000000, NULL, NULL)
 ON DUPLICATE KEY UPDATE
     `SNAPSHOT_ID`=VALUES(`SNAPSHOT_ID`), `SIMULATION_START_DATE`=VALUES(`SIMULATION_START_DATE`),
     `SIMULATION_DUE_DATE`=VALUES(`SIMULATION_DUE_DATE`), `SIMULATION_END_AMOUNT`=VALUES(`SIMULATION_END_AMOUNT`),
-    `PREP_MONTHS`=VALUES(`PREP_MONTHS`), `CONFIRMED_AT`=VALUES(`CONFIRMED_AT`);
+    `EXPECT_PREP_MONTHS`=VALUES(`EXPECT_PREP_MONTHS`), `CONFIRMED_AT`=VALUES(`CONFIRMED_AT`);
 
 -- ---------------------------------------------------------
 -- 13. 시뮬레이션 항목 (SIMULATION_ITEM)  * 적용일 DATE
@@ -229,7 +277,45 @@ INSERT INTO `SIMULATION_ITEM`
 (2, 1, 'POLICY',  '청년월세 특별지원', NULL, 200000, '2026-08-01', '2026-12-23',
  1, 'MONTHLY', FALSE),
 (3, 1, 'EXPENSE', '구독비 줄이기', 'SUBSCRIPTION', 9900,   '2026-08-01', NULL,
- NULL, 'MONTHLY', FALSE)
+ NULL, 'MONTHLY', FALSE),
+
+(4,  2, 'INCOME',  '단기 알바 1',     NULL, 300000, '2026-08-05', NULL,        NULL, 'MONTHLY', FALSE),
+(5,  2, 'INCOME',  '단기 알바 2',     NULL, 250000, '2026-08-10', '2026-12-10', NULL, 'MONTHLY', FALSE),
+(6,  2, 'INCOME',  '프리랜서 외주',   NULL, 400000, '2026-09-01', NULL,        NULL, 'ONCE',    FALSE),
+(7,  2, 'INCOME',  '재능마켓 판매',   NULL, 150000, '2026-08-20', NULL,        NULL, 'MONTHLY', FALSE),
+(8,  2, 'INCOME',  '용돈',           NULL, 100000, '2026-08-01', NULL,        NULL, 'MONTHLY', FALSE),
+
+(9,  2, 'EXPENSE', '식비 줄이기',       'FOOD',          20000, '2026-08-03', NULL,        NULL, 'MONTHLY', FALSE),
+(10, 2, 'EXPENSE', '교통비 줄이기',     'TRANSPORT',     15000, '2026-08-04', NULL,        NULL, 'MONTHLY', FALSE),
+(11, 2, 'EXPENSE', '주거비 줄이기',     'HOUSING',       50000, '2026-08-05', '2026-12-05', NULL, 'MONTHLY', FALSE),
+(12, 2, 'EXPENSE', '통신비 줄이기',     'COMMUNICATION', 10000, '2026-08-06', NULL,        NULL, 'MONTHLY', FALSE),
+(13, 2, 'EXPENSE', '구독비 줄이기',     'SUBSCRIPTION',  9900,  '2026-08-07', NULL,        NULL, 'MONTHLY', FALSE),
+(14, 2, 'EXPENSE', '교육비 줄이기',     'EDUCATION',     30000, '2026-08-08', NULL,        NULL, 'MONTHLY', FALSE),
+(15, 2, 'EXPENSE', '자격증 비용 줄이기', 'CERTIFICATE',   25000, '2026-08-09', NULL,        NULL, 'ONCE',    FALSE),
+(16, 2, 'EXPENSE', '기타 비용 줄이기',   'ETC_EXPENSE',   12000, '2026-08-10', NULL,        NULL, 'MONTHLY', FALSE),
+(17, 2, 'EXPENSE', '식비 줄이기',       'FOOD',          18000, '2026-09-01', NULL,        NULL, 'MONTHLY', FALSE),
+(18, 2, 'EXPENSE', '교통비 줄이기',     'TRANSPORT',     13000, '2026-09-02', NULL,        NULL, 'MONTHLY', FALSE),
+
+(19, 2, 'POLICY', NULL, NULL, 300000,  '2026-08-01', NULL, 4,  'MONTHLY', FALSE),
+(20, 2, 'POLICY', NULL, NULL, 500000,  '2026-08-02', NULL, 5,  'MONTHLY', FALSE),
+(21, 2, 'POLICY', NULL, NULL, 1000000, '2026-08-03', NULL, 6,  'ONCE',    FALSE),
+(22, 2, 'POLICY', NULL, NULL, 100000,  '2026-08-04', NULL, 7,  'ONCE',    FALSE),
+(23, 2, 'POLICY', NULL, NULL, 300000,  '2026-08-05', NULL, 8,  'ONCE',    FALSE),
+(24, 2, 'POLICY', NULL, NULL, 200000,  '2026-08-06', NULL, 9,  'MONTHLY', FALSE),
+(25, 2, 'POLICY', NULL, NULL, 100000,  '2026-08-07', NULL, 10, 'MONTHLY', FALSE),
+(26, 2, 'POLICY', NULL, NULL, 250000,  '2026-08-08', NULL, 11, 'MONTHLY', FALSE),
+(27, 2, 'POLICY', NULL, NULL, 3000000, '2026-08-09', NULL, 12, 'ONCE',    FALSE),
+(28, 2, 'POLICY', NULL, NULL, 150000,  '2026-08-10', NULL, 13, 'MONTHLY', FALSE),
+(29, 2, 'POLICY', NULL, NULL, 500000,  '2026-08-11', NULL, 14, 'ONCE',    FALSE),
+(30, 2, 'POLICY', NULL, NULL, 250000,  '2026-08-12', NULL, 15, 'MONTHLY', FALSE),
+(31, 2, 'POLICY', NULL, NULL, 500000,  '2026-08-13', NULL, 16, 'ONCE',    FALSE),
+(32, 2, 'POLICY', NULL, NULL, 100000,  '2026-08-14', NULL, 17, 'ONCE',    FALSE),
+(33, 2, 'POLICY', NULL, NULL, 400000,  '2026-08-15', NULL, 18, 'ONCE',    FALSE),
+(34, 2, 'POLICY', NULL, NULL, 50000,   '2026-08-16', NULL, 19, 'MONTHLY', FALSE),
+(35, 2, 'POLICY', NULL, NULL, 300000,  '2026-08-17', NULL, 20, 'MONTHLY', FALSE),
+(36, 2, 'POLICY', NULL, NULL, 200000,  '2026-08-18', NULL, 21, 'MONTHLY', FALSE),
+(37, 2, 'POLICY', NULL, NULL, 700000,  '2026-08-19', NULL, 22, 'MONTHLY', FALSE),
+(38, 2, 'POLICY', NULL, NULL, 300000,  '2026-08-20', NULL, 23, 'ONCE',    FALSE)
 ON DUPLICATE KEY UPDATE
     `SIMULATION_ITEM_CATEGORY`=VALUES(`SIMULATION_ITEM_CATEGORY`),
     `SIMULATION_ITEM_NAME`=VALUES(`SIMULATION_ITEM_NAME`),
@@ -302,7 +388,7 @@ INSERT INTO `LOG`
 (1, 1,    'AUTH',       NULL, 'LOGIN',         JSON_OBJECT('ip', '127.0.0.1')),
 (2, 1,    'MYDATA',     1,    'SYNC_SUCCESS',  JSON_OBJECT('syncedCount', 12)),
 (3, 1,    'MYDATA',     1,    'TOKEN_REFRESH', JSON_OBJECT('expiresAt', '2026-08-22 12:00:00')),
-(4, 1,    'SIMULATION', 1,    'CONFIRM',       JSON_OBJECT('prepMonths', 7.81)),
+(4, 1,    'SIMULATION', 1,    'CONFIRM',       JSON_OBJECT('expectPrepMonths', 7.81)),
 (5, NULL, 'POLICY',     NULL, 'BATCH_SYNC',    JSON_OBJECT('collected', 3, 'source', '온통청년'))
 ON DUPLICATE KEY UPDATE
     `USER_ID`=VALUES(`USER_ID`), `ENTITY_TYPE`=VALUES(`ENTITY_TYPE`), `ENTITY_ID`=VALUES(`ENTITY_ID`),

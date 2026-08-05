@@ -100,7 +100,7 @@ class SimulationItemCreateServiceTest {
             .simulationStartDate(LocalDate.of(2026, 8, 1))
             .simulationDueDate(LocalDate.of(2026, 10, 31))
             .simulationEndAmount(4_000_000)
-            .prepMonths(BigDecimal.valueOf(3))
+            .expectPrepMonths(BigDecimal.valueOf(3))
             .build();
 
         snapshot = FinancialSnapshotVO.builder()
@@ -110,7 +110,7 @@ class SimulationItemCreateServiceTest {
             .avgMonthlyIncome(BigDecimal.valueOf(1_000_000))
             .avgMonthlyExpense(BigDecimal.valueOf(2_000_000))
             .monthlyNetCashflow(-1_000_000)
-            .prepPossibleMonths(BigDecimal.valueOf(5))
+            .currentPrepMonths(BigDecimal.valueOf(5))
             .build();
 
         beforeProjections = List.of(
@@ -148,11 +148,7 @@ class SimulationItemCreateServiceTest {
         assertEquals(3_100_000, savedProjections.get(1).getClosingBalance());
         assertEquals(2_100_000, savedProjections.get(2).getClosingBalance());
 
-        assertEquals(50_000, result.preview().itemEffect().monthlyEffectAmount());
-        assertEquals(0, result.preview().itemEffect().onceEffectAmount());
-        assertEquals(50_000, result.preview().cashflow().netCashFlowDelta());
-
-        verify(simulationMapper).updateSummary(100L, 2_100_000, BigDecimal.valueOf(3));
+        verify(simulationMapper).updateSummary(100L, 2_100_000, new BigDecimal("5.10"));
     }
 
     @Test
@@ -179,8 +175,7 @@ class SimulationItemCreateServiceTest {
         assertEquals(3_300_000, savedProjections.get(1).getClosingBalance());
         assertEquals(2_300_000, savedProjections.get(2).getClosingBalance());
 
-        assertEquals(0, result.preview().itemEffect().monthlyEffectAmount());
-        assertEquals(300_000, result.preview().itemEffect().onceEffectAmount());
+        assertEquals(1L, result.itemId());
     }
 
     @Test
@@ -217,7 +212,7 @@ class SimulationItemCreateServiceTest {
         assertEquals(3_400_000, savedProjections.get(1).getClosingBalance());
         assertEquals(2_600_000, savedProjections.get(2).getClosingBalance());
 
-        assertEquals(200_000, result.preview().itemEffect().monthlyEffectAmount());
+        assertEquals(1L, result.itemId());
     }
 
     @Test

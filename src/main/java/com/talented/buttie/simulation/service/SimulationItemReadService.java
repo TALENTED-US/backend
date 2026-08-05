@@ -1,12 +1,10 @@
 package com.talented.buttie.simulation.service;
 
-import com.talented.buttie.catalog.domain.PolicyVO;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemVO;
 import com.talented.buttie.simulation.domain.SimulationVO;
-import com.talented.buttie.simulation.dto.request.ApplySimulationItemRequest;
-import com.talented.buttie.simulation.dto.response.ApplySimulationItemResponse;
+import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationItemMapper;
@@ -14,7 +12,6 @@ import com.talented.buttie.simulation.mapper.SimulationMapper;
 import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
 import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
 import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
-import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class SimulationItemCreateService {
+public class SimulationItemReadService {
 
     private final SimulationMapper simulationMapper;
     private final SimulationItemMapper simulationItemMapper;
@@ -31,19 +28,13 @@ public class SimulationItemCreateService {
     private final FinancialSnapshotMapper financialSnapshotMapper;
     private final SimulationItemCalculationService simulationItemCalculationService;
 
-    @Transactional
-    public ApplySimulationItemResponse applyItem(Long userId, ApplySimulationItemRequest request) {
+    @Transactional(readOnly = true)
+    public SimulationItemReportResponse getAppliedItemReport(Long userId) {
         SimulationVO simulation = simulationMapper.findActiveByUserId(userId);
 
         if (simulation == null) {
             throw ApplicationException.from(SimulationErrorCode.SIMULATION_NOT_FOUND);
         }
-
-        if (simulation.getConfirmedAt() != null) {
-            throw ApplicationException.from(SimulationErrorCode.CONFIRMED_SIMULATION_CANNOT_BE_UPDATED);
-        }
-
-        simulationItemCalculationService.validateRequest(request, simulation);
 
         FinancialSnapshotVO snapshot = financialSnapshotMapper.findLatestByUserId(userId);
 
@@ -51,33 +42,27 @@ public class SimulationItemCreateService {
             throw ApplicationException.from(AnalysisErrorCode.SNAPSHOT_NOT_FOUND);
         }
 
-        PolicyVO policy = simulationItemCalculationService.resolvePolicy(request);
-        SimulationItemVO item = simulationItemCalculationService.createItem(simulation, request, policy);
-        simulationItemMapper.save(item);
+        List<SimulationItemVO> appliedItems =
+            simulationItemMapper.findAllActiveBySimulationId(simulation.getSimulationId());
 
-        List<MonthlyProjectionVO> beforeProjections = findBeforeProjections(simulation, snapshot);
-        List<SimulationItemVO> appliedItems = simulationItemMapper.findAllActiveBySimulationId(simulation.getSimulationId());
-        List<MonthlyProjectionVO> recalculatedProjections =
-            simulationItemCalculationService.recalculateProjections(simulation, snapshot, appliedItems);
+        List<MonthlyProjectionVO> beforeProjections =
+            simulationItemCalculationService.createBaselineProjections(simulation, snapshot);
 
-        monthlyProjectionMapper.deleteAllBySimulationId(simulation.getSimulationId());
-        monthlyProjectionMapper.saveAll(recalculatedProjections);
+        List<MonthlyProjectionVO> afterProjections = findAfterProjections(simulation, snapshot, appliedItems);
 
-        MonthlyProjectionVO lastProjection = recalculatedProjections.get(recalculatedProjections.size() - 1);
-        BigDecimal expectPrepMonths = simulationItemCalculationService.calculateExpectedPrepMonths(
+        return simulationItemCalculationService.createReportResponse(
             userId,
-            recalculatedProjections,
-            snapshot
+            snapshot,
+            appliedItems,
+            beforeProjections,
+            afterProjections
         );
-
-        simulationMapper.updateSummary(simulation.getSimulationId(), lastProjection.getClosingBalance(), expectPrepMonths);
-
-        return new ApplySimulationItemResponse(item.getSimulationItemId());
     }
 
-    private List<MonthlyProjectionVO> findBeforeProjections(
+    private List<MonthlyProjectionVO> findAfterProjections(
         SimulationVO simulation,
-        FinancialSnapshotVO snapshot
+        FinancialSnapshotVO snapshot,
+        List<SimulationItemVO> appliedItems
     ) {
         List<MonthlyProjectionVO> currentProjections =
             monthlyProjectionMapper.findAllBySimulationId(simulation.getSimulationId());
@@ -88,6 +73,6 @@ public class SimulationItemCreateService {
                 .toList();
         }
 
-        return simulationItemCalculationService.createBaselineProjections(simulation, snapshot);
+        return simulationItemCalculationService.recalculateProjections(simulation, snapshot, appliedItems);
     }
 }

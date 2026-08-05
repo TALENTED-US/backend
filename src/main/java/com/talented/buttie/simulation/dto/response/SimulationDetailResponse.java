@@ -31,8 +31,8 @@ public record SimulationDetailResponse(
     @ApiModelProperty(value = "종료 예상 잔액", example = "5000000")
     Integer simulationEndAmount,
 
-    @ApiModelProperty(value = "준비 가능 개월", example = "8.25")
-    BigDecimal prepMonths,
+    @ApiModelProperty(value = "예상 버티는 기간", example = "8.25")
+    BigDecimal expectPrepMonths,
 
     @ApiModelProperty(value = "관련 월별 재정 계획 리스트")
     List<MonthlyProjectionResponse> monthlyProjections
@@ -45,7 +45,7 @@ public record SimulationDetailResponse(
             .simulationStartDate(simulation.getSimulationStartDate())
             .simulationDueDate(simulation.getSimulationDueDate())
             .simulationEndAmount(simulation.getSimulationEndAmount())
-            .prepMonths(simulation.getPrepMonths())
+            .expectPrepMonths(simulation.getExpectPrepMonths())
             .monthlyProjections(
                 simulation.getMonthlyProjections().stream()
                     .map(MonthlyProjectionResponse::from)

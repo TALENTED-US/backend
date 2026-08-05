@@ -32,8 +32,8 @@ public record ConfirmedSimulationResponse(
     @ApiModelProperty(value = "종료 예상 잔액", example = "5000000")
     Integer simulationEndAmount,
 
-    @ApiModelProperty(value = "준비 가능 개월", example = "8.25")
-    BigDecimal prepMonths,
+    @ApiModelProperty(value = "예상 버티는 기간", example = "8.25")
+    BigDecimal expectPrepMonths,
 
     @ApiModelProperty(value = "확정 일시", example = "2027-02-01T12:00:00")
     LocalDateTime confirmedAt,
@@ -51,7 +51,7 @@ public record ConfirmedSimulationResponse(
             .simulationStartDate(simulation.getSimulationStartDate())
             .simulationDueDate(simulation.getSimulationDueDate())
             .simulationEndAmount(simulation.getSimulationEndAmount())
-            .prepMonths(simulation.getPrepMonths())
+            .expectPrepMonths(simulation.getExpectPrepMonths())
             .confirmedAt(simulation.getConfirmedAt())
             .monthlyProjections(
                 simulation.getMonthlyProjections().stream()
