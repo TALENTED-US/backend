@@ -7,6 +7,7 @@ public record SimulationSnapshotResponse(
     Long userId,
     Integer liquidAssets,
     BigDecimal targetAchievementRate,
-    BigDecimal currentPrepMonths
+    BigDecimal currentPrepMonths,
+    Boolean sustainable
 ) {
 }

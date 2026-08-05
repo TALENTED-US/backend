@@ -12,14 +12,14 @@ import lombok.Builder;
 @Builder
 public record SimulationResponse(
 
-    @ApiModelProperty(value = "시뮬레이션 ID", example = "1")
-    Long simulationId,
+    @ApiModelProperty(value = "암호화된 시뮬레이션 ID")
+    String simulationId,
 
-    @ApiModelProperty(value = "암호화된 사용자 ID", example = "qwe123...")
+    @ApiModelProperty(value = "암호화된 사용자 ID")
     String userId,
 
-    @ApiModelProperty(value = "기준 스냅샷 ID", example = "10")
-    Long snapshotId,
+    @ApiModelProperty(value = "암호화된 기준 스냅샷 ID")
+    String snapshotId,
 
     @ApiModelProperty(value = "시뮬레이션 수행 시작일", example = "2026-08-01")
     LocalDate simulationStartDate,
@@ -31,17 +31,25 @@ public record SimulationResponse(
     Integer simulationEndAmount,
 
     @ApiModelProperty(value = "예상 버티는 기간", example = "8.25")
-    BigDecimal expectPrepMonths
+    BigDecimal expectPrepMonths,
+
+    @ApiModelProperty(value = "현재 현금흐름 유지 시 자금이 고갈되지 않는지 여부")
+    Boolean sustainable
 ) {
     public static SimulationResponse from(SimulationVO simulation){
         return SimulationResponse.builder()
-            .simulationId(simulation.getSimulationId())
+            .simulationId(PKCrypto.encrypt(simulation.getSimulationId()))
             .userId(PKCrypto.encrypt(simulation.getUserId()))
-            .snapshotId(simulation.getSnapshotId())
+            .snapshotId(PKCrypto.encrypt(simulation.getSnapshotId()))
             .simulationStartDate(simulation.getSimulationStartDate())
             .simulationDueDate(simulation.getSimulationDueDate())
             .simulationEndAmount(simulation.getSimulationEndAmount())
             .expectPrepMonths(simulation.getExpectPrepMonths())
+            .sustainable(isSustainable(simulation.getExpectPrepMonths()))
             .build();
+    }
+
+    private static boolean isSustainable(BigDecimal prepMonths) {
+        return prepMonths != null && prepMonths.compareTo(new BigDecimal("999.99")) == 0;
     }
 }
