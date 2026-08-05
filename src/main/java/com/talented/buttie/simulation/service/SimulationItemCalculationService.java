@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class SimulationItemCalculationService {
+    private static final BigDecimal MAX_EXPECT_PREP_MONTHS = new BigDecimal("999.99");
 
     private final EmploymentPreparationMapper employmentPreparationMapper;
     private final PolicyMapper policyMapper;
@@ -271,7 +272,7 @@ public class SimulationItemCalculationService {
         for(MonthlyProjectionVO projection : sortedProjections) {
             BigDecimal monthlyBurn = calculateProjectionMonthlyBurn(projection, livingThreshold);
 
-            if(monthlyBurn.compareTo(BigDecimal.ZERO) <= 0) return null;
+            if(monthlyBurn.compareTo(BigDecimal.ZERO) <= 0) return MAX_EXPECT_PREP_MONTHS;
 
             if(balance.compareTo(BigDecimal.ZERO) <= 0) return survivedMonths;
 
@@ -290,17 +291,17 @@ public class SimulationItemCalculationService {
                 partialMonth = BigDecimal.ONE;
             }
 
-            return survivedMonths.add(partialMonth);
+            return capPrepMonths(survivedMonths.add(partialMonth));
         }
 
         BigDecimal currentMonthlyBurn = calculateCurrentMonthlyBurn(snapshot, livingThreshold);
 
-        if(currentMonthlyBurn == null || currentMonthlyBurn.compareTo(BigDecimal.ZERO) <= 0) return null;
+        if(currentMonthlyBurn == null || currentMonthlyBurn.compareTo(BigDecimal.ZERO) <= 0) return MAX_EXPECT_PREP_MONTHS;
 
         BigDecimal additionalMonths = balance
             .divide(currentMonthlyBurn, 2, RoundingMode.HALF_UP);
 
-        return survivedMonths.add(additionalMonths);
+        return capPrepMonths(survivedMonths.add(additionalMonths));
     }
 
     private BigDecimal calculateProjectionMonthlyBurn(MonthlyProjectionVO projection, Integer livingThreshold) {
@@ -313,21 +314,30 @@ public class SimulationItemCalculationService {
     }
 
     private BigDecimal calculateCurrentMonthlyBurn(FinancialSnapshotVO snapshot, Integer livingThreshold) {
-        if (snapshot == null) {
-            return null;
+
+        if(snapshot == null) return null;
+
+        if(snapshot.getCurrentPrepMonths() != null
+            && snapshot.getCurrentPrepMonths().compareTo(BigDecimal.ZERO) > 0
+            && valueOf(snapshot.getLiquidAssets()) > 0) {
+            return BigDecimal.valueOf(snapshot.getLiquidAssets())
+                .divide(snapshot.getCurrentPrepMonths(), 2, RoundingMode.HALF_UP);
         }
 
+        // fallback : 평일/주말 평균으로 재계산
         LocalDate today = LocalDate.now();
         int weekDaysInMonth = countDaysInCurrentMonth(today, false);
         int weekendDaysInMonth = countDaysInCurrentMonth(today, true);
 
         BigDecimal currentMonthlyIncome = decimalValueOf(snapshot.getAvgWeekIncome())
             .multiply(BigDecimal.valueOf(weekDaysInMonth))
-            .add(decimalValueOf(snapshot.getAvgWeekendIncome()).multiply(BigDecimal.valueOf(weekendDaysInMonth)));
+            .add(decimalValueOf(snapshot.getAvgWeekendIncome())
+                .multiply(BigDecimal.valueOf(weekendDaysInMonth)));
 
         BigDecimal currentMonthlyExpense = decimalValueOf(snapshot.getAvgWeekExpense())
             .multiply(BigDecimal.valueOf(weekDaysInMonth))
-            .add(decimalValueOf(snapshot.getAvgWeekendExpense()).multiply(BigDecimal.valueOf(weekendDaysInMonth)));
+            .add(decimalValueOf(snapshot.getAvgWeekendExpense())
+                .multiply(BigDecimal.valueOf(weekendDaysInMonth)));
 
         BigDecimal requiredMonthlyExpense = currentMonthlyExpense
             .max(BigDecimal.valueOf(valueOf(livingThreshold)));
@@ -335,6 +345,16 @@ public class SimulationItemCalculationService {
         return requiredMonthlyExpense
             .subtract(currentMonthlyIncome)
             .setScale(2, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal capPrepMonths(BigDecimal prepMonths) {
+        if (prepMonths == null) {
+            return null;
+        }
+
+        return prepMonths.compareTo(MAX_EXPECT_PREP_MONTHS) > 0
+            ? MAX_EXPECT_PREP_MONTHS
+            : prepMonths;
     }
 
     private MonthlyProjectionVO applyItemsToProjection(
