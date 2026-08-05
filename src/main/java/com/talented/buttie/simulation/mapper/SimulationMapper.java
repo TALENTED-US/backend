@@ -20,6 +20,6 @@ public interface SimulationMapper {
     void updateSummary(
         @Param("simulationId") Long simulationId,
         @Param("simulationEndAmount") Integer simulationEndAmount,
-        @Param("prepMonths")BigDecimal prepMonths
+        @Param("expectPrepMonths") BigDecimal expectPrepMonths
     );
 }

@@ -174,7 +174,7 @@ class FinancialSnapshotCreateServiceTest {
         FinancialSnapshotVO result = financialSnapshotCreateService.createSnapshot(userId);
 
         // then
-        assertNull(result.getPrepPossibleMonths());
+        assertNull(result.getCurrentPrepMonths());
         assertEquals(RiskLevel.STABLE, result.getRiskLevel());
     }
 
@@ -212,10 +212,10 @@ class FinancialSnapshotCreateServiceTest {
             .multiply(BigDecimal.valueOf(weekDaysInMonth))
             .setScale(2, RoundingMode.HALF_UP);
 
-        BigDecimal expectedPrepPossibleMonths = BigDecimal.valueOf(1_000_000)
+        BigDecimal expectedCurrentPrepMonths = BigDecimal.valueOf(1_000_000)
             .divide(expectedMonthlyBurn, 2, RoundingMode.HALF_UP);
 
-        assertEquals(expectedPrepPossibleMonths, result.getPrepPossibleMonths());
+        assertEquals(expectedCurrentPrepMonths, result.getCurrentPrepMonths());
     }
 
     @Test
@@ -304,7 +304,7 @@ class FinancialSnapshotCreateServiceTest {
         assertEquals(new BigDecimal("0.00"),
             result.getAvgMonthlyExpense());
         assertEquals(0, result.getMonthlyNetCashflow());
-        assertNull(result.getPrepPossibleMonths());
+        assertNull(result.getCurrentPrepMonths());
         assertEquals(RiskLevel.STABLE, result.getRiskLevel());
     }
 
