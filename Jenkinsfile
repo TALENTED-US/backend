@@ -37,10 +37,11 @@ pipeline {
 
                             scp -o StrictHostKeyChecking=accept-new \
                               "${ENV_FILE}" \
-                              ${SPRING_USER}@${SPRING_HOST}:${DEPLOY_DIR}/.env
+                              ${SPRING_USER}@${SPRING_HOST}:${DEPLOY_DIR}/.env.next
 
                             ssh -o StrictHostKeyChecking=accept-new \
                               ${SPRING_USER}@${SPRING_HOST} '
+                                mv /home/ubuntu/deploy/.env.next /home/ubuntu/deploy/.env
                                 docker rm -f buttie-api || true
 
                                 docker run -d \
