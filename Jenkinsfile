@@ -63,7 +63,7 @@ pipeline {
                     sh '''
                         ssh ${SPRING_USER}@${SPRING_HOST} '
                             for i in {1..30}; do
-                                curl -fsS http://localhost:8080/v2/api-docs > /dev/null && exit 0
+                                curl -fsS http://localhost:8080/swagger-ui.html > /dev/null && exit 0
                                 sleep 2
                             done
 
