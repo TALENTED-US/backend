@@ -36,19 +36,38 @@
 
   <select id="findAllActiveBySimulationId"
     resultType="com.talented.buttie.simulation.domain.SimulationItemVO">
-    select SIMULATION_ITEM_ID as simulationItemId,
-           SIMULATION_ID as simulationId,
-           SIMULATION_ITEM_CATEGORY as simulationItemCategory,
-           SIMULATION_ITEM_NAME as simulationItemName,
-           SIMULATION_ITEM_EXPENSE_CATEGORY as simulationItemExpenseCategory,
-           SIMULATION_ITEM_APPLY_AMOUNT as simulationItemApplyAmount,
-           APPLY_START_DATE as applyStartDate,
-           APPLY_END_DATE as applyEndDate,
-           POLICY_ID as policyId,
-           RECURRENCE_TYPE as recurrenceType,
-           IS_DELETED as isDeleted
-    from SIMULATION_ITEM
-    where SIMULATION_ID = #{simulationId}
-        and IS_DELETED is false
+    select I.SIMULATION_ITEM_ID as simulationItemId,
+           I.SIMULATION_ID as simulationId,
+           I.SIMULATION_ITEM_CATEGORY as simulationItemCategory,
+           I.SIMULATION_ITEM_NAME as simulationItemName,
+           I.SIMULATION_ITEM_EXPENSE_CATEGORY as simulationItemExpenseCategory,
+           I.SIMULATION_ITEM_APPLY_AMOUNT as simulationItemApplyAmount,
+           I.APPLY_START_DATE as applyStartDate,
+           I.APPLY_END_DATE as applyEndDate,
+           I.POLICY_ID as policyId,
+           I.RECURRENCE_TYPE as recurrenceType,
+           I.IS_DELETED as isDeleted
+    from SIMULATION_ITEM I
+    where I.SIMULATION_ID = #{simulationId}
+        and I.IS_DELETED is false
+  </select>
+  <select id="findAllByCategory"
+          resultType="com.talented.buttie.simulation.domain.SimulationItemVO">
+    select I.SIMULATION_ITEM_ID as simulationItemId,
+           I.SIMULATION_ID as simulationId,
+           I.SIMULATION_ITEM_CATEGORY as simulationItemCategory,
+           I.SIMULATION_ITEM_NAME as simulationItemName,
+           I.SIMULATION_ITEM_EXPENSE_CATEGORY as simulationItemExpenseCategory,
+           I.SIMULATION_ITEM_APPLY_AMOUNT as simulationItemApplyAmount,
+           I.APPLY_START_DATE as applyStartDate,
+           I.APPLY_END_DATE as applyEndDate,
+           I.RECURRENCE_TYPE as recurrenceType,
+           I.IS_DELETED as isDeleted,
+           I.POLICY_ID as policyId
+    from SIMULATION_ITEM I
+    where I.SIMULATION_ID = #{simulationId}
+        and I.SIMULATION_ITEM_CATEGORY = #{itemCategory}
+        and I.IS_DELETED = false
+    order by I.SIMULATION_ITEM_CATEGORY, I.APPLY_START_DATE
   </select>
 </mapper>

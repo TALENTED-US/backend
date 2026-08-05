@@ -1,18 +1,21 @@
 package com.talented.buttie.simulation.service;
 
+import com.talented.buttie.catalog.domain.PolicyVO;
+import com.talented.buttie.catalog.mapper.PolicyMapper;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
+import com.talented.buttie.simulation.domain.SimulationItemCategory;
 import com.talented.buttie.simulation.domain.SimulationItemVO;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse;
+import com.talented.buttie.simulation.dto.response.SimulationItemResponse;
+import com.talented.buttie.simulation.dto.response.SimulationItemsByCategoryResponse;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
-import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationItemMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
 import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
 import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
 import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
-import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,9 +27,9 @@ public class SimulationItemReadService {
 
     private final SimulationMapper simulationMapper;
     private final SimulationItemMapper simulationItemMapper;
-    private final MonthlyProjectionMapper monthlyProjectionMapper;
     private final FinancialSnapshotMapper financialSnapshotMapper;
     private final SimulationItemCalculationService simulationItemCalculationService;
+    private final PolicyMapper policyMapper;
 
     @Transactional(readOnly = true)
     public SimulationItemReportResponse getAppliedItemReport(Long userId) {
@@ -48,7 +51,8 @@ public class SimulationItemReadService {
         List<MonthlyProjectionVO> beforeProjections =
             simulationItemCalculationService.createBaselineProjections(simulation, snapshot);
 
-        List<MonthlyProjectionVO> afterProjections = findAfterProjections(simulation, snapshot, appliedItems);
+        List<MonthlyProjectionVO> afterProjections =
+            simulationItemCalculationService.recalculateProjections(simulation, snapshot, appliedItems);
 
         return simulationItemCalculationService.createReportResponse(
             userId,
@@ -59,20 +63,25 @@ public class SimulationItemReadService {
         );
     }
 
-    private List<MonthlyProjectionVO> findAfterProjections(
-        SimulationVO simulation,
-        FinancialSnapshotVO snapshot,
-        List<SimulationItemVO> appliedItems
-    ) {
-        List<MonthlyProjectionVO> currentProjections =
-            monthlyProjectionMapper.findAllBySimulationId(simulation.getSimulationId());
+    @Transactional(readOnly = true)
+    public SimulationItemsByCategoryResponse findItemListByCategory(Long userId, SimulationItemCategory itemCategory) {
+        SimulationVO simulation = simulationMapper.findActiveByUserId(userId);
 
-        if (currentProjections != null && !currentProjections.isEmpty()) {
-            return currentProjections.stream()
-                .sorted(Comparator.comparing(MonthlyProjectionVO::getProjectionMonth))
-                .toList();
+        if (simulation == null) {
+            throw ApplicationException.from(SimulationErrorCode.SIMULATION_NOT_FOUND);
         }
 
-        return simulationItemCalculationService.recalculateProjections(simulation, snapshot, appliedItems);
+        List<SimulationItemResponse> items = simulationItemMapper
+            .findAllByCategory(simulation.getSimulationId(), itemCategory)
+            .stream()
+            .map(item -> {
+                PolicyVO policy = item.getPolicyId() == null
+                    ? null
+                    : policyMapper.findById(item.getPolicyId());
+                return SimulationItemResponse.from(item, policy, simulation);
+            })
+            .toList();
+
+        return new SimulationItemsByCategoryResponse(items);
     }
 }
