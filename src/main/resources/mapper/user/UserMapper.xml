@@ -45,4 +45,4 @@
     WHERE USER_NICKNAME = #{nickname}
   </select>
 
-</mapper>
+</mapper>
