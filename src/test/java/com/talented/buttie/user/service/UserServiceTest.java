@@ -18,6 +18,7 @@ import com.talented.buttie.user.exception.UserErrorCode;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import com.talented.buttie.user.dto.request.ModifyUserProfileRequestDTO;
 import com.talented.buttie.user.mapper.UserMapper;
+import com.talented.buttie.user.domain.ButiDashboardVO;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -186,6 +187,46 @@ class UserServiceTest {
             exception.getCode()
         );
     }
+
+    @Test
+    @DisplayName("버티 성장 대시보드를 조회하면 해당 사용자의 버티 정보를 반환한다.")
+    void getButiDashboard() {
+
+        Long userId = 1L;
+        ButiDashboardVO mockVO = new ButiDashboardVO(
+            1, "새싹 버티",  "이제 막 자산관리를 시작한 기본 버티",120, 0, "CAUTION", "https://cdn.buttie.com/buttie/lv1_caution.png"
+        );
+
+        given(userMapper.selectButiDashboard(userId))
+            .willReturn(mockVO);
+
+        ButiDashboardVO result = userService.getButiDashboard(userId);
+
+        assertNotNull(result);
+        assertEquals(1, result.getButtieLevel());
+        assertEquals("CAUTION", result.getRiskLevel());
+        verify(userMapper).selectButiDashboard(userId);
+    }
+
+    @Test
+    @DisplayName("버티 성장 대시보드 조회 시 해당 사용자가 없으면 예외가 발생한다.")
+    void throwWhenGetButiDashboardNotFound() {
+        Long userId = 999L;
+
+        given(userMapper.selectButiDashboard(userId))
+            .willReturn(null);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> userService.getButiDashboard(userId)
+        );
+
+        assertEquals(
+            UserErrorCode.USER_NOT_FOUND,
+            exception.getCode()
+        );
+    }
+
     @Test
     @DisplayName("취업 준비 정보를 조회하면 해당 사용자의 정보를 반환한다.")
     void getEmploymentPreparation() {

@@ -18,13 +18,13 @@ INSERT INTO `BUTTIE_LEVEL`
  `IMAGE_URL_STABLE`, `IMAGE_URL_CAUTION`, `IMAGE_URL_DANGER`) VALUES
 (1, '새싹 버티',   0,    '이제 막 자산관리를 시작한 기본 버티',
  'https://cdn.buttie.com/buttie/lv1_stable.png', 'https://cdn.buttie.com/buttie/lv1_caution.png', 'https://cdn.buttie.com/buttie/lv1_danger.png'),
-(2, '기사 버티',   300,  '재정 습관이 자라나는 버티',
+(2, '기사 버티',   50,  '재정 습관이 자라나는 버티',
  'https://cdn.buttie.com/buttie/lv2_stable.png', 'https://cdn.buttie.com/buttie/lv2_caution.png', 'https://cdn.buttie.com/buttie/lv2_danger.png'),
-(3, '황금 버티',   800,  '자산을 불려가는 황금빛 버티',
+(3, '황금 버티',   100,  '자산을 불려가는 황금빛 버티',
  'https://cdn.buttie.com/buttie/lv3_stable.png', 'https://cdn.buttie.com/buttie/lv3_caution.png', 'https://cdn.buttie.com/buttie/lv3_danger.png'),
-(4, '천사 버티',   1500, '자산을 든든히 지키는 버티',
+(4, '천사 버티',   250, '자산을 든든히 지키는 버티',
  'https://cdn.buttie.com/buttie/lv4_stable.png', 'https://cdn.buttie.com/buttie/lv4_caution.png', 'https://cdn.buttie.com/buttie/lv4_danger.png'),
-(5, '수호신 버티', 3000, '재정을 완성한 최고 단계 버티',
+(5, '수호신 버티', 500, '재정을 완성한 최고 단계 버티',
  'https://cdn.buttie.com/buttie/lv5_stable.png', 'https://cdn.buttie.com/buttie/lv5_caution.png', 'https://cdn.buttie.com/buttie/lv5_danger.png')
 ON DUPLICATE KEY UPDATE
     `STAGE_NAME`=VALUES(`STAGE_NAME`), `REQUIRED_EXP`=VALUES(`REQUIRED_EXP`),
