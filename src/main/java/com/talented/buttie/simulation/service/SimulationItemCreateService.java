@@ -64,14 +64,14 @@ public class SimulationItemCreateService {
         monthlyProjectionMapper.saveAll(recalculatedProjections);
 
         MonthlyProjectionVO lastProjection = recalculatedProjections.get(recalculatedProjections.size() - 1);
-        BigDecimal prepMonths = simulationItemCalculationService.calculatePrepMonths(recalculatedProjections);
-
-        simulationMapper.updateSummary(simulation.getSimulationId(), lastProjection.getClosingBalance(), prepMonths);
-
-        return new ApplySimulationItemResponse(
-            item.getSimulationItemId(),
-            simulationItemCalculationService.createPreviewResponse(item, beforeProjections, recalculatedProjections)
+        BigDecimal expectPrepMonths = simulationItemCalculationService.calculateExpectedPrepMonths(
+            recalculatedProjections,
+            snapshot
         );
+
+        simulationMapper.updateSummary(simulation.getSimulationId(), lastProjection.getClosingBalance(), expectPrepMonths);
+
+        return ApplySimulationItemResponse.from(item.getSimulationItemId());
     }
 
     private List<MonthlyProjectionVO> findBeforeProjections(

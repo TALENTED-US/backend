@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class FinancialSnapshotCreateService {
     private static final int SCALE = 2;
     private static final BigDecimal DAYS_IN_MONTH = new BigDecimal("30");
-    private static final BigDecimal MAX_PREP_POSSIBLE_MONTHS = new BigDecimal("999.99");
+    private static final BigDecimal MAX_CURRENT_PREP_MONTHS = new BigDecimal("999.99");
     private static final Set<AccountType> LIQUID_ACCOUNT_TYPES = Set.of(AccountType.CHECKING, AccountType.SAVINGS, AccountType.DEPOSIT);
     private static final int SNAPSHOT_MONTH_RANGE = 3;
 
@@ -62,14 +62,9 @@ public class FinancialSnapshotCreateService {
 
         int monthlyNetCashflow = avgMonthlyIncome.subtract(avgMonthlyExpense).intValue();
 
-        int weekDaysInMonth = countDaysInCurrentMonth(today, false);
-        int weekendDaysInMonth = countDaysInCurrentMonth(today, true);
+        BigDecimal monthlyBurn = avgMonthlyExpense.subtract(avgMonthlyIncome);
 
-        BigDecimal monthlyBurn = calculateMonthlyBurn(
-            avgWeekIncome, avgWeekExpense, avgWeekendIncome, avgWeekendExpense, weekDaysInMonth, weekendDaysInMonth
-        );
-
-        BigDecimal prepPossibleMonths = calculatePrepPossibleMonths(liquidAssets, monthlyBurn);
+        BigDecimal currentPrepMonths = calculateCurrentPrepMonths(liquidAssets, monthlyBurn);
         BigDecimal survivalDays = calculateSurvivalDays(liquidAssets, monthlyBurn);
 
         RiskLevel riskLevel = resolveRiskLevel(userId, today, monthlyBurn, survivalDays);
@@ -79,7 +74,7 @@ public class FinancialSnapshotCreateService {
             .snapshotBaseDate(today)
             .liquidAssets(liquidAssets)
             .monthlyNetCashflow(monthlyNetCashflow)
-            .prepPossibleMonths(prepPossibleMonths)
+            .currentPrepMonths(currentPrepMonths)
             .avgMonthlyExpense(avgMonthlyExpense)
             .avgMonthlyIncome(avgMonthlyIncome)
             .avgWeekendExpense(avgWeekendExpense)
@@ -113,29 +108,19 @@ public class FinancialSnapshotCreateService {
         return value.divide(BigDecimal.valueOf(divisor), SCALE, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal calculateMonthlyBurn(
-        BigDecimal avgWeekIncome, BigDecimal avgWeekExpense,
-        BigDecimal avgWeekendIncome, BigDecimal avgWeekendExpense,
-        int weekDaysInMonth, int weekendDaysInMonth
-    ){
-        BigDecimal weekBurn = avgWeekExpense.subtract(avgWeekIncome);
-        BigDecimal weekendBurn = avgWeekendExpense.subtract(avgWeekendIncome);
-
-        return weekBurn
-            .multiply(BigDecimal.valueOf(weekDaysInMonth))
-            .add(weekendBurn.multiply(BigDecimal.valueOf(weekendDaysInMonth)))
-            .setScale(SCALE, RoundingMode.HALF_UP);
+    private int valueOf(Integer value) {
+        return value == null ? 0 : value;
     }
 
-    private BigDecimal calculatePrepPossibleMonths(int liquidAssets, BigDecimal monthlyBurn){
-        if(monthlyBurn.compareTo(BigDecimal.ZERO) <= 0) return null;
+    private BigDecimal calculateCurrentPrepMonths(int liquidAssets, BigDecimal monthlyBurn){
+        if(monthlyBurn.compareTo(BigDecimal.ZERO) <= 0) return MAX_CURRENT_PREP_MONTHS;
 
-        BigDecimal prepPossibleMonths = BigDecimal.valueOf(liquidAssets)
+        BigDecimal currentPrepMonths = BigDecimal.valueOf(liquidAssets)
             .divide(monthlyBurn, SCALE, RoundingMode.HALF_UP);
 
-        if(prepPossibleMonths.compareTo(MAX_PREP_POSSIBLE_MONTHS) > 0) return MAX_PREP_POSSIBLE_MONTHS;
+        if(currentPrepMonths.compareTo(MAX_CURRENT_PREP_MONTHS) > 0) return MAX_CURRENT_PREP_MONTHS;
 
-        return prepPossibleMonths;
+        return currentPrepMonths;
     }
 
     private BigDecimal calculateSurvivalDays(int liquidAssets, BigDecimal monthlyBurn){
@@ -182,13 +167,6 @@ public class FinancialSnapshotCreateService {
             .longValue();
 
         return Math.min(Math.max(twentyPrecent, 14), 60);
-    }
-
-    private int countDaysInCurrentMonth(LocalDate date, boolean weekend){
-        LocalDate current = date.withDayOfMonth(1);
-        LocalDate end = current.plusMonths(1);
-
-        return countDaysInPeriod(current, end, weekend);
     }
 
     private int countDaysInPeriod(LocalDate fromInclusive, LocalDate toExclusive, boolean weekend){

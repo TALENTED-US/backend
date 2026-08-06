@@ -1,7 +1,6 @@
-package com.talented.buttie.ledger.service;
+package com.talented.buttie.ledger.service.transaction;
 
 import com.talented.buttie.common.exception.ApplicationException;
-import com.talented.buttie.ledger.domain.TransactionType;
 import com.talented.buttie.ledger.domain.TransactionVO;
 import com.talented.buttie.ledger.exception.LedgerErrorCode;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
@@ -11,12 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class CreateFixedExpenseService {
+public class DeleteTransactionService {
 
     private final TransactionMapper transactionMapper;
 
     @Transactional
-    public Long createFixedExpense(Long userId, Long transactionId) {
+    public Long deleteTransaction(Long userId, Long transactionId) {
+
         TransactionVO targetTransaction = transactionMapper.findById(transactionId);
 
         if (targetTransaction == null) {
@@ -24,21 +24,18 @@ public class CreateFixedExpenseService {
         }
 
         if (!targetTransaction.getUserId().equals(userId)) {
-            throw ApplicationException.from(LedgerErrorCode.TRANSACTION_USER_ID_MISMATCH);
+            throw ApplicationException.from(LedgerErrorCode.TRANSACTION_DELETE_USER_ID_MISMATCH);
         }
 
-        if (targetTransaction.getTransactionType() == TransactionType.FIXED) {
-            throw ApplicationException.from(LedgerErrorCode.ALREADY_FIXED_EXPENSE);
+        boolean isExternal = targetTransaction.getExternalTransactionId() != null
+            && !targetTransaction.getExternalTransactionId().isBlank();
+
+        if (isExternal) {
+            throw ApplicationException.from(LedgerErrorCode.EXTERNAL_TRANSACTION_UNDELETABLE);
         }
 
-        TransactionVO fixedExpense = TransactionVO.createFixedExpense(targetTransaction);
+        transactionMapper.deleteTransaction(transactionId);
 
-        int updatedTransactionId = transactionMapper.updateTransaction(fixedExpense);
-
-        if(updatedTransactionId == 0){
-            throw ApplicationException.from(LedgerErrorCode.TRANSACTION_NOT_FOUND);
-        }
-
-        return transactionId;
+        return userId;
     }
 }

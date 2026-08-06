@@ -16,7 +16,7 @@ public class SimulationVO {
     private LocalDate simulationStartDate;
     private LocalDate simulationDueDate;
     private Integer simulationEndAmount;
-    private BigDecimal prepMonths;
+    private BigDecimal expectPrepMonths;
     private LocalDateTime confirmedAt;
 
     private List<MonthlyProjectionVO> monthlyProjections;
@@ -32,7 +32,7 @@ public class SimulationVO {
             .simulationStartDate(request.simulationStartDate())
             .simulationDueDate(request.simulationDueDate())
             .simulationEndAmount(snapshot.getLiquidAssets())
-            .prepMonths(snapshot.getPrepPossibleMonths())
+            .expectPrepMonths(snapshot.getCurrentPrepMonths())
             .build();
     }
 }

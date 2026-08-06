@@ -1,12 +1,11 @@
-package com.talented.buttie.ledger.service;
+package com.talented.buttie.ledger.service.transaction;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.ledger.exception.LedgerErrorCode;
 import com.talented.buttie.ledger.domain.TransactionVO;
-import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequest;
-import com.talented.buttie.ledger.dto.request.UpdateTransactionRequest;
+import com.talented.buttie.ledger.dto.request.transaction.UpdateTransactionMemoRequest;
+import com.talented.buttie.ledger.dto.request.transaction.UpdateTransactionRequest;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -7,20 +7,22 @@ import com.talented.buttie.ledger.mapper.TransactionMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class ReadFixedExpenseDetailService {
+public class GetSumFixedExpenseService {
 
     private final TransactionMapper transactionMapper;
 
-    public List<TransactionVO> getFixedExpenseDetails(Long userId) {
-        List<TransactionVO> transactions = transactionMapper.findFixedExpensesByUserId(userId);
+    @Transactional(readOnly = true)
+    public List<TransactionVO> getFixedExpenses(Long userId) {
+        List<TransactionVO> fixedExpenses = transactionMapper.findFixedExpensesByUserId(userId);
 
-        if (transactions == null || transactions.isEmpty()) {
+        if (fixedExpenses == null || fixedExpenses.isEmpty()) {
             throw ApplicationException.from(LedgerErrorCode.FIXED_EXPENSE_NOT_FOUND);
         }
 
-        return transactions;
+        return fixedExpenses;
     }
 }

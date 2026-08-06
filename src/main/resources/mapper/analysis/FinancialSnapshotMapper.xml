@@ -4,6 +4,13 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper">
+  <select id="findById"
+          resultType="com.talented.buttie.snapshot.domain.FinancialSnapshotVO">
+    select *
+    from SNAPSHOT
+    where SNAPSHOT_ID = #{snapshotId}
+  </select>
+
   <insert id="save"
           parameterType="com.talented.buttie.snapshot.domain.FinancialSnapshotVO"
           useGeneratedKeys="true"
@@ -13,7 +20,7 @@
                          SNAPSHOT_BASE_DATE,
                          LIQUID_ASSETS,
                          MONTHLY_NET_CASHFLOW,
-                         PREP_POSSIBLE_MONTHS,
+                         CURRENT_PREP_MONTHS,
                          AVG_MONTHLY_EXPENSE,
                          AVG_MONTHLY_INCOME,
                          AVG_WEEKEND_EXPENSE,
@@ -26,7 +33,7 @@
               #{snapshotBaseDate},
               #{liquidAssets},
               #{monthlyNetCashflow},
-              #{prepPossibleMonths},
+              #{currentPrepMonths},
               #{avgMonthlyExpense},
               #{avgMonthlyIncome},
               #{avgWeekendExpense},
@@ -40,7 +47,7 @@
          SNAPSHOT_BASE_DATE = values(SNAPSHOT_BASE_DATE),
          LIQUID_ASSETS = values(LIQUID_ASSETS),
          MONTHLY_NET_CASHFLOW = values(MONTHLY_NET_CASHFLOW),
-         PREP_POSSIBLE_MONTHS = values(PREP_POSSIBLE_MONTHS),
+         CURRENT_PREP_MONTHS = values(CURRENT_PREP_MONTHS),
          AVG_MONTHLY_EXPENSE = values(AVG_MONTHLY_EXPENSE),
          AVG_MONTHLY_INCOME = values(AVG_MONTHLY_INCOME),
          AVG_WEEKEND_EXPENSE = values(AVG_WEEKEND_EXPENSE),

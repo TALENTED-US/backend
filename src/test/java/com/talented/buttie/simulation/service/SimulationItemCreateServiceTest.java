@@ -14,6 +14,7 @@ import com.talented.buttie.catalog.domain.PolicyVO;
 import com.talented.buttie.catalog.exception.CatalogErrorCode;
 import com.talented.buttie.catalog.mapper.PolicyMapper;
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemCategory;
@@ -78,6 +79,9 @@ class SimulationItemCreateServiceTest {
 
     @BeforeEach
     void setUp() {
+        PKCrypto crypto = new PKCrypto("AES", "1234567890123456");
+        crypto.init();
+
         simulationItemCalculationService = new SimulationItemCalculationService(
             employmentPreparationMapper,
             policyMapper,
@@ -100,7 +104,7 @@ class SimulationItemCreateServiceTest {
             .simulationStartDate(LocalDate.of(2026, 8, 1))
             .simulationDueDate(LocalDate.of(2026, 10, 31))
             .simulationEndAmount(4_000_000)
-            .prepMonths(BigDecimal.valueOf(3))
+            .expectPrepMonths(BigDecimal.valueOf(3))
             .build();
 
         snapshot = FinancialSnapshotVO.builder()
@@ -110,7 +114,7 @@ class SimulationItemCreateServiceTest {
             .avgMonthlyIncome(BigDecimal.valueOf(1_000_000))
             .avgMonthlyExpense(BigDecimal.valueOf(2_000_000))
             .monthlyNetCashflow(-1_000_000)
-            .prepPossibleMonths(BigDecimal.valueOf(5))
+            .currentPrepMonths(BigDecimal.valueOf(5))
             .build();
 
         beforeProjections = List.of(
@@ -118,6 +122,131 @@ class SimulationItemCreateServiceTest {
             projection(LocalDate.of(2026, 9, 1), 4_000_000, 1_000_000, 2_000_000, 3_000_000),
             projection(LocalDate.of(2026, 10, 1), 3_000_000, 1_000_000, 2_000_000, 2_000_000)
         );
+    }
+
+    @Test
+    @DisplayName("초기 자산이 0원이어도 해당 월 수입으로 회복되면 이후 소진 시점까지의 기간을 반영한다.")
+    void calculatePrepMonthsWhenZeroAssetsRecoverWithinMonth() {
+        List<MonthlyProjectionVO> projections = List.of(
+            projection(LocalDate.of(2026, 8, 1), 0, 65_666, 11_633, 54_033)
+        );
+
+        BigDecimal result = simulationItemCalculationService.calculateExpectedPrepMonths(
+            projections,
+            snapshot
+        );
+
+        assertEquals(new BigDecimal("1.05"), result);
+    }
+
+    @Test
+    @DisplayName("초기 자산이 0원이고 회복 없이 계속 순소진되면 버티는 기간은 0개월이다.")
+    void calculateZeroPrepMonthsWithoutAssets() {
+        List<MonthlyProjectionVO> projections = List.of(
+            projection(LocalDate.of(2026, 8, 1), 0, 11_633, 65_666, -54_033)
+        );
+
+        BigDecimal result = simulationItemCalculationService.calculateExpectedPrepMonths(
+            projections,
+            snapshot
+        );
+
+        assertEquals(new BigDecimal("0.00"), result);
+    }
+
+    @Test
+    @DisplayName("중간 달에 잔액이 마이너스가 되어도 다음 달 수입으로 회복되면 시뮬레이션 종료 이후 소진 시점까지 반영한다.")
+    void calculatePrepMonthsWhenNegativeMonthRecoversLater() {
+        List<MonthlyProjectionVO> projections = List.of(
+            projection(LocalDate.of(2026, 8, 1), 0, 0, 50_566, -50_566),
+            projection(LocalDate.of(2026, 9, 1), -50_566, 600_000, 50_566, 498_868),
+            projection(LocalDate.of(2026, 10, 1), 498_868, 0, 50_566, 448_302),
+            projection(LocalDate.of(2026, 11, 1), 448_302, 0, 50_566, 397_736),
+            projection(LocalDate.of(2026, 12, 1), 397_736, 0, 50_566, 347_170)
+        );
+
+        BigDecimal result = simulationItemCalculationService.calculateExpectedPrepMonths(
+            projections,
+            snapshot
+        );
+
+        assertEquals(new BigDecimal("5.35"), result);
+    }
+
+    @Test
+    @DisplayName("시뮬레이션 기간의 월별 예상 수입과 지출을 순차적으로 생존 기간에 반영한다.")
+    void calculatePrepMonthsWithProjectedCashFlow() {
+        List<MonthlyProjectionVO> projections = List.of(
+            projection(LocalDate.of(2026, 8, 1), 3_000_000, 500_000, 1_000_000, 2_500_000),
+            projection(LocalDate.of(2026, 9, 1), 2_500_000, 500_000, 1_000_000, 2_000_000)
+        );
+
+        BigDecimal result = simulationItemCalculationService.calculateExpectedPrepMonths(
+            projections,
+            snapshot
+        );
+
+        assertEquals(new BigDecimal("4.00"), result);
+    }
+
+    @Test
+    @DisplayName("적용 항목이 없는 기준 현금흐름은 현재와 예상 버티는 기간이 같다.")
+    void keepCurrentPrepMonthsWithoutAppliedItems() {
+        List<MonthlyProjectionVO> projections = List.of(
+            projection(LocalDate.of(2026, 8, 1), 5_000_000, 1_000_000, 2_000_000, 4_000_000),
+            projection(LocalDate.of(2026, 9, 1), 4_000_000, 1_000_000, 2_000_000, 3_000_000),
+            projection(LocalDate.of(2026, 10, 1), 3_000_000, 1_000_000, 2_000_000, 2_000_000)
+        );
+
+        BigDecimal result = simulationItemCalculationService.calculateExpectedPrepMonths(
+            projections,
+            snapshot
+        );
+
+        assertEquals(new BigDecimal("5.00"), result);
+    }
+
+    @Test
+    @DisplayName("월 순현금흐름이 0 이상이면 예상 버티는 기간은 무제한이다.")
+    void sustainableCashFlowHasNoFinitePrepMonths() {
+        FinancialSnapshotVO sustainableSnapshot = FinancialSnapshotVO.builder()
+            .liquidAssets(5_000_000)
+            .avgMonthlyIncome(BigDecimal.valueOf(1_000_000))
+            .avgMonthlyExpense(BigDecimal.valueOf(500_000))
+            .currentPrepMonths(null)
+            .build();
+        List<MonthlyProjectionVO> projections = List.of(
+            projection(LocalDate.of(2026, 8, 1), 5_000_000, 1_000_000, 500_000, 5_500_000)
+        );
+
+        BigDecimal result = simulationItemCalculationService.calculateExpectedPrepMonths(
+            projections,
+            sustainableSnapshot
+        );
+
+        assertEquals(new BigDecimal("999.99"), result);
+    }
+
+    @Test
+    @DisplayName("초기 잔액이 0원이어도 계속 흑자이면 예상 버티는 기간은 무제한이다.")
+    void sustainableCashFlowWithoutInitialAssetsHasNoFinitePrepMonths() {
+        FinancialSnapshotVO sustainableSnapshot = FinancialSnapshotVO.builder()
+            .liquidAssets(0)
+            .avgMonthlyIncome(BigDecimal.valueOf(65_666))
+            .avgMonthlyExpense(BigDecimal.valueOf(11_633))
+            .currentPrepMonths(null)
+            .build();
+        List<MonthlyProjectionVO> projections = List.of(
+            projection(LocalDate.of(2026, 8, 1), 0, 65_666, 11_633, 54_033),
+            projection(LocalDate.of(2026, 9, 1), 54_033, 665_666, 11_633, 708_066)
+        );
+
+        BigDecimal result = simulationItemCalculationService.calculateExpectedPrepMonths(
+            projections,
+            sustainableSnapshot
+        );
+
+        assertEquals(new BigDecimal("999.99"), result);
     }
 
     @Test
@@ -136,7 +265,7 @@ class SimulationItemCreateServiceTest {
 
         ApplySimulationItemResponse result = simulationItemCreateService.applyItem(userId, request);
 
-        assertEquals(1L, result.itemId());
+        assertEquals(1L, PKCrypto.decrypt(result.itemId()));
         assertEquals("식비 줄이기", savedItem.get().getSimulationItemName());
         assertEquals(ExpenseCategory.FOOD, savedItem.get().getSimulationItemExpenseCategory());
         assertEquals(50_000, savedItem.get().getSimulationItemApplyAmount());
@@ -148,11 +277,7 @@ class SimulationItemCreateServiceTest {
         assertEquals(3_100_000, savedProjections.get(1).getClosingBalance());
         assertEquals(2_100_000, savedProjections.get(2).getClosingBalance());
 
-        assertEquals(50_000, result.preview().itemEffect().monthlyEffectAmount());
-        assertEquals(0, result.preview().itemEffect().onceEffectAmount());
-        assertEquals(50_000, result.preview().cashflow().netCashFlowDelta());
-
-        verify(simulationMapper).updateSummary(100L, 2_100_000, BigDecimal.valueOf(3));
+        verify(simulationMapper).updateSummary(100L, 2_100_000, new BigDecimal("5.10"));
     }
 
     @Test
@@ -179,12 +304,11 @@ class SimulationItemCreateServiceTest {
         assertEquals(3_300_000, savedProjections.get(1).getClosingBalance());
         assertEquals(2_300_000, savedProjections.get(2).getClosingBalance());
 
-        assertEquals(0, result.preview().itemEffect().monthlyEffectAmount());
-        assertEquals(300_000, result.preview().itemEffect().onceEffectAmount());
+        assertEquals(1L, PKCrypto.decrypt(result.itemId()));
     }
 
     @Test
-    @DisplayName("정책 항목은 요청 amount를 무시하고 정책 금액과 정책 반복 유형으로 저장한다.")
+    @DisplayName("정책 항목은 요청 amount를 무시하고 정책 금액과 월 반복 유형으로 저장한다.")
     void applyPolicyItem() {
         ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
             .category(SimulationItemCategory.POLICY)
@@ -198,7 +322,7 @@ class SimulationItemCreateServiceTest {
         PolicyVO policy = PolicyVO.builder()
             .policyId(7L)
             .policySupportAmount(200_000)
-            .policyRecurrenceType(SimulationRecurrenceType.MONTHLY)
+            .supportMonthCount(12)
             .build();
 
         given(policyMapper.findById(7L)).willReturn(policy);
@@ -210,6 +334,7 @@ class SimulationItemCreateServiceTest {
         assertNull(savedItem.get().getSimulationItemExpenseCategory());
         assertEquals(7L, savedItem.get().getPolicyId());
         assertEquals(200_000, savedItem.get().getSimulationItemApplyAmount());
+        assertNull(savedItem.get().getApplyEndDate());
         assertEquals(SimulationRecurrenceType.MONTHLY, savedItem.get().getRecurrenceType());
 
         List<MonthlyProjectionVO> savedProjections = captureSavedProjections();
@@ -217,7 +342,141 @@ class SimulationItemCreateServiceTest {
         assertEquals(3_400_000, savedProjections.get(1).getClosingBalance());
         assertEquals(2_600_000, savedProjections.get(2).getClosingBalance());
 
-        assertEquals(200_000, result.preview().itemEffect().monthlyEffectAmount());
+        assertEquals(1L, PKCrypto.decrypt(result.itemId()));
+    }
+
+    @Test
+    @DisplayName("1개월 지원 정책은 일회성 항목으로 저장한다.")
+    void applyOncePolicyItem() {
+        ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
+            .category(SimulationItemCategory.POLICY)
+            .policyId(7L)
+            .applyStartDate(LocalDate.of(2026, 9, 10))
+            .build();
+
+        PolicyVO policy = PolicyVO.builder()
+            .policyId(7L)
+            .policySupportAmount(200_000)
+            .supportMonthCount(1)
+            .build();
+
+        given(policyMapper.findById(7L)).willReturn(policy);
+        AtomicReference<SimulationItemVO> savedItem = stubApplyBase();
+
+        simulationItemCreateService.applyItem(userId, request);
+
+        assertNull(savedItem.get().getApplyEndDate());
+        assertEquals(SimulationRecurrenceType.ONCE, savedItem.get().getRecurrenceType());
+
+        List<MonthlyProjectionVO> savedProjections = captureSavedProjections();
+        assertEquals(4_000_000, savedProjections.get(0).getClosingBalance());
+        assertEquals(3_200_000, savedProjections.get(1).getClosingBalance());
+        assertEquals(2_200_000, savedProjections.get(2).getClosingBalance());
+    }
+
+    @Test
+    @DisplayName("정책 항목은 요청 종료일을 무시하고 정책 지원 개월 수로 기간을 계산한다.")
+    void ignoreRequestedEndDateForPolicyItem() {
+        ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
+            .category(SimulationItemCategory.POLICY)
+            .policyId(7L)
+            .applyStartDate(LocalDate.of(2026, 8, 1))
+            .applyEndDate(LocalDate.of(2026, 7, 1))
+            .build();
+
+        PolicyVO policy = PolicyVO.builder()
+            .policyId(7L)
+            .policySupportAmount(200_000)
+            .supportMonthCount(2)
+            .build();
+
+        given(policyMapper.findById(7L)).willReturn(policy);
+        AtomicReference<SimulationItemVO> savedItem = stubApplyBase();
+
+        simulationItemCreateService.applyItem(userId, request);
+
+        assertNull(savedItem.get().getApplyEndDate());
+        assertEquals(SimulationRecurrenceType.MONTHLY, savedItem.get().getRecurrenceType());
+    }
+
+    @Test
+    @DisplayName("정책 지원 시작일이 시뮬레이션 기간 전이면 예외가 발생한다.")
+    void rejectPolicyStartingBeforeSimulation() {
+        given(simulationMapper.findActiveByUserId(userId)).willReturn(simulation);
+
+        ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
+            .category(SimulationItemCategory.POLICY)
+            .policyId(7L)
+            .applyStartDate(LocalDate.of(2026, 7, 31))
+            .build();
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> simulationItemCreateService.applyItem(userId, request)
+        );
+
+        assertEquals(SimulationErrorCode.INVALID_SIMULATION_ITEM, exception.getCode());
+        verifyNoInteractions(policyMapper);
+    }
+
+    @Test
+    @DisplayName("시뮬레이션 종료일이 정책 지급일보다 빠르면 종료월 지원금은 반영하지 않는다.")
+    void truncatePolicyBeforeRecurrenceDay() {
+        simulation.setSimulationDueDate(LocalDate.of(2026, 10, 15));
+
+        ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
+            .category(SimulationItemCategory.POLICY)
+            .policyId(7L)
+            .applyStartDate(LocalDate.of(2026, 8, 20))
+            .build();
+
+        PolicyVO policy = PolicyVO.builder()
+            .policyId(7L)
+            .policySupportAmount(200_000)
+            .supportMonthCount(12)
+            .build();
+
+        given(policyMapper.findById(7L)).willReturn(policy);
+        AtomicReference<SimulationItemVO> savedItem = stubApplyBase();
+
+        simulationItemCreateService.applyItem(userId, request);
+
+        assertNull(savedItem.get().getApplyEndDate());
+
+        List<MonthlyProjectionVO> savedProjections = captureSavedProjections();
+        assertEquals(4_200_000, savedProjections.get(0).getClosingBalance());
+        assertEquals(3_400_000, savedProjections.get(1).getClosingBalance());
+        assertEquals(2_400_000, savedProjections.get(2).getClosingBalance());
+    }
+
+    @Test
+    @DisplayName("시뮬레이션 기간을 연장하면 이전에 잘렸던 정책 지원 개월이 다시 반영된다.")
+    void restorePolicySupportAfterSimulationExtension() {
+        SimulationItemVO policyItem = SimulationItemVO.builder()
+            .simulationId(100L)
+            .simulationItemCategory(SimulationItemCategory.POLICY)
+            .simulationItemApplyAmount(200_000)
+            .applyStartDate(LocalDate.of(2026, 8, 20))
+            .applyEndDate(null)
+            .policyId(7L)
+            .recurrenceType(SimulationRecurrenceType.MONTHLY)
+            .build();
+        simulation.setSimulationDueDate(LocalDate.of(2027, 7, 31));
+        given(employmentPreparationMapper.getLivingThresholdByUserId(userId)).willReturn(1_000_000);
+        given(policyMapper.findById(7L)).willReturn(PolicyVO.builder()
+            .policyId(7L)
+            .supportMonthCount(12)
+            .build());
+
+        List<MonthlyProjectionVO> projections = simulationItemCalculationService.recalculateProjections(
+            simulation,
+            snapshot,
+            List.of(policyItem)
+        );
+
+        assertEquals(12, projections.size());
+        assertEquals(1_200_000, projections.get(0).getExpectedIncome());
+        assertEquals(1_200_000, projections.get(11).getExpectedIncome());
     }
 
     @Test

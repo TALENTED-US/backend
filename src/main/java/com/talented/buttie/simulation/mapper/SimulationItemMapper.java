@@ -1,5 +1,6 @@
 package com.talented.buttie.simulation.mapper;
 
+import com.talented.buttie.simulation.domain.SimulationItemCategory;
 import com.talented.buttie.simulation.domain.SimulationItemVO;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
@@ -9,4 +10,8 @@ import org.apache.ibatis.annotations.Param;
 public interface SimulationItemMapper {
     List<SimulationItemVO> findAllActiveBySimulationId(@Param("simulationId") Long simulationId);
     void save(SimulationItemVO item);
+    List<SimulationItemVO> findAllByCategory(
+        @Param("simulationId") Long simulationId,
+        @Param("itemCategory") SimulationItemCategory itemCategory
+    );
 }
