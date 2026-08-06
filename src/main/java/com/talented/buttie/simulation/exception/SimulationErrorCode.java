@@ -17,7 +17,6 @@ public enum SimulationErrorCode implements BaseErrorCode {
     CONFIRMED_SIMULATION_CANNOT_BE_UPDATED(HttpStatus.CONFLICT, "SIMULATION_901", "확정 재정 계획은 수정 불가합니다."),
     INVALID_SIMULATION_ITEM(HttpStatus.BAD_REQUEST, "SIMULATION_002", "시뮬레이션 항목 값이 올바르지 않습니다."),
 
-    EMPTY_SIMULATION_ITEM_UPDATE(HttpStatus.BAD_REQUEST, "SIMULATION_003", "수정할 항목 값을 입력해주세요."),
     POLICY_ITEM_CANNOT_BE_UPDATED(HttpStatus.BAD_REQUEST, "SIMULATION_004", "정책 항목은 수정 불가합니다."),
     INVALID_INCOME_ITEM_NAME(HttpStatus.BAD_REQUEST, "SIMULATION_005", "수입 항목 이름을 확인해주세요."),
     ITEM_NAME_NOT_ALLOWED_FOR_EXPENSE(HttpStatus.BAD_REQUEST, "SIMULATION_006", "지출 항목의 이름은 수정 불가합니다."),

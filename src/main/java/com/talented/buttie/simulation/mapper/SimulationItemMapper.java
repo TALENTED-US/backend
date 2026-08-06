@@ -14,4 +14,6 @@ public interface SimulationItemMapper {
         @Param("simulationId") Long simulationId,
         @Param("itemCategory") SimulationItemCategory itemCategory
     );
+    SimulationItemVO findActiveByIdAndSimulationId(@Param("itemId") Long itemId, @Param("simulationId") Long simulationId);
+    int update(SimulationItemVO item);
 }
