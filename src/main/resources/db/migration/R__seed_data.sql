@@ -310,34 +310,7 @@ ON DUPLICATE KEY UPDATE
     `BALANCE`=VALUES(`BALANCE`), `IS_ACTIVE`=VALUES(`IS_ACTIVE`), `SYNCED_AT`=VALUES(`SYNCED_AT`);
 
 -- ---------------------------------------------------------
--- 9. 카드 (CARD)  CARD_TYPE: CREDIT(신용)/DEBIT(체크)/PREPAID(선불)
--- ---------------------------------------------------------
-INSERT INTO `CARD`
-(`CARD_ID`, `USER_ID`, `EXTERNAL_CARD_ID`, `CARD_INSTITUTION_NAME`,
- `CARD_NAME`, `CARD_TYPE`, `CARD_NUMBER_MASKED`, `CARD_BALANCE`, `CARD_IS_ACTIVE`, `CARD_SYNCED_AT`) VALUES
-(1, 2, 'EXT_CARD_0001', '하나카드', '하나카드 신용카드', 'CREDIT', '5379-**-2612', 0, TRUE, '2026-08-02 13:34:08'),
-(2, 4, 'EXT_CARD_0002', '신한카드', '신한카드 체크카드', 'DEBIT', '5848-**-1960', 0, TRUE, '2026-08-02 10:03:41'),
-(3, 9, 'EXT_CARD_0003', 'KB국민카드', 'KB국민카드 신용카드', 'CREDIT', '4756-**-5669', 0, TRUE, '2026-08-02 17:59:48'),
-(4, 11, 'EXT_CARD_0004', '하나카드', '하나카드 체크카드', 'DEBIT', '5035-**-9004', 0, TRUE, '2026-08-03 23:00:42'),
-(5, 11, 'EXT_CARD_0005', '하나카드', '하나카드 체크카드', 'DEBIT', '5854-**-1832', 0, TRUE, '2026-08-03 23:00:42'),
-(6, 13, 'EXT_CARD_0006', 'KB국민카드', 'KB국민카드 신용카드', 'CREDIT', '4154-**-3442', 0, TRUE, '2026-08-03 08:00:21'),
-(7, 13, 'EXT_CARD_0007', 'KB국민카드', 'KB국민카드 신용카드', 'CREDIT', '5709-**-7049', 0, TRUE, '2026-08-03 08:00:21'),
-(8, 16, 'EXT_CARD_0008', '하나카드', '하나카드 신용카드', 'CREDIT', '4546-**-3608', 0, TRUE, '2026-08-03 13:43:15'),
-(9, 17, 'EXT_CARD_0009', '삼성카드', '삼성카드 체크카드', 'DEBIT', '5770-**-2137', 0, TRUE, '2026-08-02 08:54:30'),
-(10, 18, 'EXT_CARD_0010', '삼성카드', '삼성카드 신용카드', 'CREDIT', '4222-**-8119', 0, TRUE, '2026-08-03 23:25:43'),
-(11, 18, 'EXT_CARD_0011', '삼성카드', '삼성카드 체크카드', 'DEBIT', '5492-**-6139', 0, TRUE, '2026-08-03 23:25:43'),
-(12, 20, 'EXT_CARD_0012', '삼성카드', '삼성카드 체크카드', 'DEBIT', '5365-**-7691', 0, TRUE, '2026-08-02 07:33:59'),
-(13, 20, 'EXT_CARD_0013', '삼성카드', '삼성카드 체크카드', 'DEBIT', '4824-**-5844', 0, TRUE, '2026-08-02 07:33:59'),
-(14, 21, 'EXT_CARD_0014', '현대카드', '현대카드 체크카드', 'DEBIT', '5383-**-4501', 0, TRUE, '2026-08-04 20:42:24'),
-(15, 24, 'EXT_CARD_0015', '신한카드', '신한카드 체크카드', 'DEBIT', '5367-**-9702', 0, TRUE, '2026-08-05 20:14:11')
-ON DUPLICATE KEY UPDATE
-    `CARD_INSTITUTION_NAME`=VALUES(`CARD_INSTITUTION_NAME`), `CARD_NAME`=VALUES(`CARD_NAME`),
-    `CARD_TYPE`=VALUES(`CARD_TYPE`), `CARD_NUMBER_MASKED`=VALUES(`CARD_NUMBER_MASKED`),
-    `CARD_BALANCE`=VALUES(`CARD_BALANCE`), `CARD_IS_ACTIVE`=VALUES(`CARD_IS_ACTIVE`),
-    `CARD_SYNCED_AT`=VALUES(`CARD_SYNCED_AT`);
-
--- ---------------------------------------------------------
--- 10. 거래 (TRANSACTION)  TYPE: EXPENSE/INCOME/FIXED - 260건
+-- 9. 거래 (TRANSACTION)  TYPE: EXPENSE/INCOME/FIXED - 260건
 -- ---------------------------------------------------------
 INSERT INTO `TRANSACTION`
 (`TRANSACTION_ID`, `USER_ID`, `ACCOUNT_ID`, `EXTERNAL_TRANSACTION_ID`, `TRANSACTION_CONTENT`,
@@ -610,11 +583,11 @@ ON DUPLICATE KEY UPDATE
     `IS_DELETED`=VALUES(`IS_DELETED`);
 
 -- ---------------------------------------------------------
--- 11. 재정 스냅샷 (SNAPSHOT)
+-- 10. 재정 스냅샷 (SNAPSHOT)
 -- ---------------------------------------------------------
 INSERT INTO `SNAPSHOT`
 (`SNAPSHOT_ID`, `USER_ID`, `SNAPSHOT_BASE_DATE`, `LIQUID_ASSETS`, `MONTHLY_NET_CASHFLOW`,
- `PREP_POSSIBLE_MONTHS`, `AVG_MONTHLY_EXPENSE`, `AVG_MONTHLY_INCOME`,
+ `CURRENT_PREP_MONTHS`, `AVG_MONTHLY_EXPENSE`, `AVG_MONTHLY_INCOME`,
  `AVG_WEEKEND_EXPENSE`, `AVG_WEEKEND_INCOME`,
  `AVG_WEEK_EXPENSE`, `AVG_WEEK_INCOME`, `RISK_LEVEL`) VALUES
 (1, 2, '2026-08-05', 3863325, 103550,
@@ -655,14 +628,14 @@ INSERT INTO `SNAPSHOT`
  22.03, 247350, 0, 11650.0, 0.0, 19000.0, 0.0, 'STABLE')
 ON DUPLICATE KEY UPDATE
     `LIQUID_ASSETS`=VALUES(`LIQUID_ASSETS`), `MONTHLY_NET_CASHFLOW`=VALUES(`MONTHLY_NET_CASHFLOW`),
-    `PREP_POSSIBLE_MONTHS`=VALUES(`PREP_POSSIBLE_MONTHS`),
+    `CURRENT_PREP_MONTHS`=VALUES(`CURRENT_PREP_MONTHS`),
     `AVG_MONTHLY_EXPENSE`=VALUES(`AVG_MONTHLY_EXPENSE`), `AVG_MONTHLY_INCOME`=VALUES(`AVG_MONTHLY_INCOME`),
     `AVG_WEEKEND_EXPENSE`=VALUES(`AVG_WEEKEND_EXPENSE`), `AVG_WEEKEND_INCOME`=VALUES(`AVG_WEEKEND_INCOME`),
     `AVG_WEEK_EXPENSE`=VALUES(`AVG_WEEK_EXPENSE`), `AVG_WEEK_INCOME`=VALUES(`AVG_WEEK_INCOME`),
     `RISK_LEVEL`=VALUES(`RISK_LEVEL`);
 
 -- ---------------------------------------------------------
--- 12. 정부 지원 정책 (POLICY)
+-- 11. 정부 지원 정책 (POLICY)
 -- ---------------------------------------------------------
 INSERT INTO `POLICY`
 (`POLICY_ID`, `POLICY_NAME`, `POLICY_CATEGORY`, `POLICY_MIN_AGE`, `POLICY_MAX_AGE`, `POLICY_REGION`,
@@ -694,11 +667,11 @@ ON DUPLICATE KEY UPDATE
     `POLICY_STATUS`=VALUES(`POLICY_STATUS`), `POLICY_URL`=VALUES(`POLICY_URL`);
 
 -- ---------------------------------------------------------
--- 13. 시뮬레이션 (SIMULATION)  * 날짜 DATE
+-- 12. 시뮬레이션 (SIMULATION)  * 날짜 DATE
 -- ---------------------------------------------------------
 INSERT INTO `SIMULATION`
 (`SIMULATION_ID`, `USER_ID`, `SNAPSHOT_ID`, `SIMULATION_START_DATE`, `SIMULATION_DUE_DATE`,
- `SIMULATION_END_AMOUNT`, `PREP_MONTHS`, `CONFIRMED_AT`) VALUES
+ `SIMULATION_END_AMOUNT`, `EXPECT_PREP_MONTHS`, `CONFIRMED_AT`) VALUES
 (1, 18, 12, '2026-08-05', '2026-12-03', 845617, 10.77, '2026-08-05 11:00:00'),
 (2, 30, 18, '2026-08-05', '2027-02-01', 3077575, 3.2, '2026-08-05 15:00:00'),
 (3, 8, 6, '2026-08-05', '2027-03-03', 2111160, 3.69, '2026-08-05 13:00:00'),
@@ -716,10 +689,10 @@ INSERT INTO `SIMULATION`
 ON DUPLICATE KEY UPDATE
     `SNAPSHOT_ID`=VALUES(`SNAPSHOT_ID`), `SIMULATION_START_DATE`=VALUES(`SIMULATION_START_DATE`),
     `SIMULATION_DUE_DATE`=VALUES(`SIMULATION_DUE_DATE`), `SIMULATION_END_AMOUNT`=VALUES(`SIMULATION_END_AMOUNT`),
-    `PREP_MONTHS`=VALUES(`PREP_MONTHS`), `CONFIRMED_AT`=VALUES(`CONFIRMED_AT`);
+    `EXPECT_PREP_MONTHS`=VALUES(`EXPECT_PREP_MONTHS`), `CONFIRMED_AT`=VALUES(`CONFIRMED_AT`);
 
 -- ---------------------------------------------------------
--- 14. 시뮬레이션 항목 (SIMULATION_ITEM)  * 적용일 DATE
+-- 13. 시뮬레이션 항목 (SIMULATION_ITEM)  * 적용일 DATE
 -- ---------------------------------------------------------
 INSERT INTO `SIMULATION_ITEM`
 (`SIMULATION_ITEM_ID`, `SIMULATION_ID`, `SIMULATION_ITEM_CATEGORY`, `SIMULATION_ITEM_NAME`,
@@ -819,7 +792,7 @@ ON DUPLICATE KEY UPDATE
     `RECURRENCE_TYPE`=VALUES(`RECURRENCE_TYPE`), `IS_DELETED`=VALUES(`IS_DELETED`);
 
 -- ---------------------------------------------------------
--- 15. 월별 예상 (PROJECTION)
+-- 14. 월별 예상 (PROJECTION)
 -- ---------------------------------------------------------
 INSERT INTO `PROJECTION`
 (`PROJECTION_ID`, `SIMULATION_ID`, `PROJECTION_MONTH`,
@@ -871,7 +844,7 @@ ON DUPLICATE KEY UPDATE
     `ADJUSTMENT_REQUIRED`=VALUES(`ADJUSTMENT_REQUIRED`), `ADJUSTMENT_REASON`=VALUES(`ADJUSTMENT_REASON`);
 
 -- ---------------------------------------------------------
--- 16. 알림 (NOTIFICATION)
+-- 15. 알림 (NOTIFICATION)
 -- ---------------------------------------------------------
 INSERT INTO `NOTIFICATION`
 (`NOTIFICATION_ID`, `USER_ID`, `NOTIFICATION_TYPE`, `NOTIFICATION_TITLE`,
@@ -917,7 +890,7 @@ ON DUPLICATE KEY UPDATE
     `IS_READ`=VALUES(`IS_READ`);
 
 -- ---------------------------------------------------------
--- 17. 퀘스트 (QUEST)
+-- 16. 퀘스트 (QUEST)
 -- ---------------------------------------------------------
 INSERT INTO `QUEST`
 (`QUEST_ID`, `USER_ID`, `SIMULATION_ID`, `SIMULATION_ITEM_ID`, `TRANSACTION_ID`,
@@ -1040,7 +1013,7 @@ ON DUPLICATE KEY UPDATE
     `QUEST_COMPLETED_AT`=VALUES(`QUEST_COMPLETED_AT`);
 
 -- ---------------------------------------------------------
--- 18. 로그 (LOG) - 도메인 이벤트 이력 샘플
+-- 17. 로그 (LOG) - 도메인 이벤트 이력 샘플
 -- ---------------------------------------------------------
 INSERT INTO `LOG`
 (`LOG_ID`, `USER_ID`, `ENTITY_TYPE`, `ENTITY_ID`, `ACTION`, `LOG_DETAIL`) VALUES
