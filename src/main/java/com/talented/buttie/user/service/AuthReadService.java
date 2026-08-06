@@ -1,7 +1,7 @@
 package com.talented.buttie.user.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
-import com.talented.buttie.user.dto.request.auth.AuthLoginRequestDTO;
+import com.talented.buttie.user.dto.request.auth.AuthLoginRequest;
 import com.talented.buttie.user.dto.response.auth.AuthTokenResponseDTO;
 import com.talented.buttie.user.exception.AuthErrorCode;
 import com.talented.buttie.user.mapper.AuthMapper;
@@ -20,21 +20,21 @@ public class AuthReadService {
     private final PasswordEncoder passwordEncoder;
     private final AuthTokenService authTokenService;
 
-    public AuthTokenResponseDTO userLogin(@Valid AuthLoginRequestDTO authLoginRequestDTO) {
-        if (!authMapper.existsByEmail(authLoginRequestDTO.userEmail())) {
+    public AuthTokenResponseDTO userLogin(@Valid AuthLoginRequest authLoginRequest) {
+        if (!authMapper.existsByEmail(authLoginRequest.userEmail())) {
             throw ApplicationException.from(AuthErrorCode.EMAIL_NOT_FOUND);
         }
 
-        String targetPassword = authMapper.getPasswordByUserEmail(authLoginRequestDTO.userEmail());
+        String targetPassword = authMapper.getPasswordByUserEmail(authLoginRequest.userEmail());
         if (targetPassword == null) {
             throw ApplicationException.from(AuthErrorCode.EMAIL_NOT_FOUND);
         }
 
-        if (!passwordEncoder.matches(authLoginRequestDTO.password(), targetPassword)) {
+        if (!passwordEncoder.matches(authLoginRequest.password(), targetPassword)) {
             throw ApplicationException.from(AuthErrorCode.PASSWORD_NOT_MATCH);
         }
 
-        Long userId = authMapper.getUserIdByUserEmail(authLoginRequestDTO.userEmail());
+        Long userId = authMapper.getUserIdByUserEmail(authLoginRequest.userEmail());
         if (userId == null) {
             throw ApplicationException.from(AuthErrorCode.EMAIL_NOT_FOUND);
         }

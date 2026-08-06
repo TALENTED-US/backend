@@ -11,7 +11,7 @@ import lombok.Builder;
 
 @Builder
 @ApiModel(description = "회원 가입 요청")
-public record AuthSignUpRequestDTO(
+public record AuthSignUpRequest(
 
     @ApiModelProperty(value = "이름", example = "장예연", required = true)
     @NotBlank(message = "이름은 필수입니다.")
@@ -51,15 +51,15 @@ public record AuthSignUpRequestDTO(
     @Size(min = 2, max = 20, message = "닉네임은 2~20자여야 합니다.")
     String userNickname
 ) {
-    public AuthSignUpRequestDTO saveNewUser(AuthSignUpRequestDTO authSignUpRequestDTO, String userPassword) {
-       return AuthSignUpRequestDTO.builder()
-           .userName(authSignUpRequestDTO.userName())
-           .birthDate(authSignUpRequestDTO.birthDate())
-           .phoneNumber(authSignUpRequestDTO.phoneNumber())
-           .userEmail(authSignUpRequestDTO.userEmail())
+    public AuthSignUpRequest saveNewUser(AuthSignUpRequest authSignUpRequest, String userPassword) {
+       return AuthSignUpRequest.builder()
+           .userName(authSignUpRequest.userName())
+           .birthDate(authSignUpRequest.birthDate())
+           .phoneNumber(authSignUpRequest.phoneNumber())
+           .userEmail(authSignUpRequest.userEmail())
            .userPassword(userPassword)
-           .userPasswordCheck(authSignUpRequestDTO.userPasswordCheck())
-           .userNickname(authSignUpRequestDTO.userNickname())
+           .userPasswordCheck(authSignUpRequest.userPasswordCheck())
+           .userNickname(authSignUpRequest.userNickname())
            .build();
     }
 
