@@ -2,7 +2,7 @@ package com.talented.buttie.ledger.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.ledger.domain.TransactionVO;
-import com.talented.buttie.ledger.dto.response.TransactionDetailResponse;
+import com.talented.buttie.ledger.dto.response.transaction.TransactionDetailResponse;
 import com.talented.buttie.ledger.exception.LedgerErrorCode;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
 import lombok.RequiredArgsConstructor;

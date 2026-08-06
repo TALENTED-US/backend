@@ -45,18 +45,4 @@
     WHERE USER_NICKNAME = #{nickname}
   </select>
 
-
-  <update id="updateUser">
-    UPDATE USER
-    SET USER_NICKNAME = #{user.userNickname},
-        USER_UPDATED_AT = NOW()
-    WHERE USER_ID = #{user.userId}
-  </update>
-
-  <select id="countByNickname" resultType="int">
-    SELECT COUNT(*)
-    FROM USER
-    WHERE USER_NICKNAME = #{nickname}
-  </select>
-
-</mapper>
+</mapper>
