@@ -1,4 +1,4 @@
-package com.talented.buttie.ledger.dto.response;
+package com.talented.buttie.ledger.dto.response.transaction;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
@@ -7,7 +7,6 @@ import com.talented.buttie.ledger.domain.TransactionVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
-import java.util.List;
 import javax.validation.constraints.NotBlank;
 import lombok.Builder;
 

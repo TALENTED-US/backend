@@ -19,7 +19,8 @@ public enum LedgerErrorCode implements BaseErrorCode {
     EXTERNAL_TRANSACTION_UNDELETABLE(HttpStatus.FORBIDDEN, "LEDGER_305", "외부 기관에서 연동된 거래는 삭제할 수 없습니다."),
 
     TRANSACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "LEDGER_401", "거래 정보를 찾을 수 없습니다."),
-    FIXED_EXPENSE_NOT_FOUND(HttpStatus.NOT_FOUND, "LEDGER_402", "등록된 고정 지출 내역을 찾을 수 없습니다.");
+    FIXED_EXPENSE_NOT_FOUND(HttpStatus.NOT_FOUND, "LEDGER_402", "등록된 고정 지출 내역을 찾을 수 없습니다."),
+    NOT_FIXED_EXPENSE(HttpStatus.BAD_REQUEST, "LEDGER_403", "고정 지출로 등록된 거래가 아닙니다.");
     private final HttpStatus httpStatus;
     private final String customCode;
     private final String message;

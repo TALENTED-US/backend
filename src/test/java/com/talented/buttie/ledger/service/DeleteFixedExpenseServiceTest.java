@@ -11,7 +11,7 @@ import com.talented.buttie.ledger.domain.TransactionType;
 import com.talented.buttie.ledger.domain.TransactionVO;
 import com.talented.buttie.ledger.exception.LedgerErrorCode;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
-import com.talented.buttie.ledger.service.fixed.CreateFixedExpenseService;
+import com.talented.buttie.ledger.service.fixed.DeleteFixedExpenseService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,13 +21,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class CreateFixedExpenseServiceTest {
+class DeleteFixedExpenseServiceTest {
 
     @Mock
     private TransactionMapper transactionMapper;
 
     @InjectMocks
-    private CreateFixedExpenseService createFixedExpenseService;
+    private DeleteFixedExpenseService deleteFixedExpenseService;
 
     private Long userId;
     private Long transactionId;
@@ -39,18 +39,18 @@ class CreateFixedExpenseServiceTest {
     }
 
     @Test
-    @DisplayName("성공: 거래 내역을 고정 지출로 등록")
-    void createFixedExpenseSuccess() {
-        TransactionVO original = TransactionVO.builder()
+    @DisplayName("성공: 고정 지출 거래를 일반 지출로 해제(삭제)")
+    void deleteFixedExpenseSuccess() {
+        TransactionVO fixedTransaction = TransactionVO.builder()
             .transactionId(transactionId)
             .userId(userId)
-            .transactionType(TransactionType.EXPENSE)
+            .transactionType(TransactionType.FIXED)
             .build();
 
-        given(transactionMapper.findById(transactionId)).willReturn(original);
+        given(transactionMapper.findById(transactionId)).willReturn(fixedTransaction);
         given(transactionMapper.updateTransaction(any(TransactionVO.class))).willReturn(1);
 
-        Long result = createFixedExpenseService.createFixedExpense(userId, transactionId);
+        Long result = deleteFixedExpenseService.deleteFixedExpense(userId, transactionId);
 
         assertEquals(transactionId, result);
         verify(transactionMapper).updateTransaction(any(TransactionVO.class));
@@ -62,7 +62,7 @@ class CreateFixedExpenseServiceTest {
         given(transactionMapper.findById(transactionId)).willReturn(null);
 
         ApplicationException exception = assertThrows(ApplicationException.class,
-            () -> createFixedExpenseService.createFixedExpense(userId, transactionId));
+            () -> deleteFixedExpenseService.deleteFixedExpense(userId, transactionId));
 
         assertEquals(LedgerErrorCode.TRANSACTION_NOT_FOUND, exception.getCode());
         verify(transactionMapper, never()).updateTransaction(any());
@@ -74,33 +74,33 @@ class CreateFixedExpenseServiceTest {
         TransactionVO otherUserTransaction = TransactionVO.builder()
             .transactionId(transactionId)
             .userId(999L)
-            .transactionType(TransactionType.EXPENSE)
+            .transactionType(TransactionType.FIXED)
             .build();
 
         given(transactionMapper.findById(transactionId)).willReturn(otherUserTransaction);
 
         ApplicationException exception = assertThrows(ApplicationException.class,
-            () -> createFixedExpenseService.createFixedExpense(userId, transactionId));
+            () -> deleteFixedExpenseService.deleteFixedExpense(userId, transactionId));
 
         assertEquals(LedgerErrorCode.TRANSACTION_USER_ID_MISMATCH, exception.getCode());
         verify(transactionMapper, never()).updateTransaction(any());
     }
 
     @Test
-    @DisplayName("실패: 이미 고정 지출인 거래를 추가하려는 경우 예외 발생")
-    void whenAlreadyFixedExpense() {
-        TransactionVO alreadyFixed = TransactionVO.builder()
+    @DisplayName("실패: 고정 지출이 아닌 일반 거래를 고정지출 해제하려는 경우 예외 발생")
+    void whenNotFixedExpense() {
+        TransactionVO normalExpense = TransactionVO.builder()
             .transactionId(transactionId)
             .userId(userId)
-            .transactionType(TransactionType.FIXED)
+            .transactionType(TransactionType.EXPENSE)
             .build();
 
-        given(transactionMapper.findById(transactionId)).willReturn(alreadyFixed);
+        given(transactionMapper.findById(transactionId)).willReturn(normalExpense);
 
         ApplicationException exception = assertThrows(ApplicationException.class,
-            () -> createFixedExpenseService.createFixedExpense(userId, transactionId));
+            () -> deleteFixedExpenseService.deleteFixedExpense(userId, transactionId));
 
-        assertEquals(LedgerErrorCode.ALREADY_FIXED_EXPENSE, exception.getCode());
+        assertEquals(LedgerErrorCode.NOT_FIXED_EXPENSE, exception.getCode());
         verify(transactionMapper, never()).updateTransaction(any());
     }
 }

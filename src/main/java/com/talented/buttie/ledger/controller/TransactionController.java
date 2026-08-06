@@ -5,19 +5,20 @@ import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.annotation.AuthUser;
 import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.ledger.domain.TransactionVO;
-import com.talented.buttie.ledger.dto.request.CreateTransactionRequest;
-import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequest;
-import com.talented.buttie.ledger.dto.request.UpdateTransactionRequest;
-import com.talented.buttie.ledger.dto.response.FixedExpenseDetailResponse;
-import com.talented.buttie.ledger.dto.response.TransactionDetailResponse;
-import com.talented.buttie.ledger.dto.response.TransactionResponse;
-import com.talented.buttie.ledger.service.CreateFixedExpenseService;
-import com.talented.buttie.ledger.service.CreateTransactionService;
-import com.talented.buttie.ledger.service.DeleteTransactionService;
-import com.talented.buttie.ledger.service.ReadFixedExpenseDetailService;
-import com.talented.buttie.ledger.service.ReadTransactionDetailService;
-import com.talented.buttie.ledger.service.ReadTransactionService;
-import com.talented.buttie.ledger.service.UpdateTransactionService;
+import com.talented.buttie.ledger.dto.request.transaction.CreateTransactionRequest;
+import com.talented.buttie.ledger.dto.request.transaction.UpdateTransactionMemoRequest;
+import com.talented.buttie.ledger.dto.request.transaction.UpdateTransactionRequest;
+import com.talented.buttie.ledger.dto.response.fixed.FixedExpenseDetailResponse;
+import com.talented.buttie.ledger.dto.response.transaction.TransactionDetailResponse;
+import com.talented.buttie.ledger.dto.response.transaction.TransactionResponse;
+import com.talented.buttie.ledger.service.fixed.CreateFixedExpenseService;
+import com.talented.buttie.ledger.service.transaction.CreateTransactionService;
+import com.talented.buttie.ledger.service.fixed.DeleteFixedExpenseService;
+import com.talented.buttie.ledger.service.transaction.DeleteTransactionService;
+import com.talented.buttie.ledger.service.fixed.ReadFixedExpenseDetailService;
+import com.talented.buttie.ledger.service.transaction.ReadTransactionDetailService;
+import com.talented.buttie.ledger.service.transaction.ReadTransactionService;
+import com.talented.buttie.ledger.service.transaction.UpdateTransactionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
@@ -44,6 +45,7 @@ public class TransactionController {
     private final ReadTransactionDetailService readTransactionDetailService;
     private final ReadFixedExpenseDetailService readFixedExpenseDetailService;
     private final CreateFixedExpenseService createFixedExpenseService;
+    private final DeleteFixedExpenseService deleteFixedExpenseService;
 
     @ApiOperation("거래 목록 조회")
     @GetMapping("")
@@ -143,6 +145,19 @@ public class TransactionController {
         Long targetUserId = user.userId();
         Long decryptedTransactionId = PKCrypto.decrypt(transactionId);
         Long resultTransactionId = createFixedExpenseService.createFixedExpense(targetUserId, decryptedTransactionId);
+
+        return ApplicationResponse.onSuccess(resultTransactionId);
+    }
+
+    @ApiOperation("고정 지출 삭제(해제)")
+    @PatchMapping("/{transactionId}/fixed/delete")
+    public ApplicationResponse<Long> deleteFixedExpense(
+        @PathVariable("transactionId") String transactionId,
+        @AuthUser AuthenticationUser user
+    ){
+        Long targetUserId = user.userId();
+        Long decryptedTransactionId = PKCrypto.decrypt(transactionId);
+        Long resultTransactionId = deleteFixedExpenseService.deleteFixedExpense(targetUserId, decryptedTransactionId);
 
         return ApplicationResponse.onSuccess(resultTransactionId);
     }
