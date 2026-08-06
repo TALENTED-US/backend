@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Positive;
 import lombok.Builder;
 
 @ApiModel("시뮬레이션 항목 적용 요청")
@@ -24,11 +24,11 @@ public record ApplySimulationItemRequest(
     ExpenseCategory expenseCategory,
 
     @ApiModelProperty(value = "항목 적용 금액. 정책 항목은 서버에서 policyId로 조회한 금액을 사용합니다.", example = "100000")
-    @PositiveOrZero(message = "항목 적용 금액은 0 이상이어야 합니다.")
+    @Positive(message = "항목 적용 금액은 0보다 커야 합니다.")
     Integer amount,
 
-    @ApiModelProperty(value = "정책 ID. 정책 항목일 때 필수입니다.", example = "1")
-    Long policyId,
+    @ApiModelProperty(value = "암호화된 정책 ID. 정책 항목일 때 필수입니다.")
+    String policyId,
 
     @ApiModelProperty(value = "항목 적용 시작일", example = "2026-09-01", required = true)
     @NotNull(message = "항목 적용 시작일은 필수입니다.")
