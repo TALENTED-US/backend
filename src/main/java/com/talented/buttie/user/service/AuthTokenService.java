@@ -2,6 +2,7 @@ package com.talented.buttie.user.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.common.security.AccountType;
+import com.talented.buttie.common.security.TokenAccount;
 import com.talented.buttie.common.security.jwt.JwtTokenProvider;
 import com.talented.buttie.common.security.redis.RefreshTokenRepository;
 import com.talented.buttie.user.dto.response.auth.AuthTokenResponseDTO;
@@ -46,5 +47,24 @@ public class AuthTokenService {
         }
 
         return targetUserId;
+    }
+
+    public AuthTokenResponseDTO reissue(String refreshToken) {
+        TokenAccount account;
+
+        try {
+            account = jwtTokenProvider.parseRefreshToken(refreshToken);
+        } catch (IllegalArgumentException e) {
+            throw ApplicationException.from(AuthErrorCode.INVALID_TOKEN);
+        }
+
+        if(account.accountType() != AccountType.USER) {
+            throw ApplicationException.from(AuthErrorCode.INVALID_TOKEN);
+        }
+
+        if(!refreshTokenRepository.matches(account.accountId(), account.accountType(), refreshToken)){
+            throw ApplicationException.from(AuthErrorCode.INVALID_TOKEN);
+        }
+        return createToken(account.accountId());
     }
 }

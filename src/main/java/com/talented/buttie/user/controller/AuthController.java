@@ -20,6 +20,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Api(tags = "Auth")
 @RestController
@@ -81,5 +83,21 @@ public class AuthController {
     public ApplicationResponse<AuthDuplicateCheckResponseDTO> checkNicknameDuplicate(@RequestParam String nickname) {
         boolean isDuplicate = authReadService.isNicknameDuplicate(nickname);
         return ApplicationResponse.onSuccess(new AuthDuplicateCheckResponseDTO(isDuplicate));
+    }
+
+    @ApiOperation("액세스 토큰 재발급")
+    @GetMapping("/reissue")
+    public ApplicationResponse<AuthTokenResponseDTO> reissue(
+        @ApiIgnore
+        @CookieValue(SecurityConstants.REFRESH_TOKEN_COOKIE_NAME) String refreshToken,
+        HttpServletResponse response
+    ) {
+        AuthTokenResponseDTO tokenResponseDTO = authTokenService.reissue(refreshToken);
+
+        int maxAge = Math.toIntExact(tokenResponseDTO.refreshTokenExpiration() / 1000);
+        response.addCookie(authCookieService.createCookie(SecurityConstants.REFRESH_TOKEN_COOKIE_NAME, tokenResponseDTO.refreshToken(), true, maxAge));
+        response.addCookie(authCookieService.createCookie(SecurityConstants.CSRF_TOKEN_COOKIE_NAME, UUID.randomUUID().toString(), false, maxAge));
+
+        return ApplicationResponse.onSuccess(tokenResponseDTO);
     }
 }
