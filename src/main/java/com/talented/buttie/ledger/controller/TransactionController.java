@@ -5,22 +5,27 @@ import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.annotation.AuthUser;
 import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.ledger.domain.TransactionVO;
-import com.talented.buttie.ledger.dto.request.CreateTransactionRequest;
-import com.talented.buttie.ledger.dto.request.UpdateTransactionMemoRequest;
-import com.talented.buttie.ledger.dto.request.UpdateTransactionRequest;
-import com.talented.buttie.ledger.dto.response.FixedExpenseDetailResponse;
-import com.talented.buttie.ledger.dto.response.TransactionDetailResponse;
-import com.talented.buttie.ledger.dto.response.TransactionResponse;
-import com.talented.buttie.ledger.service.CreateFixedExpenseService;
-import com.talented.buttie.ledger.service.CreateTransactionService;
-import com.talented.buttie.ledger.service.DeleteTransactionService;
-import com.talented.buttie.ledger.service.ReadFixedExpenseDetailService;
-import com.talented.buttie.ledger.service.ReadTransactionDetailService;
-import com.talented.buttie.ledger.service.ReadTransactionService;
-import com.talented.buttie.ledger.service.UpdateTransactionService;
+import com.talented.buttie.ledger.dto.request.transaction.CreateTransactionRequest;
+import com.talented.buttie.ledger.dto.request.transaction.UpdateTransactionMemoRequest;
+import com.talented.buttie.ledger.dto.request.transaction.UpdateTransactionRequest;
+import com.talented.buttie.ledger.dto.response.GetSumFixedExpenseResponse;
+import com.talented.buttie.ledger.dto.response.fixed.FixedExpenseDetailResponse;
+import com.talented.buttie.ledger.dto.response.transaction.TransactionDetailResponse;
+import com.talented.buttie.ledger.dto.response.transaction.TransactionResponse;
+import com.talented.buttie.ledger.service.GetSumFixedExpenseService;
+import com.talented.buttie.ledger.service.fixed.CreateFixedExpenseService;
+import com.talented.buttie.ledger.service.transaction.CreateTransactionService;
+import com.talented.buttie.ledger.service.fixed.DeleteFixedExpenseService;
+import com.talented.buttie.ledger.service.transaction.DeleteTransactionService;
+import com.talented.buttie.ledger.service.fixed.ReadFixedExpenseDetailService;
+import com.talented.buttie.ledger.service.transaction.ReadTransactionDetailService;
+import com.talented.buttie.ledger.service.transaction.ReadTransactionService;
+import com.talented.buttie.ledger.service.transaction.UpdateTransactionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.time.YearMonth;
 import java.util.List;
+import java.util.Objects;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,6 +49,8 @@ public class TransactionController {
     private final ReadTransactionDetailService readTransactionDetailService;
     private final ReadFixedExpenseDetailService readFixedExpenseDetailService;
     private final CreateFixedExpenseService createFixedExpenseService;
+    private final DeleteFixedExpenseService deleteFixedExpenseService;
+    private final GetSumFixedExpenseService getSumFixedExpenseService;
 
     @ApiOperation("거래 목록 조회")
     @GetMapping("")
@@ -123,6 +130,37 @@ public class TransactionController {
         return ApplicationResponse.onSuccess(responseList);
     }
 
+    @ApiOperation("지난달 및 이번달 고정 지출 금액 합계 조회")
+    @GetMapping("/fixed/sum")
+    public ApplicationResponse<GetSumFixedExpenseResponse> getSumFixedExpense(
+        @AuthUser AuthenticationUser user
+    ){
+        Long targetUserId = user.userId();
+        List<TransactionVO> fixedExpenses = getSumFixedExpenseService.getFixedExpenses(targetUserId);
+
+        YearMonth currentYearMonth = YearMonth.now();
+        YearMonth lastYearMonth = currentYearMonth.minusMonths(1);
+
+        // 1. 이번달 고정 지출 합계 (이번달 날짜에 해당하는 고정 지출 AMOUNT 합계)
+        int currentMonthTotal = fixedExpenses.stream()
+            .filter(tx -> tx.getTransactionAt() != null && YearMonth.from(tx.getTransactionAt()).equals(currentYearMonth))
+            .map(TransactionVO::getTransactionAmount)
+            .filter(Objects::nonNull)
+            .mapToInt(Integer::intValue)
+            .sum();
+
+        // 2. 지난달 고정 지출 합계 (지난달 날짜에 해당하는 고정 지출 AMOUNT 합계)
+        int lastMonthTotal = fixedExpenses.stream()
+            .filter(tx -> tx.getTransactionAt() != null && YearMonth.from(tx.getTransactionAt()).equals(lastYearMonth))
+            .map(TransactionVO::getTransactionAmount)
+            .filter(Objects::nonNull)
+            .mapToInt(Integer::intValue)
+            .sum();
+
+        GetSumFixedExpenseResponse response = GetSumFixedExpenseResponse.of(lastMonthTotal, currentMonthTotal);
+        return ApplicationResponse.onSuccess(response);
+    }
+
     @ApiOperation("거래 상세 조회")
     @GetMapping("/{transactionId}")
     public ApplicationResponse<TransactionDetailResponse> getTransactionDetail(
@@ -143,6 +181,19 @@ public class TransactionController {
         Long targetUserId = user.userId();
         Long decryptedTransactionId = PKCrypto.decrypt(transactionId);
         Long resultTransactionId = createFixedExpenseService.createFixedExpense(targetUserId, decryptedTransactionId);
+
+        return ApplicationResponse.onSuccess(resultTransactionId);
+    }
+
+    @ApiOperation("고정 지출 삭제(해제)")
+    @PatchMapping("/{transactionId}/fixed/delete")
+    public ApplicationResponse<Long> deleteFixedExpense(
+        @PathVariable("transactionId") String transactionId,
+        @AuthUser AuthenticationUser user
+    ){
+        Long targetUserId = user.userId();
+        Long decryptedTransactionId = PKCrypto.decrypt(transactionId);
+        Long resultTransactionId = deleteFixedExpenseService.deleteFixedExpense(targetUserId, decryptedTransactionId);
 
         return ApplicationResponse.onSuccess(resultTransactionId);
     }

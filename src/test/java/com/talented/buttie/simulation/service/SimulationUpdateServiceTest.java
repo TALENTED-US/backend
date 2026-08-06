@@ -3,23 +3,23 @@ package com.talented.buttie.simulation.service;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
+import com.talented.buttie.simulation.domain.SimulationItemVO;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.request.UpdateSimulationPeriodRequest;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
+import com.talented.buttie.simulation.mapper.SimulationItemMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
-import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
+import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
+import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
+import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,10 +40,13 @@ class SimulationUpdateServiceTest {
     private MonthlyProjectionMapper monthlyProjectionMapper;
 
     @Mock
-    private ProjectionEngine projectionEngine;
+    private SimulationItemMapper simulationItemMapper;
 
     @Mock
-    private EmploymentPreparationMapper employmentPreparationMapper;
+    private FinancialSnapshotMapper financialSnapshotMapper;
+
+    @Mock
+    private SimulationItemCalculationService simulationItemCalculationService;
 
     @InjectMocks
     private SimulationUpdateService simulationUpdateService;
@@ -52,7 +55,8 @@ class SimulationUpdateServiceTest {
     private Long simulationId;
     private UpdateSimulationPeriodRequest request;
     private SimulationVO activeSimulation;
-    private List<MonthlyProjectionVO> existingProjections;
+    private FinancialSnapshotVO snapshot;
+    private List<SimulationItemVO> appliedItems;
     private List<MonthlyProjectionVO> recalculatedProjections;
 
     @BeforeEach
@@ -66,10 +70,10 @@ class SimulationUpdateServiceTest {
         activeSimulation = SimulationVO.builder()
             .simulationId(simulationId)
             .userId(userId)
+            .snapshotId(100L)
             .build();
-        existingProjections = List.of(
-            projection(LocalDate.of(2026, 8, 1), 1_000_000, 2_000_000)
-        );
+        snapshot = FinancialSnapshotVO.builder().snapshotId(100L).userId(userId).build();
+        appliedItems = List.of(SimulationItemVO.builder().simulationItemId(1L).build());
         recalculatedProjections = List.of(
             projection(LocalDate.of(2026, 8, 1), 1_000_000, 2_000_000),
             projection(LocalDate.of(2026, 9, 1), 2_000_000, 3_000_000)
@@ -81,13 +85,12 @@ class SimulationUpdateServiceTest {
     void updateSimulationPeriod() {
         given(simulationMapper.findActiveByUserId(userId))
             .willReturn(activeSimulation);
-        given(monthlyProjectionMapper.findAllBySimulationId(simulationId))
-            .willReturn(existingProjections);
-        given(employmentPreparationMapper.getLivingThresholdByUserId(userId))
-            .willReturn(1_000_000);
-        given(projectionEngine.recalculateProjections(
-            simulationId, request.simulationStartDate(), request.simulationDueDate(), existingProjections, 1_000_000
-        )).willReturn(recalculatedProjections);
+        given(financialSnapshotMapper.findById(100L)).willReturn(snapshot);
+        given(simulationItemMapper.findAllActiveBySimulationId(simulationId)).willReturn(appliedItems);
+        given(simulationItemCalculationService.recalculateProjections(activeSimulation, snapshot, appliedItems))
+            .willReturn(recalculatedProjections);
+        given(simulationItemCalculationService.calculateExpectedPrepMonths(recalculatedProjections, snapshot))
+            .willReturn(new BigDecimal("3.00"));
         given(simulationMapper.updateSimulationPeriod(
             simulationId, request.simulationStartDate(), request.simulationDueDate(), 3_000_000
         )).willReturn(1);
@@ -103,6 +106,7 @@ class SimulationUpdateServiceTest {
             .deleteAllBySimulationId(simulationId);
         verify(monthlyProjectionMapper)
             .saveAll(recalculatedProjections);
+        verify(simulationMapper).updateSummary(simulationId, 3_000_000, new BigDecimal("3.00"));
     }
 
     @Test
@@ -119,27 +123,29 @@ class SimulationUpdateServiceTest {
         );
 
         assertEquals(SimulationErrorCode.INVALID_SIMULATION_PERIOD, exception.getCode());
-        verifyNoInteractions(simulationMapper, monthlyProjectionMapper, projectionEngine, employmentPreparationMapper);
+        verifyNoInteractions(
+            simulationMapper,
+            simulationItemMapper,
+            monthlyProjectionMapper,
+            financialSnapshotMapper,
+            simulationItemCalculationService
+        );
     }
 
     @Test
-    @DisplayName("기존 예상 재정 계획이 없으면 예외가 발생한다.")
-    void throwWhenProjectionNotFound() {
+    @DisplayName("시뮬레이션에 연결된 스냅샷이 없으면 예외가 발생한다.")
+    void throwWhenSnapshotNotFound() {
         given(simulationMapper.findActiveByUserId(userId))
             .willReturn(activeSimulation);
-        given(monthlyProjectionMapper.findAllBySimulationId(simulationId))
-            .willReturn(List.of());
+        given(financialSnapshotMapper.findById(100L)).willReturn(null);
 
         ApplicationException exception = assertThrows(
             ApplicationException.class,
             () -> simulationUpdateService.updateSimulationPeriod(userId, request)
         );
 
-        assertEquals(SimulationErrorCode.SIMULATION_PROJECTION_NOT_FOUND, exception.getCode());
-        verifyNoInteractions(projectionEngine, employmentPreparationMapper);
-        verify(simulationMapper, never()).updateSimulationPeriod(anyLong(), any(), any(), anyInt());
-        verify(monthlyProjectionMapper, never()).deleteAllBySimulationId(anyLong());
-        verify(monthlyProjectionMapper, never()).saveAll(anyList());
+        assertEquals(AnalysisErrorCode.SNAPSHOT_NOT_FOUND, exception.getCode());
+        verifyNoInteractions(simulationItemMapper, monthlyProjectionMapper, simulationItemCalculationService);
     }
 
     @Test
@@ -159,7 +165,12 @@ class SimulationUpdateServiceTest {
             SimulationErrorCode.CONFIRMED_SIMULATION_CANNOT_BE_UPDATED,
             exception.getCode()
         );
-        verifyNoInteractions(monthlyProjectionMapper, projectionEngine, employmentPreparationMapper);
+        verifyNoInteractions(
+            simulationItemMapper,
+            monthlyProjectionMapper,
+            financialSnapshotMapper,
+            simulationItemCalculationService
+        );
     }
 
     @Test
@@ -176,7 +187,12 @@ class SimulationUpdateServiceTest {
         );
 
         assertEquals(SimulationErrorCode.SIMULATION_NOT_FOUND, exception.getCode());
-        verifyNoInteractions(monthlyProjectionMapper, projectionEngine, employmentPreparationMapper);
+        verifyNoInteractions(
+            simulationItemMapper,
+            monthlyProjectionMapper,
+            financialSnapshotMapper,
+            simulationItemCalculationService
+        );
     }
 
     @Test
@@ -184,22 +200,20 @@ class SimulationUpdateServiceTest {
     void recreateProjectionsAfterPeriodUpdate() {
         given(simulationMapper.findActiveByUserId(userId))
             .willReturn(activeSimulation);
-        given(monthlyProjectionMapper.findAllBySimulationId(simulationId))
-            .willReturn(existingProjections);
-        given(employmentPreparationMapper.getLivingThresholdByUserId(userId))
-            .willReturn(1_000_000);
-        given(projectionEngine.recalculateProjections(
-            simulationId, request.simulationStartDate(), request.simulationDueDate(), existingProjections, 1_000_000
-        )).willReturn(recalculatedProjections);
+        given(financialSnapshotMapper.findById(100L)).willReturn(snapshot);
+        given(simulationItemMapper.findAllActiveBySimulationId(simulationId)).willReturn(appliedItems);
+        given(simulationItemCalculationService.recalculateProjections(activeSimulation, snapshot, appliedItems))
+            .willReturn(recalculatedProjections);
+        given(simulationItemCalculationService.calculateExpectedPrepMonths(recalculatedProjections, snapshot))
+            .willReturn(new BigDecimal("3.00"));
         given(simulationMapper.updateSimulationPeriod(
             simulationId, request.simulationStartDate(), request.simulationDueDate(), 3_000_000
         )).willReturn(1);
 
         simulationUpdateService.updateSimulationPeriod(userId, request);
 
-        verify(projectionEngine).recalculateProjections(
-            simulationId, request.simulationStartDate(), request.simulationDueDate(), existingProjections, 1_000_000
-        );
+        verify(simulationItemCalculationService)
+            .recalculateProjections(activeSimulation, snapshot, appliedItems);
         verify(monthlyProjectionMapper).deleteAllBySimulationId(simulationId);
         verify(monthlyProjectionMapper).saveAll(recalculatedProjections);
     }

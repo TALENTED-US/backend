@@ -11,6 +11,7 @@ import com.talented.buttie.user.dto.request.WithdrawUserRequestDTO;
 import com.talented.buttie.user.exception.UserErrorCode;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import com.talented.buttie.user.mapper.UserMapper;
+import com.talented.buttie.user.domain.ButiDashboardVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,15 @@ public class UserService {
         }
 
         return userProfile;
+    }
+    public ButiDashboardVO getButiDashboard(Long userId) {
+        ButiDashboardVO butiDashboard = userMapper.selectButiDashboard(userId);
+
+        if (butiDashboard == null) {
+            throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
+        }
+
+        return butiDashboard;
     }
 
     public Long modifyEmploymentPreparation(Long userId, UpdateEmploymentPreparationRequestDTO request) {

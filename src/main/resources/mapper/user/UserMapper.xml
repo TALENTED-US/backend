@@ -45,4 +45,27 @@
     WHERE USER_NICKNAME = #{nickname}
   </select>
 
+  <select id="selectButiDashboard" resultType="com.talented.buttie.user.domain.ButiDashboardVO">
+    SELECT
+        ub.BUTTIE_LEVEL AS buttieLevel,
+        bl.STAGE_NAME AS stageName,
+        bl.LEVEL_DESCRIPTION AS levelDescription,
+        ub.BUTTIE_TOTAL_EXP AS buttieTotalExp,
+        bl.REQUIRED_EXP AS requiredExp,
+        COALESCE(s.RISK_LEVEL, 'STABLE') AS riskLevel,
+        CASE COALESCE(s.RISK_LEVEL, 'STABLE')
+          WHEN 'STABLE'  THEN bl.IMAGE_URL_STABLE
+          WHEN 'CAUTION' THEN bl.IMAGE_URL_CAUTION
+          WHEN 'DANGER'  THEN bl.IMAGE_URL_DANGER
+          END AS buttieImageUrl
+    FROM USER_BUTTIE ub
+           JOIN BUTTIE_LEVEL bl ON ub.BUTTIE_LEVEL = bl.LEVEL
+           LEFT JOIN SNAPSHOT s ON ub.USER_ID = s.USER_ID
+      AND s.SNAPSHOT_BASE_DATE = (
+        SELECT MAX(s2.SNAPSHOT_BASE_DATE)
+        FROM SNAPSHOT s2
+        WHERE s2.USER_ID = ub.USER_ID
+      )
+    WHERE ub.USER_ID = #{userId}
+  </select>
 </mapper>

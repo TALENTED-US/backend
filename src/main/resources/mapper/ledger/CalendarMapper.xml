@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.talented.buttie.ledger.mapper.CalendarMapper">
+
+  <select id="selectTransactionsByMonth"
+    resultType="com.talented.buttie.ledger.domain.calendar.CalendarTransactionVO">
+    SELECT
+      t.TRANSACTION_ID AS transactionId,
+      t.TRANSACTION_AT AS transactionAt,
+      t.TRANSACTION_CONTENT AS transactionContent,
+      t.EXPENSE_CATEGORY AS category,
+      t.TRANSACTION_TYPE AS transactionType,
+      t.TRANSACTION_AMOUNT AS amount,
+      a.INSTITUTION_NAME AS institutionName
+    FROM `TRANSACTION` t
+           LEFT JOIN `ACCOUNT` a ON t.ACCOUNT_ID = a.ACCOUNT_ID
+    WHERE t.USER_ID = #{userId}
+      AND YEAR(t.TRANSACTION_AT) = #{year}
+      AND MONTH(t.TRANSACTION_AT) = #{month}
+      AND t.IS_DELETED = FALSE
+    ORDER BY t.TRANSACTION_AT DESC
+  </select>
+
+  <select id="selectCategoryExpensesByMonth"
+    resultType="com.talented.buttie.ledger.domain.calendar.CalendarCategoryExpenseVO">
+    SELECT
+      EXPENSE_CATEGORY AS category,
+      SUM(TRANSACTION_AMOUNT) AS amount
+    FROM `TRANSACTION`
+    WHERE USER_ID = #{userId}
+      AND YEAR(TRANSACTION_AT) = #{year}
+      AND MONTH(TRANSACTION_AT) = #{month}
+      AND IS_DELETED = FALSE
+      AND TRANSACTION_TYPE IN ('EXPENSE', 'FIXED')
+    GROUP BY EXPENSE_CATEGORY
+    ORDER BY amount DESC
+  </select>
+
+</mapper>
