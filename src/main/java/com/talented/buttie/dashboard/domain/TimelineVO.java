@@ -1,4 +1,4 @@
-package com.talented.buttie.simulation.domain;
+package com.talented.buttie.dashboard.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

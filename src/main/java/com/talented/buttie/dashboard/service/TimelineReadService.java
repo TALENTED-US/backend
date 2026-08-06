@@ -1,10 +1,10 @@
-package com.talented.buttie.simulation.service;
+package com.talented.buttie.dashboard.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
-import com.talented.buttie.simulation.domain.TimelineVO;
-import com.talented.buttie.simulation.dto.response.TimelineResponse;
-import com.talented.buttie.simulation.exception.TimelineErrorCode;
-import com.talented.buttie.simulation.mapper.TimelineMapper;
+import com.talented.buttie.dashboard.domain.TimelineVO;
+import com.talented.buttie.dashboard.dto.TimelineResponse;
+import com.talented.buttie.dashboard.exception.TimelineErrorCode;
+import com.talented.buttie.dashboard.mapper.TimelineMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
