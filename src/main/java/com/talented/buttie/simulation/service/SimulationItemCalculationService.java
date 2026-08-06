@@ -20,11 +20,14 @@ import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,12 +39,16 @@ public class SimulationItemCalculationService {
     private final PolicyMapper policyMapper;
     private final ProjectionEngine projectionEngine;
 
+    private static final BigDecimal MAX_EXPECT_PREP_MONTHS = new BigDecimal("999.99");
+
     public void validateRequest(ApplySimulationItemRequest request, SimulationVO simulation) {
         if (request.category() == null || request.applyStartDate() == null) {
             throw ApplicationException.from(SimulationErrorCode.INVALID_SIMULATION_ITEM);
         }
 
-        LocalDate applyEndDate = resolveApplyEndDate(request);
+        LocalDate applyEndDate = request.category() == SimulationItemCategory.POLICY
+            ? request.applyStartDate()
+            : resolveApplyEndDate(request);
 
         if (applyEndDate.isBefore(request.applyStartDate())) {
             throw ApplicationException.from(SimulationErrorCode.INVALID_SIMULATION_ITEM);
@@ -131,11 +138,18 @@ public class SimulationItemCalculationService {
         List<SimulationItemVO> appliedItems
     ) {
         int livingThreshold = valueOf(employmentPreparationMapper.getLivingThresholdByUserId(simulation.getUserId()));
+        Map<Long, PolicyVO> policyById = appliedItems.stream()
+            .filter(item -> item.getPolicyId() != null)
+            .map(SimulationItemVO::getPolicyId)
+            .distinct()
+            .map(policyMapper::findById)
+            .filter(policy -> policy != null)
+            .collect(Collectors.toMap(PolicyVO::getPolicyId, Function.identity()));
 
         List<MonthlyProjectionVO> baselineProjections = createBaselineProjections(simulation, snapshot);
 
         List<MonthlyProjectionVO> appliedProjections = baselineProjections.stream()
-            .map(projection -> applyItemsToProjection(projection, appliedItems))
+            .map(projection -> applyItemsToProjection(projection, appliedItems, simulation, policyById))
             .toList();
 
         return projectionEngine.recalculateProjections(
@@ -173,6 +187,7 @@ public class SimulationItemCalculationService {
                     .beforeClosingBalance(before.getClosingBalance())
                     .afterClosingBalance(after.getClosingBalance())
                     .livingFundThreshold(livingFundThreshold)
+                    .belowLivingFundThreshold(after.getClosingBalance() < livingFundThreshold)
                     .build();
             })
             .toList();
@@ -184,10 +199,13 @@ public class SimulationItemCalculationService {
         int beforeMonthlyExpense = valueOf(beforeFirst.getExpectedExpense());
         int afterMonthlyIncome = valueOf(afterFirst.getExpectedIncome());
         int afterMonthlyExpense = valueOf(afterFirst.getExpectedExpense());
+        PrepMonthsCalculation expectedPrepMonths = calculateExpectedPrepMonthsResult(sortedAfter, snapshot);
 
         return SimulationItemReportResponse.builder()
             .currentPrepMonths(snapshot.getCurrentPrepMonths())
-            .expectPrepMonths(calculateExpectedPrepMonths(sortedAfter, snapshot, livingFundThreshold))
+            .expectPrepMonths(expectedPrepMonths.months())
+            .currentSustainable(isCurrentSustainable(snapshot))
+            .expectSustainable(expectedPrepMonths.sustainable())
             .monthlyBalances(monthlyBalances)
             .cashflow(
                 CashFlowReport.builder()
@@ -216,7 +234,10 @@ public class SimulationItemCalculationService {
 
         for (SimulationItemVO item : appliedItems) {
             int amount = valueOf(item.getSimulationItemApplyAmount());
-            boolean monthly = item.getRecurrenceType() == SimulationRecurrenceType.MONTHLY;
+            PolicyVO policy = item.getPolicyId() == null
+                ? null
+                : policyMapper.findById(item.getPolicyId());
+            boolean monthly = resolveItemRecurrenceType(item, policy) == SimulationRecurrenceType.MONTHLY;
 
             switch (item.getSimulationItemCategory()) {
                 case EXPENSE -> {
@@ -245,107 +266,132 @@ public class SimulationItemCalculationService {
     }
 
     public BigDecimal calculateExpectedPrepMonths(
-        Long userId,
         List<MonthlyProjectionVO> projections,
         FinancialSnapshotVO snapshot
     ) {
-        int livingThreshold = valueOf(employmentPreparationMapper.getLivingThresholdByUserId(userId));
-        return calculateExpectedPrepMonths(projections, snapshot, livingThreshold);
+        return calculateExpectedPrepMonthsResult(projections, snapshot).months();
     }
 
-    public BigDecimal calculateExpectedPrepMonths(
+    private PrepMonthsCalculation calculateExpectedPrepMonthsResult(
         List<MonthlyProjectionVO> projections,
-        FinancialSnapshotVO snapshot,
-        Integer livingThreshold
+        FinancialSnapshotVO snapshot
     ) {
         if(projections == null || projections.isEmpty())
-            return snapshot.getCurrentPrepMonths();
+            return new PrepMonthsCalculation(snapshot.getCurrentPrepMonths(), isCurrentSustainable(snapshot));
 
         List<MonthlyProjectionVO> sortedProjections = projections.stream()
             .sorted(Comparator.comparing(MonthlyProjectionVO::getProjectionMonth))
             .toList();
 
-        BigDecimal survivedMonths = BigDecimal.ZERO;
-        BigDecimal balance = BigDecimal.valueOf(valueOf(sortedProjections.get(0).getOpeningBalance()));
+        BigDecimal currentMonthlyBurn = calculateCurrentMonthlyBurn(snapshot);
+        boolean neverDepletesDuringSimulation = sortedProjections.stream()
+            .allMatch(projection -> valueOf(projection.getExpectedExpense())
+                <= valueOf(projection.getExpectedIncome()));
 
-        for(MonthlyProjectionVO projection : sortedProjections) {
-            BigDecimal monthlyBurn = calculateProjectionMonthlyBurn(projection, livingThreshold);
-
-            if(monthlyBurn.compareTo(BigDecimal.ZERO) <= 0) return null;
-
-            if(balance.compareTo(BigDecimal.ZERO) <= 0) return survivedMonths;
-
-            BigDecimal closingBalance = balance.subtract(monthlyBurn);
-
-            if(closingBalance.compareTo(BigDecimal.ZERO) >= 0) {
-                survivedMonths = survivedMonths.add(BigDecimal.ONE);
-                balance = closingBalance;
-                continue;
-            }
-
-            BigDecimal partialMonth = balance
-                .divide(monthlyBurn, 2, RoundingMode.HALF_UP);
-
-            if(partialMonth.compareTo(BigDecimal.ONE) > 0) {
-                partialMonth = BigDecimal.ONE;
-            }
-
-            return survivedMonths.add(partialMonth);
+        if (neverDepletesDuringSimulation
+            && currentMonthlyBurn != null
+            && currentMonthlyBurn.compareTo(BigDecimal.ZERO) <= 0) {
+            return new PrepMonthsCalculation(MAX_EXPECT_PREP_MONTHS, true);
         }
 
-        BigDecimal currentMonthlyBurn = calculateCurrentMonthlyBurn(snapshot, livingThreshold);
+        // 잔액이 마이너스로 떨어져도 시뮬레이션 끝까지 계속 진행시켜, 이후 수입으로
+        // 회복되는 경우(예: 다음 달에 목돈 유입)를 생존 기간에 반영한다.
+        BigDecimal openingBalance = BigDecimal.valueOf(valueOf(sortedProjections.get(0).getOpeningBalance()));
+        List<BigDecimal> closingBalances = new ArrayList<>();
+        BigDecimal balance = openingBalance;
 
-        if(currentMonthlyBurn == null || currentMonthlyBurn.compareTo(BigDecimal.ZERO) <= 0) return null;
+        for (MonthlyProjectionVO projection : sortedProjections) {
+            BigDecimal monthlyIncome = BigDecimal.valueOf(valueOf(projection.getExpectedIncome()));
+            BigDecimal monthlyExpense = BigDecimal.valueOf(valueOf(projection.getExpectedExpense()));
+            BigDecimal monthlyBurn = monthlyExpense.subtract(monthlyIncome);
+            balance = balance.subtract(monthlyBurn);
+            closingBalances.add(balance);
+        }
 
-        BigDecimal additionalMonths = balance
-            .divide(currentMonthlyBurn, 2, RoundingMode.HALF_UP);
+        BigDecimal finalBalance = closingBalances.get(closingBalances.size() - 1);
 
-        return survivedMonths.add(additionalMonths);
+        if (finalBalance.compareTo(BigDecimal.ZERO) >= 0) {
+            if (currentMonthlyBurn == null || currentMonthlyBurn.compareTo(BigDecimal.ZERO) <= 0) {
+                return new PrepMonthsCalculation(MAX_EXPECT_PREP_MONTHS, true);
+            }
+
+            BigDecimal additionalMonths = finalBalance
+                .divide(currentMonthlyBurn, 2, RoundingMode.HALF_UP);
+
+            return new PrepMonthsCalculation(
+                capPrepMonths(BigDecimal.valueOf(sortedProjections.size()).add(additionalMonths)),
+                false
+            );
+        }
+
+        // 시뮬레이션 종료 시점까지도 마이너스라면, 다시는 회복되지 않는
+        // 마지막 마이너스 구간의 시작점을 실질적인 고갈 시점으로 계산한다.
+        int depletionMonthIndex = closingBalances.size() - 1;
+        while (depletionMonthIndex > 0
+            && closingBalances.get(depletionMonthIndex - 1).compareTo(BigDecimal.ZERO) < 0) {
+            depletionMonthIndex--;
+        }
+
+        BigDecimal balanceBeforeDepletionMonth = depletionMonthIndex == 0
+            ? openingBalance
+            : closingBalances.get(depletionMonthIndex - 1);
+
+        MonthlyProjectionVO depletionProjection = sortedProjections.get(depletionMonthIndex);
+        BigDecimal depletionMonthlyBurn = BigDecimal.valueOf(valueOf(depletionProjection.getExpectedExpense()))
+            .subtract(BigDecimal.valueOf(valueOf(depletionProjection.getExpectedIncome())));
+
+        BigDecimal partialMonth = depletionMonthlyBurn.compareTo(BigDecimal.ZERO) <= 0
+            ? BigDecimal.ONE
+            : balanceBeforeDepletionMonth.max(BigDecimal.ZERO)
+                .divide(depletionMonthlyBurn, 2, RoundingMode.HALF_UP)
+                .min(BigDecimal.ONE);
+
+        return new PrepMonthsCalculation(
+            capPrepMonths(BigDecimal.valueOf(depletionMonthIndex).add(partialMonth)),
+            false
+        );
     }
 
-    private BigDecimal calculateProjectionMonthlyBurn(MonthlyProjectionVO projection, Integer livingThreshold) {
-        BigDecimal requiredMonthlyExpense = BigDecimal.valueOf(valueOf(projection.getExpectedExpense()))
-            .max(BigDecimal.valueOf(valueOf(livingThreshold)));
-
-        return requiredMonthlyExpense
-            .subtract(BigDecimal.valueOf(valueOf(projection.getExpectedIncome())))
-            .setScale(2, RoundingMode.HALF_UP);
+    private boolean isCurrentSustainable(FinancialSnapshotVO snapshot) {
+        BigDecimal monthlyBurn = calculateCurrentMonthlyBurn(snapshot);
+        return monthlyBurn != null && monthlyBurn.compareTo(BigDecimal.ZERO) <= 0;
     }
 
-    private BigDecimal calculateCurrentMonthlyBurn(FinancialSnapshotVO snapshot, Integer livingThreshold) {
+    private record PrepMonthsCalculation(BigDecimal months, boolean sustainable) {}
+
+    private BigDecimal capPrepMonths(BigDecimal prepMonths) {
+        return prepMonths.compareTo(MAX_EXPECT_PREP_MONTHS) > 0
+            ? MAX_EXPECT_PREP_MONTHS
+            : prepMonths;
+    }
+
+
+    private BigDecimal calculateCurrentMonthlyBurn(FinancialSnapshotVO snapshot) {
         if (snapshot == null) {
             return null;
         }
 
-        LocalDate today = LocalDate.now();
-        int weekDaysInMonth = countDaysInCurrentMonth(today, false);
-        int weekendDaysInMonth = countDaysInCurrentMonth(today, true);
-
-        BigDecimal currentMonthlyIncome = decimalValueOf(snapshot.getAvgWeekIncome())
-            .multiply(BigDecimal.valueOf(weekDaysInMonth))
-            .add(decimalValueOf(snapshot.getAvgWeekendIncome()).multiply(BigDecimal.valueOf(weekendDaysInMonth)));
-
-        BigDecimal currentMonthlyExpense = decimalValueOf(snapshot.getAvgWeekExpense())
-            .multiply(BigDecimal.valueOf(weekDaysInMonth))
-            .add(decimalValueOf(snapshot.getAvgWeekendExpense()).multiply(BigDecimal.valueOf(weekendDaysInMonth)));
-
-        BigDecimal requiredMonthlyExpense = currentMonthlyExpense
-            .max(BigDecimal.valueOf(valueOf(livingThreshold)));
-
-        return requiredMonthlyExpense
-            .subtract(currentMonthlyIncome)
+        return decimalValueOf(snapshot.getAvgMonthlyExpense())
+            .subtract(decimalValueOf(snapshot.getAvgMonthlyIncome()))
             .setScale(2, RoundingMode.HALF_UP);
     }
 
     private MonthlyProjectionVO applyItemsToProjection(
         MonthlyProjectionVO projection,
-        List<SimulationItemVO> appliedItems
+        List<SimulationItemVO> appliedItems,
+        SimulationVO simulation,
+        Map<Long, PolicyVO> policyById
     ) {
         int expectedIncome = valueOf(projection.getExpectedIncome());
         int expectedExpense = valueOf(projection.getExpectedExpense());
 
         for (SimulationItemVO item : appliedItems) {
-            int monthlyEffect = calculateMonthlyEffect(item, projection.getProjectionMonth());
+            int monthlyEffect = calculateMonthlyEffect(
+                item,
+                projection.getProjectionMonth(),
+                simulation,
+                policyById.get(item.getPolicyId())
+            );
 
             if (item.getSimulationItemCategory() == SimulationItemCategory.EXPENSE) {
                 expectedExpense = Math.max(0, expectedExpense - monthlyEffect);
@@ -366,10 +412,15 @@ public class SimulationItemCalculationService {
             .build();
     }
 
-    private int calculateMonthlyEffect(SimulationItemVO item, LocalDate projectionMonth) {
+    private int calculateMonthlyEffect(
+        SimulationItemVO item,
+        LocalDate projectionMonth,
+        SimulationVO simulation,
+        PolicyVO policy
+    ) {
         YearMonth targetMonth = YearMonth.from(projectionMonth);
         LocalDate applyStartDate = item.getApplyStartDate();
-        LocalDate applyEndDate = item.getApplyEndDate() == null ? applyStartDate : item.getApplyEndDate();
+        LocalDate applyEndDate = resolveItemApplyEndDate(item, simulation, policy);
 
         YearMonth applyStartMonth = YearMonth.from(applyStartDate);
         YearMonth applyEndMonth = YearMonth.from(applyEndDate);
@@ -378,19 +429,23 @@ public class SimulationItemCalculationService {
             return 0;
         }
 
-        if (item.getRecurrenceType() == SimulationRecurrenceType.MONTHLY) {
+        SimulationRecurrenceType recurrenceType = resolveItemRecurrenceType(item, policy);
+
+        if (recurrenceType == SimulationRecurrenceType.MONTHLY) {
             int recurrenceDay = applyStartDate.getDayOfMonth();
             int day = Math.min(recurrenceDay, targetMonth.lengthOfMonth());
             LocalDate effectDate = targetMonth.atDay(day);
 
-            if (effectDate.isBefore(applyStartDate) || effectDate.isAfter(applyEndDate)) {
+            if (effectDate.isBefore(applyStartDate)
+                || effectDate.isAfter(applyEndDate)
+                || effectDate.isBefore(simulation.getSimulationStartDate())) {
                 return 0;
             }
 
             return valueOf(item.getSimulationItemApplyAmount());
         }
 
-        if (item.getRecurrenceType() == SimulationRecurrenceType.ONCE) {
+        if (recurrenceType == SimulationRecurrenceType.ONCE) {
             return targetMonth.equals(applyStartMonth)
                 ? valueOf(item.getSimulationItemApplyAmount())
                 : 0;
@@ -440,17 +495,61 @@ public class SimulationItemCalculationService {
     }
 
     private LocalDate resolveApplyEndDate(ApplySimulationItemRequest request) {
+        if (request.category() == SimulationItemCategory.POLICY) {
+            return null;
+        }
+
         return request.applyEndDate() == null ? request.applyStartDate() : request.applyEndDate();
+    }
+
+    private LocalDate resolveItemApplyEndDate(
+        SimulationItemVO item,
+        SimulationVO simulation,
+        PolicyVO policy
+    ) {
+        LocalDate applyEndDate;
+        if (item.getSimulationItemCategory() == SimulationItemCategory.POLICY) {
+            int supportMonthCount = policy == null || policy.getSupportMonthCount() == null
+                ? 1
+                : Math.max(policy.getSupportMonthCount(), 1);
+            applyEndDate = item.getApplyStartDate().plusMonths(supportMonthCount - 1L);
+        } else {
+            applyEndDate = item.getApplyEndDate() == null
+                ? item.getApplyStartDate()
+                : item.getApplyEndDate();
+        }
+
+        return applyEndDate.isAfter(simulation.getSimulationDueDate())
+            ? simulation.getSimulationDueDate()
+            : applyEndDate;
     }
 
     private SimulationRecurrenceType resolveRecurrenceType(ApplySimulationItemRequest request, PolicyVO policy) {
         if (request.category() == SimulationItemCategory.POLICY) {
-            return policy.getPolicyRecurrenceType() == null
+            int supportMonthCount = policy.getSupportMonthCount() == null
+                ? 1
+                : Math.max(policy.getSupportMonthCount(), 1);
+
+            return supportMonthCount == 1
                 ? SimulationRecurrenceType.ONCE
-                : policy.getPolicyRecurrenceType();
+                : SimulationRecurrenceType.MONTHLY;
         }
 
         return request.recurrenceType();
+    }
+
+    private SimulationRecurrenceType resolveItemRecurrenceType(SimulationItemVO item, PolicyVO policy) {
+        if (item.getSimulationItemCategory() != SimulationItemCategory.POLICY) {
+            return item.getRecurrenceType();
+        }
+
+        int supportMonthCount = policy == null || policy.getSupportMonthCount() == null
+            ? 1
+            : Math.max(policy.getSupportMonthCount(), 1);
+
+        return supportMonthCount == 1
+            ? SimulationRecurrenceType.ONCE
+            : SimulationRecurrenceType.MONTHLY;
     }
 
     private boolean isBlank(String value) {
@@ -473,29 +572,4 @@ public class SimulationItemCalculationService {
         return value == null ? BigDecimal.ZERO : value;
     }
 
-    private int countDaysInCurrentMonth(LocalDate date, boolean weekend) {
-        LocalDate current = date.withDayOfMonth(1);
-        LocalDate end = current.plusMonths(1);
-
-        return countDaysInPeriod(current, end, weekend);
-    }
-
-    private int countDaysInPeriod(LocalDate fromInclusive, LocalDate toExclusive, boolean weekend) {
-        LocalDate current = fromInclusive;
-        int count = 0;
-
-        while (current.isBefore(toExclusive)) {
-            boolean currentIsWeekend = isWeekend(current.getDayOfWeek());
-            if (currentIsWeekend == weekend) {
-                count++;
-            }
-            current = current.plusDays(1);
-        }
-
-        return count;
-    }
-
-    private boolean isWeekend(DayOfWeek dayOfWeek) {
-        return dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY;
-    }
 }

@@ -1,5 +1,6 @@
 package com.talented.buttie.simulation.dto.response;
 
+import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -10,8 +11,8 @@ import lombok.Builder;
 @ApiModel(description = "월별 재정 계획 응답")
 public record MonthlyProjectionResponse(
 
-    @ApiModelProperty(value = "월별 재정 계획 ID", example = "1")
-    Long projectionId,
+    @ApiModelProperty(value = "암호화된 월별 재정 계획 ID")
+    String projectionId,
 
     @ApiModelProperty(value = "예측 기준 월", example = "2026-08-01")
     LocalDate projectionMonth,
@@ -36,7 +37,7 @@ public record MonthlyProjectionResponse(
 ) {
     public static MonthlyProjectionResponse from(MonthlyProjectionVO monthlyProjection){
         return MonthlyProjectionResponse.builder()
-            .projectionId(monthlyProjection.getProjectionId())
+            .projectionId(PKCrypto.encrypt(monthlyProjection.getProjectionId()))
             .projectionMonth(monthlyProjection.getProjectionMonth())
             .openingBalance(monthlyProjection.getOpeningBalance())
             .expectedIncome(monthlyProjection.getExpectedIncome())

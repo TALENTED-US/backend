@@ -62,19 +62,7 @@ public class FinancialSnapshotCreateService {
 
         int monthlyNetCashflow = avgMonthlyIncome.subtract(avgMonthlyExpense).intValue();
 
-        int weekDaysInMonth = countDaysInCurrentMonth(today, false);
-        int weekendDaysInMonth = countDaysInCurrentMonth(today, true);
-        Integer livingThreshold = employmentPreparationMapper.getLivingThresholdByUserId(userId);
-
-        BigDecimal monthlyBurn = calculateMonthlyBurn(
-            avgWeekIncome,
-            avgWeekExpense,
-            avgWeekendIncome,
-            avgWeekendExpense,
-            weekDaysInMonth,
-            weekendDaysInMonth,
-            livingThreshold
-        );
+        BigDecimal monthlyBurn = avgMonthlyExpense.subtract(avgMonthlyIncome);
 
         BigDecimal currentPrepMonths = calculateCurrentPrepMonths(liquidAssets, monthlyBurn);
         BigDecimal survivalDays = calculateSurvivalDays(liquidAssets, monthlyBurn);
@@ -120,41 +108,12 @@ public class FinancialSnapshotCreateService {
         return value.divide(BigDecimal.valueOf(divisor), SCALE, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal calculateMonthlyBurn(
-        BigDecimal avgWeekIncome,
-        BigDecimal avgWeekExpense,
-        BigDecimal avgWeekendIncome,
-        BigDecimal avgWeekendExpense,
-        int weekDaysInMonth,
-        int weekendDaysInMonth,
-        Integer livingThreshold
-    ){
-        BigDecimal currentMonthlyIncome = decimalValueOf(avgWeekIncome)
-            .multiply(BigDecimal.valueOf(weekDaysInMonth))
-            .add(decimalValueOf(avgWeekendIncome).multiply(BigDecimal.valueOf(weekendDaysInMonth)));
-
-        BigDecimal currentMonthlyExpense = decimalValueOf(avgWeekExpense)
-            .multiply(BigDecimal.valueOf(weekDaysInMonth))
-            .add(decimalValueOf(avgWeekendExpense).multiply(BigDecimal.valueOf(weekendDaysInMonth)));
-
-        BigDecimal requiredMonthlyExpense = currentMonthlyExpense
-            .max(BigDecimal.valueOf(valueOf(livingThreshold)));
-
-        return requiredMonthlyExpense
-            .subtract(currentMonthlyIncome)
-            .setScale(SCALE, RoundingMode.HALF_UP);
-    }
-
-    private BigDecimal decimalValueOf(BigDecimal value) {
-        return value == null ? BigDecimal.ZERO : value;
-    }
-
     private int valueOf(Integer value) {
         return value == null ? 0 : value;
     }
 
     private BigDecimal calculateCurrentPrepMonths(int liquidAssets, BigDecimal monthlyBurn){
-        if(monthlyBurn.compareTo(BigDecimal.ZERO) <= 0) return null;
+        if(monthlyBurn.compareTo(BigDecimal.ZERO) <= 0) return MAX_CURRENT_PREP_MONTHS;
 
         BigDecimal currentPrepMonths = BigDecimal.valueOf(liquidAssets)
             .divide(monthlyBurn, SCALE, RoundingMode.HALF_UP);
@@ -208,13 +167,6 @@ public class FinancialSnapshotCreateService {
             .longValue();
 
         return Math.min(Math.max(twentyPrecent, 14), 60);
-    }
-
-    private int countDaysInCurrentMonth(LocalDate date, boolean weekend){
-        LocalDate current = date.withDayOfMonth(1);
-        LocalDate end = current.plusMonths(1);
-
-        return countDaysInPeriod(current, end, weekend);
     }
 
     private int countDaysInPeriod(LocalDate fromInclusive, LocalDate toExclusive, boolean weekend){

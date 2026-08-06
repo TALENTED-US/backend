@@ -16,6 +16,12 @@ public record SimulationItemReportResponse(
     @ApiModelProperty(value = "예상 버티는 기간")
     BigDecimal expectPrepMonths,
 
+    @ApiModelProperty(value = "현재 현금흐름 유지 시 자금이 고갈되지 않는지 여부")
+    Boolean currentSustainable,
+
+    @ApiModelProperty(value = "시뮬레이션 적용 후 자금이 고갈되지 않는지 여부")
+    Boolean expectSustainable,
+
     @ApiModelProperty(value = "월별 재정 타임라인")
     List<MonthlyBalanceReport> monthlyBalances,
 
@@ -38,7 +44,10 @@ public record SimulationItemReportResponse(
         Integer afterClosingBalance,
 
         @ApiModelProperty(value = "생활자금 최소 기준", example = "500000")
-        Integer livingFundThreshold
+        Integer livingFundThreshold,
+
+        @ApiModelProperty(value = "적용 후 예상 잔액이 생활자금 최소 기준보다 낮은지 여부")
+        Boolean belowLivingFundThreshold
     ) {}
 
     @ApiModel("현금흐름 결과 보고서")

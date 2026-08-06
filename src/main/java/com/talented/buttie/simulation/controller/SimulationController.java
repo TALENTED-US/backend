@@ -3,6 +3,7 @@ package com.talented.buttie.simulation.controller;
 import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.annotation.AuthUser;
+import com.talented.buttie.simulation.domain.SimulationItemCategory;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.request.ApplySimulationItemRequest;
 import com.talented.buttie.simulation.dto.request.CreateSimulationRequest;
@@ -10,6 +11,7 @@ import com.talented.buttie.simulation.dto.request.UpdateSimulationPeriodRequest;
 import com.talented.buttie.simulation.dto.response.ApplySimulationItemResponse;
 import com.talented.buttie.simulation.dto.response.ConfirmedSimulationResponse;
 import com.talented.buttie.simulation.dto.response.SimulationDetailResponse;
+import com.talented.buttie.simulation.dto.response.SimulationItemsByCategoryResponse;
 import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse;
 import com.talented.buttie.simulation.dto.response.SimulationResponse;
 import com.talented.buttie.simulation.service.SimulationCreateService;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Api(tags = "Simulation")
@@ -93,6 +96,18 @@ public class SimulationController {
         @Valid @RequestBody ApplySimulationItemRequest request
     ) {
         ApplySimulationItemResponse response = simulationItemCreateService.applyItem(authUser.userId(), request);
+        return ApplicationResponse.onSuccess(response);
+    }
+
+    @ApiOperation("시뮬레이션 카테고리별 적용된 항목 목록 조회")
+    @GetMapping("/items")
+    public ApplicationResponse<SimulationItemsByCategoryResponse> getAllItemsByCategory(
+        @AuthUser AuthenticationUser authUser,
+        @RequestParam("category") SimulationItemCategory itemCategory
+    ) {
+        SimulationItemsByCategoryResponse response = simulationItemReadService
+            .findItemListByCategory(authUser.userId(), itemCategory);
+
         return ApplicationResponse.onSuccess(response);
     }
 

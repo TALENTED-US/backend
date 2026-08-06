@@ -2,12 +2,16 @@ package com.talented.buttie.simulation.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
+import com.talented.buttie.simulation.domain.SimulationItemVO;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.request.UpdateSimulationPeriodRequest;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
+import com.talented.buttie.simulation.mapper.SimulationItemMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
-import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
+import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
+import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
+import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class SimulationUpdateService {
 
     private final SimulationMapper simulationMapper;
+    private final SimulationItemMapper simulationItemMapper;
     private final MonthlyProjectionMapper monthlyProjectionMapper;
-    private final ProjectionEngine projectionEngine;
-    private final EmploymentPreparationMapper employmentPreparationMapper;
+    private final FinancialSnapshotMapper financialSnapshotMapper;
+    private final SimulationItemCalculationService simulationItemCalculationService;
 
     @Transactional
     public void updateSimulationPeriod(
@@ -31,18 +36,19 @@ public class SimulationUpdateService {
         validatePeriod(request.simulationStartDate(), request.simulationDueDate());
 
         SimulationVO simulation = findUpdatableSimulation(userId);
-        List<MonthlyProjectionVO> existingProjections =
-            monthlyProjectionMapper.findAllBySimulationId(simulation.getSimulationId());
+        FinancialSnapshotVO snapshot = financialSnapshotMapper.findById(simulation.getSnapshotId());
+        if (snapshot == null) {
+            throw ApplicationException.from(AnalysisErrorCode.SNAPSHOT_NOT_FOUND);
+        }
 
-        validateProjectionExists(existingProjections);
+        simulation.setSimulationStartDate(request.simulationStartDate());
+        simulation.setSimulationDueDate(request.simulationDueDate());
 
-        Integer livingThreshold = employmentPreparationMapper.getLivingThresholdByUserId(userId);
+        List<SimulationItemVO> appliedItems =
+            simulationItemMapper.findAllActiveBySimulationId(simulation.getSimulationId());
 
         List<MonthlyProjectionVO> recalculatedProjections =
-            projectionEngine.recalculateProjections(
-                simulation.getSimulationId(), request.simulationStartDate(), request.simulationDueDate(),
-                existingProjections, valueOf(livingThreshold)
-            );
+            simulationItemCalculationService.recalculateProjections(simulation, snapshot, appliedItems);
 
         int simulationEndAmount = recalculatedProjections
             .get(recalculatedProjections.size() - 1)
@@ -61,6 +67,12 @@ public class SimulationUpdateService {
 
         monthlyProjectionMapper.deleteAllBySimulationId(simulation.getSimulationId());
         monthlyProjectionMapper.saveAll(recalculatedProjections);
+
+        simulationMapper.updateSummary(
+            simulation.getSimulationId(),
+            simulationEndAmount,
+            simulationItemCalculationService.calculateExpectedPrepMonths(recalculatedProjections, snapshot)
+        );
     }
 
     private SimulationVO findUpdatableSimulation(Long userId) {
@@ -93,17 +105,4 @@ public class SimulationUpdateService {
         }
     }
 
-    private void validateProjectionExists(
-        List<MonthlyProjectionVO> projections
-    ) {
-        if (projections == null || projections.isEmpty()) {
-            throw ApplicationException.from(
-                SimulationErrorCode.SIMULATION_PROJECTION_NOT_FOUND
-            );
-        }
-    }
-
-    private int valueOf(Integer value){
-        return value == null ? 0 : value;
-    }
 }

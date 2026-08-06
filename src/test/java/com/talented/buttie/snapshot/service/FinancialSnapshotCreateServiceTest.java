@@ -1,7 +1,6 @@
 package com.talented.buttie.snapshot.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -174,12 +173,12 @@ class FinancialSnapshotCreateServiceTest {
         FinancialSnapshotVO result = financialSnapshotCreateService.createSnapshot(userId);
 
         // then
-        assertNull(result.getCurrentPrepMonths());
+        assertEquals(new BigDecimal("999.99"), result.getCurrentPrepMonths());
         assertEquals(RiskLevel.STABLE, result.getRiskLevel());
     }
 
     @Test
-    @DisplayName("버티는 기간은 유동자산을 월 순소진으로 나누어 계산한다.")
+    @DisplayName("버티는 기간은 전체 유동자산을 월 순소진으로 나누어 계산한다.")
     void calculatePrepPossibleMonths() {
         // given
         given(accountMapper.findActiveByUserId(userId))
@@ -208,9 +207,7 @@ class FinancialSnapshotCreateServiceTest {
         FinancialSnapshotVO result = financialSnapshotCreateService.createSnapshot(userId);
 
         // then
-        BigDecimal expectedMonthlyBurn = BigDecimal.valueOf(250_000 / weekDaysInMonth)
-            .multiply(BigDecimal.valueOf(weekDaysInMonth))
-            .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal expectedMonthlyBurn = new BigDecimal("250000.00");
 
         BigDecimal expectedCurrentPrepMonths = BigDecimal.valueOf(1_000_000)
             .divide(expectedMonthlyBurn, 2, RoundingMode.HALF_UP);
@@ -304,7 +301,7 @@ class FinancialSnapshotCreateServiceTest {
         assertEquals(new BigDecimal("0.00"),
             result.getAvgMonthlyExpense());
         assertEquals(0, result.getMonthlyNetCashflow());
-        assertNull(result.getCurrentPrepMonths());
+        assertEquals(new BigDecimal("999.99"), result.getCurrentPrepMonths());
         assertEquals(RiskLevel.STABLE, result.getRiskLevel());
     }
 

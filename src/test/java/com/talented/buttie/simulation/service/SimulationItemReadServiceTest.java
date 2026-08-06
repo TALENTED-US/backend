@@ -3,19 +3,21 @@ package com.talented.buttie.simulation.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
+import com.talented.buttie.catalog.domain.PolicyVO;
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
-import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemCategory;
 import com.talented.buttie.simulation.domain.SimulationItemVO;
 import com.talented.buttie.simulation.domain.SimulationRecurrenceType;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse;
+import com.talented.buttie.simulation.dto.response.SimulationItemResponse;
+import com.talented.buttie.simulation.dto.response.SimulationItemsByCategoryResponse;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
-import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationItemMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
 import com.talented.buttie.catalog.mapper.PolicyMapper;
@@ -43,9 +45,6 @@ class SimulationItemReadServiceTest {
     private SimulationItemMapper simulationItemMapper;
 
     @Mock
-    private MonthlyProjectionMapper monthlyProjectionMapper;
-
-    @Mock
     private FinancialSnapshotMapper financialSnapshotMapper;
 
     @Mock
@@ -65,6 +64,9 @@ class SimulationItemReadServiceTest {
 
     @BeforeEach
     void setUp() {
+        PKCrypto crypto = new PKCrypto("AES", "1234567890123456");
+        crypto.init();
+
         SimulationItemCalculationService calculationService = new SimulationItemCalculationService(
             employmentPreparationMapper,
             policyMapper,
@@ -74,9 +76,9 @@ class SimulationItemReadServiceTest {
         simulationItemReadService = new SimulationItemReadService(
             simulationMapper,
             simulationItemMapper,
-            monthlyProjectionMapper,
             financialSnapshotMapper,
-            calculationService
+            calculationService,
+            policyMapper
         );
 
         userId = 1L;
@@ -99,29 +101,29 @@ class SimulationItemReadServiceTest {
             .build();
     }
 
+    // 보고서 조회 API 테스트
     @Test
     @DisplayName("적용된 항목 전체 기준으로 결과 보고서와 카테고리별 소계를 조회한다.")
     void getAppliedItemReport() {
         given(simulationMapper.findActiveByUserId(userId)).willReturn(simulation);
         given(financialSnapshotMapper.findLatestByUserId(userId)).willReturn(snapshot);
         given(employmentPreparationMapper.getLivingThresholdByUserId(userId)).willReturn(1_000_000);
+        given(policyMapper.findById(7L)).willReturn(com.talented.buttie.catalog.domain.PolicyVO.builder()
+            .policyId(7L)
+            .supportMonthCount(6)
+            .build());
         given(simulationItemMapper.findAllActiveBySimulationId(100L))
             .willReturn(List.of(
                 item(SimulationItemCategory.EXPENSE, 50_000, SimulationRecurrenceType.MONTHLY),
                 item(SimulationItemCategory.INCOME, 300_000, SimulationRecurrenceType.ONCE),
                 item(SimulationItemCategory.POLICY, 200_000, SimulationRecurrenceType.MONTHLY)
             ));
-        given(monthlyProjectionMapper.findAllBySimulationId(100L))
-            .willReturn(List.of(
-                projection(LocalDate.of(2026, 8, 1), 5_000_000, 1_200_000, 1_950_000, 4_250_000),
-                projection(LocalDate.of(2026, 9, 1), 4_250_000, 1_500_000, 1_950_000, 3_800_000),
-                projection(LocalDate.of(2026, 10, 1), 3_800_000, 1_200_000, 1_950_000, 3_050_000)
-            ));
-
         SimulationItemReportResponse result = simulationItemReadService.getAppliedItemReport(userId);
 
         assertEquals(BigDecimal.valueOf(5), result.currentPrepMonths());
         assertEquals(new BigDecimal("6.05"), result.expectPrepMonths());
+        assertEquals(false, result.currentSustainable());
+        assertEquals(false, result.expectSustainable());
         assertEquals(50_000, result.categoryContribution().expenseMonthlyAmount());
         assertEquals(0, result.categoryContribution().expenseOnceAmount());
         assertEquals(0, result.categoryContribution().incomeMonthlyAmount());
@@ -129,10 +131,38 @@ class SimulationItemReadServiceTest {
         assertEquals(200_000, result.categoryContribution().policyMonthlyAmount());
         assertEquals(0, result.categoryContribution().policyOnceAmount());
         assertEquals(3, result.monthlyBalances().size());
-        assertEquals(4_250_000, result.monthlyBalances().get(0).afterClosingBalance());
+        assertEquals(4_550_000, result.monthlyBalances().get(0).afterClosingBalance());
         assertEquals(1_000_000, result.monthlyBalances().get(0).livingFundThreshold());
+        assertEquals(false, result.monthlyBalances().get(0).belowLivingFundThreshold());
+    }
 
-        verify(monthlyProjectionMapper, never()).saveAll(org.mockito.ArgumentMatchers.any());
+    @Test
+    @DisplayName("적용 항목이 없으면 적용 전후 예측이 같고 흑자 현금흐름은 지속 가능하다.")
+    void getSustainableReportWithoutAppliedItems() {
+        snapshot.setLiquidAssets(0);
+        snapshot.setAvgMonthlyIncome(BigDecimal.valueOf(65_666));
+        snapshot.setAvgMonthlyExpense(BigDecimal.valueOf(11_633));
+        snapshot.setMonthlyNetCashflow(54_033);
+        snapshot.setCurrentPrepMonths(new BigDecimal("999.99"));
+
+        given(simulationMapper.findActiveByUserId(userId)).willReturn(simulation);
+        given(financialSnapshotMapper.findLatestByUserId(userId)).willReturn(snapshot);
+        given(employmentPreparationMapper.getLivingThresholdByUserId(userId)).willReturn(1_000_000);
+        given(simulationItemMapper.findAllActiveBySimulationId(100L)).willReturn(List.of());
+
+        SimulationItemReportResponse result = simulationItemReadService.getAppliedItemReport(userId);
+
+        assertEquals(new BigDecimal("999.99"), result.currentPrepMonths());
+        assertEquals(new BigDecimal("999.99"), result.expectPrepMonths());
+        assertEquals(true, result.currentSustainable());
+        assertEquals(true, result.expectSustainable());
+        assertEquals(0, result.cashflow().incomeDelta());
+        assertEquals(0, result.cashflow().expenseDelta());
+        assertEquals(0, result.cashflow().netCashFlowDelta());
+        assertEquals(true, result.monthlyBalances().get(0).belowLivingFundThreshold());
+        result.monthlyBalances().forEach(month ->
+            assertEquals(month.beforeClosingBalance(), month.afterClosingBalance())
+        );
     }
 
     @Test
@@ -161,26 +191,70 @@ class SimulationItemReadServiceTest {
             .simulationItemApplyAmount(amount)
             .applyStartDate(LocalDate.of(2026, 8, 1))
             .applyEndDate(LocalDate.of(2026, 10, 31))
+            .policyId(category == SimulationItemCategory.POLICY ? 7L : null)
             .recurrenceType(recurrenceType)
             .isDeleted(false)
             .build();
     }
 
-    private MonthlyProjectionVO projection(
-        LocalDate projectionMonth,
-        int openingBalance,
-        int expectedIncome,
-        int expectedExpense,
-        int closingBalance
-    ) {
-        return MonthlyProjectionVO.builder()
+    // 카테고리별 적용 항목 리스트 조회 API
+    @Test
+    @DisplayName("정책 카테고리 항목 목록을 조회한다.")
+    void findPolicyItemsByCategory() {
+        SimulationItemVO item = SimulationItemVO.builder()
+            .simulationItemId(1L)
             .simulationId(100L)
-            .projectionMonth(projectionMonth)
-            .openingBalance(openingBalance)
-            .expectedIncome(expectedIncome)
-            .expectedExpense(expectedExpense)
-            .closingBalance(closingBalance)
-            .adjustmentRequired(false)
+            .simulationItemCategory(SimulationItemCategory.POLICY)
+            .simulationItemApplyAmount(200_000)
+            .applyStartDate(LocalDate.of(2026, 8, 1))
+            .policyId(7L)
+            .recurrenceType(SimulationRecurrenceType.MONTHLY)
+            .isDeleted(false)
             .build();
+
+        PolicyVO policy = PolicyVO.builder()
+            .policyId(7L)
+            .policyName("청년월세 특별지원")
+            .policySupportAmount(200_000)
+            .supportMonthCount(12)
+            .build();
+
+        given(simulationMapper.findActiveByUserId(userId))
+            .willReturn(simulation);
+        given(simulationItemMapper.findAllByCategory(simulation.getSimulationId(), SimulationItemCategory.POLICY))
+            .willReturn(List.of(item));
+        given(policyMapper.findById(7L)).willReturn(policy);
+
+        SimulationItemsByCategoryResponse result = simulationItemReadService.findItemListByCategory(
+            userId, SimulationItemCategory.POLICY
+        );
+
+        assertEquals(1, result.appliedItems().size());
+
+        SimulationItemResponse response = result.appliedItems().get(0);
+
+        assertEquals(SimulationItemCategory.POLICY, response.itemCategory());
+        assertEquals("청년월세 특별지원", response.displayName());
+        assertEquals(200_000, response.amount());
+        assertEquals(SimulationRecurrenceType.MONTHLY, response.recurrenceType());
+        assertEquals(12, response.policy().supportMonthCount());
+
+        verify(simulationItemMapper).findAllByCategory(simulation.getSimulationId(), SimulationItemCategory.POLICY);
+    }
+
+    @Test
+    @DisplayName("카테고리에 적용된 항목이 없으면 빈 목록을 반환한다.")
+    void findEmptyItemsByCategory() {
+        given(simulationMapper.findActiveByUserId(userId))
+            .willReturn(simulation);
+        given(simulationItemMapper.findAllByCategory(simulation.getSimulationId(), SimulationItemCategory.EXPENSE))
+            .willReturn(List.of());
+
+        SimulationItemsByCategoryResponse result = simulationItemReadService.findItemListByCategory(
+            userId, SimulationItemCategory.EXPENSE
+        );
+
+        assertEquals(0, result.appliedItems().size());
+        verifyNoInteractions(policyMapper);
     }
 }

@@ -4,6 +4,13 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper">
+  <select id="findById"
+          resultType="com.talented.buttie.snapshot.domain.FinancialSnapshotVO">
+    select *
+    from SNAPSHOT
+    where SNAPSHOT_ID = #{snapshotId}
+  </select>
+
   <insert id="save"
           parameterType="com.talented.buttie.snapshot.domain.FinancialSnapshotVO"
           useGeneratedKeys="true"
