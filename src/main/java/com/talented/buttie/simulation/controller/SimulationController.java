@@ -11,6 +11,7 @@ import com.talented.buttie.simulation.dto.request.UpdateSimulationPeriodRequest;
 import com.talented.buttie.simulation.dto.response.ApplySimulationItemResponse;
 import com.talented.buttie.simulation.dto.response.ConfirmedSimulationResponse;
 import com.talented.buttie.simulation.dto.response.SimulationDetailResponse;
+import com.talented.buttie.simulation.dto.response.SimulationItemResponse;
 import com.talented.buttie.simulation.dto.response.SimulationItemsByCategoryResponse;
 import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse;
 import com.talented.buttie.simulation.dto.response.SimulationResponse;
@@ -21,6 +22,8 @@ import com.talented.buttie.simulation.service.SimulationReadService;
 import com.talented.buttie.simulation.service.SimulationUpdateService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.math.BigDecimal;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,15 +59,18 @@ public class SimulationController {
         );
     }
 
-    @ApiOperation("현재 시뮬레이션 통합 조회")
+    @ApiOperation("현재 시뮬레이션 조회")
     @GetMapping
     public ApplicationResponse<SimulationDetailResponse> getSimulationTotal(
         @AuthUser AuthenticationUser authUser
     ) {
         SimulationVO simulation = simulationReadService.getCurrentSimulation(authUser.userId());
 
+        BigDecimal currentPrepMonths = simulationItemReadService.getCurrentPrepMonths(authUser.userId());
+        List<SimulationItemResponse> appliedItems = simulationItemReadService.findAllAppliedItems(simulation);
+
         return ApplicationResponse.onSuccess(
-            SimulationDetailResponse.from(simulation)
+            SimulationDetailResponse.from(simulation, currentPrepMonths, appliedItems)
         );
     }
 
@@ -86,7 +92,12 @@ public class SimulationController {
     ) {
         SimulationVO simulation = simulationReadService.getLatestConfirmedSimulation(authUser.userId());
 
-        return ApplicationResponse.onSuccess(ConfirmedSimulationResponse.from(simulation));
+        BigDecimal currentPrepMonths = simulationItemReadService.getCurrentPrepMonths(authUser.userId());
+        List<SimulationItemResponse> appliedItems = simulationItemReadService.findAllAppliedItems(simulation);
+
+        return ApplicationResponse.onSuccess(
+            ConfirmedSimulationResponse.from(simulation, currentPrepMonths, appliedItems)
+        );
     }
 
     @ApiOperation("시뮬레이션 항목 적용 확정")
