@@ -20,6 +20,7 @@ import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse;
 import com.talented.buttie.simulation.dto.response.SimulationResponse;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.service.SimulationCreateService;
+import com.talented.buttie.simulation.service.SimulationDeleteService;
 import com.talented.buttie.simulation.service.SimulationItemCreateService;
 import com.talented.buttie.simulation.service.SimulationItemDeleteService;
 import com.talented.buttie.simulation.service.SimulationItemReadService;
@@ -140,6 +141,19 @@ public class SimulationController {
             simulationItemUpdateService.updateItem(authUser.userId(), itemId, request);
 
         return ApplicationResponse.onSuccess(response);
+    }
+
+    @ApiOperation("미확정 시뮬레이션 항목 삭제")
+    @DeleteMapping("/items/{encryptedItemId}")
+    public ApplicationResponse<Void> deleteItem(
+        @AuthUser AuthenticationUser authUser,
+        @PathVariable String encryptedItemId
+    ) {
+        Long itemId = decryptItemId(encryptedItemId);
+
+        simulationItemDeleteService.deleteItem(authUser.userId(),itemId);
+
+        return ApplicationResponse.onSuccess(null);
     }
 
     private Long decryptItemId(String encryptedItemId) {

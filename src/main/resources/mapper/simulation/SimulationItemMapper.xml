@@ -102,4 +102,12 @@
       and SIMULATION_ID = #{simulationId}
       and IS_DELETED = false
   </update>
+
+  <update id="deleteByIdAndSimulationId">
+    update SIMULATION_ITEM
+    set IS_DELETED = true
+    where SIMULATION_ITEM_ID = #{itemId}
+        and SIMULATION_ID = #{simulationId}
+        and IS_DELETED = false
+  </update>
 </mapper>
