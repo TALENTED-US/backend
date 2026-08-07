@@ -1,4 +1,4 @@
-package com.talented.buttie.user.service;
+package com.talented.buttie.user.service.auth;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.user.dto.request.auth.AuthSignUpRequest;
