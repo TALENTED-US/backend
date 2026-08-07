@@ -1,4 +1,4 @@
-package com.talented.buttie.user.dto.response;
+package com.talented.buttie.user.dto.response.user;
 import com.talented.buttie.user.domain.ButiDashboardVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

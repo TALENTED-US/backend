@@ -2,7 +2,7 @@ package com.talented.buttie.user.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.user.dto.request.auth.AuthLoginRequest;
-import com.talented.buttie.user.dto.response.auth.AuthTokenResponseDTO;
+import com.talented.buttie.user.dto.response.auth.AuthTokenResponse;
 import com.talented.buttie.user.exception.AuthErrorCode;
 import com.talented.buttie.user.mapper.AuthMapper;
 import javax.validation.Valid;
@@ -20,7 +20,7 @@ public class AuthReadService {
     private final PasswordEncoder passwordEncoder;
     private final AuthTokenService authTokenService;
 
-    public AuthTokenResponseDTO userLogin(@Valid AuthLoginRequest authLoginRequest) {
+    public AuthTokenResponse userLogin(@Valid AuthLoginRequest authLoginRequest) {
         if (!authMapper.existsByEmail(authLoginRequest.userEmail())) {
             throw ApplicationException.from(AuthErrorCode.EMAIL_NOT_FOUND);
         }

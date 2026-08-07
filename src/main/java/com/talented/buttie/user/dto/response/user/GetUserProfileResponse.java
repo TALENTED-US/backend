@@ -1,4 +1,4 @@
-package com.talented.buttie.user.dto.response;
+package com.talented.buttie.user.dto.response.user;
 
 import com.talented.buttie.user.domain.UserProfileVO;
 import io.swagger.annotations.ApiModel;
@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
 
 @ApiModel(description = "회원 프로필 조회 응답")
-public record GetUserProfileResponseDTO(
+public record GetUserProfileResponse(
 
 
     @ApiModelProperty(value = "닉네임", example = "김재준")
@@ -31,8 +31,8 @@ public record GetUserProfileResponseDTO(
 
     String userEmail
 ) {
-    public static GetUserProfileResponseDTO from(UserProfileVO vo) {
-        return new GetUserProfileResponseDTO(
+    public static GetUserProfileResponse from(UserProfileVO vo) {
+        return new GetUserProfileResponse(
             vo.getUserNickname(),
             vo.getButtieTotalExp(),
             vo.getButtieLevel(),

@@ -12,11 +12,11 @@ import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.user.domain.EmploymentPreparationType;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.domain.UserVO;
-import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
-import com.talented.buttie.user.dto.request.WithdrawUserRequestDTO;
+import com.talented.buttie.user.dto.request.user.UpdateEmploymentPreparationRequest;
+import com.talented.buttie.user.dto.request.user.WithdrawUserRequest;
 import com.talented.buttie.user.exception.UserErrorCode;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
-import com.talented.buttie.user.dto.request.ModifyUserProfileRequestDTO;
+import com.talented.buttie.user.dto.request.user.ModifyUserProfileRequest;
 import com.talented.buttie.user.mapper.UserMapper;
 import com.talented.buttie.user.domain.ButiDashboardVO;
 import java.time.LocalDate;
@@ -46,7 +46,7 @@ class UserServiceTest {
     @DisplayName("취업 준비 정보를 수정하면 수정된 사용자의 ID를 반환한다.")
     void modifyEmploymentPreparation() {
         Long userId = 1L;
-        UpdateEmploymentPreparationRequestDTO request = new UpdateEmploymentPreparationRequestDTO(
+        UpdateEmploymentPreparationRequest request = new UpdateEmploymentPreparationRequest(
             LocalDate.of(1999, 3, 15),
             "서울특별시",
             1,
@@ -70,7 +70,7 @@ class UserServiceTest {
     @DisplayName("취업 준비 정보 수정 시 해당 사용자가 없으면 예외가 발생한다.")
     void throwWhenModifyTargetNotFound() {
         Long userId = 999L;
-        UpdateEmploymentPreparationRequestDTO request = new UpdateEmploymentPreparationRequestDTO(
+        UpdateEmploymentPreparationRequest request = new UpdateEmploymentPreparationRequest(
             LocalDate.of(1999, 3, 15),
             "서울특별시",
             1,
@@ -97,7 +97,7 @@ class UserServiceTest {
     @DisplayName("닉네임을 수정하면 수정된 사용자 ID를 반환한다.")
     void modifyUserProfile() {
         Long userId = 1L;
-        ModifyUserProfileRequestDTO request = new ModifyUserProfileRequestDTO("새닉네임");
+        ModifyUserProfileRequest request = new ModifyUserProfileRequest("새닉네임");
 
         given(userMapper.countByNickname("새닉네임"))
             .willReturn(0);
@@ -115,7 +115,7 @@ class UserServiceTest {
     @DisplayName("이미 사용 중인 닉네임이면 예외가 발생한다.")
     void throwWhenDuplicateNickname() {
         Long userId = 1L;
-        ModifyUserProfileRequestDTO request = new ModifyUserProfileRequestDTO("중복닉네임");
+        ModifyUserProfileRequest request = new ModifyUserProfileRequest("중복닉네임");
 
         given(userMapper.countByNickname("중복닉네임"))
             .willReturn(1);
@@ -135,7 +135,7 @@ class UserServiceTest {
     @DisplayName("프로필 수정 시 해당 사용자가 없으면 예외가 발생한다.")
     void throwWhenModifyProfileTargetNotFound() {
         Long userId = 999L;
-        ModifyUserProfileRequestDTO request = new ModifyUserProfileRequestDTO("새닉네임");
+        ModifyUserProfileRequest request = new ModifyUserProfileRequest("새닉네임");
 
         given(userMapper.countByNickname("새닉네임"))
             .willReturn(0);
@@ -274,7 +274,7 @@ class UserServiceTest {
     void withdrawUser() {
         Long userId = 1L;
         String password = "password1234";
-        WithdrawUserRequestDTO request = new WithdrawUserRequestDTO(password);
+        WithdrawUserRequest request = new WithdrawUserRequest(password);
 
         given(userMapper.getPasswordByUserId(userId)).willReturn(password);
         given(passwordEncoder.matches(password, password)).willReturn(true);
@@ -290,7 +290,7 @@ class UserServiceTest {
     @DisplayName("회원 탈퇴 시 해당 사용자가 없으면 예외가 발생한다.")
     void throwWhenWithdrawTargetNotFound() {
         Long userId = 999L;
-        WithdrawUserRequestDTO request = new WithdrawUserRequestDTO("password1234");
+        WithdrawUserRequest request = new WithdrawUserRequest("password1234");
 
         given(userMapper.getPasswordByUserId(userId)).willReturn(null);
 
@@ -306,7 +306,7 @@ class UserServiceTest {
     @DisplayName("회원 탈퇴 시 비밀번호가 일치하지 않으면 예외가 발생한다.")
     void throwWhenWithdrawPasswordMismatch() {
         Long userId = 1L;
-        WithdrawUserRequestDTO request = new WithdrawUserRequestDTO("wrongPassword");
+        WithdrawUserRequest request = new WithdrawUserRequest("wrongPassword");
 
         given(userMapper.getPasswordByUserId(userId)).willReturn("password1234");
         given(passwordEncoder.matches("wrongPassword", "password1234")).willReturn(false);

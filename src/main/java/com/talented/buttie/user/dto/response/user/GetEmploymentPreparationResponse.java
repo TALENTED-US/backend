@@ -1,4 +1,4 @@
-package com.talented.buttie.user.dto.response;
+package com.talented.buttie.user.dto.response.user;
 
 import com.talented.buttie.user.domain.EmploymentPreparationType;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
 
 @ApiModel(description = "취업 준비 정보 조회 응답")
-public record GetEmploymentPreparationResponseDTO(
+public record GetEmploymentPreparationResponse(
 
     @ApiModelProperty(value = "취업 준비 유형", example = "FIRST_JOB")
     EmploymentPreparationType employmentPrepType,
@@ -24,8 +24,8 @@ public record GetEmploymentPreparationResponseDTO(
     @ApiModelProperty(value = "세대원 수", example = "1")
     Integer familyCount
 ) {
-    public static GetEmploymentPreparationResponseDTO from(EmploymentPreparationVO vo) {
-        return new GetEmploymentPreparationResponseDTO(
+    public static GetEmploymentPreparationResponse from(EmploymentPreparationVO vo) {
+        return new GetEmploymentPreparationResponse(
             vo.getEmploymentPrepType(),
             vo.getPrepStartDate(),
             vo.getTargetEmploymentDate(),

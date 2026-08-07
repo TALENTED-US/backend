@@ -1,15 +1,14 @@
-package com.talented.buttie.user.dto.request;
+package com.talented.buttie.user.dto.request.user;
 
 import com.talented.buttie.user.domain.EmploymentPreparationType;
 import java.time.LocalDate;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-
-@ApiModel(description = "취업 준비 정보 수정 요청")
-public record UpdateEmploymentPreparationRequestDTO(
+@ApiModel(description = "취업 준비 정보 등록 요청")
+public record CreateEmploymentPreparationRequest(
 
     @ApiModelProperty(value = "생년월일", example = "2002-03-29", required = true)
     @NotNull(message = "생년월일은 필수입니다.")
@@ -31,7 +30,7 @@ public record UpdateEmploymentPreparationRequestDTO(
     @NotNull(message = "취업 준비 시작일은 필수입니다.")
     LocalDate prepStartDate,
 
-    @ApiModelProperty(value = "목표 취업일", example = "2026-07-25", required = true)
+    @ApiModelProperty(value = "목표 취업일", example = "2026-12-31", required = true)
     @NotNull(message = "목표 취업일은 필수입니다.")
     LocalDate targetEmploymentDate,
 
