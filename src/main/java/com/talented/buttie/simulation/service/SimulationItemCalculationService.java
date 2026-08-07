@@ -279,8 +279,9 @@ public class SimulationItemCalculationService {
         List<MonthlyProjectionVO> projections,
         FinancialSnapshotVO snapshot
     ) {
-        if(projections == null || projections.isEmpty())
+        if(projections == null || projections.isEmpty()) {
             return new PrepMonthsCalculation(snapshot.getCurrentPrepMonths(), isCurrentSustainable(snapshot));
+        }
 
         List<MonthlyProjectionVO> sortedProjections = projections.stream()
             .sorted(Comparator.comparing(MonthlyProjectionVO::getProjectionMonth))

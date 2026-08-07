@@ -37,6 +37,7 @@ public class SimulationUpdateService {
 
         SimulationVO simulation = findUpdatableSimulation(userId);
         FinancialSnapshotVO snapshot = financialSnapshotMapper.findById(simulation.getSnapshotId());
+
         if (snapshot == null) {
             throw ApplicationException.from(AnalysisErrorCode.SNAPSHOT_NOT_FOUND);
         }
@@ -61,9 +62,8 @@ public class SimulationUpdateService {
             simulationEndAmount
         );
 
-        if (updatedRows == 0) {
-            throw ApplicationException.from(SimulationErrorCode.SIMULATION_NOT_FOUND);
-        }
+        if (updatedRows == 0)
+            throw ApplicationException.from(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND);
 
         monthlyProjectionMapper.deleteAllBySimulationId(simulation.getSimulationId());
         monthlyProjectionMapper.saveAll(recalculatedProjections);
@@ -77,19 +77,16 @@ public class SimulationUpdateService {
 
     private SimulationVO findUpdatableSimulation(Long userId) {
         SimulationVO activeSimulation = simulationMapper.findActiveByUserId(userId);
+
         if (activeSimulation != null) {
             return activeSimulation;
         }
 
-        SimulationVO confirmedSimulation =
-            simulationMapper.findLatestConfirmedByUserId(userId);
-        if (confirmedSimulation != null) {
-            throw ApplicationException.from(
-                SimulationErrorCode.CONFIRMED_SIMULATION_CANNOT_BE_UPDATED
-            );
+        if (simulationMapper.findLatestConfirmedByUserId(userId) != null) {
+            throw ApplicationException.from(SimulationErrorCode.CONFIRMED_SIMULATION_CANNOT_BE_UPDATED);
         }
 
-        throw ApplicationException.from(SimulationErrorCode.SIMULATION_NOT_FOUND);
+        throw ApplicationException.from(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND);
     }
 
     private void validatePeriod(

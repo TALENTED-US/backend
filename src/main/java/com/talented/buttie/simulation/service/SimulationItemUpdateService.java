@@ -56,6 +56,7 @@ public class SimulationItemUpdateService {
         overwriteItem(item, request, applyEndDate);
 
         int updatedRows = simulationItemMapper.update(item);
+
         if (updatedRows == 0) {
             throw ApplicationException.from(SimulationErrorCode.SIMULATION_ITEM_NOT_FOUND);
         }
@@ -64,6 +65,20 @@ public class SimulationItemUpdateService {
 
         // 정책 항목은 수정 불가로 PolicyVO 조회가 필요하지 않다.
         return SimulationItemResponse.from(item, null, simulation);
+    }
+
+    private SimulationVO findUpdatableSimulation(Long userId) {
+        SimulationVO simulation = simulationMapper.findActiveByUserId(userId);
+
+        if (simulation != null) {
+            return simulation;
+        }
+
+        if (simulationMapper.findLatestConfirmedByUserId(userId) != null) {
+            throw ApplicationException.from(SimulationErrorCode.CONFIRMED_SIMULATION_CANNOT_BE_UPDATED);
+        }
+
+        throw ApplicationException.from(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND);
     }
 
     private void validateRequest(UpdateSimulationItemRequest request) {
@@ -139,19 +154,5 @@ public class SimulationItemUpdateService {
             .calculateExpectedPrepMonths(recalculatedProjections, snapshot);
 
         simulationMapper.updateSummary(simulation.getSimulationId(), lastProjection.getClosingBalance(), expectedPrepMonths);
-    }
-
-    private SimulationVO findUpdatableSimulation(Long userId) {
-        SimulationVO simulation = simulationMapper.findActiveByUserId(userId);
-
-        if (simulation != null) {
-            return simulation;
-        }
-
-        if (simulationMapper.findLatestConfirmedByUserId(userId) != null) {
-            throw ApplicationException.from(SimulationErrorCode.CONFIRMED_SIMULATION_CANNOT_BE_UPDATED);
-        }
-
-        throw ApplicationException.from(SimulationErrorCode.SIMULATION_NOT_FOUND);
     }
 }
