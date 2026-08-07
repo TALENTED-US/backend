@@ -312,7 +312,7 @@ class SimulationItemCreateServiceTest {
     void applyPolicyItem() {
         ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
             .category(SimulationItemCategory.POLICY)
-            .policyId(7L)
+            .policyId(PKCrypto.encrypt(7L))
             .amount(999_999)
             .itemName("무시되는 이름")
             .applyStartDate(LocalDate.of(2026, 8, 1))
@@ -350,7 +350,7 @@ class SimulationItemCreateServiceTest {
     void applyOncePolicyItem() {
         ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
             .category(SimulationItemCategory.POLICY)
-            .policyId(7L)
+            .policyId(PKCrypto.encrypt(7L))
             .applyStartDate(LocalDate.of(2026, 9, 10))
             .build();
 
@@ -379,7 +379,7 @@ class SimulationItemCreateServiceTest {
     void ignoreRequestedEndDateForPolicyItem() {
         ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
             .category(SimulationItemCategory.POLICY)
-            .policyId(7L)
+            .policyId(PKCrypto.encrypt(7L))
             .applyStartDate(LocalDate.of(2026, 8, 1))
             .applyEndDate(LocalDate.of(2026, 7, 1))
             .build();
@@ -406,7 +406,7 @@ class SimulationItemCreateServiceTest {
 
         ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
             .category(SimulationItemCategory.POLICY)
-            .policyId(7L)
+            .policyId(PKCrypto.encrypt(7L))
             .applyStartDate(LocalDate.of(2026, 7, 31))
             .build();
 
@@ -426,7 +426,7 @@ class SimulationItemCreateServiceTest {
 
         ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
             .category(SimulationItemCategory.POLICY)
-            .policyId(7L)
+            .policyId(PKCrypto.encrypt(7L))
             .applyStartDate(LocalDate.of(2026, 8, 20))
             .build();
 
@@ -582,7 +582,7 @@ class SimulationItemCreateServiceTest {
 
         ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
             .category(SimulationItemCategory.POLICY)
-            .policyId(7L)
+            .policyId(PKCrypto.encrypt(7L))
             .applyStartDate(LocalDate.of(2026, 8, 1))
             .build();
 

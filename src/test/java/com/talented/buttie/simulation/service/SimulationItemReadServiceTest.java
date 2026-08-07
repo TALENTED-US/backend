@@ -22,6 +22,7 @@ import com.talented.buttie.simulation.mapper.SimulationItemMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
 import com.talented.buttie.catalog.mapper.PolicyMapper;
 import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
+import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
 import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import java.math.BigDecimal;
@@ -256,5 +257,51 @@ class SimulationItemReadServiceTest {
 
         assertEquals(0, result.appliedItems().size());
         verifyNoInteractions(policyMapper);
+    }
+
+    // 시뮬레이션 통합 조회용 부가 데이터 조회
+    @Test
+    @DisplayName("시뮬레이션에 적용된 전체 항목 목록을 카테고리 구분 없이 조회한다.")
+    void findAllAppliedItems() {
+        SimulationItemVO expenseItem = item(SimulationItemCategory.EXPENSE, 50_000, SimulationRecurrenceType.MONTHLY);
+        expenseItem.setSimulationItemId(1L);
+        SimulationItemVO policyItem = item(SimulationItemCategory.POLICY, 200_000, SimulationRecurrenceType.MONTHLY);
+        policyItem.setSimulationItemId(2L);
+
+        given(simulationItemMapper.findAllActiveBySimulationId(100L))
+            .willReturn(List.of(expenseItem, policyItem));
+        given(policyMapper.findById(7L)).willReturn(PolicyVO.builder()
+            .policyId(7L)
+            .policyName("청년월세 특별지원")
+            .supportMonthCount(12)
+            .build());
+
+        List<SimulationItemResponse> result = simulationItemReadService.findAllAppliedItems(simulation);
+
+        assertEquals(2, result.size());
+        verify(simulationItemMapper).findAllActiveBySimulationId(100L);
+    }
+
+    @Test
+    @DisplayName("사용자의 최신 재정 스냅샷에서 현재 버티는 기간을 조회한다.")
+    void getCurrentPrepMonths() {
+        given(financialSnapshotMapper.findLatestByUserId(userId)).willReturn(snapshot);
+
+        BigDecimal result = simulationItemReadService.getCurrentPrepMonths(userId);
+
+        assertEquals(BigDecimal.valueOf(5), result);
+    }
+
+    @Test
+    @DisplayName("재정 스냅샷이 없으면 예외가 발생한다.")
+    void throwWhenSnapshotNotFoundForCurrentPrepMonths() {
+        given(financialSnapshotMapper.findLatestByUserId(userId)).willReturn(null);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> simulationItemReadService.getCurrentPrepMonths(userId)
+        );
+
+        assertEquals(AnalysisErrorCode.SNAPSHOT_NOT_FOUND, exception.getCode());
     }
 }

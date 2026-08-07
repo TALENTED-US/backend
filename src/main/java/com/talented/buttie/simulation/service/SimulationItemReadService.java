@@ -16,6 +16,7 @@ import com.talented.buttie.simulation.mapper.SimulationMapper;
 import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
 import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
 import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -83,5 +84,29 @@ public class SimulationItemReadService {
             .toList();
 
         return new SimulationItemsByCategoryResponse(items);
+    }
+
+    @Transactional(readOnly = true)
+    public List<SimulationItemResponse> findAllAppliedItems(SimulationVO simulation) {
+        return simulationItemMapper.findAllActiveBySimulationId(simulation.getSimulationId())
+            .stream()
+            .map(item -> {
+                PolicyVO policy = item.getPolicyId() == null
+                    ? null
+                    : policyMapper.findById(item.getPolicyId());
+                return SimulationItemResponse.from(item, policy, simulation);
+            })
+            .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public BigDecimal getCurrentPrepMonths(Long userId) {
+        FinancialSnapshotVO snapshot = financialSnapshotMapper.findLatestByUserId(userId);
+
+        if (snapshot == null) {
+            throw ApplicationException.from(AnalysisErrorCode.SNAPSHOT_NOT_FOUND);
+        }
+
+        return snapshot.getCurrentPrepMonths();
     }
 }
