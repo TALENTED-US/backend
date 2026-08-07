@@ -61,7 +61,7 @@ public record SimulationItemResponse(
             .build();
     }
 
-    private static String resolveDisplayName(SimulationItemVO item, PolicyVO policy) {
+    public static String resolveDisplayName(SimulationItemVO item, PolicyVO policy) {
         return switch (item.getSimulationItemCategory()) {
             case INCOME -> item.getSimulationItemName();
             case EXPENSE -> item.getSimulationItemExpenseCategory() == null
@@ -73,7 +73,7 @@ public record SimulationItemResponse(
         };
     }
 
-    private static SimulationRecurrenceType resolveRecurrenceType(SimulationItemVO item, PolicyVO policy) {
+    public static SimulationRecurrenceType resolveRecurrenceType(SimulationItemVO item, PolicyVO policy) {
         if(item.getSimulationItemCategory() != SimulationItemCategory.POLICY)
             return item.getRecurrenceType();
 

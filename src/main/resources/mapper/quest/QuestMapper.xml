@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.talented.buttie.quest.mapper.QuestMapper">
+
+  <insert id="save"
+          parameterType="com.talented.buttie.quest.domain.QuestVO"
+          useGeneratedKeys="true"
+          keyProperty="questId"
+          keyColumn="QUEST_ID">
+    insert into QUEST (
+      USER_ID,
+      SIMULATION_ID,
+      SIMULATION_ITEM_ID,
+      TRANSACTION_ID,
+      QUEST_TYPE,
+      QUEST_TITLE,
+      QUEST_DESCRIPTION,
+      QUEST_DEADLINE,
+      QUEST_STATUS,
+      QUEST_URL,
+      EXP_REWARD,
+      QUEST_COMPLETED_AT
+    ) values (
+      #{userId},
+      #{simulationId},
+      #{simulationItemId},
+      #{transactionId},
+      #{questType},
+      #{questTitle},
+      #{questDescription},
+      #{questDeadline},
+      #{questStatus},
+      #{questUrl},
+      #{expReward},
+      #{questCompletedAt}
+    )
+  </insert>
+
+  <select id="findAllByUserId"
+          resultType="com.talented.buttie.quest.domain.QuestVO">
+    select Q.QUEST_ID as questId,
+           Q.USER_ID as userId,
+           Q.SIMULATION_ID as simulationId,
+           Q.SIMULATION_ITEM_ID as simulationItemId,
+           Q.TRANSACTION_ID as transactionId,
+           Q.QUEST_TITLE as displayName,
+           Q.QUEST_DEADLINE as questDeadline,
+           Q.QUEST_STATUS as questStatus,
+           Q.QUEST_URL as questUrl,
+           Q.QUEST_COMPLETED_AT as questCompletedAt
+    from QUEST Q
+    where Q.USER_ID = #{userId}
+    order by Q.QUEST_ID asc
+  </select>
+
+  <select id="findAllWithItemByUserId"
+          resultType="com.talented.buttie.quest.domain.QuestVO">
+    select Q.QUEST_ID as questId,
+           Q.USER_ID as userId,
+           Q.SIMULATION_ID as simulationId,
+           Q.SIMULATION_ITEM_ID as simulationItemId,
+           Q.TRANSACTION_ID as transactionId,
+           Q.QUEST_TITLE as displayName,
+           Q.QUEST_DEADLINE as questDeadline,
+           Q.QUEST_STATUS as questStatus,
+           Q.QUEST_URL as questUrl,
+           Q.QUEST_COMPLETED_AT as questCompletedAt,
+           I.SIMULATION_ITEM_CATEGORY as simulationItemCategory,
+           I.SIMULATION_ITEM_EXPENSE_CATEGORY as simulationItemExpenseCategory,
+           I.SIMULATION_ITEM_APPLY_AMOUNT as simulationItemApplyAmount,
+           I.POLICY_ID as policyId,
+           I.RECURRENCE_TYPE as recurrenceType,
+           P.POLICY_NAME as policyName,
+           P.POLICY_URL as policyUrl,
+           P.DUE_DATE as policyDueDate
+    from QUEST Q
+    left join SIMULATION_ITEM I on Q.SIMULATION_ITEM_ID = I.SIMULATION_ITEM_ID
+    left join POLICY P on I.POLICY_ID = P.POLICY_ID
+    where Q.USER_ID = #{userId}
+    order by case I.SIMULATION_ITEM_CATEGORY
+               when 'EXPENSE' then 1
+               when 'INCOME' then 2
+               when 'POLICY' then 3
+               else 4
+             end,
+             Q.QUEST_ID asc
+  </select>
+
+  <select id="findAllBySimulationId"
+          resultType="com.talented.buttie.quest.domain.QuestVO">
+    select Q.QUEST_ID as questId,
+           Q.USER_ID as userId,
+           Q.SIMULATION_ID as simulationId,
+           Q.SIMULATION_ITEM_ID as simulationItemId,
+           Q.TRANSACTION_ID as transactionId,
+           Q.QUEST_TITLE as displayName,
+           Q.QUEST_DEADLINE as questDeadline,
+           Q.QUEST_STATUS as questStatus,
+           Q.QUEST_URL as questUrl,
+           Q.QUEST_COMPLETED_AT as questCompletedAt
+    from QUEST Q
+    where Q.SIMULATION_ID = #{simulationId}
+    order by Q.QUEST_ID asc
+  </select>
+
+  <select id="findById"
+          resultType="com.talented.buttie.quest.domain.QuestVO">
+    select Q.QUEST_ID as questId,
+           Q.USER_ID as userId,
+           Q.SIMULATION_ID as simulationId,
+           Q.SIMULATION_ITEM_ID as simulationItemId,
+           Q.TRANSACTION_ID as transactionId,
+           Q.QUEST_TITLE as displayName,
+           Q.QUEST_DEADLINE as questDeadline,
+           Q.QUEST_STATUS as questStatus,
+           Q.QUEST_URL as questUrl,
+           Q.QUEST_COMPLETED_AT as questCompletedAt
+    from QUEST Q
+    where Q.QUEST_ID = #{questId}
+  </select>
+
+  <update id="updateStatus">
+    update QUEST
+    set QUEST_STATUS = #{questStatus},
+        QUEST_COMPLETED_AT = case when #{questStatus} = 'COMPLETED' then now() else null end
+    where QUEST_ID = #{questId}
+  </update>
+
+</mapper>

@@ -70,4 +70,21 @@
         and I.IS_DELETED = false
     order by I.SIMULATION_ITEM_CATEGORY, I.APPLY_START_DATE
   </select>
+
+  <select id="findById"
+          resultType="com.talented.buttie.simulation.domain.SimulationItemVO">
+    select I.SIMULATION_ITEM_ID as simulationItemId,
+           I.SIMULATION_ID as simulationId,
+           I.SIMULATION_ITEM_CATEGORY as simulationItemCategory,
+           I.SIMULATION_ITEM_NAME as simulationItemName,
+           I.SIMULATION_ITEM_EXPENSE_CATEGORY as simulationItemExpenseCategory,
+           I.SIMULATION_ITEM_APPLY_AMOUNT as simulationItemApplyAmount,
+           I.APPLY_START_DATE as applyStartDate,
+           I.APPLY_END_DATE as applyEndDate,
+           I.POLICY_ID as policyId,
+           I.RECURRENCE_TYPE as recurrenceType,
+           I.IS_DELETED as isDeleted
+    from SIMULATION_ITEM I
+    where I.SIMULATION_ITEM_ID = #{simulationItemId}
+  </select>
 </mapper>
