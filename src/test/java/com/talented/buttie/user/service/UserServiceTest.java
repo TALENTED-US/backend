@@ -47,13 +47,11 @@ class UserServiceTest {
     void modifyEmploymentPreparation() {
         Long userId = 1L;
         UpdateEmploymentPreparationRequestDTO request = new UpdateEmploymentPreparationRequestDTO(
-            LocalDate.of(1999, 3, 15),
             "서울특별시",
             1,
             EmploymentPreparationType.FIRST_JOB,
             LocalDate.of(2026, 7, 1),
-            LocalDate.of(2027, 1, 1),
-            0
+            LocalDate.of(2027, 1, 1)
         );
 
         given(employmentPreparationMapper.updateEmploymentPreparation(any(EmploymentPreparationVO.class)))
@@ -71,13 +69,11 @@ class UserServiceTest {
     void throwWhenModifyTargetNotFound() {
         Long userId = 999L;
         UpdateEmploymentPreparationRequestDTO request = new UpdateEmploymentPreparationRequestDTO(
-            LocalDate.of(1999, 3, 15),
             "서울특별시",
             1,
             EmploymentPreparationType.FIRST_JOB,
             LocalDate.of(2026, 7, 1),
-            LocalDate.of(2027, 1, 1),
-            0
+            LocalDate.of(2027, 1, 1)
         );
 
         given(employmentPreparationMapper.updateEmploymentPreparation(any(EmploymentPreparationVO.class)))
