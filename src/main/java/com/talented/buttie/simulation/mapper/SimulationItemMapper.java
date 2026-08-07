@@ -16,4 +16,5 @@ public interface SimulationItemMapper {
     );
     SimulationItemVO findActiveByIdAndSimulationId(@Param("itemId") Long itemId, @Param("simulationId") Long simulationId);
     int update(SimulationItemVO item);
+    int deleteByIdAndSimulationId(@Param("itemId") Long itemId, @Param("simulationId") Long simulationId);
 }

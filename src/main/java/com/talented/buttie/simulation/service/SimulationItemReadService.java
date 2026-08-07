@@ -37,7 +37,7 @@ public class SimulationItemReadService {
         SimulationVO simulation = simulationMapper.findActiveByUserId(userId);
 
         if (simulation == null) {
-            throw ApplicationException.from(SimulationErrorCode.SIMULATION_NOT_FOUND);
+            throw ApplicationException.from(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND);
         }
 
         FinancialSnapshotVO snapshot = financialSnapshotMapper.findLatestByUserId(userId);
@@ -69,7 +69,7 @@ public class SimulationItemReadService {
         SimulationVO simulation = simulationMapper.findActiveByUserId(userId);
 
         if (simulation == null) {
-            throw ApplicationException.from(SimulationErrorCode.SIMULATION_NOT_FOUND);
+            throw ApplicationException.from(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND);
         }
 
         List<SimulationItemResponse> items = simulationItemMapper

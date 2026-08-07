@@ -18,13 +18,13 @@ public class SimulationReadService {
     private final SimulationMapper simulationMapper;
     private final MonthlyProjectionMapper monthlyProjectionMapper;
 
-    // 현재 시뮬레이션 이어보기
+    // 미확정 시뮬레이션 조회
     @Transactional(readOnly = true)
-    public SimulationVO getCurrentSimulation(Long userId){
+    public SimulationVO getActiveSimulation(Long userId){
         SimulationVO simulation = simulationMapper.findActiveByUserId(userId);
 
-        if(simulation == null){
-            throw ApplicationException.from(SimulationErrorCode.SIMULATION_NOT_FOUND);
+        if(simulation == null) {
+            throw ApplicationException.from(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND);
         }
 
         setMonthlyProjections(simulation);
@@ -34,13 +34,10 @@ public class SimulationReadService {
     // 최근 확정 시뮬레이션 조회
     @Transactional(readOnly = true)
     public SimulationVO getLatestConfirmedSimulation(Long userId){
-        SimulationVO simulation =
-            simulationMapper.findLatestConfirmedByUserId(userId);
+        SimulationVO simulation = simulationMapper.findLatestConfirmedByUserId(userId);
 
-        if(simulation == null){
-            throw ApplicationException.from(
-                SimulationErrorCode.CONFIRMED_SIMULATION_NOT_FOUND
-            );
+        if(simulation == null) {
+            throw ApplicationException.from(SimulationErrorCode.CONFIRMED_SIMULATION_NOT_FOUND);
         }
 
         setMonthlyProjections(simulation);

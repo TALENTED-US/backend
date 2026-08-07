@@ -1,7 +1,6 @@
 package com.talented.buttie.simulation.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -14,6 +13,7 @@ import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.request.CreateSimulationRequest;
+import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
 import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
@@ -82,7 +82,7 @@ class SimulationCreateServiceTest {
     }
 
     @Test
-    @DisplayName("시뮬레이션 최초 생성 시 스냅샷을 생성하고 예상 재정 계획도 생성한다.")
+    @DisplayName("성공: 시뮬레이션 최초 생성 시 스냅샷을 생성하고 예상 재정 계획도 생성한다.")
     void createSimulation() {
         List<MonthlyProjectionVO> monthlyProjections = List.of(
             projection(LocalDate.of(2026, 8, 1), 5_000_000, 480_000, 525_000, 4_955_000)
@@ -126,14 +126,18 @@ class SimulationCreateServiceTest {
         verify(monthlyProjectionMapper).saveAll(monthlyProjections);
     }
 
+    // 시뮬레이션 생성
     @Test
-    @DisplayName("기존 활성 시뮬레이션이 있으면 재사용한다.")
-    void reuseActiveSimulation() {
+    @DisplayName("실패: 기존 미확정 시뮬레이션이 있으면 예외가 발생한다.")
+    void rejectWhenActiveSimulationExists() {
         given(simulationMapper.findActiveByUserId(userId)).willReturn(activeSimulation);
 
-        SimulationVO result = simulationCreateService.createSimulation(userId, createRequest);
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> simulationCreateService.createSimulation(userId, createRequest)
+        );
 
-        assertSame(activeSimulation, result);
+        assertEquals(SimulationErrorCode.ALREADY_NOT_CONFIRMED_SIMULATION_EXISTS, exception.getCode());
         verify(simulationMapper, never()).save(any(SimulationVO.class));
         verifyNoInteractions(
             financialSnapshotCreateService,
@@ -144,7 +148,28 @@ class SimulationCreateServiceTest {
     }
 
     @Test
-    @DisplayName("스냅샷 생성에 실패하면 예외가 전파된다.")
+    @DisplayName("실패: 기존 확정 시뮬레이션이 있으면 예외가 발생한다.")
+    void rejectWhenConfirmedSimulationExists() {
+        given(simulationMapper.findActiveByUserId(userId)).willReturn(null);
+        given(simulationMapper.findLatestConfirmedByUserId(userId)).willReturn(activeSimulation);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> simulationCreateService.createSimulation(userId, createRequest)
+        );
+
+        assertEquals(SimulationErrorCode.ALREADY_CONFIRMED_SIMULATION_EXISTS, exception.getCode());
+        verify(simulationMapper, never()).save(any(SimulationVO.class));
+        verifyNoInteractions(
+            financialSnapshotCreateService,
+            employmentPreparationMapper,
+            projectionEngine,
+            monthlyProjectionMapper
+        );
+    }
+
+    @Test
+    @DisplayName("실패: 스냅샷 생성에 실패하면 예외가 전파된다.")
     void throwWhenSnapshotCreateFails() {
         given(financialSnapshotCreateService.createSnapshot(userId))
             .willThrow(ApplicationException.from(AnalysisErrorCode.SNAPSHOT_NOT_FOUND));

@@ -116,6 +116,7 @@ class SimulationItemUpdateServiceTest {
             .willReturn(new BigDecimal("4.25"));
     }
 
+    // 미확정 시뮬레이션 항목 조건 수정
     @Test
     @DisplayName("성공: 수입 항목 수정 후 전체 예상 재정 계획과 요약을 갱신")
     void updateIncomeItemAndRecalculateSimulation() {

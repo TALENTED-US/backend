@@ -102,9 +102,9 @@ class SimulationItemReadServiceTest {
             .build();
     }
 
-    // 보고서 조회 API 테스트
+    // 미확정 시뮬레이션 적용 항목 기준 결과 보고서 조회
     @Test
-    @DisplayName("적용된 항목 전체 기준으로 결과 보고서와 카테고리별 소계를 조회한다.")
+    @DisplayName("성공: 적용된 항목 전체 기준으로 결과 보고서와 카테고리별 소계를 조회한다.")
     void getAppliedItemReport() {
         given(simulationMapper.findActiveByUserId(userId)).willReturn(simulation);
         given(financialSnapshotMapper.findLatestByUserId(userId)).willReturn(snapshot);
@@ -138,7 +138,7 @@ class SimulationItemReadServiceTest {
     }
 
     @Test
-    @DisplayName("적용 항목이 없으면 적용 전후 예측이 같고 흑자 현금흐름은 지속 가능하다.")
+    @DisplayName("성공: 적용 항목이 없으면 적용 전후 예측이 같고 흑자 현금흐름은 지속 가능하다.")
     void getSustainableReportWithoutAppliedItems() {
         snapshot.setLiquidAssets(0);
         snapshot.setAvgMonthlyIncome(BigDecimal.valueOf(65_666));
@@ -167,7 +167,7 @@ class SimulationItemReadServiceTest {
     }
 
     @Test
-    @DisplayName("활성 시뮬레이션이 없으면 결과 보고서 조회 예외가 발생한다.")
+    @DisplayName("실패: 미확정 시뮬레이션이 없으면 결과 보고서 조회 예외가 발생한다.")
     void throwWhenActiveSimulationNotFound() {
         given(simulationMapper.findActiveByUserId(userId)).willReturn(null);
 
@@ -176,7 +176,7 @@ class SimulationItemReadServiceTest {
             () -> simulationItemReadService.getAppliedItemReport(userId)
         );
 
-        assertEquals(SimulationErrorCode.SIMULATION_NOT_FOUND, exception.getCode());
+        assertEquals(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND, exception.getCode());
     }
 
     private SimulationItemVO item(
@@ -198,9 +198,9 @@ class SimulationItemReadServiceTest {
             .build();
     }
 
-    // 카테고리별 적용 항목 리스트 조회 API
+    // 미확정 시뮬레이션 카테고리별 적용 항목 목록 조회
     @Test
-    @DisplayName("정책 카테고리 항목 목록을 조회한다.")
+    @DisplayName("성공: 정책 카테고리 항목 목록을 조회한다.")
     void findPolicyItemsByCategory() {
         SimulationItemVO item = SimulationItemVO.builder()
             .simulationItemId(1L)
@@ -244,7 +244,7 @@ class SimulationItemReadServiceTest {
     }
 
     @Test
-    @DisplayName("카테고리에 적용된 항목이 없으면 빈 목록을 반환한다.")
+    @DisplayName("성공: 카테고리에 적용된 항목이 없으면 빈 목록을 반환한다.")
     void findEmptyItemsByCategory() {
         given(simulationMapper.findActiveByUserId(userId))
             .willReturn(simulation);
@@ -261,7 +261,7 @@ class SimulationItemReadServiceTest {
 
     // 시뮬레이션 통합 조회용 부가 데이터 조회
     @Test
-    @DisplayName("시뮬레이션에 적용된 전체 항목 목록을 카테고리 구분 없이 조회한다.")
+    @DisplayName("성공: 시뮬레이션에 적용된 전체 항목 목록을 카테고리 구분 없이 조회한다.")
     void findAllAppliedItems() {
         SimulationItemVO expenseItem = item(SimulationItemCategory.EXPENSE, 50_000, SimulationRecurrenceType.MONTHLY);
         expenseItem.setSimulationItemId(1L);
@@ -283,7 +283,7 @@ class SimulationItemReadServiceTest {
     }
 
     @Test
-    @DisplayName("사용자의 최신 재정 스냅샷에서 현재 버티는 기간을 조회한다.")
+    @DisplayName("성공: 사용자의 최신 재정 스냅샷에서 현재 버티는 기간을 조회한다.")
     void getCurrentPrepMonths() {
         given(financialSnapshotMapper.findLatestByUserId(userId)).willReturn(snapshot);
 
@@ -293,7 +293,7 @@ class SimulationItemReadServiceTest {
     }
 
     @Test
-    @DisplayName("재정 스냅샷이 없으면 예외가 발생한다.")
+    @DisplayName("실패: 재정 스냅샷이 없으면 예외가 발생한다.")
     void throwWhenSnapshotNotFoundForCurrentPrepMonths() {
         given(financialSnapshotMapper.findLatestByUserId(userId)).willReturn(null);
 
