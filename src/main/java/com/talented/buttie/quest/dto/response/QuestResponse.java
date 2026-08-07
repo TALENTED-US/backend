@@ -62,14 +62,14 @@ public record QuestResponse(
         if (quest == null) return null;
 
         return QuestResponse.builder()
-            .questId(quest.getQuestId() == null? null : PKCrypto.encrypt(quest.getQuestId()))
-            .simulationId(PKCrypto.encrypt(quest.getSimulationId() == null ? null : quest.getSimulationId()))
+            .questId(quest.getQuestId() == null ? null : PKCrypto.encrypt(quest.getQuestId()))
+            .simulationId(quest.getSimulationId() == null ? null : PKCrypto.encrypt(quest.getSimulationId()))
             .simulationItemId(quest.getSimulationItemId() == null ? null : PKCrypto.encrypt(quest.getSimulationItemId()))
-            .transactionId(PKCrypto.encrypt(quest.getTransactionId() == null ? null : quest.getTransactionId()))
+            .transactionId(quest.getTransactionId() == null ? null : PKCrypto.encrypt(quest.getTransactionId()))
             .displayName(quest.getDisplayName())
             .simulationItemCategory(quest.getSimulationItemCategory())
             .expenseCategory(quest.getSimulationItemExpenseCategory())
-            .policyId(PKCrypto.encrypt(quest.getPolicyId() == null ? null :quest.getPolicyId()))
+            .policyId(quest.getPolicyId() == null ? null : PKCrypto.encrypt(quest.getPolicyId()))
             .policyName(quest.getPolicyName())
             .policyDueDate(quest.getPolicyDueDate())
             .recurrenceType(quest.getRecurrenceType())
