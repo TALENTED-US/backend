@@ -61,8 +61,8 @@ public class UserController {
         return ApplicationResponse.onSuccess(new UserPKResponseDTO(PKCrypto.encrypt(userId)));
     }
 
-    @GetMapping
-    @ApiOperation("회원 프로필 조회")
+    @GetMapping("/info")
+    @ApiOperation("마이페이지 내 정보 조회")
     public ApplicationResponse<GetUserProfileResponseDTO> getUserProfile(
         @AuthUser AuthenticationUser user
     ) {
