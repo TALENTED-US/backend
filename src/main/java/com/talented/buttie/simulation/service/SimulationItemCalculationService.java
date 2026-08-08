@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -143,11 +142,8 @@ public class SimulationItemCalculationService {
         int livingThreshold = valueOf(employmentPreparationMapper.getLivingThresholdByUserId(simulation.getUserId()));
         Map<Long, PolicyVO> policyById = appliedItems.stream()
             .filter(item -> item.getPolicyId() != null)
-            .map(SimulationItemVO::getPolicyId)
-            .distinct()
-            .map(policyMapper::findById)
-            .filter(policy -> policy != null)
-            .collect(Collectors.toMap(PolicyVO::getPolicyId, Function.identity()));
+            .collect(Collectors.toMap(SimulationItemVO::getPolicyId, SimulationItemVO::getPolicy,
+                (a, b) -> a));
 
         List<MonthlyProjectionVO> baselineProjections = createBaselineProjections(simulation, snapshot);
 
@@ -237,9 +233,7 @@ public class SimulationItemCalculationService {
 
         for (SimulationItemVO item : appliedItems) {
             int amount = valueOf(item.getSimulationItemApplyAmount());
-            PolicyVO policy = item.getPolicyId() == null
-                ? null
-                : policyMapper.findById(item.getPolicyId());
+            PolicyVO policy = item.getPolicy();
             boolean monthly = resolveItemRecurrenceType(item, policy) == SimulationRecurrenceType.MONTHLY;
 
             switch (item.getSimulationItemCategory()) {
