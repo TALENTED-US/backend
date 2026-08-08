@@ -75,7 +75,6 @@ class SimulationItemCreateServiceTest {
     private Long userId;
     private SimulationVO simulation;
     private FinancialSnapshotVO snapshot;
-    private List<MonthlyProjectionVO> beforeProjections;
 
     @BeforeEach
     void setUp() {
@@ -116,16 +115,11 @@ class SimulationItemCreateServiceTest {
             .monthlyNetCashflow(-1_000_000)
             .currentPrepMonths(BigDecimal.valueOf(5))
             .build();
-
-        beforeProjections = List.of(
-            projection(LocalDate.of(2026, 8, 1), 5_000_000, 1_000_000, 2_000_000, 4_000_000),
-            projection(LocalDate.of(2026, 9, 1), 4_000_000, 1_000_000, 2_000_000, 3_000_000),
-            projection(LocalDate.of(2026, 10, 1), 3_000_000, 1_000_000, 2_000_000, 2_000_000)
-        );
     }
 
+    // 미확정 시뮬레이션 항목 적용 확정
     @Test
-    @DisplayName("초기 자산이 0원이어도 해당 월 수입으로 회복되면 이후 소진 시점까지의 기간을 반영한다.")
+    @DisplayName("성공: 초기 자산이 0원이어도 해당 월 수입으로 회복되면 이후 소진 시점까지의 기간을 반영한다.")
     void calculatePrepMonthsWhenZeroAssetsRecoverWithinMonth() {
         List<MonthlyProjectionVO> projections = List.of(
             projection(LocalDate.of(2026, 8, 1), 0, 65_666, 11_633, 54_033)
@@ -140,7 +134,7 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("초기 자산이 0원이고 회복 없이 계속 순소진되면 버티는 기간은 0개월이다.")
+    @DisplayName("성공: 초기 자산이 0원이고 회복 없이 계속 순소진되면 버티는 기간은 0개월이다.")
     void calculateZeroPrepMonthsWithoutAssets() {
         List<MonthlyProjectionVO> projections = List.of(
             projection(LocalDate.of(2026, 8, 1), 0, 11_633, 65_666, -54_033)
@@ -155,7 +149,7 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("중간 달에 잔액이 마이너스가 되어도 다음 달 수입으로 회복되면 시뮬레이션 종료 이후 소진 시점까지 반영한다.")
+    @DisplayName("성공: 중간 달에 잔액이 마이너스가 되어도 다음 달 수입으로 회복되면 시뮬레이션 종료 이후 소진 시점까지 반영한다.")
     void calculatePrepMonthsWhenNegativeMonthRecoversLater() {
         List<MonthlyProjectionVO> projections = List.of(
             projection(LocalDate.of(2026, 8, 1), 0, 0, 50_566, -50_566),
@@ -174,7 +168,7 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("시뮬레이션 기간의 월별 예상 수입과 지출을 순차적으로 생존 기간에 반영한다.")
+    @DisplayName("성공: 시뮬레이션 기간의 월별 예상 수입과 지출을 순차적으로 생존 기간에 반영한다.")
     void calculatePrepMonthsWithProjectedCashFlow() {
         List<MonthlyProjectionVO> projections = List.of(
             projection(LocalDate.of(2026, 8, 1), 3_000_000, 500_000, 1_000_000, 2_500_000),
@@ -190,7 +184,7 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("적용 항목이 없는 기준 현금흐름은 현재와 예상 버티는 기간이 같다.")
+    @DisplayName("성공: 적용 항목이 없는 기준 현금흐름은 현재와 예상 버티는 기간이 같다.")
     void keepCurrentPrepMonthsWithoutAppliedItems() {
         List<MonthlyProjectionVO> projections = List.of(
             projection(LocalDate.of(2026, 8, 1), 5_000_000, 1_000_000, 2_000_000, 4_000_000),
@@ -207,7 +201,7 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("월 순현금흐름이 0 이상이면 예상 버티는 기간은 무제한이다.")
+    @DisplayName("성공: 월 순현금흐름이 0 이상이면 예상 버티는 기간은 무제한이다.")
     void sustainableCashFlowHasNoFinitePrepMonths() {
         FinancialSnapshotVO sustainableSnapshot = FinancialSnapshotVO.builder()
             .liquidAssets(5_000_000)
@@ -228,7 +222,7 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("초기 잔액이 0원이어도 계속 흑자이면 예상 버티는 기간은 무제한이다.")
+    @DisplayName("성공: 초기 잔액이 0원이어도 계속 흑자이면 예상 버티는 기간은 무제한이다.")
     void sustainableCashFlowWithoutInitialAssetsHasNoFinitePrepMonths() {
         FinancialSnapshotVO sustainableSnapshot = FinancialSnapshotVO.builder()
             .liquidAssets(0)
@@ -250,7 +244,7 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("지출 항목을 적용하면 카테고리와 자동 항목명을 저장하고 전체 재정 계획을 재계산한다.")
+    @DisplayName("성공: 지출 항목을 적용하면 카테고리와 자동 항목명을 저장하고 전체 재정 계획을 재계산한다.")
     void applyMonthlyExpenseItem() {
         ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
             .category(SimulationItemCategory.EXPENSE)
@@ -281,7 +275,7 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("일회성 수입 항목은 시작일이 속한 월에만 반영한다.")
+    @DisplayName("성공: 일회성 수입 항목은 시작일이 속한 월에만 반영한다.")
     void applyOnceIncomeItem() {
         ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
             .category(SimulationItemCategory.INCOME)
@@ -308,11 +302,11 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("정책 항목은 요청 amount를 무시하고 정책 금액과 월 반복 유형으로 저장한다.")
+    @DisplayName("성공: 정책 항목은 요청 amount를 무시하고 정책 금액과 월 반복 유형으로 저장한다.")
     void applyPolicyItem() {
         ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
             .category(SimulationItemCategory.POLICY)
-            .policyId(7L)
+            .policyId(PKCrypto.encrypt(7L))
             .amount(999_999)
             .itemName("무시되는 이름")
             .applyStartDate(LocalDate.of(2026, 8, 1))
@@ -346,11 +340,11 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("1개월 지원 정책은 일회성 항목으로 저장한다.")
+    @DisplayName("성공: 1개월 지원 정책은 일회성 항목으로 저장한다.")
     void applyOncePolicyItem() {
         ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
             .category(SimulationItemCategory.POLICY)
-            .policyId(7L)
+            .policyId(PKCrypto.encrypt(7L))
             .applyStartDate(LocalDate.of(2026, 9, 10))
             .build();
 
@@ -375,11 +369,11 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("정책 항목은 요청 종료일을 무시하고 정책 지원 개월 수로 기간을 계산한다.")
+    @DisplayName("성공: 정책 항목은 요청 종료일을 무시하고 정책 지원 개월 수로 기간을 계산한다.")
     void ignoreRequestedEndDateForPolicyItem() {
         ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
             .category(SimulationItemCategory.POLICY)
-            .policyId(7L)
+            .policyId(PKCrypto.encrypt(7L))
             .applyStartDate(LocalDate.of(2026, 8, 1))
             .applyEndDate(LocalDate.of(2026, 7, 1))
             .build();
@@ -400,13 +394,13 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("정책 지원 시작일이 시뮬레이션 기간 전이면 예외가 발생한다.")
+    @DisplayName("실패: 정책 지원 시작일이 시뮬레이션 기간 전이면 예외가 발생한다.")
     void rejectPolicyStartingBeforeSimulation() {
         given(simulationMapper.findActiveByUserId(userId)).willReturn(simulation);
 
         ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
             .category(SimulationItemCategory.POLICY)
-            .policyId(7L)
+            .policyId(PKCrypto.encrypt(7L))
             .applyStartDate(LocalDate.of(2026, 7, 31))
             .build();
 
@@ -420,13 +414,13 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("시뮬레이션 종료일이 정책 지급일보다 빠르면 종료월 지원금은 반영하지 않는다.")
+    @DisplayName("성공: 시뮬레이션 종료일이 정책 지급일보다 빠르면 종료월 지원금은 반영하지 않는다.")
     void truncatePolicyBeforeRecurrenceDay() {
         simulation.setSimulationDueDate(LocalDate.of(2026, 10, 15));
 
         ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
             .category(SimulationItemCategory.POLICY)
-            .policyId(7L)
+            .policyId(PKCrypto.encrypt(7L))
             .applyStartDate(LocalDate.of(2026, 8, 20))
             .build();
 
@@ -450,7 +444,7 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("시뮬레이션 기간을 연장하면 이전에 잘렸던 정책 지원 개월이 다시 반영된다.")
+    @DisplayName("성공: 시뮬레이션 기간을 연장하면 이전에 잘렸던 정책 지원 개월이 다시 반영된다.")
     void restorePolicySupportAfterSimulationExtension() {
         SimulationItemVO policyItem = SimulationItemVO.builder()
             .simulationId(100L)
@@ -480,7 +474,7 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("계획 기간과 겹치지 않는 항목은 저장하지 않고 예외가 발생한다.")
+    @DisplayName("실패: 계획 기간과 겹치지 않는 항목은 저장하지 않고 예외가 발생한다.")
     void throwWhenApplyPeriodOutOfSimulationPeriod() {
         given(simulationMapper.findActiveByUserId(userId)).willReturn(simulation);
 
@@ -502,7 +496,7 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("수입 항목 필수값이 없으면 저장하지 않고 예외가 발생한다.")
+    @DisplayName("실패: 수입 항목 필수값이 없으면 저장하지 않고 예외가 발생한다.")
     void throwWhenIncomeRequiredValueMissing() {
         given(simulationMapper.findActiveByUserId(userId)).willReturn(simulation);
 
@@ -523,7 +517,7 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("활성 시뮬레이션이 없으면 예외가 발생한다.")
+    @DisplayName("실패: 활성 시뮬레이션이 없으면 예외가 발생한다.")
     void throwWhenActiveSimulationNotFound() {
         given(simulationMapper.findActiveByUserId(userId)).willReturn(null);
 
@@ -534,15 +528,17 @@ class SimulationItemCreateServiceTest {
             () -> simulationItemCreateService.applyItem(userId, request)
         );
 
-        assertEquals(SimulationErrorCode.SIMULATION_NOT_FOUND, exception.getCode());
+        assertEquals(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND, exception.getCode());
         verifyNoInteractions(financialSnapshotMapper, simulationItemMapper, monthlyProjectionMapper);
     }
 
     @Test
-    @DisplayName("확정된 시뮬레이션에는 항목을 적용할 수 없다.")
+    @DisplayName("실패: 확정된 시뮬레이션에는 항목을 적용할 수 없다.")
     void throwWhenSimulationAlreadyConfirmed() {
-        simulation.setConfirmedAt(LocalDateTime.of(2026, 8, 1, 12, 0));
-        given(simulationMapper.findActiveByUserId(userId)).willReturn(simulation);
+        given(simulationMapper.findActiveByUserId(userId))
+            .willReturn(null);
+        given(simulationMapper.findLatestConfirmedByUserId(userId))
+            .willReturn(simulation);
 
         ApplySimulationItemRequest request = incomeMonthlyRequest();
 
@@ -556,7 +552,7 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("최신 스냅샷이 없으면 항목을 저장하지 않는다.")
+    @DisplayName("실패: 최신 스냅샷이 없으면 항목을 저장하지 않는다.")
     void throwWhenSnapshotNotFound() {
         given(simulationMapper.findActiveByUserId(userId)).willReturn(simulation);
         given(financialSnapshotMapper.findLatestByUserId(userId)).willReturn(null);
@@ -574,7 +570,7 @@ class SimulationItemCreateServiceTest {
     }
 
     @Test
-    @DisplayName("정책이 존재하지 않으면 항목을 저장하지 않는다.")
+    @DisplayName("실패: 정책이 존재하지 않으면 항목을 저장하지 않는다.")
     void throwWhenPolicyNotFound() {
         given(simulationMapper.findActiveByUserId(userId)).willReturn(simulation);
         given(financialSnapshotMapper.findLatestByUserId(userId)).willReturn(snapshot);
@@ -582,7 +578,7 @@ class SimulationItemCreateServiceTest {
 
         ApplySimulationItemRequest request = ApplySimulationItemRequest.builder()
             .category(SimulationItemCategory.POLICY)
-            .policyId(7L)
+            .policyId(PKCrypto.encrypt(7L))
             .applyStartDate(LocalDate.of(2026, 8, 1))
             .build();
 
@@ -602,7 +598,6 @@ class SimulationItemCreateServiceTest {
         given(simulationMapper.findActiveByUserId(userId)).willReturn(simulation);
         given(financialSnapshotMapper.findLatestByUserId(userId)).willReturn(snapshot);
         given(employmentPreparationMapper.getLivingThresholdByUserId(userId)).willReturn(1_000_000);
-        given(monthlyProjectionMapper.findAllBySimulationId(100L)).willReturn(beforeProjections);
         given(simulationItemMapper.findAllActiveBySimulationId(100L))
             .willAnswer(invocation -> List.of(savedItem.get()));
         doAnswer(invocation -> {

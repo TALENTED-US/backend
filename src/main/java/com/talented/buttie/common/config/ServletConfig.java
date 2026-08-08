@@ -62,7 +62,7 @@ public class ServletConfig implements WebMvcConfigurer {
         registry.addMapping("/api/**")
             .allowedOrigins(
                 "http://localhost:5173",
-                "https://프론트엔드-도메인" //TODO FE Domain 수정
+                "https://buttie.duckdns.org"
             )
             .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
             .allowedHeaders("*")

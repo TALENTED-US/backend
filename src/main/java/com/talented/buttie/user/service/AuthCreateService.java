@@ -1,7 +1,7 @@
 package com.talented.buttie.user.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
-import com.talented.buttie.user.dto.request.auth.AuthSignUpRequestDTO;
+import com.talented.buttie.user.dto.request.auth.AuthSignUpRequest;
 import com.talented.buttie.user.exception.AuthErrorCode;
 import com.talented.buttie.user.mapper.AuthMapper;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +17,12 @@ public class AuthCreateService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public Long createUser(AuthSignUpRequestDTO authSignUpRequestDTO) {
-        isPasswordValid(authSignUpRequestDTO);
-        isFieldDuplicate(authSignUpRequestDTO);
+    public Long createUser(AuthSignUpRequest authSignUpRequest) {
+        isPasswordValid(authSignUpRequest);
+        isFieldDuplicate(authSignUpRequest);
 
-        String passwordHash = passwordEncoder.encode(authSignUpRequestDTO.userPassword());
-        AuthSignUpRequestDTO newUser = authSignUpRequestDTO.saveNewUser(authSignUpRequestDTO, passwordHash);
+        String passwordHash = passwordEncoder.encode(authSignUpRequest.userPassword());
+        AuthSignUpRequest newUser = authSignUpRequest.saveNewUser(authSignUpRequest, passwordHash);
         Long userId = authMapper.createUser(newUser);
         if(userId == null) {
             throw ApplicationException.from(AuthErrorCode.USER_CREATE_FAILED);
@@ -30,40 +30,40 @@ public class AuthCreateService {
         return userId;
     }
 
-    private void isPasswordValid(AuthSignUpRequestDTO authSignUpRequestDTO) {
-        String password = authSignUpRequestDTO.userPassword();
-        if (!password.equals(authSignUpRequestDTO.userPasswordCheck())) {
+    private void isPasswordValid(AuthSignUpRequest authSignUpRequest) {
+        String password = authSignUpRequest.userPassword();
+        if (!password.equals(authSignUpRequest.userPasswordCheck())) {
             throw ApplicationException.from(AuthErrorCode.PASSWORD_NOT_VALID);
         }
 
-        String username = authSignUpRequestDTO.userName().split("@")[0];
+        String username = authSignUpRequest.userName().split("@")[0];
         if (password.contains(username)) {
             throw ApplicationException.from(AuthErrorCode.PASSWORD_HAS_USERNAME);
         }
 
-        String middleNumber = authSignUpRequestDTO.phoneNumber().substring(3, 7);
-        String lastNumber = authSignUpRequestDTO.phoneNumber().substring(7, 11);
+        String middleNumber = authSignUpRequest.phoneNumber().substring(3, 7);
+        String lastNumber = authSignUpRequest.phoneNumber().substring(7, 11);
 
         if (password.contains(middleNumber) || password.contains(lastNumber)) {
             throw ApplicationException.from(AuthErrorCode.PASSWORD_HAS_PHONENUMBER);
         }
 
-        String[] birthday = authSignUpRequestDTO.birthDate().split("-");
+        String[] birthday = authSignUpRequest.birthDate().split("-");
         if (password.contains(birthday[1] + birthday[2])) {
             throw ApplicationException.from(AuthErrorCode.PASSWORD_HAS_BIRTHDAY);
         }
     }
 
-    private void isFieldDuplicate(AuthSignUpRequestDTO authSignUpRequestDTO) {
-        if (authMapper.existsByPhoneNumber(authSignUpRequestDTO.phoneNumber())) {
+    private void isFieldDuplicate(AuthSignUpRequest authSignUpRequest) {
+        if (authMapper.existsByPhoneNumber(authSignUpRequest.phoneNumber())) {
             throw ApplicationException.from(AuthErrorCode.PHONE_NUMBER_ALREADY_EXISTS);
         }
 
-        if(authMapper.existsByEmail(authSignUpRequestDTO.userEmail())) {
+        if(authMapper.existsByEmail(authSignUpRequest.userEmail())) {
             throw ApplicationException.from(AuthErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
-        if(authMapper.existsByNickName(authSignUpRequestDTO.userNickname())) {
+        if(authMapper.existsByNickName(authSignUpRequest.userNickname())) {
             throw ApplicationException.from(AuthErrorCode.NICKNAME_ALREADY_EXISTS);
         }
     }

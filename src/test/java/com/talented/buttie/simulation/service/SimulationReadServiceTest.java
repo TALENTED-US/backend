@@ -34,10 +34,10 @@ class SimulationReadServiceTest {
     @InjectMocks
     private SimulationReadService simulationReadService;
 
-    // 현재 시뮬레이션 상세 조회(이어보기)
+    // 미확정 시뮬레이션 상세 조회(이어보기)
     @Test
-    @DisplayName("사용자의 최신 미확정 시뮬레이션과 월별 예상 재정 계획을 조회한다.")
-    void getCurrentSimulation() {
+    @DisplayName("성공: 사용자의 최신 미확정 시뮬레이션과 월별 예상 재정 계획을 조회한다.")
+    void getActiveSimulation() {
         Long userId = 1L;
         Long simulationId = 10L;
         SimulationVO simulation = SimulationVO.builder()
@@ -63,7 +63,7 @@ class SimulationReadServiceTest {
             .willReturn(monthlyProjections);
 
         SimulationVO result =
-            simulationReadService.getCurrentSimulation(userId);
+            simulationReadService.getActiveSimulation(userId);
 
         assertSame(simulation, result);
         assertEquals(monthlyProjections, result.getMonthlyProjections());
@@ -73,7 +73,7 @@ class SimulationReadServiceTest {
     }
 
     @Test
-    @DisplayName("사용자의 미확정 시뮬레이션이 없으면 예외가 발생한다.")
+    @DisplayName("실패: 미확정 시뮬레이션이 없으면 예외가 발생한다.")
     void throwWhenCurrentSimulationNotFound() {
         Long userId = 1L;
         given(simulationMapper.findActiveByUserId(userId))
@@ -81,18 +81,18 @@ class SimulationReadServiceTest {
 
         ApplicationException exception = assertThrows(
             ApplicationException.class,
-            () -> simulationReadService.getCurrentSimulation(userId)
+            () -> simulationReadService.getActiveSimulation(userId)
         );
 
         assertEquals(
-            SimulationErrorCode.SIMULATION_NOT_FOUND,
+            SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND,
             exception.getCode()
         );
         verifyNoInteractions(monthlyProjectionMapper);
     }
 
     @Test
-    @DisplayName("월별 예상 재정 계획이 없으면 예외가 발생한다.")
+    @DisplayName("실패: 월별 예상 재정 계획이 없으면 예외가 발생한다.")
     void throwWhenCurrentProjectionNotFound() {
         Long userId = 1L;
         Long simulationId = 10L;
@@ -108,7 +108,7 @@ class SimulationReadServiceTest {
 
         ApplicationException exception = assertThrows(
             ApplicationException.class,
-            () -> simulationReadService.getCurrentSimulation(userId)
+            () -> simulationReadService.getActiveSimulation(userId)
         );
 
         assertEquals(
@@ -121,7 +121,7 @@ class SimulationReadServiceTest {
 
     // 최근 확정 시뮬레이션 조회
     @Test
-    @DisplayName("사용자의 최근 확정 시뮬레이션과 월별 예상 재정 계획을 조회한다.")
+    @DisplayName("성공: 사용자의 최근 확정 시뮬레이션과 월별 예상 재정 계획을 조회한다.")
     void getLatestConfirmedSimulation(){
         Long userId = 1L;
         Long simulationId = 10L;
@@ -154,7 +154,7 @@ class SimulationReadServiceTest {
     }
 
     @Test
-    @DisplayName("사용자의 확정 시뮬레이션이 없으면 예외가 발생한다.")
+    @DisplayName("실패: 확정 시뮬레이션이 없으면 예외가 발생한다.")
     void throwWhenConfirmedSimulationNotFound(){
         Long userId = 1L;
 
@@ -174,7 +174,7 @@ class SimulationReadServiceTest {
     }
 
     @Test
-    @DisplayName("최근 확정 시뮬레이션의 월별 예상 재정 계획이 없으면 예외가 발생한다.")
+    @DisplayName("실패: 최근 확정 시뮬레이션의 월별 예상 재정 계획이 없으면 예외가 발생한다.")
     void throwWhenConfirmedProjectionNotFound() {
         Long userId = 1L;
         Long simulationId = 10L;

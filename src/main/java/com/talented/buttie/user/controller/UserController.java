@@ -15,6 +15,8 @@ import com.talented.buttie.user.dto.request.CreateEmploymentPreparationRequestDT
 import org.springframework.web.bind.annotation.PostMapping;
 import com.talented.buttie.user.dto.response.GetEmploymentPreparationResponseDTO;
 import com.talented.buttie.user.dto.request.WithdrawUserRequestDTO;
+import com.talented.buttie.user.domain.ButiDashboardVO;
+import com.talented.buttie.user.dto.response.GetButiDashboardResponse;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -67,6 +69,16 @@ public class UserController {
         Long targetUserId = user.userId();
         UserProfileVO userProfile = userService.getUserProfile(targetUserId);
         return ApplicationResponse.onSuccess(GetUserProfileResponseDTO.from(userProfile));
+    }
+
+    @GetMapping("/buti")
+    @ApiOperation("버티 성장 대시보드 조회")
+    public ApplicationResponse<GetButiDashboardResponse> getButiDashboard(
+        @AuthUser AuthenticationUser user
+    ) {
+        Long targetUserId = user.userId();
+        ButiDashboardVO butiDashboard = userService.getButiDashboard(targetUserId);
+        return ApplicationResponse.onSuccess(GetButiDashboardResponse.from(butiDashboard));
     }
 
     @GetMapping("/employment-preparation")

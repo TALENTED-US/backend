@@ -16,6 +16,7 @@ import com.talented.buttie.simulation.mapper.SimulationMapper;
 import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
 import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
 import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class SimulationItemReadService {
         SimulationVO simulation = simulationMapper.findActiveByUserId(userId);
 
         if (simulation == null) {
-            throw ApplicationException.from(SimulationErrorCode.SIMULATION_NOT_FOUND);
+            throw ApplicationException.from(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND);
         }
 
         FinancialSnapshotVO snapshot = financialSnapshotMapper.findLatestByUserId(userId);
@@ -68,7 +69,7 @@ public class SimulationItemReadService {
         SimulationVO simulation = simulationMapper.findActiveByUserId(userId);
 
         if (simulation == null) {
-            throw ApplicationException.from(SimulationErrorCode.SIMULATION_NOT_FOUND);
+            throw ApplicationException.from(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND);
         }
 
         List<SimulationItemResponse> items = simulationItemMapper
@@ -83,5 +84,29 @@ public class SimulationItemReadService {
             .toList();
 
         return new SimulationItemsByCategoryResponse(items);
+    }
+
+    @Transactional(readOnly = true)
+    public List<SimulationItemResponse> findAllAppliedItems(SimulationVO simulation) {
+        return simulationItemMapper.findAllActiveBySimulationId(simulation.getSimulationId())
+            .stream()
+            .map(item -> {
+                PolicyVO policy = item.getPolicyId() == null
+                    ? null
+                    : policyMapper.findById(item.getPolicyId());
+                return SimulationItemResponse.from(item, policy, simulation);
+            })
+            .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public BigDecimal getCurrentPrepMonths(Long userId) {
+        FinancialSnapshotVO snapshot = financialSnapshotMapper.findLatestByUserId(userId);
+
+        if (snapshot == null) {
+            throw ApplicationException.from(AnalysisErrorCode.SNAPSHOT_NOT_FOUND);
+        }
+
+        return snapshot.getCurrentPrepMonths();
     }
 }

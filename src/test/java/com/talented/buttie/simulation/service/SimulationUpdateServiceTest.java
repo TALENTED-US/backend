@@ -80,8 +80,9 @@ class SimulationUpdateServiceTest {
         );
     }
 
+    // 미확정 시뮬레이션 수행 기간 수정
     @Test
-    @DisplayName("시뮬레이션 기간을 정상적으로 수정한다.")
+    @DisplayName("성공: 시뮬레이션 기간을 정상적으로 수정한다.")
     void updateSimulationPeriod() {
         given(simulationMapper.findActiveByUserId(userId))
             .willReturn(activeSimulation);
@@ -110,7 +111,7 @@ class SimulationUpdateServiceTest {
     }
 
     @Test
-    @DisplayName("시뮬레이션 기간이 올바르지 않으면 예외가 발생한다.")
+    @DisplayName("실패: 시뮬레이션 기간이 올바르지 않으면 예외가 발생한다.")
     void throwWhenPeriodIsInvalid() {
         UpdateSimulationPeriodRequest errorRequest = UpdateSimulationPeriodRequest.builder()
             .simulationStartDate(LocalDate.of(2027, 1, 1))
@@ -133,7 +134,7 @@ class SimulationUpdateServiceTest {
     }
 
     @Test
-    @DisplayName("시뮬레이션에 연결된 스냅샷이 없으면 예외가 발생한다.")
+    @DisplayName("실패: 시뮬레이션에 연결된 스냅샷이 없으면 예외가 발생한다.")
     void throwWhenSnapshotNotFound() {
         given(simulationMapper.findActiveByUserId(userId))
             .willReturn(activeSimulation);
@@ -149,7 +150,7 @@ class SimulationUpdateServiceTest {
     }
 
     @Test
-    @DisplayName("확정된 시뮬레이션의 기간을 수정하면 예외가 발생한다.")
+    @DisplayName("실패: 확정된 시뮬레이션의 기간을 수정하면 예외가 발생한다.")
     void throwWhenConfirmedSimulationIsUpdated() {
         given(simulationMapper.findActiveByUserId(userId))
             .willReturn(null);
@@ -174,7 +175,7 @@ class SimulationUpdateServiceTest {
     }
 
     @Test
-    @DisplayName("수정할 시뮬레이션이 없으면 예외가 발생한다.")
+    @DisplayName("실패: 수정할 시뮬레이션이 없으면 예외가 발생한다.")
     void throwWhenSimulationNotFound() {
         given(simulationMapper.findActiveByUserId(userId))
             .willReturn(null);
@@ -186,7 +187,7 @@ class SimulationUpdateServiceTest {
             () -> simulationUpdateService.updateSimulationPeriod(userId, request)
         );
 
-        assertEquals(SimulationErrorCode.SIMULATION_NOT_FOUND, exception.getCode());
+        assertEquals(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND, exception.getCode());
         verifyNoInteractions(
             simulationItemMapper,
             monthlyProjectionMapper,
@@ -196,7 +197,7 @@ class SimulationUpdateServiceTest {
     }
 
     @Test
-    @DisplayName("기간 수정 후 예상 재정 계획을 다시 생성한다.")
+    @DisplayName("성공: 기간 수정 후 예상 재정 계획을 다시 생성한다.")
     void recreateProjectionsAfterPeriodUpdate() {
         given(simulationMapper.findActiveByUserId(userId))
             .willReturn(activeSimulation);

@@ -1,8 +1,10 @@
 package com.talented.buttie.simulation.service;
 
+import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.request.CreateSimulationRequest;
+import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
 import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
@@ -28,7 +30,15 @@ public class SimulationCreateService {
     public SimulationVO createSimulation(Long userId, CreateSimulationRequest request){
         SimulationVO activeSimulation = simulationMapper.findActiveByUserId(userId);
 
-        if(activeSimulation != null) return activeSimulation;
+        if(activeSimulation != null) {
+            throw ApplicationException.from(SimulationErrorCode.ALREADY_NOT_CONFIRMED_SIMULATION_EXISTS);
+        }
+
+        SimulationVO confirmedSimulation = simulationMapper.findLatestConfirmedByUserId(userId);
+
+        if(confirmedSimulation != null) {
+            throw ApplicationException.from(SimulationErrorCode.ALREADY_CONFIRMED_SIMULATION_EXISTS);
+        }
 
         FinancialSnapshotVO snapshot = financialSnapshotCreateService.createSnapshot(userId);
 

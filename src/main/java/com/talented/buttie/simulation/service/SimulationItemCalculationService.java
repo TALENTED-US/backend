@@ -4,6 +4,7 @@ import com.talented.buttie.catalog.domain.PolicyVO;
 import com.talented.buttie.catalog.exception.CatalogErrorCode;
 import com.talented.buttie.catalog.mapper.PolicyMapper;
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemCategory;
@@ -87,7 +88,7 @@ public class SimulationItemCalculationService {
             return null;
         }
 
-        PolicyVO policy = policyMapper.findById(request.policyId());
+        PolicyVO policy = policyMapper.findById(PKCrypto.decrypt(request.policyId()));
 
         if (policy == null) {
             throw ApplicationException.from(CatalogErrorCode.POLICY_NOT_FOUND);
@@ -109,7 +110,9 @@ public class SimulationItemCalculationService {
             .simulationItemApplyAmount(resolveApplyAmount(request, policy))
             .applyStartDate(request.applyStartDate())
             .applyEndDate(resolveApplyEndDate(request))
-            .policyId(request.category() == SimulationItemCategory.POLICY ? request.policyId() : null)
+            .policyId(request.category() == SimulationItemCategory.POLICY
+                ? policy.getPolicyId()
+                : null)
             .recurrenceType(resolveRecurrenceType(request, policy))
             .isDeleted(false)
             .build();
@@ -276,8 +279,9 @@ public class SimulationItemCalculationService {
         List<MonthlyProjectionVO> projections,
         FinancialSnapshotVO snapshot
     ) {
-        if(projections == null || projections.isEmpty())
+        if(projections == null || projections.isEmpty()) {
             return new PrepMonthsCalculation(snapshot.getCurrentPrepMonths(), isCurrentSustainable(snapshot));
+        }
 
         List<MonthlyProjectionVO> sortedProjections = projections.stream()
             .sorted(Comparator.comparing(MonthlyProjectionVO::getProjectionMonth))

@@ -78,30 +78,30 @@ pipeline {
     }
 
     post {
-        success {
-            withCredentials([
-                string(credentialsId: 'slack-webhook-url', variable: 'SLACK_WEBHOOK')
-            ]) {
-                sh '''
-                    curl -sS -X POST \
-                      -H "Content-Type: application/json" \
-                      --data '{"text":"✅ ButtIE Backend 배포 및 서버 구동 완료"}' \
-                      "$SLACK_WEBHOOK"
-                '''
-            }
-        }
-
-        failure {
-            withCredentials([
-                string(credentialsId: 'slack-webhook-url', variable: 'SLACK_WEBHOOK')
-            ]) {
-                sh '''
-                    curl -sS -X POST \
-                      -H "Content-Type: application/json" \
-                      --data '{"text":"❌ ButtIE Backend 배포 실패. Jenkins 로그를 확인하세요."}' \
-                      "$SLACK_WEBHOOK"
-                '''
-            }
+    success {
+        withCredentials([
+            string(credentialsId: 'slack-webhook-url', variable: 'SLACK_WEBHOOK')
+        ]) {
+            sh """
+                curl -sS -X POST \
+                  -H 'Content-Type: application/json' \
+                  --data '{"text":"✅ Buttie Backend 배포 성공\\n빌드: #${env.BUILD_NUMBER}\\n로그: ${env.BUILD_URL}console"}' \
+                  "\$SLACK_WEBHOOK"
+            """
         }
     }
+
+    failure {
+        withCredentials([
+            string(credentialsId: 'slack-webhook-url', variable: 'SLACK_WEBHOOK')
+        ]) {
+            sh """
+                curl -sS -X POST \
+                  -H 'Content-Type: application/json' \
+                  --data '{"text":"❌ Buttie Backend 배포 실패\\n빌드: #${env.BUILD_NUMBER}\\n로그: ${env.BUILD_URL}console"}' \
+                  "\$SLACK_WEBHOOK"
+            """
+        }
+    }
+}
 }

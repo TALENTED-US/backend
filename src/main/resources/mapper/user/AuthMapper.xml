@@ -4,7 +4,7 @@
 
 <mapper namespace="com.talented.buttie.user.mapper.AuthMapper">
   <insert id="createUser"
-    parameterType="com.talented.buttie.user.dto.request.auth.AuthSignUpRequestDTO"
+    parameterType="com.talented.buttie.user.dto.request.auth.AuthSignUpRequest"
     useGeneratedKeys="true"
     keyProperty="id"
   >
@@ -15,11 +15,11 @@
       USER_NICKNAME,
       USER_PHONE_NUMBER
     ) VALUES (
-      #{authSignUpRequestDTO.userName},
-      #{authSignUpRequestDTO.userEmail},
-      #{authSignUpRequestDTO.userPassword},
-      #{authSignUpRequestDTO.userNickname},
-      #{authSignUpRequestDTO.phoneNumber}
+      #{authSignUpRequest.userName},
+      #{authSignUpRequest.userEmail},
+      #{authSignUpRequest.userPassword},
+      #{authSignUpRequest.userNickname},
+      #{authSignUpRequest.phoneNumber}
     )
   </insert>
 

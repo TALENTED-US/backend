@@ -71,6 +71,25 @@
     order by I.SIMULATION_ITEM_CATEGORY, I.APPLY_START_DATE
   </select>
 
+  <select id="findActiveByIdAndSimulationId"
+          resultType="com.talented.buttie.simulation.domain.SimulationItemVO">
+    select I.SIMULATION_ITEM_ID as simulationItemId,
+           I.SIMULATION_ID as simulationId,
+           I.SIMULATION_ITEM_CATEGORY as simulationItemCategory,
+           I.SIMULATION_ITEM_NAME as simulationItemName,
+           I.SIMULATION_ITEM_EXPENSE_CATEGORY as simulationItemExpenseCategory,
+           I.SIMULATION_ITEM_APPLY_AMOUNT as simulationItemApplyAmount,
+           I.APPLY_START_DATE as applyStartDate,
+           I.APPLY_END_DATE as applyEndDate,
+           I.POLICY_ID as policyId,
+           I.RECURRENCE_TYPE as recurrenceType,
+           I.IS_DELETED as isDeleted
+    from SIMULATION_ITEM I
+    where I.SIMULATION_ITEM_ID = #{itemId}
+      and I.SIMULATION_ID = #{simulationId}
+      and I.IS_DELETED = false
+  </select>
+  
   <select id="findById"
           resultType="com.talented.buttie.simulation.domain.SimulationItemVO">
     select I.SIMULATION_ITEM_ID as simulationItemId,
@@ -87,4 +106,25 @@
     from SIMULATION_ITEM I
     where I.SIMULATION_ITEM_ID = #{simulationItemId}
   </select>
+
+  <update id="update"
+          parameterType="com.talented.buttie.simulation.domain.SimulationItemVO">
+    update SIMULATION_ITEM
+    set SIMULATION_ITEM_NAME = #{simulationItemName},
+        SIMULATION_ITEM_APPLY_AMOUNT = #{simulationItemApplyAmount},
+        APPLY_START_DATE = #{applyStartDate},
+        APPLY_END_DATE = #{applyEndDate},
+        RECURRENCE_TYPE = #{recurrenceType}
+    where SIMULATION_ITEM_ID = #{simulationItemId}
+      and SIMULATION_ID = #{simulationId}
+      and IS_DELETED = false
+  </update>
+
+  <update id="deleteByIdAndSimulationId">
+    update SIMULATION_ITEM
+    set IS_DELETED = true
+    where SIMULATION_ITEM_ID = #{itemId}
+        and SIMULATION_ID = #{simulationId}
+        and IS_DELETED = false
+  </update>
 </mapper>
