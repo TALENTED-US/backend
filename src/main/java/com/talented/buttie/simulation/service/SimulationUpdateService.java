@@ -28,6 +28,7 @@ public class SimulationUpdateService {
     private final FinancialSnapshotMapper financialSnapshotMapper;
     private final SimulationItemCalculationService simulationItemCalculationService;
 
+    // 미확정 시뮬레이션 수행 기간 수정
     @Transactional
     public void updateSimulationPeriod(
         Long userId,
@@ -73,6 +74,18 @@ public class SimulationUpdateService {
             simulationEndAmount,
             simulationItemCalculationService.calculateExpectedPrepMonths(recalculatedProjections, snapshot)
         );
+    }
+
+    // 시뮬레이션 최종 확정
+    @Transactional
+    public void confirmSimulation(Long userId) {
+        SimulationVO simulation = findUpdatableSimulation(userId);
+
+        int confirmedRows = simulationMapper.confirmSimulation(simulation.getSimulationId());
+
+        if(confirmedRows == 0) {
+            throw ApplicationException.from(SimulationErrorCode.SIMULATION_CANNOT_BE_CONFIRMED);
+        }
     }
 
     private SimulationVO findUpdatableSimulation(Long userId) {

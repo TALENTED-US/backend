@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
@@ -217,6 +218,62 @@ class SimulationUpdateServiceTest {
             .recalculateProjections(activeSimulation, snapshot, appliedItems);
         verify(monthlyProjectionMapper).deleteAllBySimulationId(simulationId);
         verify(monthlyProjectionMapper).saveAll(recalculatedProjections);
+    }
+
+    // 시뮬레이션 최종 확정
+    @Test
+    @DisplayName("성공: 미확정 시뮬레이션을 정상적으로 확정한다.")
+    void confirmSimulation() {
+        given(simulationMapper.findActiveByUserId(userId))
+            .willReturn(activeSimulation);
+        given(simulationMapper.confirmSimulation(simulationId))
+            .willReturn(1);
+
+        assertDoesNotThrow(
+            () -> simulationUpdateService.confirmSimulation(userId)
+        );
+
+        verify(simulationMapper).confirmSimulation(simulationId);
+    }
+
+    @Test
+    @DisplayName("실패: 이미 확정된 시뮬레이션을 다시 확정하면 예외가 발생한다.")
+    void rejectDuplicateConfirmation() {
+        given(simulationMapper.findActiveByUserId(userId))
+            .willReturn(null);
+        given(simulationMapper.findLatestConfirmedByUserId(userId))
+            .willReturn(activeSimulation);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> simulationUpdateService.confirmSimulation(userId)
+        );
+
+        assertEquals(
+            SimulationErrorCode.CONFIRMED_SIMULATION_CANNOT_BE_UPDATED,
+            exception.getCode()
+        );
+        verify(simulationMapper, never()).confirmSimulation(simulationId);
+    }
+
+    @Test
+    @DisplayName("실패: 확정 갱신 대상이 없으면 예외가 발생한다.")
+    void rejectWhenConfirmationUpdateFails() {
+        given(simulationMapper.findActiveByUserId(userId))
+            .willReturn(activeSimulation);
+        given(simulationMapper.confirmSimulation(simulationId))
+            .willReturn(0);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> simulationUpdateService.confirmSimulation(userId)
+        );
+
+        assertEquals(
+            SimulationErrorCode.SIMULATION_CANNOT_BE_CONFIRMED,
+            exception.getCode()
+        );
+        verify(simulationMapper).confirmSimulation(simulationId);
     }
 
     private MonthlyProjectionVO projection(

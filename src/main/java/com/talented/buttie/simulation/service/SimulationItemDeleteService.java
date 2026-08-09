@@ -27,6 +27,7 @@ public class SimulationItemDeleteService {
     private final FinancialSnapshotMapper financialSnapshotMapper;
     private final SimulationItemCalculationService simulationItemCalculationService;
 
+    // 미확정 시뮬레이션 항목 삭제
     @Transactional
     public void deleteItem(Long userId, Long itemId) {
 
