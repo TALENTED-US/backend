@@ -2,8 +2,8 @@ package com.talented.buttie.user.domain;
 
 import java.time.LocalDate;
 import lombok.*;
-import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
-import com.talented.buttie.user.dto.request.CreateEmploymentPreparationRequestDTO;
+import com.talented.buttie.user.dto.request.user.UpdateEmploymentPreparationRequest;
+import com.talented.buttie.user.dto.request.user.CreateEmploymentPreparationRequest;
 @Data
 @Builder
 @NoArgsConstructor
@@ -22,7 +22,7 @@ public class EmploymentPreparationVO {
 
     public static EmploymentPreparationVO createEmploymentPreparation(
         Long userId,
-        CreateEmploymentPreparationRequestDTO request
+        CreateEmploymentPreparationRequest request
     ) {
         return EmploymentPreparationVO.builder()
             .userId(userId)
@@ -37,7 +37,7 @@ public class EmploymentPreparationVO {
     }
     public static EmploymentPreparationVO createEmploymentPreparation(
         Long userId,
-        UpdateEmploymentPreparationRequestDTO request
+        UpdateEmploymentPreparationRequest request
     ) {
         return EmploymentPreparationVO.builder()
             .userId(userId)

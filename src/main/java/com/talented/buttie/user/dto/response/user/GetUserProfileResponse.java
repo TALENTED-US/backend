@@ -1,4 +1,4 @@
-package com.talented.buttie.user.dto.response;
+package com.talented.buttie.user.dto.response.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.talented.buttie.user.domain.UserProfileVO;
@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
 
 @ApiModel(description = "회원 프로필 조회 응답")
-public record GetUserProfileResponseDTO(
+public record GetUserProfileResponse(
 
     @ApiModelProperty(value = "버티 이미지 URL", example = "https://cdn.buttie.com/buttie/lv1_stable.png")
     String buttieImageUrl,
@@ -31,8 +31,8 @@ public record GetUserProfileResponseDTO(
     @ApiModelProperty(value = "이메일", example = "qwert1234@gmail.com")
     String userEmail
 ) {
-    public static GetUserProfileResponseDTO from(UserProfileVO vo) {
-        return new GetUserProfileResponseDTO(
+    public static GetUserProfileResponse from(UserProfileVO vo) {
+        return new GetUserProfileResponse(
             vo.getButtieImageUrl(),
             vo.getButtieLevel(),
             vo.getUserNickname(),

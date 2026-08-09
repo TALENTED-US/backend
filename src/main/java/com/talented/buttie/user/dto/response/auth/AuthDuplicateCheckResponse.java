@@ -6,7 +6,7 @@ import lombok.Builder;
 
 @Builder
 @ApiModel(description = "중복 체크 응답 DTO")
-public record AuthDuplicateCheckResponseDTO(
+public record AuthDuplicateCheckResponse(
     @ApiModelProperty(value = "중복 여부", example = "true")
     boolean isDuplicate
 ) {

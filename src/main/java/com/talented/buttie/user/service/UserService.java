@@ -1,17 +1,16 @@
 package com.talented.buttie.user.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.user.domain.ButtieDashboardVO;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.domain.UserProfileVO;
 import com.talented.buttie.user.domain.UserVO;
-import com.talented.buttie.user.dto.request.CreateEmploymentPreparationRequestDTO;
-import com.talented.buttie.user.dto.request.ModifyUserProfileRequestDTO;
-import com.talented.buttie.user.dto.request.UpdateEmploymentPreparationRequestDTO;
-import com.talented.buttie.user.dto.request.WithdrawUserRequestDTO;
+import com.talented.buttie.user.dto.request.user.ModifyUserProfileRequest;
+import com.talented.buttie.user.dto.request.user.UpdateEmploymentPreparationRequest;
+import com.talented.buttie.user.dto.request.user.WithdrawUserRequest;
 import com.talented.buttie.user.exception.UserErrorCode;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import com.talented.buttie.user.mapper.UserMapper;
-import com.talented.buttie.user.domain.ButiDashboardVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,17 +32,18 @@ public class UserService {
 
         return userProfile;
     }
-    public ButiDashboardVO getButiDashboard(Long userId) {
-        ButiDashboardVO butiDashboard = userMapper.selectButiDashboard(userId);
 
-        if (butiDashboard == null) {
+    public ButtieDashboardVO getButtieDashboard(Long userId) {
+        ButtieDashboardVO buttieDashboard = userMapper.selectButtieDashboard(userId);
+
+        if (buttieDashboard == null) {
             throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
         }
 
-        return butiDashboard;
+        return buttieDashboard;
     }
 
-    public Long modifyEmploymentPreparation(Long userId, UpdateEmploymentPreparationRequestDTO request) {
+    public Long modifyEmploymentPreparation(Long userId, UpdateEmploymentPreparationRequest request) {
         EmploymentPreparationVO employmentPreparation =
             EmploymentPreparationVO.createEmploymentPreparation(userId, request);
 
@@ -53,6 +53,7 @@ public class UserService {
         }
         return userId;
     }
+
     public EmploymentPreparationVO getEmploymentPreparation(Long userId) {
         EmploymentPreparationVO employmentPreparation =
             employmentPreparationMapper.selectEmploymentPreparation(userId);
@@ -64,14 +65,14 @@ public class UserService {
         return employmentPreparation;
     }
 
-    public Long withdrawUser(Long userId, WithdrawUserRequestDTO request) {
+    public Long withdrawUser(Long userId, WithdrawUserRequest request) {
         String passwordHash = userMapper.getPasswordByUserId(userId);
 
         if (passwordHash == null || passwordHash.isBlank()) {
             throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
         }
 
-        if (!passwordEncoder.matches(request.password(), passwordHash)){
+        if (!passwordEncoder.matches(request.password(), passwordHash)) {
             throw ApplicationException.from(UserErrorCode.PASSWORD_MISMATCH);
         }
 
@@ -81,19 +82,7 @@ public class UserService {
         return userId;
     }
 
-    public Long createEmploymentPreparation(Long userId, CreateEmploymentPreparationRequestDTO request) {
-
-        EmploymentPreparationVO employmentPreparation =
-            EmploymentPreparationVO.createEmploymentPreparation(userId, request);
-
-        int inserted = employmentPreparationMapper.insertEmploymentPreparation(employmentPreparation);
-        if (inserted == 0) {
-            throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_CREATE_FAILED);
-        }
-        return userId;
-    }
-
-    public Long modifyUserProfile(Long userId, ModifyUserProfileRequestDTO request) {
+    public Long modifyUserProfile(Long userId, ModifyUserProfileRequest request) {
         if (userMapper.countByNickname(request.nickname()) > 0) {
             throw ApplicationException.from(UserErrorCode.DUPLICATE_NICKNAME);
         }
@@ -107,4 +96,16 @@ public class UserService {
 
         return userId;
     }
+
+//    public Long createEmploymentPreparation(Long userId, CreateEmploymentPreparationRequest request) {
+//
+//        EmploymentPreparationVO employmentPreparation =
+//            EmploymentPreparationVO.createEmploymentPreparation(userId, request);
+//
+//        int inserted = employmentPreparationMapper.createEmploymentPreparation(employmentPreparation);
+//        if (inserted == 0) {
+//            throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_CREATE_FAILED);
+//        }
+//        return userId;
+//    }
 }

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ButiDashboardVO {
+public class ButtieDashboardVO {
 
     private int buttieLevel;
     private String stageName;

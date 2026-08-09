@@ -10,19 +10,18 @@
       AND USER_STATUS != 'WITHDRAWN'
   </select>
   <select id="selectUserProfile" resultType="com.talented.buttie.user.domain.UserProfileVO">
-    SELECT
-      u.USER_ID                                       AS userId,
-      ub.BUTTIE_LEVEL                                 AS buttieLevel,
-      CASE COALESCE(s.RISK_LEVEL, 'STABLE')
-        WHEN 'STABLE'  THEN bl.IMAGE_URL_STABLE
-        WHEN 'CAUTION' THEN bl.IMAGE_URL_CAUTION
-        WHEN 'DANGER'  THEN bl.IMAGE_URL_DANGER
-        END                                           AS buttieImageUrl,
-      u.USER_NICKNAME                                 AS userNickname,
-      u.USER_NAME                                     AS userName,
-      ep.BIRTH_DATE                                   AS birthDate,
-      u.USER_PHONE_NUMBER                             AS userPhoneNumber,
-      u.USER_EMAIL                                    AS userEmail
+    SELECT u.USER_ID           AS userId,
+           ub.BUTTIE_LEVEL     AS buttieLevel,
+           CASE COALESCE(s.RISK_LEVEL, 'STABLE')
+             WHEN 'STABLE' THEN bl.IMAGE_URL_STABLE
+             WHEN 'CAUTION' THEN bl.IMAGE_URL_CAUTION
+             WHEN 'DANGER' THEN bl.IMAGE_URL_DANGER
+             END               AS buttieImageUrl,
+           u.USER_NICKNAME     AS userNickname,
+           u.USER_NAME         AS userName,
+           ep.BIRTH_DATE       AS birthDate,
+           u.USER_PHONE_NUMBER AS userPhoneNumber,
+           u.USER_EMAIL        AS userEmail
     FROM USER u
            JOIN USER_BUTTIE ub ON u.USER_ID = ub.USER_ID
            JOIN BUTTIE_LEVEL bl ON ub.BUTTIE_LEVEL = bl.LEVEL
@@ -32,7 +31,7 @@
   </select>
   <update id="updateWithdrawnUser">
     UPDATE `USER`
-    SET USER_STATUS = #{user.userStatus},
+    SET USER_STATUS       = #{user.userStatus},
         USER_WITHDRAWN_AT = #{user.userWithdrawnAt}
     WHERE USER_ID = #{user.userId}
   </update>
@@ -40,7 +39,7 @@
 
   <update id="updateUser">
     UPDATE USER
-    SET USER_NICKNAME = #{user.userNickname},
+    SET USER_NICKNAME   = #{user.userNickname},
         USER_UPDATED_AT = NOW()
     WHERE USER_ID = #{user.userId}
   </update>
@@ -51,27 +50,31 @@
     WHERE USER_NICKNAME = #{nickname}
   </select>
 
-  <select id="selectButiDashboard" resultType="com.talented.buttie.user.domain.ButiDashboardVO">
-    SELECT
-        ub.BUTTIE_LEVEL AS buttieLevel,
-        bl.STAGE_NAME AS stageName,
-        bl.LEVEL_DESCRIPTION AS levelDescription,
-        ub.BUTTIE_TOTAL_EXP AS buttieTotalExp,
-        bl.REQUIRED_EXP AS requiredExp,
-        COALESCE(s.RISK_LEVEL, 'STABLE') AS riskLevel,
-        CASE COALESCE(s.RISK_LEVEL, 'STABLE')
-          WHEN 'STABLE'  THEN bl.IMAGE_URL_STABLE
-          WHEN 'CAUTION' THEN bl.IMAGE_URL_CAUTION
-          WHEN 'DANGER'  THEN bl.IMAGE_URL_DANGER
-          END AS buttieImageUrl
+  <select id="selectButtieDashboard" resultType="com.talented.buttie.user.domain.ButtieDashboardVO">
+    SELECT ub.BUTTIE_LEVEL                  AS buttieLevel,
+           bl.STAGE_NAME                    AS stageName,
+           bl.LEVEL_DESCRIPTION             AS levelDescription,
+           ub.BUTTIE_TOTAL_EXP              AS buttieTotalExp,
+           bl.REQUIRED_EXP                  AS requiredExp,
+           COALESCE(s.RISK_LEVEL, 'STABLE') AS riskLevel,
+           CASE COALESCE(s.RISK_LEVEL, 'STABLE')
+             WHEN 'STABLE' THEN bl.IMAGE_URL_STABLE
+             WHEN 'CAUTION' THEN bl.IMAGE_URL_CAUTION
+             WHEN 'DANGER' THEN bl.IMAGE_URL_DANGER
+             END                            AS buttieImageUrl
     FROM USER_BUTTIE ub
            JOIN BUTTIE_LEVEL bl ON ub.BUTTIE_LEVEL = bl.LEVEL
            LEFT JOIN SNAPSHOT s ON ub.USER_ID = s.USER_ID
-      AND s.SNAPSHOT_BASE_DATE = (
-        SELECT MAX(s2.SNAPSHOT_BASE_DATE)
-        FROM SNAPSHOT s2
-        WHERE s2.USER_ID = ub.USER_ID
-      )
+      AND s.SNAPSHOT_BASE_DATE = (SELECT MAX(s2.SNAPSHOT_BASE_DATE)
+                                  FROM SNAPSHOT s2
+                                  WHERE s2.USER_ID = ub.USER_ID)
     WHERE ub.USER_ID = #{userId}
   </select>
+
+  <insert id="createUserBuiite">
+    INSERT INTO USER_BUTTIE (USER_ID, BUTTIE_LEVEL, BUTTIE_TOTAL_EXP)
+    VALUES (#{userId},
+            1,
+            0)
+  </insert>
 </mapper>

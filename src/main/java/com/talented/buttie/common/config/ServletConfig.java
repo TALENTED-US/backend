@@ -66,7 +66,7 @@ public class ServletConfig implements WebMvcConfigurer {
             )
             .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
             .allowedHeaders("*")
-            .exposedHeaders("Authorization")
+            .exposedHeaders("Authorization", "X-Identity-Verification-Token")
             .allowCredentials(true);
     }
 

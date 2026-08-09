@@ -1,4 +1,4 @@
-package com.talented.buttie.user.dto.request;
+package com.talented.buttie.user.dto.request.user;
 
 import com.talented.buttie.user.domain.EmploymentPreparationType;
 import java.time.LocalDate;
@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(description = "취업 준비 정보 등록 요청")
-public record CreateEmploymentPreparationRequestDTO(
+public record CreateEmploymentPreparationRequest(
 
     @ApiModelProperty(value = "생년월일", example = "2002-03-29", required = true)
     @NotNull(message = "생년월일은 필수입니다.")

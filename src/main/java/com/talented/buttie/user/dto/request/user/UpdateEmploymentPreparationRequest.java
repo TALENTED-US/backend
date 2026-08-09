@@ -1,4 +1,4 @@
-package com.talented.buttie.user.dto.request;
+package com.talented.buttie.user.dto.request.user;
 
 import com.talented.buttie.user.domain.EmploymentPreparationType;
 import java.time.LocalDate;
@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 
 @ApiModel(description = "취업 준비 정보 수정 요청")
-public record UpdateEmploymentPreparationRequestDTO(
+public record UpdateEmploymentPreparationRequest(
 
     @ApiModelProperty(value = "거주 지역", example = "서울특별시", required = true)
     @NotBlank(message = "거주 지역은 필수입니다.")

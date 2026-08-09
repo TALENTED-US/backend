@@ -12,23 +12,6 @@ import lombok.Builder;
 @Builder
 @ApiModel(description = "회원 가입 요청")
 public record AuthSignUpRequest(
-
-    @ApiModelProperty(value = "이름", example = "장예연", required = true)
-    @NotBlank(message = "이름은 필수입니다.")
-    String userName,
-
-    @ApiModelProperty(value = "생년월일", example = "2002-03-29", required = true)
-    @NotBlank(message = "생년월일은 필수입니다.")
-    @Pattern(
-        regexp = "^\\d{4}-\\d{2}-\\d{2}$",
-        message = "생년월일은 yyyy-MM-dd 형식이어야 합니다."
-    )
-    String birthDate,
-
-    @ApiModelProperty(value = "전화번호", example = "010-1234-5678", required = true)
-    @NotBlank(message = "전화번호는 필수입니다.")
-    String phoneNumber,
-
     @ApiModelProperty(value = "이메일", example = "abc123@example.com", required = true)
     @NotBlank(message = "이메일은 필수입니다.")
     @Email(message = "올바른 이메일 형식이 아닙니다.")
@@ -51,17 +34,5 @@ public record AuthSignUpRequest(
     @Size(min = 2, max = 20, message = "닉네임은 2~20자여야 합니다.")
     String userNickname
 ) {
-    public AuthSignUpRequest saveNewUser(AuthSignUpRequest authSignUpRequest, String userPassword) {
-       return AuthSignUpRequest.builder()
-           .userName(authSignUpRequest.userName())
-           .birthDate(authSignUpRequest.birthDate())
-           .phoneNumber(authSignUpRequest.phoneNumber())
-           .userEmail(authSignUpRequest.userEmail())
-           .userPassword(userPassword)
-           .userPasswordCheck(authSignUpRequest.userPasswordCheck())
-           .userNickname(authSignUpRequest.userNickname())
-           .build();
-    }
-
 
 }
