@@ -32,6 +32,7 @@ public class SimulationItemUpdateService {
     private final FinancialSnapshotMapper financialSnapshotMapper;
     private final SimulationItemCalculationService simulationItemCalculationService;
 
+    // 미확정 시뮬레이셔 항목 조건 수정
     @Transactional
     public SimulationItemResponse updateItem(Long userId, Long itemId, UpdateSimulationItemRequest request) {
         SimulationVO simulation = findUpdatableSimulation(userId);

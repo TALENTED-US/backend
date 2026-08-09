@@ -20,6 +20,7 @@ public enum SimulationErrorCode implements BaseErrorCode {
     INVALID_INCOME_ITEM_NAME(HttpStatus.BAD_REQUEST, "SIMULATION_004", "수입 항목 이름을 확인해주세요."),
     ITEM_NAME_NOT_ALLOWED_FOR_EXPENSE(HttpStatus.BAD_REQUEST, "SIMULATION_005", "지출 항목의 이름은 수정 불가합니다."),
     INVALID_SIMULATION_ITEM_APPLY_PERIOD(HttpStatus.BAD_REQUEST, "SIMULATION_006", "항목 적용 기간이 올바르지 않습니다."),
+    SIMULATION_CANNOT_BE_CONFIRMED(HttpStatus.BAD_REQUEST, "SIMULATION_007", "시뮬레이션을 최종 확정할 수 없습니다"),
 
     ALREADY_NOT_CONFIRMED_SIMULATION_EXISTS(HttpStatus.CONFLICT, "SIMULATION_901", "이미 미확정 시뮬레이션이 존재합니다."),
     ALREADY_CONFIRMED_SIMULATION_EXISTS(HttpStatus.CONFLICT, "SIMULATION_902", "이미 확정 시뮬레이션이 존재합니다."),

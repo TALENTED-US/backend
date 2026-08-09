@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProjectionEngine {
 
+    // 예상 재정 계획 생성
     public List<MonthlyProjectionVO> createInitialProjections(
         Long simulationId,
         LocalDate simulationStartDate,
@@ -44,6 +45,7 @@ public class ProjectionEngine {
         return recalculateProjections(simulationId, simulationStartDate, simulationDueDate, baseline, livingFundThreshold);
     }
 
+    // 예상 재정 계획 재계산
     public List<MonthlyProjectionVO> recalculateProjections(
         Long simulationId,
         LocalDate simulationStartDate,
