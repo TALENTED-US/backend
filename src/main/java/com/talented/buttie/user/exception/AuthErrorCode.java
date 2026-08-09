@@ -7,13 +7,15 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum AuthErrorCode  implements BaseErrorCode {
+public enum AuthErrorCode implements BaseErrorCode {
 
     PASSWORD_NOT_VALID(HttpStatus.BAD_REQUEST, "AUTH_001", "비밀번호가 유효하지 않습니다."),
-    PASSWORD_HAS_USERNAME(HttpStatus.BAD_REQUEST, "AUTH_002", "비밀번호에 이름이 포함되어 있습니다."),
+    PASSWORD_HAS_EMAIL(HttpStatus.BAD_REQUEST, "AUTH_002", "비밀번호에 이메일이 포함되어 있습니다."),
     PASSWORD_HAS_PHONENUMBER(HttpStatus.BAD_REQUEST, "AUTH_003", "비밀번호에 전화번호가 포함되어 있습니다."),
     PASSWORD_HAS_BIRTHDAY(HttpStatus.BAD_REQUEST, "AUTH_004", "비밀번호에 생일이 포함되어 있습니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "AUTH_005", "유효하지 않은 토큰입니다."),
+    IDENTITY_VERIFICATION_FAILED(HttpStatus.BAD_REQUEST, "AUTH_006", "신원 확인에 실패했습니다. 다시 시도해 주십시오."),
+    INVALID_PHONE_NUMBER(HttpStatus.BAD_REQUEST, "AUTH_007", "유효하지 않은 전화번호입니다."),
 
     PASSWORD_NOT_MATCH(HttpStatus.UNAUTHORIZED, "AUTH_101", "비밀번호가 일치하지 않습니다."),
     REFRESH_TOKEN_SAVE_FAILED(HttpStatus.UNAUTHORIZED, "AUTH_102", "로그인 토큰 저장에 실패했습니다."),

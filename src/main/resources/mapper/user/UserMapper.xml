@@ -10,15 +10,14 @@
       AND USER_STATUS != 'WITHDRAWN'
   </select>
   <select id="selectUserProfile" resultType="com.talented.buttie.user.domain.UserProfileVO">
-    SELECT
-      u.USER_ID,
-      u.USER_NICKNAME,
-      ub.BUTTIE_TOTAL_EXP,
-      ub.BUTTIE_LEVEL,
-      u.USER_NAME,
-      u.USER_PHONE_NUMBER,
-      u.USER_EMAIL,
-      ep.BIRTH_DATE
+    SELECT u.USER_ID,
+           u.USER_NICKNAME,
+           ub.BUTTIE_TOTAL_EXP,
+           ub.BUTTIE_LEVEL,
+           u.USER_NAME,
+           u.USER_PHONE_NUMBER,
+           u.USER_EMAIL,
+           ep.BIRTH_DATE
     FROM USER u
            JOIN USER_BUTTIE ub ON u.USER_ID = ub.USER_ID
            JOIN EMPLOYMENT_PREPARATIONS ep ON u.USER_ID = ep.USER_ID
@@ -26,7 +25,7 @@
   </select>
   <update id="updateWithdrawnUser">
     UPDATE `USER`
-    SET USER_STATUS = #{user.userStatus},
+    SET USER_STATUS       = #{user.userStatus},
         USER_WITHDRAWN_AT = #{user.userWithdrawnAt}
     WHERE USER_ID = #{user.userId}
   </update>
@@ -34,7 +33,7 @@
 
   <update id="updateUser">
     UPDATE USER
-    SET USER_NICKNAME = #{user.userNickname},
+    SET USER_NICKNAME   = #{user.userNickname},
         USER_UPDATED_AT = NOW()
     WHERE USER_ID = #{user.userId}
   </update>
@@ -46,26 +45,30 @@
   </select>
 
   <select id="selectButiDashboard" resultType="com.talented.buttie.user.domain.ButiDashboardVO">
-    SELECT
-        ub.BUTTIE_LEVEL AS buttieLevel,
-        bl.STAGE_NAME AS stageName,
-        bl.LEVEL_DESCRIPTION AS levelDescription,
-        ub.BUTTIE_TOTAL_EXP AS buttieTotalExp,
-        bl.REQUIRED_EXP AS requiredExp,
-        COALESCE(s.RISK_LEVEL, 'STABLE') AS riskLevel,
-        CASE COALESCE(s.RISK_LEVEL, 'STABLE')
-          WHEN 'STABLE'  THEN bl.IMAGE_URL_STABLE
-          WHEN 'CAUTION' THEN bl.IMAGE_URL_CAUTION
-          WHEN 'DANGER'  THEN bl.IMAGE_URL_DANGER
-          END AS buttieImageUrl
+    SELECT ub.BUTTIE_LEVEL                  AS buttieLevel,
+           bl.STAGE_NAME                    AS stageName,
+           bl.LEVEL_DESCRIPTION             AS levelDescription,
+           ub.BUTTIE_TOTAL_EXP              AS buttieTotalExp,
+           bl.REQUIRED_EXP                  AS requiredExp,
+           COALESCE(s.RISK_LEVEL, 'STABLE') AS riskLevel,
+           CASE COALESCE(s.RISK_LEVEL, 'STABLE')
+             WHEN 'STABLE' THEN bl.IMAGE_URL_STABLE
+             WHEN 'CAUTION' THEN bl.IMAGE_URL_CAUTION
+             WHEN 'DANGER' THEN bl.IMAGE_URL_DANGER
+             END                            AS buttieImageUrl
     FROM USER_BUTTIE ub
            JOIN BUTTIE_LEVEL bl ON ub.BUTTIE_LEVEL = bl.LEVEL
            LEFT JOIN SNAPSHOT s ON ub.USER_ID = s.USER_ID
-      AND s.SNAPSHOT_BASE_DATE = (
-        SELECT MAX(s2.SNAPSHOT_BASE_DATE)
-        FROM SNAPSHOT s2
-        WHERE s2.USER_ID = ub.USER_ID
-      )
+      AND s.SNAPSHOT_BASE_DATE = (SELECT MAX(s2.SNAPSHOT_BASE_DATE)
+                                  FROM SNAPSHOT s2
+                                  WHERE s2.USER_ID = ub.USER_ID)
     WHERE ub.USER_ID = #{userId}
   </select>
+
+  <insert id="createUserBuiite">
+    INSERT INTO USER_BUTTIE (USER_ID, BUTTIE_LEVEL, BUTTIE_TOTAL_EXP)
+    VALUES (#{userId},
+            1,
+            0)
+  </insert>
 </mapper>

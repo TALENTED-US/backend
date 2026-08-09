@@ -1,15 +1,16 @@
 package com.talented.buttie.user.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+import com.talented.buttie.user.domain.ButiDashboardVO;
 import com.talented.buttie.user.domain.UserProfileVO;
 import com.talented.buttie.user.domain.UserVO;
-import com.talented.buttie.user.domain.ButiDashboardVO;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface UserMapper {
 
     UserProfileVO selectUserProfile(@Param("userId") Long userId);
+
     ButiDashboardVO selectButiDashboard(@Param("userId") Long userId);
 
     int updateUser(@Param("user") UserVO user);
@@ -19,4 +20,6 @@ public interface UserMapper {
     String getPasswordByUserId(@Param("userId") Long userId);
 
     int updateWithdrawnUser(@Param("user") UserVO user);
+
+    Long createUserBuiite(@Param("userId") Long userId);
 }

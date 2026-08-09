@@ -1,33 +1,30 @@
 package com.talented.buttie.user.controller;
 
 import com.talented.buttie.common.response.ApplicationResponse;
-import com.talented.buttie.common.util.PKCrypto;
-import com.talented.buttie.user.domain.UserProfileVO;
-import com.talented.buttie.user.dto.response.user.GetUserProfileResponse;
-import com.talented.buttie.user.service.UserService;
 import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.annotation.AuthUser;
+import com.talented.buttie.common.util.PKCrypto;
+import com.talented.buttie.user.domain.ButiDashboardVO;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
+import com.talented.buttie.user.domain.UserProfileVO;
 import com.talented.buttie.user.dto.request.user.ModifyUserProfileRequest;
 import com.talented.buttie.user.dto.request.user.UpdateEmploymentPreparationRequest;
-import com.talented.buttie.user.dto.response.user.UserPKResponse;
-import com.talented.buttie.user.dto.request.user.CreateEmploymentPreparationRequest;
-import org.springframework.web.bind.annotation.PostMapping;
-import com.talented.buttie.user.dto.response.user.GetEmploymentPreparationResponse;
 import com.talented.buttie.user.dto.request.user.WithdrawUserRequest;
-import com.talented.buttie.user.domain.ButiDashboardVO;
 import com.talented.buttie.user.dto.response.user.GetButiDashboardResponse;
-
+import com.talented.buttie.user.dto.response.user.GetEmploymentPreparationResponse;
+import com.talented.buttie.user.dto.response.user.GetUserProfileResponse;
+import com.talented.buttie.user.dto.response.user.UserPKResponse;
+import com.talented.buttie.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import javax.validation.Valid;
 
 @Api(tags = "User")
 @RestController
@@ -49,17 +46,16 @@ public class UserController {
         return ApplicationResponse.onSuccess(new UserPKResponse(PKCrypto.encrypt(userId)));
     }
 
-
-    @PostMapping("/employment-preparation")
-    @ApiOperation("취업 준비 정보 등록")
-    public ApplicationResponse<UserPKResponse> createEmploymentPreparation(
-        @AuthUser AuthenticationUser user,
-        @Valid @RequestBody CreateEmploymentPreparationRequest request
-    ) {
-        Long targetUserId = user.userId();
-        Long userId = userService.createEmploymentPreparation(targetUserId, request);
-        return ApplicationResponse.onSuccess(new UserPKResponse(PKCrypto.encrypt(userId)));
-    }
+//    @PostMapping("/employment-preparation")
+//    @ApiOperation("취업 준비 정보 등록")
+//    public ApplicationResponse<UserPKResponse> createEmploymentPreparation(
+//        @AuthUser AuthenticationUser user,
+//        @Valid @RequestBody CreateEmploymentPreparationRequest request
+//    ) {
+//        Long targetUserId = user.userId();
+//        Long userId = userService.createEmploymentPreparation(targetUserId, request);
+//        return ApplicationResponse.onSuccess(new UserPKResponse(PKCrypto.encrypt(userId)));
+//    }
 
     @GetMapping
     @ApiOperation("회원 프로필 조회")
@@ -85,7 +81,7 @@ public class UserController {
     @ApiOperation("취업 준비 정보 조회")
     public ApplicationResponse<GetEmploymentPreparationResponse> getEmploymentPreparation(
         @AuthUser AuthenticationUser user
-    ){
+    ) {
         Long targetUserId = user.userId();
         EmploymentPreparationVO employmentPreparation = userService.getEmploymentPreparation(targetUserId);
         return ApplicationResponse.onSuccess(GetEmploymentPreparationResponse.from(employmentPreparation));

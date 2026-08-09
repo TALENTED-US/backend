@@ -1,7 +1,7 @@
 package com.talented.buttie.user.domain;
 
-import lombok.Getter;
 import java.time.LocalDate;
+import lombok.Getter;
 
 @Getter
 public class UserProfileVO {
@@ -14,4 +14,6 @@ public class UserProfileVO {
     private LocalDate birthDate;
     private String userPhoneNumber;
     private String userEmail;
+
+
 }

@@ -1,10 +1,20 @@
 package com.talented.buttie.user.domain;
 
+import com.talented.buttie.user.dto.request.auth.AuthSignUpRequest;
+import com.talented.buttie.user.dto.response.auth.VerifiedCustomer;
 import java.time.LocalDateTime;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-@Data @Builder @NoArgsConstructor @AllArgsConstructor
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserVO {
+
     private Long userId;
     private String userName;
     @ToString.Exclude
@@ -17,8 +27,6 @@ public class UserVO {
     private Boolean userOnboardingCompleted;
     private UserStatus userStatus;
     private LocalDateTime userWithdrawnAt;
-    private LocalDateTime userCreatedAt;
-    private LocalDateTime userUpdatedAt;
 
     public static UserVO createWithdrawnUser(Long userId) {
         return UserVO.builder()
@@ -32,6 +40,16 @@ public class UserVO {
         return UserVO.builder()
             .userId(userId)
             .userNickname(nickname)
+            .build();
+    }
+
+    public static UserVO createUser(AuthSignUpRequest authSignUpRequest, VerifiedCustomer verifiedCustomer, String hashedPassword) {
+        return UserVO.builder()
+            .userName(verifiedCustomer.name())
+            .userEmail(authSignUpRequest.userEmail())
+            .userPasswordHash(hashedPassword)
+            .userNickname(authSignUpRequest.userNickname())
+            .userPhoneNumber(verifiedCustomer.phoneNumber())
             .build();
     }
 }
