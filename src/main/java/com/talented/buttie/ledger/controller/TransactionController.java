@@ -69,7 +69,7 @@ public class TransactionController {
 
     @ApiOperation("수동 거래 내역 등록")
     @PostMapping("")
-    public ApplicationResponse<Long> createTransaction(
+    public ApplicationResponse<String> createTransaction(
         @AuthUser AuthenticationUser user,
 
         @Valid @RequestBody CreateTransactionRequest request
@@ -77,42 +77,45 @@ public class TransactionController {
         Long targetUserId = user.userId();
         Long transactionId = createTransactionService.createTransaction(targetUserId, request);
 
-        return ApplicationResponse.onSuccess(transactionId);
+        return ApplicationResponse.onSuccess(PKCrypto.encrypt(transactionId));
     }
 
     @ApiOperation("수동 거래 내역 수정 (외부거래 ID가 없을 때 사용)")
     @PatchMapping("/{transactionId}")
     public ApplicationResponse<TransactionResponse> updateTransaction(
-        @PathVariable Long transactionId,
+        @PathVariable("transactionId") String transactionId,
         @AuthUser AuthenticationUser user,
         @Valid @RequestBody UpdateTransactionRequest request
     ){
         Long targetUserId = user.userId();
-        TransactionVO transaction = updateTransactionService.updateTransaction(targetUserId, transactionId, request);
+        Long decryptedTransactionId = PKCrypto.decrypt(transactionId);
+        TransactionVO transaction = updateTransactionService.updateTransaction(targetUserId, decryptedTransactionId, request);
         return ApplicationResponse.onSuccess(TransactionResponse.from(transaction));
     }
 
     @ApiOperation("외부 거래 메모 수정 (외부거래 ID가 있을 때 사용)")
     @PatchMapping("/{transactionId}/memo")
     public ApplicationResponse<TransactionResponse> updateTransactionMemo(
-        @PathVariable Long transactionId,
+        @PathVariable("transactionId") String transactionId,
         @AuthUser AuthenticationUser user,
         @Valid @RequestBody UpdateTransactionMemoRequest request
     ){
         Long targetUserId = user.userId();
-        TransactionVO transactionMemo = updateTransactionService.updateTransactionMemo(targetUserId, transactionId, request);
+        Long decryptedTransactionId = PKCrypto.decrypt(transactionId);
+        TransactionVO transactionMemo = updateTransactionService.updateTransactionMemo(targetUserId, decryptedTransactionId, request);
         return ApplicationResponse.onSuccess(TransactionResponse.from(transactionMemo));
     }
 
     @ApiOperation("수동 거래 내역 삭제 (외부거래 ID가 없을 때 사용)")
     @DeleteMapping("/{transactionId}")
-    public ApplicationResponse<Long> deleteTransaction(
-        @PathVariable Long transactionId,
+    public ApplicationResponse<String> deleteTransaction(
+        @PathVariable("transactionId") String transactionId,
         @AuthUser AuthenticationUser user
     ){
         Long targetUserId = user.userId();
-        Long deleteUserId = deleteTransactionService.deleteTransaction(targetUserId, transactionId);
-        return ApplicationResponse.onSuccess(deleteUserId);
+        Long decryptedTransactionId = PKCrypto.decrypt(transactionId);
+        deleteTransactionService.deleteTransaction(targetUserId, decryptedTransactionId);
+        return ApplicationResponse.onSuccess(PKCrypto.encrypt(decryptedTransactionId));
     }
 
     @ApiOperation("고정 지출 상세 목록 조회")
@@ -164,17 +167,18 @@ public class TransactionController {
     @ApiOperation("거래 상세 조회")
     @GetMapping("/{transactionId}")
     public ApplicationResponse<TransactionDetailResponse> getTransactionDetail(
-        @PathVariable("transactionId") Long transactionId,
+        @PathVariable("transactionId") String transactionId,
         @AuthUser AuthenticationUser user
     ){
         Long targetUserId = user.userId();
-        TransactionDetailResponse response = readTransactionDetailService.getTransactionDetail(targetUserId, transactionId);
+        Long decryptedTransactionId = PKCrypto.decrypt(transactionId);
+        TransactionDetailResponse response = readTransactionDetailService.getTransactionDetail(targetUserId, decryptedTransactionId);
         return ApplicationResponse.onSuccess(response);
     }
 
     @ApiOperation("고정 지출 추가")
     @PatchMapping("/{transactionId}/fixed")
-    public ApplicationResponse<Long> createFixedExpense(
+    public ApplicationResponse<String> createFixedExpense(
         @PathVariable("transactionId") String transactionId,
         @AuthUser AuthenticationUser user
     ){
@@ -182,12 +186,12 @@ public class TransactionController {
         Long decryptedTransactionId = PKCrypto.decrypt(transactionId);
         Long resultTransactionId = createFixedExpenseService.createFixedExpense(targetUserId, decryptedTransactionId);
 
-        return ApplicationResponse.onSuccess(resultTransactionId);
+        return ApplicationResponse.onSuccess(PKCrypto.encrypt(resultTransactionId));
     }
 
     @ApiOperation("고정 지출 삭제(해제)")
     @PatchMapping("/{transactionId}/fixed/delete")
-    public ApplicationResponse<Long> deleteFixedExpense(
+    public ApplicationResponse<String> deleteFixedExpense(
         @PathVariable("transactionId") String transactionId,
         @AuthUser AuthenticationUser user
     ){
@@ -195,6 +199,6 @@ public class TransactionController {
         Long decryptedTransactionId = PKCrypto.decrypt(transactionId);
         Long resultTransactionId = deleteFixedExpenseService.deleteFixedExpense(targetUserId, decryptedTransactionId);
 
-        return ApplicationResponse.onSuccess(resultTransactionId);
+        return ApplicationResponse.onSuccess(PKCrypto.encrypt(resultTransactionId));
     }
 }
