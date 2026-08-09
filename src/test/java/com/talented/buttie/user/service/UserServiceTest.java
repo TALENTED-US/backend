@@ -52,8 +52,7 @@ class UserServiceTest {
             1,
             EmploymentPreparationType.FIRST_JOB,
             LocalDate.of(2026, 7, 1),
-            LocalDate.of(2027, 1, 1),
-            0
+            LocalDate.of(2027, 1, 1)
         );
 
         given(employmentPreparationMapper.updateEmploymentPreparation(any(EmploymentPreparationVO.class)))
@@ -76,8 +75,7 @@ class UserServiceTest {
             1,
             EmploymentPreparationType.FIRST_JOB,
             LocalDate.of(2026, 7, 1),
-            LocalDate.of(2027, 1, 1),
-            0
+            LocalDate.of(2027, 1, 1)
         );
 
         given(employmentPreparationMapper.updateEmploymentPreparation(any(EmploymentPreparationVO.class)))

@@ -1,5 +1,6 @@
 package com.talented.buttie.catalog.domain;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.*;
 
@@ -13,7 +14,7 @@ public class PolicyVO {
     private String policyRegion;
     private Integer policySupportAmount;
     private Integer supportMonthCount;
-    private LocalDateTime dueDate;
+    private LocalDate dueDate;
     private String requiredDocument;
     private String employmentPrepStatus;
     private Integer familyCount;

@@ -1,10 +1,10 @@
-package com.talented.buttie.simulation.controller;
+package com.talented.buttie.dashboard.controller;
 
 import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.annotation.AuthUser;
-import com.talented.buttie.simulation.dto.response.TimelineResponse;
-import com.talented.buttie.simulation.service.TimelineReadService;
+import com.talented.buttie.dashboard.dto.TimelineResponse;
+import com.talented.buttie.dashboard.service.TimelineReadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;

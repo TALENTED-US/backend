@@ -1,7 +1,7 @@
-package com.talented.buttie.simulation.dto.response;
+package com.talented.buttie.dashboard.dto;
 
 import com.talented.buttie.common.util.PKCrypto;
-import com.talented.buttie.simulation.domain.TimelineVO;
+import com.talented.buttie.dashboard.domain.TimelineVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;

@@ -41,13 +41,11 @@ public class EmploymentPreparationVO {
     ) {
         return EmploymentPreparationVO.builder()
             .userId(userId)
-            .birthDate(request.birthDate())
             .employmentPrepRegion(request.region())
             .familyCount(request.familyCount())
             .employmentPrepType(request.employmentPrepType())
             .prepStartDate(request.prepStartDate())
             .targetEmploymentDate(request.targetEmploymentDate())
-            .livingFundThreshold(request.livingFundThreshold())
             .build();
     }
 }

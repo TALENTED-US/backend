@@ -1,5 +1,6 @@
 package com.talented.buttie.simulation.domain;
 
+import com.talented.buttie.catalog.domain.PolicyVO;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
 import java.time.LocalDate;
 import lombok.*;
@@ -17,4 +18,5 @@ public class SimulationItemVO {
     private Long policyId;
     private SimulationRecurrenceType recurrenceType;
     private Boolean isDeleted;
+    private PolicyVO policy;
 }

@@ -7,9 +7,9 @@ import lombok.Getter;
 public class UserProfileVO {
 
     private Long userId;
-    private String userNickname;
-    private Integer buttieTotalExp;
+    private String buttieImageUrl;
     private Integer buttieLevel;
+    private String userNickname;
     private String userName;
     private LocalDate birthDate;
     private String userPhoneNumber;

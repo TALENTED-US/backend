@@ -48,7 +48,7 @@ public record PolicySummaryResponse(
     String supportTruncatedMessage,
 
     @ApiModelProperty(value = "정책 신청 마감 일시", example = "2026-12-31T23:59:59")
-    LocalDateTime dueDate,
+    LocalDate dueDate,
 
     @ApiModelProperty(value = "필요 서류", example = "주민등록등본, 임대차계약서, 통장사본")
     String requiredDocument,

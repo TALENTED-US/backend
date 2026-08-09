@@ -1,12 +1,9 @@
 package com.talented.buttie.simulation.service;
 
-import com.talented.buttie.catalog.domain.PolicyVO;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemVO;
 import com.talented.buttie.simulation.domain.SimulationVO;
-import com.talented.buttie.simulation.dto.request.ApplySimulationItemRequest;
-import com.talented.buttie.simulation.dto.response.ApplySimulationItemResponse;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationItemMapper;
@@ -22,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class SimulationItemCreateService {
+public class SimulationItemDeleteService {
 
     private final SimulationMapper simulationMapper;
     private final SimulationItemMapper simulationItemMapper;
@@ -31,50 +28,50 @@ public class SimulationItemCreateService {
     private final SimulationItemCalculationService simulationItemCalculationService;
 
     @Transactional
-    public ApplySimulationItemResponse applyItem(Long userId, ApplySimulationItemRequest request) {
+    public void deleteItem(Long userId, Long itemId) {
+
         SimulationVO simulation = findUpdatableSimulation(userId);
 
-        simulationItemCalculationService.validateRequest(request, simulation);
+        int deletedRows = simulationItemMapper.deleteByIdAndSimulationId(itemId, simulation.getSimulationId());
 
-        FinancialSnapshotVO snapshot = financialSnapshotMapper.findLatestByUserId(userId);
+        if(deletedRows == 0) {
+            throw ApplicationException.from(SimulationErrorCode.SIMULATION_ITEM_NOT_FOUND);
+        }
+
+        recalculateSimulation(simulation);
+    }
+
+    private void recalculateSimulation(SimulationVO simulation) {
+        FinancialSnapshotVO snapshot = financialSnapshotMapper.findById(simulation.getSnapshotId());
 
         if (snapshot == null) {
             throw ApplicationException.from(AnalysisErrorCode.SNAPSHOT_NOT_FOUND);
         }
 
-        PolicyVO policy = simulationItemCalculationService.resolvePolicy(request);
-        SimulationItemVO item = simulationItemCalculationService.createItem(simulation, request, policy);
+        List<SimulationItemVO> appliedItems = simulationItemMapper.findAllActiveBySimulationId(simulation.getSimulationId());
 
-        simulationItemMapper.save(item);
-
-        List<SimulationItemVO> appliedItems =
-            simulationItemMapper.findAllActiveBySimulationId(simulation.getSimulationId());
-
-        List<MonthlyProjectionVO> recalculatedProjections =
-            simulationItemCalculationService.recalculateProjections(simulation, snapshot, appliedItems);
+        List<MonthlyProjectionVO> recalculatedProjections = simulationItemCalculationService
+            .recalculateProjections(simulation, snapshot, appliedItems);
 
         monthlyProjectionMapper.deleteAllBySimulationId(simulation.getSimulationId());
         monthlyProjectionMapper.saveAll(recalculatedProjections);
 
         MonthlyProjectionVO lastProjection = recalculatedProjections.get(recalculatedProjections.size() - 1);
-        BigDecimal expectPrepMonths = simulationItemCalculationService.calculateExpectedPrepMonths(
-            recalculatedProjections,
-            snapshot
-        );
 
-        simulationMapper.updateSummary(simulation.getSimulationId(), lastProjection.getClosingBalance(), expectPrepMonths);
+        BigDecimal expectedPrepMonths = simulationItemCalculationService
+            .calculateExpectedPrepMonths(recalculatedProjections, snapshot);
 
-        return ApplySimulationItemResponse.from(item.getSimulationItemId());
+        simulationMapper.updateSummary(simulation.getSimulationId(), lastProjection.getClosingBalance(), expectedPrepMonths);
     }
 
     private SimulationVO findUpdatableSimulation(Long userId) {
-        SimulationVO activeSimulation = simulationMapper.findActiveByUserId(userId);
+        SimulationVO simulation = simulationMapper.findActiveByUserId(userId);
 
-        if(activeSimulation != null) {
-            return activeSimulation;
+        if(simulation != null) {
+            return simulation;
         }
 
-        if(simulationMapper.findLatestConfirmedByUserId(userId) != null) {
+        if (simulationMapper.findLatestConfirmedByUserId(userId) != null) {
             throw ApplicationException.from(SimulationErrorCode.CONFIRMED_SIMULATION_CANNOT_BE_UPDATED);
         }
 

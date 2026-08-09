@@ -1,6 +1,6 @@
-package com.talented.buttie.simulation.mapper;
+package com.talented.buttie.dashboard.mapper;
 
-import com.talented.buttie.simulation.domain.TimelineVO;
+import com.talented.buttie.dashboard.domain.TimelineVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

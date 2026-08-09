@@ -10,17 +10,24 @@
       AND USER_STATUS != 'WITHDRAWN'
   </select>
   <select id="selectUserProfile" resultType="com.talented.buttie.user.domain.UserProfileVO">
-    SELECT u.USER_ID,
-           u.USER_NICKNAME,
-           ub.BUTTIE_TOTAL_EXP,
-           ub.BUTTIE_LEVEL,
-           u.USER_NAME,
-           u.USER_PHONE_NUMBER,
-           u.USER_EMAIL,
-           ep.BIRTH_DATE
+    SELECT
+      u.USER_ID                                       AS userId,
+      ub.BUTTIE_LEVEL                                 AS buttieLevel,
+      CASE COALESCE(s.RISK_LEVEL, 'STABLE')
+        WHEN 'STABLE'  THEN bl.IMAGE_URL_STABLE
+        WHEN 'CAUTION' THEN bl.IMAGE_URL_CAUTION
+        WHEN 'DANGER'  THEN bl.IMAGE_URL_DANGER
+        END                                           AS buttieImageUrl,
+      u.USER_NICKNAME                                 AS userNickname,
+      u.USER_NAME                                     AS userName,
+      ep.BIRTH_DATE                                   AS birthDate,
+      u.USER_PHONE_NUMBER                             AS userPhoneNumber,
+      u.USER_EMAIL                                    AS userEmail
     FROM USER u
            JOIN USER_BUTTIE ub ON u.USER_ID = ub.USER_ID
+           JOIN BUTTIE_LEVEL bl ON ub.BUTTIE_LEVEL = bl.LEVEL
            JOIN EMPLOYMENT_PREPARATIONS ep ON u.USER_ID = ep.USER_ID
+           LEFT JOIN SNAPSHOT s ON ub.USER_ID = s.USER_ID
     WHERE u.USER_ID = #{userId}
   </select>
   <update id="updateWithdrawnUser">

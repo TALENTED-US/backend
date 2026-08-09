@@ -11,10 +11,6 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(description = "취업 준비 정보 수정 요청")
 public record UpdateEmploymentPreparationRequest(
 
-    @ApiModelProperty(value = "생년월일", example = "2002-03-29", required = true)
-    @NotNull(message = "생년월일은 필수입니다.")
-    LocalDate birthDate,
-
     @ApiModelProperty(value = "거주 지역", example = "서울특별시", required = true)
     @NotBlank(message = "거주 지역은 필수입니다.")
     String region,
@@ -33,9 +29,6 @@ public record UpdateEmploymentPreparationRequest(
 
     @ApiModelProperty(value = "목표 취업일", example = "2026-07-25", required = true)
     @NotNull(message = "목표 취업일은 필수입니다.")
-    LocalDate targetEmploymentDate,
+    LocalDate targetEmploymentDate
 
-    @ApiModelProperty(value = "생활 자금 기준", example = "0", required = true)
-    @NotNull(message = "생활 자금 기준은 필수입니다.")
-    Integer livingFundThreshold
 ) {}

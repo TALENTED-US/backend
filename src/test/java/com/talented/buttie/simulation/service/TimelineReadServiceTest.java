@@ -6,10 +6,11 @@ import static org.mockito.Mockito.mockStatic;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.common.util.PKCrypto;
-import com.talented.buttie.simulation.domain.TimelineVO;
-import com.talented.buttie.simulation.dto.response.TimelineResponse;
-import com.talented.buttie.simulation.exception.TimelineErrorCode;
-import com.talented.buttie.simulation.mapper.TimelineMapper;
+import com.talented.buttie.dashboard.domain.TimelineVO;
+import com.talented.buttie.dashboard.dto.TimelineResponse;
+import com.talented.buttie.dashboard.exception.TimelineErrorCode;
+import com.talented.buttie.dashboard.mapper.TimelineMapper;
+import com.talented.buttie.dashboard.service.TimelineReadService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import org.junit.jupiter.api.AfterEach;

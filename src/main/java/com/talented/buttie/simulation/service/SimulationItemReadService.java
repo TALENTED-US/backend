@@ -1,6 +1,5 @@
 package com.talented.buttie.simulation.service;
 
-import com.talented.buttie.catalog.domain.PolicyVO;
 import com.talented.buttie.catalog.mapper.PolicyMapper;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
@@ -37,7 +36,7 @@ public class SimulationItemReadService {
         SimulationVO simulation = simulationMapper.findActiveByUserId(userId);
 
         if (simulation == null) {
-            throw ApplicationException.from(SimulationErrorCode.SIMULATION_NOT_FOUND);
+            throw ApplicationException.from(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND);
         }
 
         FinancialSnapshotVO snapshot = financialSnapshotMapper.findLatestByUserId(userId);
@@ -69,18 +68,14 @@ public class SimulationItemReadService {
         SimulationVO simulation = simulationMapper.findActiveByUserId(userId);
 
         if (simulation == null) {
-            throw ApplicationException.from(SimulationErrorCode.SIMULATION_NOT_FOUND);
+            throw ApplicationException.from(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND);
         }
 
         List<SimulationItemResponse> items = simulationItemMapper
             .findAllByCategory(simulation.getSimulationId(), itemCategory)
             .stream()
-            .map(item -> {
-                PolicyVO policy = item.getPolicyId() == null
-                    ? null
-                    : policyMapper.findById(item.getPolicyId());
-                return SimulationItemResponse.from(item, policy, simulation);
-            })
+            .map(item -> SimulationItemResponse.from(
+                item, item.getPolicy(), simulation))
             .toList();
 
         return new SimulationItemsByCategoryResponse(items);
@@ -90,12 +85,9 @@ public class SimulationItemReadService {
     public List<SimulationItemResponse> findAllAppliedItems(SimulationVO simulation) {
         return simulationItemMapper.findAllActiveBySimulationId(simulation.getSimulationId())
             .stream()
-            .map(item -> {
-                PolicyVO policy = item.getPolicyId() == null
-                    ? null
-                    : policyMapper.findById(item.getPolicyId());
-                return SimulationItemResponse.from(item, policy, simulation);
-            })
+            .map(item -> SimulationItemResponse.from(
+                item, item.getPolicy(), simulation
+            ))
             .toList();
     }
 
