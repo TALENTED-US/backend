@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.talented.buttie.simulation.mapper.TimelineMapper">
+<mapper namespace="com.talented.buttie.dashboard.mapper.TimelineMapper">
 
   <!-- 유저의 월별 재정 타임라인 정보 조회 (스냅샷, 시뮬레이션, 취업 준비 정보 결합) -->
-  <select id="findTimelineByUserId" resultType="com.talented.buttie.simulation.domain.TimelineVO">
+  <select id="findTimelineByUserId" resultType="com.talented.buttie.dashboard.domain.TimelineVO">
     SELECT
       s.SIMULATION_ID               AS simulationId,
       ep.USER_ID                    AS userId,
