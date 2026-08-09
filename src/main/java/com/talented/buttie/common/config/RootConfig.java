@@ -1,30 +1,34 @@
 package com.talented.buttie.common.config;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.talented.buttie.user.dto.response.auth.VerifiedCustomer;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.time.Duration;
 import javax.sql.DataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.flywaydb.core.Flyway;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.flywaydb.core.Flyway;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @PropertySource({"classpath:/application.properties"})
 @ComponentScan(basePackages = {
     "com.talented.buttie.user.service",
-    "com.talented.buttie.user.redis",
     "com.talented.buttie.mydata.service",
     "com.talented.buttie.mydata.redis",
     "com.talented.buttie.mydata.client",
@@ -44,10 +48,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 })
 @MapperScan(basePackages = {"com.talented.buttie"})
 public class RootConfig {
-    @Value("${jdbc.driver}") String driver;
-    @Value("${jdbc.url}") String url;
-    @Value("${jdbc.username}") String username;
-    @Value("${jdbc.password}") String password;
+
+    @Value("${jdbc.driver}")
+    String driver;
+    @Value("${jdbc.url}")
+    String url;
+    @Value("${jdbc.username}")
+    String username;
+    @Value("${jdbc.password}")
+    String password;
 
     @Bean
     public DataSource dataSource() {
@@ -62,7 +71,7 @@ public class RootConfig {
 
     // Flyway
     @Bean(initMethod = "migrate")
-    public Flyway flyway(){
+    public Flyway flyway() {
         return Flyway.configure()
             .dataSource(dataSource())
             .locations("classpath:db/migration")
@@ -91,13 +100,26 @@ public class RootConfig {
     }
 
     @Bean
-    public DataSourceTransactionManager transactionManager(){
+    public DataSourceTransactionManager transactionManager() {
         return new DataSourceTransactionManager(dataSource());
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    @Bean
+    public Cache<String, VerifiedCustomer> identityVerificationCache() {
+        return Caffeine.newBuilder()
+            .maximumSize(10_000)
+            .expireAfterWrite(Duration.ofMinutes(30))
+            .build();
     }
 
 }

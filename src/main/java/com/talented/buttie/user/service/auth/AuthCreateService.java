@@ -1,9 +1,16 @@
 package com.talented.buttie.user.service.auth;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.user.domain.EmploymentPreparationVO;
+import com.talented.buttie.user.domain.UserVO;
 import com.talented.buttie.user.dto.request.auth.AuthSignUpRequest;
+import com.talented.buttie.user.dto.response.auth.VerifiedCustomer;
 import com.talented.buttie.user.exception.AuthErrorCode;
 import com.talented.buttie.user.mapper.AuthMapper;
+import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
+import com.talented.buttie.user.mapper.UserMapper;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,56 +21,94 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthCreateService {
 
     private final AuthMapper authMapper;
+    private final UserMapper userMapper;
+    private final EmploymentPreparationMapper employmentPreparationMapper;
     private final PasswordEncoder passwordEncoder;
+    private final Cache<String, VerifiedCustomer> identityVerificationCache;
+
 
     @Transactional
-    public Long createUser(AuthSignUpRequest authSignUpRequest) {
-        isPasswordValid(authSignUpRequest);
-        isFieldDuplicate(authSignUpRequest);
+    public Long createUser(AuthSignUpRequest authSignUpRequest, String verificationToken) {
+        VerifiedCustomer verifiedCustomer = getVerifiedCustomer(verificationToken);
+
+        isPasswordValid(authSignUpRequest, verifiedCustomer);
+        isFieldDuplicate(authSignUpRequest, verifiedCustomer);
 
         String passwordHash = passwordEncoder.encode(authSignUpRequest.userPassword());
-        AuthSignUpRequest newUser = authSignUpRequest.saveNewUser(authSignUpRequest, passwordHash);
-        Long userId = authMapper.createUser(newUser);
-        if(userId == null) {
+
+        UserVO userVO = UserVO.createUser(authSignUpRequest, verifiedCustomer, passwordHash);
+        Long userId = authMapper.createUser(userVO);
+        if (userId == null) {
             throw ApplicationException.from(AuthErrorCode.USER_CREATE_FAILED);
         }
+
+        Long preparationUserId = employmentPreparationMapper.createEmploymentPreparation(
+            EmploymentPreparationVO.builder()
+                .userId(userId)
+                .birthDate(LocalDate.parse(verifiedCustomer.birthDate()))
+                .employmentPrepRegion(null)
+                .familyCount(null)
+                .employmentPrepType(null)
+                .prepStartDate(null)
+                .targetEmploymentDate(null)
+                .livingFundThreshold(null)
+                .build());
+
+        if (preparationUserId == null) {
+            throw ApplicationException.from(AuthErrorCode.USER_CREATE_FAILED);
+        }
+
+        Long buttieUserId = userMapper.createUserBuiite(userId);
+        if (buttieUserId == null) {
+            throw ApplicationException.from(AuthErrorCode.USER_CREATE_FAILED);
+        }
+
+        identityVerificationCache.invalidate(verificationToken);
         return userId;
     }
 
-    private void isPasswordValid(AuthSignUpRequest authSignUpRequest) {
+    private VerifiedCustomer getVerifiedCustomer(String token) {
+        VerifiedCustomer verifiedCustomer = identityVerificationCache.getIfPresent(token);
+        if (verifiedCustomer == null) {
+            throw ApplicationException.from(AuthErrorCode.IDENTITY_VERIFICATION_FAILED);
+        }
+        return verifiedCustomer;
+    }
+
+    private void isPasswordValid(AuthSignUpRequest authSignUpRequest, VerifiedCustomer verifiedCustomer) {
         String password = authSignUpRequest.userPassword();
         if (!password.equals(authSignUpRequest.userPasswordCheck())) {
             throw ApplicationException.from(AuthErrorCode.PASSWORD_NOT_VALID);
         }
 
-        String username = authSignUpRequest.userName().split("@")[0];
-        if (password.contains(username)) {
-            throw ApplicationException.from(AuthErrorCode.PASSWORD_HAS_USERNAME);
+        String userEmail = authSignUpRequest.userEmail().split("@")[0];
+        if (password.contains(userEmail)) {
+            throw ApplicationException.from(AuthErrorCode.PASSWORD_HAS_EMAIL);
         }
 
-        String middleNumber = authSignUpRequest.phoneNumber().substring(3, 7);
-        String lastNumber = authSignUpRequest.phoneNumber().substring(7, 11);
+        String middleNumber = verifiedCustomer.phoneNumber().substring(3, 7);
+        String lastNumber = verifiedCustomer.phoneNumber().substring(7, 11);
 
         if (password.contains(middleNumber) || password.contains(lastNumber)) {
             throw ApplicationException.from(AuthErrorCode.PASSWORD_HAS_PHONENUMBER);
         }
 
-        String[] birthday = authSignUpRequest.birthDate().split("-");
+        String[] birthday = verifiedCustomer.birthDate().split("-");
         if (password.contains(birthday[1] + birthday[2])) {
             throw ApplicationException.from(AuthErrorCode.PASSWORD_HAS_BIRTHDAY);
         }
     }
 
-    private void isFieldDuplicate(AuthSignUpRequest authSignUpRequest) {
-        if (authMapper.existsByPhoneNumber(authSignUpRequest.phoneNumber())) {
+    private void isFieldDuplicate(AuthSignUpRequest authSignUpRequest, VerifiedCustomer verifiedCustomer) {
+        if (authMapper.existsByPhoneNumber(verifiedCustomer.phoneNumber())) {
             throw ApplicationException.from(AuthErrorCode.PHONE_NUMBER_ALREADY_EXISTS);
         }
 
-        if(authMapper.existsByEmail(authSignUpRequest.userEmail())) {
+        if (authMapper.existsByEmail(authSignUpRequest.userEmail())) {
             throw ApplicationException.from(AuthErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
-        if(authMapper.existsByNickName(authSignUpRequest.userNickname())) {
+        if (authMapper.existsByNickName(authSignUpRequest.userNickname())) {
             throw ApplicationException.from(AuthErrorCode.NICKNAME_ALREADY_EXISTS);
         }
     }
