@@ -5,20 +5,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.user.domain.ButtieDashboardVO;
 import com.talented.buttie.user.domain.EmploymentPreparationType;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
+import com.talented.buttie.user.domain.UserProfileVO;
 import com.talented.buttie.user.domain.UserVO;
+import com.talented.buttie.user.dto.request.user.ModifyUserProfileRequest;
 import com.talented.buttie.user.dto.request.user.UpdateEmploymentPreparationRequest;
 import com.talented.buttie.user.dto.request.user.WithdrawUserRequest;
 import com.talented.buttie.user.exception.UserErrorCode;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
-import com.talented.buttie.user.dto.request.user.ModifyUserProfileRequest;
 import com.talented.buttie.user.mapper.UserMapper;
-import com.talented.buttie.user.domain.ButiDashboardVO;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import com.talented.buttie.user.domain.UserProfileVO;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,7 +47,6 @@ class UserServiceTest {
     void modifyEmploymentPreparation() {
         Long userId = 1L;
         UpdateEmploymentPreparationRequest request = new UpdateEmploymentPreparationRequest(
-            LocalDate.of(1999, 3, 15),
             "서울특별시",
             1,
             EmploymentPreparationType.FIRST_JOB,
@@ -70,7 +69,6 @@ class UserServiceTest {
     void throwWhenModifyTargetNotFound() {
         Long userId = 999L;
         UpdateEmploymentPreparationRequest request = new UpdateEmploymentPreparationRequest(
-            LocalDate.of(1999, 3, 15),
             "서울특별시",
             1,
             EmploymentPreparationType.FIRST_JOB,
@@ -91,6 +89,7 @@ class UserServiceTest {
             exception.getCode()
         );
     }
+
     @Test
     @DisplayName("닉네임을 수정하면 수정된 사용자 ID를 반환한다.")
     void modifyUserProfile() {
@@ -129,6 +128,7 @@ class UserServiceTest {
         );
         verify(userMapper, never()).updateUser(any(UserVO.class));
     }
+
     @Test
     @DisplayName("프로필 수정 시 해당 사용자가 없으면 예외가 발생한다.")
     void throwWhenModifyProfileTargetNotFound() {
@@ -191,19 +191,19 @@ class UserServiceTest {
     void getButiDashboard() {
 
         Long userId = 1L;
-        ButiDashboardVO mockVO = new ButiDashboardVO(
-            1, "새싹 버티",  "이제 막 자산관리를 시작한 기본 버티",120, 0, "CAUTION", "https://cdn.buttie.com/buttie/lv1_caution.png"
+        ButtieDashboardVO mockVO = new ButtieDashboardVO(
+            1, "새싹 버티", "이제 막 자산관리를 시작한 기본 버티", 120, 0, "CAUTION", "https://cdn.buttie.com/buttie/lv1_caution.png"
         );
 
-        given(userMapper.selectButiDashboard(userId))
+        given(userMapper.selectButtieDashboard(userId))
             .willReturn(mockVO);
 
-        ButiDashboardVO result = userService.getButiDashboard(userId);
+        ButtieDashboardVO result = userService.getButtieDashboard(userId);
 
         assertNotNull(result);
         assertEquals(1, result.getButtieLevel());
         assertEquals("CAUTION", result.getRiskLevel());
-        verify(userMapper).selectButiDashboard(userId);
+        verify(userMapper).selectButtieDashboard(userId);
     }
 
     @Test
@@ -211,12 +211,12 @@ class UserServiceTest {
     void throwWhenGetButiDashboardNotFound() {
         Long userId = 999L;
 
-        given(userMapper.selectButiDashboard(userId))
+        given(userMapper.selectButtieDashboard(userId))
             .willReturn(null);
 
         ApplicationException exception = assertThrows(
             ApplicationException.class,
-            () -> userService.getButiDashboard(userId)
+            () -> userService.getButtieDashboard(userId)
         );
 
         assertEquals(

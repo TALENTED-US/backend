@@ -1,7 +1,7 @@
 package com.talented.buttie.user.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
-import com.talented.buttie.user.domain.ButiDashboardVO;
+import com.talented.buttie.user.domain.ButtieDashboardVO;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.domain.UserProfileVO;
 import com.talented.buttie.user.domain.UserVO;
@@ -33,14 +33,14 @@ public class UserService {
         return userProfile;
     }
 
-    public ButiDashboardVO getButiDashboard(Long userId) {
-        ButiDashboardVO butiDashboard = userMapper.selectButiDashboard(userId);
+    public ButtieDashboardVO getButtieDashboard(Long userId) {
+        ButtieDashboardVO buttieDashboard = userMapper.selectButtieDashboard(userId);
 
-        if (butiDashboard == null) {
+        if (buttieDashboard == null) {
             throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
         }
 
-        return butiDashboard;
+        return buttieDashboard;
     }
 
     public Long modifyEmploymentPreparation(Long userId, UpdateEmploymentPreparationRequest request) {

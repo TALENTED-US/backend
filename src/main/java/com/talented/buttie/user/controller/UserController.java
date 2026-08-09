@@ -4,13 +4,13 @@ import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.annotation.AuthUser;
 import com.talented.buttie.common.util.PKCrypto;
-import com.talented.buttie.user.domain.ButiDashboardVO;
+import com.talented.buttie.user.domain.ButtieDashboardVO;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.domain.UserProfileVO;
 import com.talented.buttie.user.dto.request.user.ModifyUserProfileRequest;
 import com.talented.buttie.user.dto.request.user.UpdateEmploymentPreparationRequest;
 import com.talented.buttie.user.dto.request.user.WithdrawUserRequest;
-import com.talented.buttie.user.dto.response.user.GetButiDashboardResponse;
+import com.talented.buttie.user.dto.response.user.GetButtieDashboardResponse;
 import com.talented.buttie.user.dto.response.user.GetEmploymentPreparationResponse;
 import com.talented.buttie.user.dto.response.user.GetUserProfileResponse;
 import com.talented.buttie.user.dto.response.user.UserPKResponse;
@@ -69,12 +69,12 @@ public class UserController {
 
     @GetMapping("/buti")
     @ApiOperation("버티 성장 대시보드 조회")
-    public ApplicationResponse<GetButiDashboardResponse> getButiDashboard(
+    public ApplicationResponse<GetButtieDashboardResponse> getButtieDashboard(
         @AuthUser AuthenticationUser user
     ) {
         Long targetUserId = user.userId();
-        ButiDashboardVO butiDashboard = userService.getButiDashboard(targetUserId);
-        return ApplicationResponse.onSuccess(GetButiDashboardResponse.from(butiDashboard));
+        ButtieDashboardVO buttieDashboard = userService.getButtieDashboard(targetUserId);
+        return ApplicationResponse.onSuccess(GetButtieDashboardResponse.from(buttieDashboard));
     }
 
     @GetMapping("/employment-preparation")

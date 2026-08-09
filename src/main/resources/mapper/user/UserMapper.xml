@@ -10,19 +10,18 @@
       AND USER_STATUS != 'WITHDRAWN'
   </select>
   <select id="selectUserProfile" resultType="com.talented.buttie.user.domain.UserProfileVO">
-    SELECT
-      u.USER_ID                                       AS userId,
-      ub.BUTTIE_LEVEL                                 AS buttieLevel,
-      CASE COALESCE(s.RISK_LEVEL, 'STABLE')
-        WHEN 'STABLE'  THEN bl.IMAGE_URL_STABLE
-        WHEN 'CAUTION' THEN bl.IMAGE_URL_CAUTION
-        WHEN 'DANGER'  THEN bl.IMAGE_URL_DANGER
-        END                                           AS buttieImageUrl,
-      u.USER_NICKNAME                                 AS userNickname,
-      u.USER_NAME                                     AS userName,
-      ep.BIRTH_DATE                                   AS birthDate,
-      u.USER_PHONE_NUMBER                             AS userPhoneNumber,
-      u.USER_EMAIL                                    AS userEmail
+    SELECT u.USER_ID           AS userId,
+           ub.BUTTIE_LEVEL     AS buttieLevel,
+           CASE COALESCE(s.RISK_LEVEL, 'STABLE')
+             WHEN 'STABLE' THEN bl.IMAGE_URL_STABLE
+             WHEN 'CAUTION' THEN bl.IMAGE_URL_CAUTION
+             WHEN 'DANGER' THEN bl.IMAGE_URL_DANGER
+             END               AS buttieImageUrl,
+           u.USER_NICKNAME     AS userNickname,
+           u.USER_NAME         AS userName,
+           ep.BIRTH_DATE       AS birthDate,
+           u.USER_PHONE_NUMBER AS userPhoneNumber,
+           u.USER_EMAIL        AS userEmail
     FROM USER u
            JOIN USER_BUTTIE ub ON u.USER_ID = ub.USER_ID
            JOIN BUTTIE_LEVEL bl ON ub.BUTTIE_LEVEL = bl.LEVEL
@@ -51,7 +50,7 @@
     WHERE USER_NICKNAME = #{nickname}
   </select>
 
-  <select id="selectButiDashboard" resultType="com.talented.buttie.user.domain.ButiDashboardVO">
+  <select id="selectButtieDashboard" resultType="com.talented.buttie.user.domain.ButtieDashboardVO">
     SELECT ub.BUTTIE_LEVEL                  AS buttieLevel,
            bl.STAGE_NAME                    AS stageName,
            bl.LEVEL_DESCRIPTION             AS levelDescription,
