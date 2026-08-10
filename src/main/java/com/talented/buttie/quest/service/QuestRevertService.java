@@ -11,13 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class QuestUpdateService {
+public class QuestRevertService {
 
     private final QuestMapper questMapper;
     private final ExperienceService experienceService;
 
     @Transactional
-    public Long completeQuest(Long userId, Long questId) {
+    public Long revertQuest(Long userId, Long questId) {
         if (questId == null) {
             throw ApplicationException.from(QuestErrorCode.QUEST_NOT_FOUND);
         }
@@ -32,25 +32,26 @@ public class QuestUpdateService {
             throw ApplicationException.from(QuestErrorCode.QUEST_USER_ID_MISMATCH);
         }
 
-        if (quest.getQuestStatus() == QuestStatus.COMPLETED) {
-            throw ApplicationException.from(QuestErrorCode.QUEST_ALREADY_COMPLETED);
+        // 완료 상태인 퀘스트만 취소(진행중 변경) 가능
+        if (quest.getQuestStatus() != QuestStatus.COMPLETED) {
+            throw ApplicationException.from(QuestErrorCode.QUEST_NOT_COMPLETED);
         }
 
         try {
-            // 1. 퀘스트 상태를 COMPLETED(완료)로 변경
-            questMapper.updateStatus(questId, QuestStatus.COMPLETED);
+            // 1. 퀘스트 상태를 NOT_COMPLETED (진행중)으로 변경
+            questMapper.updateStatus(questId, QuestStatus.NOT_COMPLETED);
         } catch (Exception e) {
             throw ApplicationException.from(QuestErrorCode.QUEST_STATUS_UPDATE_FAILED);
         }
 
         try {
-            // 2. 퀘스트 완료 경험치 지급
+            // 2. 퀘스트 완료 시 지급받은 경험치 회수 (차감)
             Integer expReward = quest.getExpReward();
             if (expReward != null && expReward > 0) {
-                experienceService.addExperience(userId, expReward);
+                experienceService.deductExperience(userId, expReward);
             }
         } catch (Exception e) {
-            throw ApplicationException.from(QuestErrorCode.QUEST_EXP_GRANT_FAILED);
+            throw ApplicationException.from(QuestErrorCode.QUEST_EXP_REVERT_FAILED);
         }
 
         return questId;

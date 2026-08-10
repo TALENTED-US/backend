@@ -24,4 +24,8 @@ public interface UserMapper {
     Long createUserButtie(@Param("userId") Long userId);
 
     Long createUserConsent(Long userId);
+
+    int deductUserExp(@Param("userId") Long userId, @Param("expAmount") Integer expAmount);
+
+    int addUserExp(@Param("userId") Long userId, @Param("expAmount") Integer expAmount);
 }

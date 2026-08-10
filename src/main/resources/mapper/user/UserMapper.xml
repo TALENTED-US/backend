@@ -82,4 +82,28 @@
                                FINANCIAL_INFO_AGREED_AT)
     VALUES (#{userId}, NOW(), NOW(), NOW())
   </insert>
+
+  <update id="deductUserExp">
+    UPDATE USER_BUTTIE ub
+    SET ub.BUTTIE_TOTAL_EXP = GREATEST(0, ub.BUTTIE_TOTAL_EXP - #{expAmount}),
+        ub.BUTTIE_LEVEL = COALESCE(
+          (SELECT MAX(bl.LEVEL)
+           FROM BUTTIE_LEVEL bl
+           WHERE bl.REQUIRED_EXP &lt;= GREATEST(0, ub.BUTTIE_TOTAL_EXP - #{expAmount})),
+          1
+        )
+    WHERE ub.USER_ID = #{userId}
+  </update>
+
+  <update id="addUserExp">
+    UPDATE USER_BUTTIE ub
+    SET ub.BUTTIE_TOTAL_EXP = ub.BUTTIE_TOTAL_EXP + #{expAmount},
+        ub.BUTTIE_LEVEL = COALESCE(
+          (SELECT MAX(bl.LEVEL)
+           FROM BUTTIE_LEVEL bl
+           WHERE bl.REQUIRED_EXP &lt;= (ub.BUTTIE_TOTAL_EXP + #{expAmount})),
+          1
+        )
+    WHERE ub.USER_ID = #{userId}
+  </update>
 </mapper>
