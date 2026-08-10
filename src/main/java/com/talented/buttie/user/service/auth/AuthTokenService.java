@@ -42,6 +42,11 @@ public class AuthTokenService {
     public Long expirationToken(Long targetUserId) {
         try {
             refreshTokenRepository.delete(targetUserId, AccountType.USER);
+            refreshTokenRepository.invalidateAccessTokens(
+                targetUserId,
+                AccountType.USER,
+                jwtTokenProvider.getAccessTokenExpiration()
+            );
         } catch (DataAccessException e) {
             throw ApplicationException.from(AuthErrorCode.REFRESH_TOKEN_DELETE_FAILED);
         }
@@ -58,11 +63,11 @@ public class AuthTokenService {
             throw ApplicationException.from(AuthErrorCode.INVALID_TOKEN);
         }
 
-        if(account.accountType() != AccountType.USER) {
+        if (account.accountType() != AccountType.USER) {
             throw ApplicationException.from(AuthErrorCode.INVALID_TOKEN);
         }
 
-        if(!refreshTokenRepository.matches(account.accountId(), account.accountType(), refreshToken)){
+        if (refreshTokenRepository.matches(account.accountId(), account.accountType(), refreshToken)) {
             throw ApplicationException.from(AuthErrorCode.INVALID_TOKEN);
         }
         return createToken(account.accountId());

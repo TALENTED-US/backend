@@ -18,4 +18,14 @@ public interface AuthMapper {
     String getPasswordByUserEmail(@Param("email") String email);
 
     Long getUserIdByUserEmail(@Param("email") String email);
+
+    String getUserEmailByPhoneNumber(@Param("phoneNumber") String phoneNumber);
+
+    UserVO getUserByPhoneNumber(@Param("phoneNumber") String phoneNumber);
+
+    Long updateUserPassword(
+        @Param("userId") Long userId,
+        @Param("newPassword") String newPassword
+    );
+
 }

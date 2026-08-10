@@ -16,6 +16,7 @@ public enum AuthErrorCode implements BaseErrorCode {
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "AUTH_005", "유효하지 않은 토큰입니다."),
     IDENTITY_VERIFICATION_FAILED(HttpStatus.BAD_REQUEST, "AUTH_006", "신원 확인에 실패했습니다. 다시 시도해 주십시오."),
     INVALID_PHONE_NUMBER(HttpStatus.BAD_REQUEST, "AUTH_007", "유효하지 않은 전화번호입니다."),
+    PASSWORD_UPDATE_FAILED(HttpStatus.BAD_REQUEST, "AUTH_008", "비밀번호 업데이트에 실패했습니다."),
 
     PASSWORD_NOT_MATCH(HttpStatus.UNAUTHORIZED, "AUTH_101", "비밀번호가 일치하지 않습니다."),
     REFRESH_TOKEN_SAVE_FAILED(HttpStatus.UNAUTHORIZED, "AUTH_102", "로그인 토큰 저장에 실패했습니다."),
@@ -24,11 +25,13 @@ public enum AuthErrorCode implements BaseErrorCode {
 
 
     EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH_401", "아이디를 찾을 수 없습니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH_402", "사용자를 찾을 수 없습니다."),
 
     USER_CREATE_FAILED(HttpStatus.CONFLICT, "AUTH_901", "사용자 생성에 실패했습니다."),
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "AUTH_902", "이미 존재하는 이메일입니다."),
     PHONE_NUMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "AUTH_903", "이미 존재하는 전화번호입니다."),
     NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "AUTH_904", "이미 존재하는 닉네임입니다.");
+
 
     private final HttpStatus httpStatus;
     private final String customCode;

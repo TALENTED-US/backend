@@ -8,59 +8,77 @@
     useGeneratedKeys="true"
     keyProperty="id"
   >
-    INSERT INTO `USER` (
-      USER_NAME,
-      USER_EMAIL,
-      USER_PASSWORD_HASH,
-      USER_NICKNAME,
-      USER_PHONE_NUMBER
-    ) VALUES (
-      #{authSignUpRequest.userName},
-      #{authSignUpRequest.userEmail},
-      #{authSignUpRequest.userPassword},
-      #{authSignUpRequest.userNickname},
-      #{authSignUpRequest.phoneNumber}
-    )
+    INSERT INTO `USER` (USER_NAME,
+                        USER_EMAIL,
+                        USER_PASSWORD_HASH,
+                        USER_NICKNAME,
+                        USER_PHONE_NUMBER)
+    VALUES (#{authSignUpRequest.userName},
+            #{authSignUpRequest.userEmail},
+            #{authSignUpRequest.userPassword},
+            #{authSignUpRequest.userNickname},
+            #{authSignUpRequest.phoneNumber})
   </insert>
+  <update id="updateUserPassword">
+    UPDATE `USER`
+    SET USER_PASSWORD_HASH = #{newPassword}
+    WHERE USER_ID = #{userId}
+      AND USER_STATUS != 'WITHDRAWN'
+  </update>
 
   <select id="existsByPhoneNumber"
     parameterType="string"
     resultType="boolean">
-    SELECT EXISTS (
-      SELECT 1
-      FROM `USER`
-      WHERE USER_PHONE_NUMBER = #{phoneNumber} AND USER_STATUS != 'WITHDRAWN'
-    )
+    SELECT EXISTS (SELECT 1
+                   FROM `USER`
+                   WHERE USER_PHONE_NUMBER = #{phoneNumber}
+                     AND USER_STATUS != 'WITHDRAWN')
   </select>
 
   <select id="existsByEmail"
     parameterType="string"
     resultType="boolean">
-    SELECT EXISTS (
-      SELECT 1
-      FROM `USER`
-      WHERE USER_EMAIL = #{email} AND USER_STATUS != 'WITHDRAWN'
-    )
+    SELECT EXISTS (SELECT 1
+                   FROM `USER`
+                   WHERE USER_EMAIL = #{email}
+                     AND USER_STATUS != 'WITHDRAWN')
   </select>
 
   <select id="existsByNickName" resultType="java.lang.Boolean">
-    SELECT EXISTS (
-      SELECT 1
-      FROM `USER`
-      WHERE USER_NICKNAME = #{userNickname} AND USER_STATUS != 'WITHDRAWN'
-    )
+    SELECT EXISTS (SELECT 1
+                   FROM `USER`
+                   WHERE USER_NICKNAME = #{userNickname}
+                     AND USER_STATUS != 'WITHDRAWN')
   </select>
 
   <select id="getPasswordByUserEmail" resultType="java.lang.String">
     SELECT USER_PASSWORD_HASH
     FROM `USER`
-    WHERE USER_EMAIL = #{email} AND USER_STATUS != 'WITHDRAWN'
+    WHERE USER_EMAIL = #{email}
+      AND USER_STATUS != 'WITHDRAWN'
   </select>
 
   <select id="getUserIdByUserEmail" resultType="java.lang.Long">
     SELECT USER_ID
     FROM `USER`
-    WHERE USER_EMAIL = #{email} AND USER_STATUS != 'WITHDRAWN'
+    WHERE USER_EMAIL = #{email}
+      AND USER_STATUS != 'WITHDRAWN'
+  </select>
+  <select id="getUserEmailByPhoneNumber" resultType="java.lang.String">
+    SELECT USER_EMAIL
+    FROM `USER`
+    WHERE USER_PHONE_NUMBER = #{phoneNumber}
+      AND USER_STATUS != 'WITHDRAWN'
+  </select>
+  <select id="getUserByPhoneNumber" resultType="com.talented.buttie.user.domain.UserVO">
+    SELECT USER_ID           AS userId,
+           USER_NAME         AS userName,
+           USER_EMAIL        AS userEmail,
+           USER_NICKNAME     AS userNickname,
+           USER_PHONE_NUMBER AS userPhoneNumber
+    FROM `USER`
+    WHERE USER_PHONE_NUMBER = #{phoneNumber}
+      AND USER_STATUS != 'WITHDRAWN'
   </select>
 
 </mapper>

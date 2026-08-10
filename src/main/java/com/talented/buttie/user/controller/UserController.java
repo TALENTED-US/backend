@@ -67,7 +67,7 @@ public class UserController {
         return ApplicationResponse.onSuccess(GetUserProfileResponse.from(userProfile));
     }
 
-    @GetMapping("/buti")
+    @GetMapping("/buttie")
     @ApiOperation("버티 성장 대시보드 조회")
     public ApplicationResponse<GetButtieDashboardResponse> getButtieDashboard(
         @AuthUser AuthenticationUser user

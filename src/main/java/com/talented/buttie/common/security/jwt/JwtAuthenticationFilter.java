@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -32,9 +33,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain filterChain
+        @NonNull HttpServletRequest request,
+        @NonNull HttpServletResponse response,
+        @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
         String token = resolveToken(request);
 
@@ -45,6 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             Claims claims = jwtTokenProvider.parseAccessToken(token);
+            validateAccessTokenNotInvalidated(claims);
             AuthenticationUser authenticationUser = createAuthenticationUser(claims);
             continueWithAuthenticatedUser(
                 request,
@@ -94,11 +96,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (
             tokenAccount.accountType() != AccountType.USER ||
-            !refreshTokenRepository.matches(
-                tokenAccount.accountId(),
-                tokenAccount.accountType(),
-                refreshToken
-            )
+                refreshTokenRepository.matches(
+                    tokenAccount.accountId(),
+                    tokenAccount.accountType(),
+                    refreshToken
+                )
         ) {
             throw new IllegalArgumentException("Refresh Token이 유효하지 않습니다.");
         }
@@ -184,5 +186,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         throw new IllegalArgumentException("지원하지 않는 계정 유형입니다.");
+    }
+
+    private void validateAccessTokenNotInvalidated(Claims claims) {
+        AccountType accountType = AccountType.valueOf(
+            claims.get(JwtClaim.ACCOUNT_TYPE, String.class)
+        );
+        if (accountType != AccountType.USER) {
+            return;
+        }
+
+        Long accountId = Long.valueOf(claims.getSubject());
+        Long issuedAtMillis = claims.get(JwtClaim.ISSUED_AT_MILLIS, Long.class);
+        if (issuedAtMillis == null) {
+            issuedAtMillis = claims.getIssuedAt().getTime();
+        }
+        if (refreshTokenRepository.isAccessTokenInvalidated(accountId, accountType, issuedAtMillis)) {
+            throw new IllegalArgumentException("폐기된 Access Token입니다.");
+        }
     }
 }
