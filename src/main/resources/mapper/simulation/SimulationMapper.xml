@@ -56,9 +56,16 @@
       and CONFIRMED_AT is null
   </update>
 
+  <update id="revertSimulation">
+    update SIMULATION
+    set CONFIRMED_AT = null
+    where SIMULATION_ID = #{simulationId}
+      and CONFIRMED_AT is not null
+  </update>
+
   <delete id="deleteById">
     delete from SIMULATION
     where SIMULATION_ID = #{simulationId}
-        and CONFIRMED_AT is not null
+      and CONFIRMED_AT is not null
   </delete>
 </mapper>
