@@ -21,5 +21,7 @@ public interface UserMapper {
 
     int updateWithdrawnUser(@Param("user") UserVO user);
 
-    Long createUserBuiite(@Param("userId") Long userId);
+    Long createUserButtie(@Param("userId") Long userId);
+
+    Long createUserConsent(Long userId);
 }
