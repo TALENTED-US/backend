@@ -189,6 +189,15 @@ public class SimulationController {
         return ApplicationResponse.onSuccess(null);
     }
 
+    @ApiOperation("미확정 시뮬레이션 삭제")
+    @DeleteMapping
+    public ApplicationResponse<Void> deleteActiveSimulation(
+        @AuthUser AuthenticationUser authUser
+    ) {
+        simulationDeleteService.deleteActiveSimulation(authUser.userId());
+        return ApplicationResponse.onSuccess(null);
+    }
+
     @ApiOperation("최근 확정 시뮬레이션 조회")
     @GetMapping("/confirmed")
     public ApplicationResponse<ConfirmedSimulationResponse> getLatestConfirmedSimulation(

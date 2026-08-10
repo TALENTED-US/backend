@@ -31,12 +31,17 @@ class SimulationDeleteServiceTest {
     private Long userId;
     private Long simulationId;
     private SimulationVO confirmedSimulation;
+    private SimulationVO activeSimulation;
 
     @BeforeEach
     void setUp() {
         userId = 1L;
         simulationId = 10L;
         confirmedSimulation = SimulationVO.builder()
+            .simulationId(simulationId)
+            .userId(userId)
+            .build();
+        activeSimulation = SimulationVO.builder()
             .simulationId(simulationId)
             .userId(userId)
             .build();
@@ -87,5 +92,52 @@ class SimulationDeleteServiceTest {
 
         assertEquals(SimulationErrorCode.CONFIRMED_SIMULATION_NOT_FOUND, exception.getCode());
         verify(simulationMapper).deleteById(simulationId);
+    }
+
+    @Test
+    @DisplayName("성공: 미확정(활성) 시뮬레이션을 정상적으로 삭제한다.")
+    void deleteActiveSimulation() {
+        given(simulationMapper.findActiveByUserId(userId))
+            .willReturn(activeSimulation);
+        given(simulationMapper.deleteActiveById(simulationId))
+            .willReturn(1);
+
+        assertDoesNotThrow(
+            () -> simulationDeleteService.deleteActiveSimulation(userId)
+        );
+
+        verify(simulationMapper).deleteActiveById(simulationId);
+    }
+
+    @Test
+    @DisplayName("실패: 활성 시뮬레이션이 없으면 예외가 발생한다.")
+    void throwWhenActiveSimulationNotFound() {
+        given(simulationMapper.findActiveByUserId(userId))
+            .willReturn(null);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> simulationDeleteService.deleteActiveSimulation(userId)
+        );
+
+        assertEquals(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND, exception.getCode());
+        verify(simulationMapper, never()).deleteActiveById(simulationId);
+    }
+
+    @Test
+    @DisplayName("실패: 삭제 대상 활성 시뮬레이션이 존재하지 않으면 예외가 발생한다.")
+    void throwWhenActiveDeleteTargetNotFound() {
+        given(simulationMapper.findActiveByUserId(userId))
+            .willReturn(activeSimulation);
+        given(simulationMapper.deleteActiveById(simulationId))
+            .willReturn(0);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> simulationDeleteService.deleteActiveSimulation(userId)
+        );
+
+        assertEquals(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND, exception.getCode());
+        verify(simulationMapper).deleteActiveById(simulationId);
     }
 }
