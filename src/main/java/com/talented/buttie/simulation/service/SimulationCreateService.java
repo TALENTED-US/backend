@@ -26,6 +26,7 @@ public class SimulationCreateService {
     private final ProjectionEngine projectionEngine;
     private final EmploymentPreparationMapper employmentPreparationMapper;
 
+    // 시뮬레이션 생성
     @Transactional
     public SimulationVO createSimulation(Long userId, CreateSimulationRequest request){
         SimulationVO activeSimulation = simulationMapper.findActiveByUserId(userId);

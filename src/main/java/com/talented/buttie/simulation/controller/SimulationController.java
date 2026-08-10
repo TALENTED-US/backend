@@ -20,7 +20,6 @@ import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse;
 import com.talented.buttie.simulation.dto.response.SimulationResponse;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.service.SimulationCreateService;
-import com.talented.buttie.simulation.service.SimulationDeleteService;
 import com.talented.buttie.simulation.service.SimulationItemCreateService;
 import com.talented.buttie.simulation.service.SimulationItemDeleteService;
 import com.talented.buttie.simulation.service.SimulationItemReadService;
@@ -156,12 +155,16 @@ public class SimulationController {
         return ApplicationResponse.onSuccess(null);
     }
 
-    private Long decryptItemId(String encryptedItemId) {
-        try {
-            return PKCrypto.decrypt(encryptedItemId);
-        } catch (IllegalStateException e) {
-            throw ApplicationException.from(SimulationErrorCode.INVALID_SIMULATION_ITEM);
-        }
+
+
+    @ApiOperation("시뮬레이션 최종 확정")
+    @PostMapping("/confirmed")
+    public ApplicationResponse<Void> confirmed(
+        @AuthUser AuthenticationUser authUser
+    ) {
+        simulationUpdateService.confirmSimulation(authUser.userId());
+
+        return ApplicationResponse.onSuccess(null);
     }
 
     @ApiOperation("최근 확정 시뮬레이션 조회")
@@ -178,4 +181,13 @@ public class SimulationController {
             ConfirmedSimulationResponse.from(simulation, currentPrepMonths, appliedItems)
         );
     }
+
+    private Long decryptItemId(String encryptedItemId) {
+        try {
+            return PKCrypto.decrypt(encryptedItemId);
+        } catch (IllegalStateException e) {
+            throw ApplicationException.from(SimulationErrorCode.INVALID_SIMULATION_ITEM);
+        }
+    }
+
 }

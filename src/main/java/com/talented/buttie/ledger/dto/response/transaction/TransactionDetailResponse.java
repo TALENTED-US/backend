@@ -17,6 +17,9 @@ public record TransactionDetailResponse(
     @ApiModelProperty(value = "암호화된 사용자 ID", example = "ToJn4pdJ9axT1Oay6sf2wQ")
     String userId,
 
+    @ApiModelProperty(value = "암호화된 거래 ID", example = "xX79VwugC283X2XVQTkp1Q")
+    String transactionId,
+
     @ApiModelProperty(value = "거래 내용", example = "String", required = true)
     @NotBlank(message = "거래 내용은 필수입니다.")
     String transactionContent,
@@ -37,6 +40,7 @@ public record TransactionDetailResponse(
     public static TransactionDetailResponse from(TransactionVO vo) {
         return TransactionDetailResponse.builder()
             .userId(PKCrypto.encrypt(vo.getUserId()))
+            .transactionId(PKCrypto.encrypt(vo.getTransactionId()))
             .transactionContent(vo.getTransactionContent())
             .transactionAt(vo.getTransactionAt())
             .transactionMemo(vo.getTransactionMemo())

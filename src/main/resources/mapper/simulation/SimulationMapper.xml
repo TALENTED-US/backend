@@ -49,4 +49,11 @@
       and CONFIRMED_AT is null
   </update>
 
+  <update id="confirmSimulation">
+    update SIMULATION
+    set CONFIRMED_AT = CURRENT_TIMESTAMP
+    where SIMULATION_ID = #{simulationId}
+      and CONFIRMED_AT is null
+  </update>
+
 </mapper>

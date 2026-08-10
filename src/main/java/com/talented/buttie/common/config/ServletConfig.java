@@ -1,5 +1,6 @@
 package com.talented.buttie.common.config;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.talented.buttie.common.security.AuthUserArgumentResolver;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
@@ -7,6 +8,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
@@ -78,6 +81,15 @@ public class ServletConfig implements WebMvcConfigurer {
     @Override
     public Validator getValidator() {
         return validator();
+    }
+
+    @Override
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.stream()
+            .filter(MappingJackson2HttpMessageConverter.class::isInstance)
+            .map(MappingJackson2HttpMessageConverter.class::cast)
+            .forEach(converter -> converter.getObjectMapper()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS));
     }
 
     //swagger
