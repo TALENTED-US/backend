@@ -5,6 +5,7 @@ import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.annotation.AuthUser;
 import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.quest.dto.response.QuestResponse;
+import com.talented.buttie.quest.service.QuestRevertService;
 import com.talented.buttie.quest.service.QuestReadService;
 import com.talented.buttie.quest.service.QuestUpdateService;
 import io.swagger.annotations.Api;
@@ -25,6 +26,7 @@ public class QuestController {
 
     private final QuestReadService questReadService;
     private final QuestUpdateService questUpdateService;
+    private final QuestRevertService questRevertService;
 
     @ApiOperation("행동과제(퀘스트) 목록 조회")
     @GetMapping("")
@@ -45,6 +47,18 @@ public class QuestController {
         Long targetUserId = user.userId();
         Long decryptedQuestId = PKCrypto.decrypt(questId);
         Long resultQuestId = questUpdateService.completeQuest(targetUserId, decryptedQuestId);
+        return ApplicationResponse.onSuccess(PKCrypto.encrypt(resultQuestId));
+    }
+
+    @ApiOperation("완료된 퀘스트 취소 (진행중 변경 및 경험치 회수)")
+    @PatchMapping("/{questId}/revert")
+    public ApplicationResponse<String> revertQuest(
+        @PathVariable("questId") String questId,
+        @AuthUser AuthenticationUser user
+    ) {
+        Long targetUserId = user.userId();
+        Long decryptedQuestId = PKCrypto.decrypt(questId);
+        Long resultQuestId = questRevertService.revertQuest(targetUserId, decryptedQuestId);
         return ApplicationResponse.onSuccess(PKCrypto.encrypt(resultQuestId));
     }
 }
