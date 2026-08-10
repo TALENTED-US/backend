@@ -276,6 +276,85 @@ class SimulationUpdateServiceTest {
         verify(simulationMapper).confirmSimulation(simulationId);
     }
 
+    // 확정 시뮬레이션 미확정으로 되돌리기
+    @Test
+    @DisplayName("성공: 확정 시뮬레이션을 정상적으로 되돌린다.")
+    void revertSimulation() {
+        given(simulationMapper.findLatestConfirmedByUserId(userId))
+            .willReturn(activeSimulation);
+        given(simulationMapper.findActiveByUserId(userId))
+            .willReturn(null);
+        given(simulationMapper.revertSimulation(simulationId))
+            .willReturn(1);
+
+        assertDoesNotThrow(
+            () -> simulationUpdateService.revertSimulation(userId)
+        );
+
+        verify(simulationMapper).revertSimulation(simulationId);
+    }
+
+    @Test
+    @DisplayName("실패: 확정 시뮬레이션이 없으면 예외가 발생한다.")
+    void rejectRevertWhenConfirmedSimulationNotFound() {
+        given(simulationMapper.findLatestConfirmedByUserId(userId))
+            .willReturn(null);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> simulationUpdateService.revertSimulation(userId)
+        );
+
+        assertEquals(
+            SimulationErrorCode.CONFIRMED_SIMULATION_NOT_FOUND,
+            exception.getCode()
+        );
+        verify(simulationMapper, never()).findActiveByUserId(userId);
+        verify(simulationMapper, never()).revertSimulation(simulationId);
+    }
+
+    @Test
+    @DisplayName("실패: 이미 미확정 시뮬레이션이 존재하면 예외가 발생한다.")
+    void rejectRevertWhenNotConfirmedSimulationExists() {
+        given(simulationMapper.findLatestConfirmedByUserId(userId))
+            .willReturn(activeSimulation);
+        given(simulationMapper.findActiveByUserId(userId))
+            .willReturn(activeSimulation);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> simulationUpdateService.revertSimulation(userId)
+        );
+
+        assertEquals(
+            SimulationErrorCode.ALREADY_NOT_CONFIRMED_SIMULATION_EXISTS,
+            exception.getCode()
+        );
+        verify(simulationMapper, never()).revertSimulation(simulationId);
+    }
+
+    @Test
+    @DisplayName("실패: 되돌리기 갱신 대상이 없으면 예외가 발생한다.")
+    void rejectWhenRevertUpdateFails() {
+        given(simulationMapper.findLatestConfirmedByUserId(userId))
+            .willReturn(activeSimulation);
+        given(simulationMapper.findActiveByUserId(userId))
+            .willReturn(null);
+        given(simulationMapper.revertSimulation(simulationId))
+            .willReturn(0);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> simulationUpdateService.revertSimulation(userId)
+        );
+
+        assertEquals(
+            SimulationErrorCode.CONFIRMED_SIMULATION_NOT_FOUND,
+            exception.getCode()
+        );
+        verify(simulationMapper).revertSimulation(simulationId);
+    }
+
     private MonthlyProjectionVO projection(
         LocalDate projectionMonth,
         int openingBalance,

@@ -23,9 +23,7 @@ public interface AuthMapper {
 
     UserVO getUserByPhoneNumber(@Param("phoneNumber") String phoneNumber);
 
-    Long updateUserPassword(
-        @Param("userId") Long userId,
-        @Param("newPassword") String newPassword
+    Long updateUserPassword(@Param("userId") Long userId, @Param("newPassword") String newPassword
     );
 
 }

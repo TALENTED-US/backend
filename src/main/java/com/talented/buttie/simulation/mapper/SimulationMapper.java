@@ -23,4 +23,8 @@ public interface SimulationMapper {
         @Param("expectPrepMonths") BigDecimal expectPrepMonths
     );
     int confirmSimulation(@Param("simulationId") Long simulationId);
+
+    int deleteById(@Param("simulationId") Long simulationId);
+
+    int revertSimulation(@Param("simulationId") Long simulationId);
 }

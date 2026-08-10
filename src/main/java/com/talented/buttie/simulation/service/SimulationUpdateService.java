@@ -115,4 +115,22 @@ public class SimulationUpdateService {
         }
     }
 
+    // 확정 시뮬레이션 미확정으로 되돌리기
+    public void revertSimulation(Long userId) {
+        SimulationVO confirmedSimulation = simulationMapper.findLatestConfirmedByUserId(userId);
+
+        if(confirmedSimulation == null) {
+            throw ApplicationException.from(SimulationErrorCode.CONFIRMED_SIMULATION_NOT_FOUND);
+        }
+
+        if(simulationMapper.findActiveByUserId(userId) != null) {
+            throw ApplicationException.from(SimulationErrorCode.ALREADY_NOT_CONFIRMED_SIMULATION_EXISTS);
+        }
+
+        int updateRows = simulationMapper.revertSimulation(confirmedSimulation.getSimulationId());
+
+        if(updateRows == 0) {
+            throw ApplicationException.from(SimulationErrorCode.CONFIRMED_SIMULATION_NOT_FOUND);
+        }
+    }
 }

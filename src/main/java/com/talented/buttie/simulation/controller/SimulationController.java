@@ -20,6 +20,7 @@ import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse;
 import com.talented.buttie.simulation.dto.response.SimulationResponse;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.service.SimulationCreateService;
+import com.talented.buttie.simulation.service.SimulationDeleteService;
 import com.talented.buttie.simulation.service.SimulationItemCreateService;
 import com.talented.buttie.simulation.service.SimulationItemDeleteService;
 import com.talented.buttie.simulation.service.SimulationItemReadService;
@@ -56,6 +57,7 @@ public class SimulationController {
     private final SimulationItemReadService simulationItemReadService;
     private final SimulationItemUpdateService simulationItemUpdateService;
     private final SimulationItemDeleteService simulationItemDeleteService;
+    private final SimulationDeleteService simulationDeleteService;
 
     @ApiOperation("시뮬레이션 생성")
     @PostMapping
@@ -103,6 +105,7 @@ public class SimulationController {
         @Valid @RequestBody ApplySimulationItemRequest request
     ) {
         ApplySimulationItemResponse response = simulationItemCreateService.applyItem(authUser.userId(), request);
+
         return ApplicationResponse.onSuccess(response);
     }
 
@@ -124,6 +127,7 @@ public class SimulationController {
         @AuthUser AuthenticationUser authUser
     ) {
         SimulationItemReportResponse response = simulationItemReadService.getAppliedItemReport(authUser.userId());
+
         return ApplicationResponse.onSuccess(response);
     }
 
@@ -155,14 +159,32 @@ public class SimulationController {
         return ApplicationResponse.onSuccess(null);
     }
 
-
-
     @ApiOperation("시뮬레이션 최종 확정")
     @PostMapping("/confirmed")
     public ApplicationResponse<Void> confirmed(
         @AuthUser AuthenticationUser authUser
     ) {
         simulationUpdateService.confirmSimulation(authUser.userId());
+
+        return ApplicationResponse.onSuccess(null);
+    }
+
+    @ApiOperation("확정 시뮬레이션 삭제")
+    @DeleteMapping("/confirmed")
+    public ApplicationResponse<Void> simulationDelete(
+       @AuthUser AuthenticationUser authUser
+    ) {
+        simulationDeleteService.deleteSimulation(authUser.userId());
+
+        return ApplicationResponse.onSuccess(null);
+    }
+
+    @ApiOperation("확정 시뮬레이션 수정(미확정으로 되돌리기)")
+    @PatchMapping("/confirmed/revert")
+    public ApplicationResponse<Void> revertSimulation(
+        @AuthUser AuthenticationUser authUser
+    ) {
+        simulationUpdateService.revertSimulation(authUser.userId());
 
         return ApplicationResponse.onSuccess(null);
     }

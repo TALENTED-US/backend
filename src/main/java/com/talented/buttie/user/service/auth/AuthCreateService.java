@@ -37,7 +37,11 @@ public class AuthCreateService {
         String passwordHash = passwordEncoder.encode(authSignUpRequest.userPassword());
 
         UserVO userVO = UserVO.createUser(authSignUpRequest, verifiedCustomer, passwordHash);
-        Long userId = authMapper.createUser(userVO);
+        Long insertRows = authMapper.createUser(userVO);
+        if (insertRows == null || insertRows == 0) {
+            throw ApplicationException.from(AuthErrorCode.USER_CREATE_FAILED);
+        }
+        Long userId = userVO.getUserId();
         if (userId == null) {
             throw ApplicationException.from(AuthErrorCode.USER_CREATE_FAILED);
         }
@@ -54,12 +58,12 @@ public class AuthCreateService {
                 .livingFundThreshold(500000)
                 .build());
 
-        if (preparationUserId == null) {
+        if (preparationUserId == null || preparationUserId == 0) {
             throw ApplicationException.from(AuthErrorCode.USER_CREATE_FAILED);
         }
 
         Long buttieUserId = userMapper.createUserButtie(userId);
-        if (buttieUserId == null) {
+        if (buttieUserId == null || buttieUserId == 0) {
             throw ApplicationException.from(AuthErrorCode.USER_CREATE_FAILED);
         }
 
@@ -72,7 +76,7 @@ public class AuthCreateService {
         if (targetUserId == null) {
             throw ApplicationException.from(AuthErrorCode.USER_CREATE_FAILED);
         }
-        return targetUserId;
+        return userId;
     }
 
     private VerifiedCustomer getVerifiedCustomer(String token) {
@@ -94,8 +98,9 @@ public class AuthCreateService {
             throw ApplicationException.from(AuthErrorCode.PASSWORD_HAS_EMAIL);
         }
 
-        String middleNumber = verifiedCustomer.phoneNumber().substring(3, 7);
-        String lastNumber = verifiedCustomer.phoneNumber().substring(7, 11);
+        String phoneNumber = verifiedCustomer.phoneNumber().replaceAll("\\D", "");
+        String middleNumber = phoneNumber.substring(3, 7);
+        String lastNumber = phoneNumber.substring(7, 11);
 
         if (password.contains(middleNumber) || password.contains(lastNumber)) {
             throw ApplicationException.from(AuthErrorCode.PASSWORD_HAS_PHONENUMBER);
