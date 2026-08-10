@@ -3,14 +3,20 @@ package com.talented.buttie.simulation.service;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.quest.domain.QuestStatus;
+import com.talented.buttie.quest.domain.QuestVO;
+import com.talented.buttie.quest.mapper.QuestMapper;
+import com.talented.buttie.quest.service.ExperienceService;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,6 +30,12 @@ class SimulationDeleteServiceTest {
 
     @Mock
     private SimulationMapper simulationMapper;
+
+    @Mock
+    private QuestMapper questMapper;
+
+    @Mock
+    private ExperienceService experienceService;
 
     @InjectMocks
     private SimulationDeleteService simulationDeleteService;
@@ -48,10 +60,12 @@ class SimulationDeleteServiceTest {
     }
 
     @Test
-    @DisplayName("성공: 확정 시뮬레이션을 정상적으로 삭제한다.")
+    @DisplayName("성공: 완료 퀘스트가 없으면 exp 회수 없이 확정 시뮬레이션을 삭제한다.")
     void deleteSimulation() {
         given(simulationMapper.findLatestConfirmedByUserId(userId))
             .willReturn(confirmedSimulation);
+        given(questMapper.findAllBySimulationIdForUpdate(simulationId))
+            .willReturn(List.of());
         given(simulationMapper.deleteById(simulationId))
             .willReturn(1);
 
@@ -59,6 +73,30 @@ class SimulationDeleteServiceTest {
             () -> simulationDeleteService.deleteSimulation(userId)
         );
 
+        verify(experienceService, never()).deductExperience(any(), any());
+        verify(simulationMapper).deleteById(simulationId);
+    }
+
+    @Test
+    @DisplayName("성공: 완료된 퀘스트가 있으면 지급된 exp를 합산 회수하고 확정 시뮬레이션을 삭제한다.")
+    void deleteSimulationWithExpReclaim() {
+        // findAllBySimulationIdForUpdate는 SQL에서 QUEST_STATUS = 'COMPLETED'로 이미 필터링해서 반환한다.
+        List<QuestVO> quests = List.of(
+            quest(QuestStatus.COMPLETED, 100),
+            quest(QuestStatus.COMPLETED, 50)
+        );
+        given(simulationMapper.findLatestConfirmedByUserId(userId))
+            .willReturn(confirmedSimulation);
+        given(questMapper.findAllBySimulationIdForUpdate(simulationId))
+            .willReturn(quests);
+        given(simulationMapper.deleteById(simulationId))
+            .willReturn(1);
+
+        assertDoesNotThrow(
+            () -> simulationDeleteService.deleteSimulation(userId)
+        );
+
+        verify(experienceService).deductExperience(userId, 150);
         verify(simulationMapper).deleteById(simulationId);
     }
 
@@ -82,6 +120,8 @@ class SimulationDeleteServiceTest {
     void throwWhenDeleteTargetNotFound() {
         given(simulationMapper.findLatestConfirmedByUserId(userId))
             .willReturn(confirmedSimulation);
+        given(questMapper.findAllBySimulationIdForUpdate(simulationId))
+            .willReturn(List.of());
         given(simulationMapper.deleteById(simulationId))
             .willReturn(0);
 
@@ -139,5 +179,12 @@ class SimulationDeleteServiceTest {
 
         assertEquals(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND, exception.getCode());
         verify(simulationMapper).deleteActiveById(simulationId);
+    }
+
+    private QuestVO quest(QuestStatus status, Integer expReward) {
+        return QuestVO.builder()
+            .questStatus(status)
+            .expReward(expReward)
+            .build();
     }
 }

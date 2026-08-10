@@ -1,9 +1,13 @@
 package com.talented.buttie.simulation.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.quest.domain.QuestVO;
+import com.talented.buttie.quest.mapper.QuestMapper;
+import com.talented.buttie.quest.service.ExperienceService;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class SimulationDeleteService {
 
     private final SimulationMapper simulationMapper;
+    private final QuestMapper questMapper;
+    private final ExperienceService experienceService;
 
     @Transactional
     public void deleteSimulation(Long userId) {
@@ -22,9 +28,19 @@ public class SimulationDeleteService {
             throw ApplicationException.from(SimulationErrorCode.CONFIRMED_SIMULATION_NOT_FOUND);
         }
 
-        int deleterows = simulationMapper.deleteById(confirmedSimulation.getSimulationId());
+        List<QuestVO> quests = questMapper.findAllBySimulationIdForUpdate(confirmedSimulation.getSimulationId());
 
-        if(deleterows == 0) {
+        int totalExp = quests.stream()
+            .mapToInt(q -> q.getExpReward() == null ? 0 : q.getExpReward())
+            .sum();
+
+        if(totalExp > 0) {
+            experienceService.deductExperience(userId, totalExp);
+        }
+
+        int deletedrows = simulationMapper.deleteById(confirmedSimulation.getSimulationId());
+
+        if(deletedrows == 0) {
             throw ApplicationException.from(SimulationErrorCode.CONFIRMED_SIMULATION_NOT_FOUND);
         }
     }
