@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface QuestMapper {
 
-    void save(QuestVO quest);
+    Long save(QuestVO quest);
 
     List<QuestVO> findAllByUserId(@Param("userId") Long userId);
 
@@ -17,7 +17,7 @@ public interface QuestMapper {
 
     QuestVO findById(@Param("questId") Long questId);
 
-    void updateStatus(
+    int updateStatus(
         @Param("questId") Long questId,
         @Param("questStatus") QuestStatus questStatus
     );
