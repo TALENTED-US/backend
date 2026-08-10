@@ -2,6 +2,7 @@ package com.talented.buttie.common.security.redis;
 
 import com.talented.buttie.common.security.AccountType;
 import java.time.Duration;
+import java.time.Instant;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 public class RefreshTokenRepository {
 
     private static final String KEY_PREFIX = "refresh-token:";
+    private static final String ACCESS_TOKEN_INVALIDATED_AT_KEY_PREFIX = "access-token-invalidated-at:";
 
     private final StringRedisTemplate redisTemplate;
 
@@ -50,8 +52,8 @@ public class RefreshTokenRepository {
             accountType
         );
 
-        return storedRefreshToken != null
-            && storedRefreshToken.equals(refreshToken);
+        return storedRefreshToken == null
+            || !storedRefreshToken.equals(refreshToken);
     }
 
     public void delete(
@@ -63,11 +65,45 @@ public class RefreshTokenRepository {
         );
     }
 
+    public void invalidateAccessTokens(
+        Long accountId,
+        AccountType accountType,
+        long accessTokenExpirationMillis
+    ) {
+        redisTemplate.opsForValue().set(
+            createAccessTokenInvalidatedAtKey(accountId, accountType),
+            String.valueOf(Instant.now().toEpochMilli()),
+            Duration.ofMillis(accessTokenExpirationMillis)
+        );
+    }
+
+    public boolean isAccessTokenInvalidated(
+        Long accountId,
+        AccountType accountType,
+        long issuedAtMillis
+    ) {
+        String invalidatedAt = redisTemplate.opsForValue().get(
+            createAccessTokenInvalidatedAtKey(accountId, accountType)
+        );
+        return invalidatedAt != null
+            && issuedAtMillis <= Long.parseLong(invalidatedAt);
+    }
+
     private String createKey(
         Long accountId,
         AccountType accountType
     ) {
         return KEY_PREFIX
+            + accountType.name()
+            + ":"
+            + accountId;
+    }
+
+    private String createAccessTokenInvalidatedAtKey(
+        Long accountId,
+        AccountType accountType
+    ) {
+        return ACCESS_TOKEN_INVALIDATED_AT_KEY_PREFIX
             + accountType.name()
             + ":"
             + accountId;

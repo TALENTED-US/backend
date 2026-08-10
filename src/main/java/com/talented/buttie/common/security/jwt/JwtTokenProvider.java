@@ -8,7 +8,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.time.Instant;
 import java.util.Date;
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
 
     private final SecretKey signingKey;
+    @Getter
     private final long accessTokenExpiration;
     @Getter
     private final long refreshTokenExpiration;
@@ -52,6 +52,7 @@ public class JwtTokenProvider {
                 JwtClaim.TOKEN_TYPE,
                 TokenType.ACCESS.name()
             )
+            .claim(JwtClaim.ISSUED_AT_MILLIS, now.toEpochMilli())
             .issuedAt(Date.from(now))
             .expiration(
                 Date.from(

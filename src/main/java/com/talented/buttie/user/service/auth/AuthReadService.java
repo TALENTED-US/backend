@@ -1,8 +1,10 @@
 package com.talented.buttie.user.service.auth;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.user.dto.request.auth.AuthLoginRequest;
 import com.talented.buttie.user.dto.response.auth.AuthTokenResponse;
+import com.talented.buttie.user.dto.response.auth.VerifiedCustomer;
 import com.talented.buttie.user.exception.AuthErrorCode;
 import com.talented.buttie.user.mapper.AuthMapper;
 import javax.validation.Valid;
@@ -19,6 +21,8 @@ public class AuthReadService {
     private final AuthMapper authMapper;
     private final PasswordEncoder passwordEncoder;
     private final AuthTokenService authTokenService;
+    private final Cache<String, VerifiedCustomer> identityVerificationCache;
+
 
     public AuthTokenResponse userLogin(@Valid AuthLoginRequest authLoginRequest) {
         if (!authMapper.existsByEmail(authLoginRequest.userEmail())) {
@@ -57,4 +61,18 @@ public class AuthReadService {
         }
         return isDuplicate;
     }
+
+    public String getUserEmail(String verificationToken) {
+        VerifiedCustomer verifiedCustomer = identityVerificationCache.getIfPresent(verificationToken);
+        if (verifiedCustomer == null) {
+            throw ApplicationException.from(AuthErrorCode.IDENTITY_VERIFICATION_FAILED);
+        }
+        String userEmail = authMapper.getUserEmailByPhoneNumber(verifiedCustomer.phoneNumber());
+        if (userEmail == null) {
+            throw ApplicationException.from(AuthErrorCode.EMAIL_NOT_FOUND);
+        }
+        return userEmail;
+    }
+
+
 }
