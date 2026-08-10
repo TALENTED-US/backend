@@ -101,7 +101,8 @@
   <!--조건부 revert-->
   <update id="revertCompletedStatus">
     update QUEST
-    set QUEST_STATUS = 'NOT_COMPLETED'
+    set QUEST_STATUS = 'NOT_COMPLETED',
+        QUEST_COMPLETED_AT = null
     where QUEST_ID = #{questId}
       and QUEST_STATUS = 'COMPLETED'
   </update>
