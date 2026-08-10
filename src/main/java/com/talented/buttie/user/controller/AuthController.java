@@ -67,9 +67,9 @@ public class AuthController {
     @ApiOperation("사용자 동의")
     @PostMapping("/consent/{userId}")
     public ApplicationResponse<UserPKResponse> createUserConsent(
-        @PathVariable Long userId
+        @PathVariable String userId
     ) {
-        Long targetUserId = authCreateService.createUserConsent(userId);
+        Long targetUserId = authCreateService.createUserConsent(PKCrypto.decrypt(userId));
         return ApplicationResponse.onSuccess(new UserPKResponse(PKCrypto.encrypt(targetUserId)));
     }
 
