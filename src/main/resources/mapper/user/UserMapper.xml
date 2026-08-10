@@ -71,15 +71,10 @@
     WHERE ub.USER_ID = #{userId}
   </select>
 
-  <insert id="createUserButtie">
+  <insert id="createUserBuiite">
     INSERT INTO USER_BUTTIE (USER_ID, BUTTIE_LEVEL, BUTTIE_TOTAL_EXP)
     VALUES (#{userId},
             1,
             0)
-  </insert>
-  <insert id="createUserConsent">
-    INSERT INTO USER_CONSENTS (USER_ID, TERMS_AGREED_AT, PRIVACY_AGREED_AT,
-                               FINANCIAL_INFO_AGREED_AT)
-    VALUES (#{userId}, NOW(), NOW(), NOW())
   </insert>
 </mapper>
