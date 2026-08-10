@@ -27,7 +27,6 @@ public class AuthCreateService {
     private final PasswordEncoder passwordEncoder;
     private final Cache<String, VerifiedCustomer> identityVerificationCache;
 
-
     @Transactional
     public Long createUser(AuthSignUpRequest authSignUpRequest, String verificationToken) {
         VerifiedCustomer verifiedCustomer = getVerifiedCustomer(verificationToken);
@@ -59,13 +58,21 @@ public class AuthCreateService {
             throw ApplicationException.from(AuthErrorCode.USER_CREATE_FAILED);
         }
 
-        Long buttieUserId = userMapper.createUserBuiite(userId);
+        Long buttieUserId = userMapper.createUserButtie(userId);
         if (buttieUserId == null) {
             throw ApplicationException.from(AuthErrorCode.USER_CREATE_FAILED);
         }
 
         identityVerificationCache.invalidate(verificationToken);
         return userId;
+    }
+
+    public Long createUserConsent(Long userId) {
+        Long targetUserId = userMapper.createUserConsent(userId);
+        if (targetUserId == null) {
+            throw ApplicationException.from(AuthErrorCode.USER_CREATE_FAILED);
+        }
+        return targetUserId;
     }
 
     private VerifiedCustomer getVerifiedCustomer(String token) {
@@ -113,4 +120,6 @@ public class AuthCreateService {
             throw ApplicationException.from(AuthErrorCode.NICKNAME_ALREADY_EXISTS);
         }
     }
+
+
 }
