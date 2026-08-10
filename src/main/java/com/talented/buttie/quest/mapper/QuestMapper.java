@@ -9,6 +9,8 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface QuestMapper {
 
+    void save(QuestVO quest);
+
     List<QuestVO> findAllByUserId(@Param("userId") Long userId);
 
     List<QuestVO> findAllBySimulationId(@Param("simulationId") Long simulationId);

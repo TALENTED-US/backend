@@ -5,6 +5,38 @@
 
 <mapper namespace="com.talented.buttie.quest.mapper.QuestMapper">
 
+  <insert id="save"
+          parameterType="com.talented.buttie.quest.domain.QuestVO"
+          useGeneratedKeys="true"
+          keyProperty="questId"
+          keyColumn="QUEST_ID">
+    insert into QUEST (
+      USER_ID,
+      SIMULATION_ID,
+      SIMULATION_ITEM_ID,
+      TRANSACTION_ID,
+      QUEST_TYPE,
+      QUEST_TITLE,
+      QUEST_DEADLINE,
+      QUEST_STATUS,
+      QUEST_URL,
+      EXP_REWARD,
+      QUEST_COMPLETED_AT
+    ) values (
+      #{userId},
+      #{simulationId},
+      #{simulationItemId},
+      #{transactionId},
+      #{questType},
+      #{displayName},
+      #{questDeadline},
+      #{questStatus},
+      #{questUrl},
+      #{expReward},
+      #{questCompletedAt}
+    )
+  </insert>
+
   <select id="findAllByUserId"
           resultType="com.talented.buttie.quest.domain.QuestVO">
     select Q.QUEST_ID as questId,
