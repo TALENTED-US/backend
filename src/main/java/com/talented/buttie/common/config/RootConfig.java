@@ -23,9 +23,11 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
+@EnableTransactionManagement
 @PropertySource({"classpath:/application.properties"})
 @ComponentScan(basePackages = {
     "com.talented.buttie.user.service",

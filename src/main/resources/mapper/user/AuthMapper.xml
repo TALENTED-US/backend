@@ -6,7 +6,8 @@
   <insert id="createUser"
     parameterType="com.talented.buttie.user.domain.UserVO"
     useGeneratedKeys="true"
-    keyProperty="userVO.userId">
+    keyProperty="userVO.userId"
+  >
     INSERT INTO `USER` (USER_NAME,
                         USER_EMAIL,
                         USER_PASSWORD_HASH,
