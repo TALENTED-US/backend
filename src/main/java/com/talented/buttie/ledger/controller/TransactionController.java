@@ -12,7 +12,7 @@ import com.talented.buttie.ledger.dto.response.GetSumFixedExpenseResponse;
 import com.talented.buttie.ledger.dto.response.fixed.FixedExpenseDetailResponse;
 import com.talented.buttie.ledger.dto.response.transaction.TransactionDetailResponse;
 import com.talented.buttie.ledger.dto.response.transaction.TransactionResponse;
-import com.talented.buttie.ledger.service.GetSumFixedExpenseService;
+import com.talented.buttie.ledger.service.fixed.GetSumFixedExpenseService;
 import com.talented.buttie.ledger.service.fixed.CreateFixedExpenseService;
 import com.talented.buttie.ledger.service.transaction.CreateTransactionService;
 import com.talented.buttie.ledger.service.fixed.DeleteFixedExpenseService;

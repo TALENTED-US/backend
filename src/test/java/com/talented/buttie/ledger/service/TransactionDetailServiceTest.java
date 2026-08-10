@@ -8,6 +8,7 @@ import com.talented.buttie.ledger.domain.TransactionVO;
 import com.talented.buttie.ledger.dto.response.transaction.TransactionDetailResponse;
 import com.talented.buttie.ledger.exception.LedgerErrorCode;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
+import com.talented.buttie.ledger.service.transaction.TransactionDetailService;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

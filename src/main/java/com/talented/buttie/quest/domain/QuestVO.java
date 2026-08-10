@@ -17,9 +17,11 @@ public class QuestVO {
     private Long simulationId;
     private Long simulationItemId;
     private Long transactionId;
+    private QuestType questType;
     private LocalDateTime questDeadline;
     private QuestStatus questStatus;
     private String questUrl;
+    private Integer expReward;
     private LocalDateTime questCompletedAt;
 
     // SIMULATION_ITEM & POLICY JOIN 필드
@@ -43,11 +45,15 @@ public class QuestVO {
         String name = SimulationItemResponse.resolveDisplayName(item, policy);
         SimulationRecurrenceType recurrence = SimulationItemResponse.resolveRecurrenceType(item, policy);
         Long pId = item.getPolicyId() != null ? item.getPolicyId() : (policy != null ? policy.getPolicyId() : null);
+        Integer exp = category == SimulationItemCategory.POLICY ? 100 : (category == SimulationItemCategory.EXPENSE ? 30 : 50);
+        QuestType type = (category == SimulationItemCategory.POLICY) ? QuestType.APPLY
+            : ((category == SimulationItemCategory.EXPENSE) ? QuestType.CANCEL : QuestType.APPLY);
 
         return QuestVO.builder()
             .userId(userId)
             .simulationId(simulationId)
             .simulationItemId(item.getSimulationItemId())
+            .questType(type)
             .displayName(name)
             .questStatus(QuestStatus.NOT_COMPLETED)
             .questUrl(policy != null ? policy.getPolicyUrl() : null)
@@ -59,6 +65,7 @@ public class QuestVO {
             .policyName(policy != null ? policy.getPolicyName() : null)
             .policyUrl(policy != null ? policy.getPolicyUrl() : null)
             .policyDueDate(policy != null ? policy.getDueDate() : null)
+            .expReward(exp)
             .build();
     }
 
@@ -92,6 +99,12 @@ public class QuestVO {
 
         if (quest.getQuestStatus() == null) {
             quest.setQuestStatus(QuestStatus.NOT_COMPLETED);
+        }
+
+        if (quest.getExpReward() == null) {
+            Integer exp = quest.getSimulationItemCategory() == SimulationItemCategory.POLICY ? 100
+                : (quest.getSimulationItemCategory() == SimulationItemCategory.EXPENSE ? 30 : 50);
+            quest.setExpReward(exp);
         }
 
         return quest;

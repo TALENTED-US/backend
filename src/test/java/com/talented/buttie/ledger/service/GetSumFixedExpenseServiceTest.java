@@ -9,6 +9,7 @@ import com.talented.buttie.ledger.domain.TransactionType;
 import com.talented.buttie.ledger.domain.TransactionVO;
 import com.talented.buttie.ledger.exception.LedgerErrorCode;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
+import com.talented.buttie.ledger.service.fixed.GetSumFixedExpenseService;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;

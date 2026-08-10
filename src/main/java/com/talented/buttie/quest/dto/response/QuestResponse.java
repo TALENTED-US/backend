@@ -54,6 +54,9 @@ public record QuestResponse(
     @ApiModelProperty(value = "퀘스트 진행 상태 (NOT_COMPLETED: 진행중, COMPLETED: 완료)", example = "NOT_COMPLETED")
     QuestStatus questStatus,
 
+    @ApiModelProperty(value = "경험치 보상", example = "100")
+    Integer expReward,
+
     @ApiModelProperty(value = "신청 링크")
     String questUrl
 ) {
@@ -75,6 +78,7 @@ public record QuestResponse(
             .recurrenceType(quest.getRecurrenceType())
             .amount(quest.getSimulationItemApplyAmount())
             .questStatus(quest.getQuestStatus())
+            .expReward(quest.getExpReward())
             .questUrl(quest.getQuestUrl())
             .build();
     }
