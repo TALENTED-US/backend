@@ -37,14 +37,11 @@ public class QuestReadService {
             throw ApplicationException.from(QuestErrorCode.INVALID_SIMULATION_ID);
         }
 
-        // 1. 활성 또는 최근 확정된 시뮬레이션 조회 및 검증
-        SimulationVO simulation = simulationMapper.findActiveByUserId(userId);
-        if (simulation == null) {
-            simulation = simulationMapper.findLatestConfirmedByUserId(userId);
-        }
+        // 1. 확정(적용)된 시뮬레이션 조회 및 검증
+        SimulationVO simulation = simulationMapper.findLatestConfirmedByUserId(userId);
 
         if (simulation == null || simulation.getSimulationId() == null) {
-            throw ApplicationException.from(QuestErrorCode.INVALID_SIMULATION_ID);
+            throw ApplicationException.from(QuestErrorCode.SIMULATION_NOT_APPLIED);
         }
 
         Long simulationId = simulation.getSimulationId();
