@@ -63,16 +63,6 @@ public class AuthController {
         return ApplicationResponse.onSuccess(new UserPKResponse(PKCrypto.encrypt(userId)));
     }
 
-    @ApiOperation("사용자 동의")
-    @PostMapping("/consent")
-    public ApplicationResponse<UserPKResponse> createUserConsent(
-        @AuthUser AuthenticationUser authUser
-    ) {
-        Long userId = authUser.userId();
-        Long targetUserId = authCreateService.createUserConsent(userId);
-        return ApplicationResponse.onSuccess(new UserPKResponse(PKCrypto.encrypt(targetUserId)));
-    }
-
     @ApiOperation("사용자 로그인")
     @PostMapping("/login")
     public ApplicationResponse<AuthTokenResponse> login(
@@ -182,6 +172,4 @@ public class AuthController {
             )
         );
     }
-
-
 }
