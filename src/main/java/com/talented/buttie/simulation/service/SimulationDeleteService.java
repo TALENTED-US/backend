@@ -1,7 +1,6 @@
 package com.talented.buttie.simulation.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
-import com.talented.buttie.quest.domain.QuestStatus;
 import com.talented.buttie.quest.domain.QuestVO;
 import com.talented.buttie.quest.mapper.QuestMapper;
 import com.talented.buttie.quest.service.ExperienceService;
@@ -29,10 +28,9 @@ public class SimulationDeleteService {
             throw ApplicationException.from(SimulationErrorCode.CONFIRMED_SIMULATION_NOT_FOUND);
         }
 
-        List<QuestVO> quests = questMapper.findAllBySimulationId(confirmedSimulation.getSimulationId());
+        List<QuestVO> quests = questMapper.findAllBySimulationIdForUpdate(confirmedSimulation.getSimulationId());
 
         int totalExp = quests.stream()
-            .filter(q -> q.getQuestStatus() == QuestStatus.COMPLETED)
             .mapToInt(q -> q.getExpReward() == null ? 0 : q.getExpReward())
             .sum();
 

@@ -90,6 +90,22 @@
     where Q.QUEST_ID = #{questId}
   </select>
 
+  <!--잠금 조회-->
+  <select id="findAllBySimulationIdForUpdate" resultType="com.talented.buttie.quest.domain.QuestVO">
+    select * from QUEST
+    where SIMULATION_ID = #{simulationId}
+      and QUEST_STATUS = 'COMPLETED'
+    for update
+  </select>
+
+  <!--조건부 revert-->
+  <update id="revertCompletedStatus">
+    update QUEST
+    set QUEST_STATUS = 'NOT_COMPLETED'
+    where QUEST_ID = #{questId}
+      and QUEST_STATUS = 'COMPLETED'
+  </update>
+
   <update id="updateStatus">
     update QUEST
     set QUEST_STATUS = #{questStatus},

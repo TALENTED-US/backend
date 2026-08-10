@@ -64,7 +64,7 @@ class SimulationDeleteServiceTest {
     void deleteSimulation() {
         given(simulationMapper.findLatestConfirmedByUserId(userId))
             .willReturn(confirmedSimulation);
-        given(questMapper.findAllBySimulationId(simulationId))
+        given(questMapper.findAllBySimulationIdForUpdate(simulationId))
             .willReturn(List.of());
         given(simulationMapper.deleteById(simulationId))
             .willReturn(1);
@@ -80,14 +80,14 @@ class SimulationDeleteServiceTest {
     @Test
     @DisplayName("성공: 완료된 퀘스트가 있으면 지급된 exp를 합산 회수하고 확정 시뮬레이션을 삭제한다.")
     void deleteSimulationWithExpReclaim() {
+        // findAllBySimulationIdForUpdate는 SQL에서 QUEST_STATUS = 'COMPLETED'로 이미 필터링해서 반환한다.
         List<QuestVO> quests = List.of(
             quest(QuestStatus.COMPLETED, 100),
-            quest(QuestStatus.COMPLETED, 50),
-            quest(QuestStatus.NOT_COMPLETED, 30)
+            quest(QuestStatus.COMPLETED, 50)
         );
         given(simulationMapper.findLatestConfirmedByUserId(userId))
             .willReturn(confirmedSimulation);
-        given(questMapper.findAllBySimulationId(simulationId))
+        given(questMapper.findAllBySimulationIdForUpdate(simulationId))
             .willReturn(quests);
         given(simulationMapper.deleteById(simulationId))
             .willReturn(1);
@@ -120,7 +120,7 @@ class SimulationDeleteServiceTest {
     void throwWhenDeleteTargetNotFound() {
         given(simulationMapper.findLatestConfirmedByUserId(userId))
             .willReturn(confirmedSimulation);
-        given(questMapper.findAllBySimulationId(simulationId))
+        given(questMapper.findAllBySimulationIdForUpdate(simulationId))
             .willReturn(List.of());
         given(simulationMapper.deleteById(simulationId))
             .willReturn(0);

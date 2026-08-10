@@ -1,7 +1,6 @@
 package com.talented.buttie.quest.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
-import com.talented.buttie.quest.domain.QuestStatus;
 import com.talented.buttie.quest.domain.QuestVO;
 import com.talented.buttie.quest.exception.QuestErrorCode;
 import com.talented.buttie.quest.mapper.QuestMapper;
@@ -32,14 +31,14 @@ public class QuestRevertService {
             throw ApplicationException.from(QuestErrorCode.QUEST_USER_ID_MISMATCH);
         }
 
-        // 완료 상태인 퀘스트만 취소(진행중 변경) 가능
-        if (quest.getQuestStatus() != QuestStatus.COMPLETED) {
-            throw ApplicationException.from(QuestErrorCode.QUEST_NOT_COMPLETED);
-        }
-
         try {
-            // 1. 퀘스트 상태를 NOT_COMPLETED (진행중)으로 변경
-            questMapper.updateStatus(questId, QuestStatus.NOT_COMPLETED);
+            // 1. 완료 상태인 퀘스트만 취소(진행중 변경) 가능 - COMPLETED일 때만 조건부로 갱신해 동시 요청 이중 회수 방지
+            int updated = questMapper.revertCompletedStatus(questId);
+            if (updated == 0) {
+                throw ApplicationException.from(QuestErrorCode.QUEST_NOT_COMPLETED);
+            }
+        } catch (ApplicationException e) {
+            throw e;
         } catch (Exception e) {
             throw ApplicationException.from(QuestErrorCode.QUEST_STATUS_UPDATE_FAILED);
         }
