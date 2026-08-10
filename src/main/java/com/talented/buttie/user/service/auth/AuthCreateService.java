@@ -2,6 +2,7 @@ package com.talented.buttie.user.service.auth;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.user.domain.EmploymentPreparationType;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.domain.UserVO;
 import com.talented.buttie.user.dto.request.auth.AuthSignUpRequest;
@@ -46,12 +47,12 @@ public class AuthCreateService {
             EmploymentPreparationVO.builder()
                 .userId(userId)
                 .birthDate(LocalDate.parse(verifiedCustomer.birthDate()))
-                .employmentPrepRegion(null)
-                .familyCount(null)
-                .employmentPrepType(null)
-                .prepStartDate(null)
-                .targetEmploymentDate(null)
-                .livingFundThreshold(null)
+                .employmentPrepRegion("서울특별시")
+                .familyCount(1)
+                .employmentPrepType(EmploymentPreparationType.FIRST_JOB)
+                .prepStartDate(LocalDate.now())
+                .targetEmploymentDate(LocalDate.now().plusMonths(6))
+                .livingFundThreshold(500000)
                 .build());
 
         if (preparationUserId == null) {
