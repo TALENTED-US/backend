@@ -71,6 +71,40 @@
     WHERE ub.USER_ID = #{userId}
   </select>
 
+  <select id="selectMyProfileSummary" resultType="com.talented.buttie.user.domain.MyProfileSummaryVO">
+    SELECT
+      CASE COALESCE(s.RISK_LEVEL, 'STABLE')
+        WHEN 'STABLE'  THEN bl.IMAGE_URL_STABLE
+        WHEN 'CAUTION' THEN bl.IMAGE_URL_CAUTION
+        WHEN 'DANGER'  THEN bl.IMAGE_URL_DANGER
+        END                                          AS buttieImageUrl,
+        ub.BUTTIE_LEVEL                              AS buttieLevel,
+        ub.BUTTIE_TOTAL_EXP                          AS buttieTotalExp,
+        (SELECT bl2.REQUIRED_EXP
+           FROM BUTTIE_LEVEL bl2
+          WHERE bl2.LEVEL = ub.BUTTIE_LEVEL + 1)     AS requiredExp,
+        COALESCE(s.RISK_LEVEL, 'STABLE')             AS riskLevel,
+        u.USER_NICKNAME                              AS userNickname,
+        u.USER_EMAIL                                 AS userEmail,
+        ep.EMPLOYMENT_PREP_TYPE                      AS employmentPrepType,
+        ep.PREP_START_DATE                           AS prepStartDate,
+        ep.TARGET_EMPLOYMENT_DATE                    AS targetEmploymentDate,
+        (SELECT m.MYDATA_STATUS
+           FROM MYDATA m
+          WHERE m.USER_ID = u.USER_ID
+          ORDER BY m.LAST_SYNCED_AT DESC
+          LIMIT 1)                                   AS mydataStatus,
+        (SELECT MAX(m.LAST_SYNCED_AT)
+           FROM MYDATA m
+          WHERE m.USER_ID = u.USER_ID)               AS lastSyncedAt
+    FROM USER u
+           JOIN USER_BUTTIE ub ON u.USER_ID = ub.USER_ID
+           JOIN BUTTIE_LEVEL bl ON ub.BUTTIE_LEVEL = bl.LEVEL
+           JOIN EMPLOYMENT_PREPARATIONS ep ON u.USER_ID = ep.USER_ID
+           LEFT JOIN SNAPSHOT s ON u.USER_ID = s.USER_ID
+    WHERE u.USER_ID = #{userId}
+  </select>
+
   <insert id="createUserButtie">
     INSERT INTO USER_BUTTIE (USER_ID, BUTTIE_LEVEL, BUTTIE_TOTAL_EXP)
     VALUES (#{userId},
