@@ -4,20 +4,19 @@
 
 <mapper namespace="com.talented.buttie.user.mapper.AuthMapper">
   <insert id="createUser"
-    parameterType="com.talented.buttie.user.dto.request.auth.AuthSignUpRequest"
+    parameterType="com.talented.buttie.user.domain.UserVO"
     useGeneratedKeys="true"
-    keyProperty="id"
-  >
+    keyProperty="userVO.userId">
     INSERT INTO `USER` (USER_NAME,
                         USER_EMAIL,
                         USER_PASSWORD_HASH,
                         USER_NICKNAME,
                         USER_PHONE_NUMBER)
-    VALUES (#{authSignUpRequest.userName},
-            #{authSignUpRequest.userEmail},
-            #{authSignUpRequest.userPassword},
-            #{authSignUpRequest.userNickname},
-            #{authSignUpRequest.phoneNumber})
+    VALUES (#{userVO.userName},
+            #{userVO.userEmail},
+            #{userVO.userPasswordHash},
+            #{userVO.userNickname},
+            #{userVO.userPhoneNumber})
   </insert>
   <update id="updateUserPassword">
     UPDATE `USER`
