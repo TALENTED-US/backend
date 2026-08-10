@@ -1,4 +1,4 @@
-package com.talented.buttie.ledger.service;
+package com.talented.buttie.ledger.service.fixed;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.ledger.domain.TransactionVO;

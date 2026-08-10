@@ -31,7 +31,7 @@ public class QuestReadService {
     private final PolicyMapper policyMapper;
     private final QuestMapper questMapper;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<QuestResponse> getQuests(Long userId) {
         if (userId == null) {
             throw ApplicationException.from(QuestErrorCode.INVALID_SIMULATION_ID);
@@ -75,7 +75,7 @@ public class QuestReadService {
         List<QuestResponse> allQuestResponses = new ArrayList<>();
         Set<Long> processedQuestIds = new HashSet<>();
 
-        // 4. 적용된 시뮬레이션 항목 처리 (QUEST 테이블에 없을 경우 동적 QuestVO 생성)
+        // 4. 적용된 시뮬레이션 항목 처리 (QUEST 테이블에 없을 경우 동적 QuestVO 생성 및 DB 저장)
         for (SimulationItemVO item : appliedItems) {
             if (item == null || item.getSimulationItemId() == null || item.getSimulationItemCategory() == null) {
                 throw ApplicationException.from(QuestErrorCode.INVALID_SIMULATION_ITEM_DATA);
@@ -91,6 +91,10 @@ public class QuestReadService {
                 quest = QuestVO.createFromSimulationItem(userId, simulationId, item, policy);
                 if (quest.getDisplayName() == null || quest.getDisplayName().isBlank()) {
                     throw ApplicationException.from(QuestErrorCode.INVALID_SIMULATION_ITEM_DATA);
+                }
+                questMapper.save(quest);
+                if (quest.getQuestId() != null) {
+                    processedQuestIds.add(quest.getQuestId());
                 }
             } else {
                 quest = QuestVO.of(quest, item, policy);
