@@ -28,4 +28,18 @@ public class SimulationDeleteService {
             throw ApplicationException.from(SimulationErrorCode.CONFIRMED_SIMULATION_NOT_FOUND);
         }
     }
+
+    public void deleteActiveSimulation(Long userId) {
+        SimulationVO activeSimulation = simulationMapper.findActiveByUserId(userId);
+
+        if(activeSimulation == null) {
+            throw ApplicationException.from(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND);
+        }
+
+        int updatedRows = simulationMapper.deleteActiveById(activeSimulation.getSimulationId());
+
+        if(updatedRows == 0) {
+            throw ApplicationException.from(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND);
+        }
+    }
 }
