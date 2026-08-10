@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum QuestErrorCode implements BaseErrorCode {
 
+    QUEST_USER_ID_MISMATCH(HttpStatus.FORBIDDEN, "QUEST_301", "해당 퀘스트에 대한 접근 권한이 없습니다."),
     QUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "QUEST_401", "퀘스트를 찾을 수 없습니다."),
+
     APPLIED_SIMULATION_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "QUEST_405", "적용된 시뮬레이션 항목을 찾을 수 없습니다."),
 
     INVALID_SIMULATION_ID(HttpStatus.BAD_REQUEST, "QUEST_001", "가져온 시뮬레이션 ID가 올바르지 않거나 일치하지 않습니다."),
