@@ -25,4 +25,6 @@ public interface SimulationMapper {
     int confirmSimulation(@Param("simulationId") Long simulationId);
 
     int deleteById(@Param("simulationId") Long simulationId);
+
+    int revertSimulation(@Param("simulationId") Long simulationId);
 }

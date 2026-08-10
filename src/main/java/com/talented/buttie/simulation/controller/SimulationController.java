@@ -105,6 +105,7 @@ public class SimulationController {
         @Valid @RequestBody ApplySimulationItemRequest request
     ) {
         ApplySimulationItemResponse response = simulationItemCreateService.applyItem(authUser.userId(), request);
+
         return ApplicationResponse.onSuccess(response);
     }
 
@@ -126,6 +127,7 @@ public class SimulationController {
         @AuthUser AuthenticationUser authUser
     ) {
         SimulationItemReportResponse response = simulationItemReadService.getAppliedItemReport(authUser.userId());
+
         return ApplicationResponse.onSuccess(response);
     }
 
@@ -173,6 +175,16 @@ public class SimulationController {
        @AuthUser AuthenticationUser authUser
     ) {
         simulationDeleteService.deleteSimulation(authUser.userId());
+
+        return ApplicationResponse.onSuccess(null);
+    }
+
+    @ApiOperation("확정 시뮬레이션 수정(미확정으로 되돌리기)")
+    @PatchMapping("/confirmed/revert")
+    public ApplicationResponse<Void> revertSimulation(
+        @AuthUser AuthenticationUser authUser
+    ) {
+        simulationUpdateService.revertSimulation(authUser.userId());
 
         return ApplicationResponse.onSuccess(null);
     }
