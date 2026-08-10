@@ -14,7 +14,7 @@
     values(#{userId}, #{snapshotId}, #{simulationStartDate}, #{simulationDueDate}, #{simulationEndAmount}, #{expectPrepMonths})
   </insert>
 
-  <select id="findActiveByUserId"
+    <select id="findActiveByUserId"
           resultType="com.talented.buttie.simulation.domain.SimulationVO">
     select * from SIMULATION
     where USER_ID = #{userId}
@@ -56,4 +56,9 @@
       and CONFIRMED_AT is null
   </update>
 
+  <delete id="deleteById">
+    delete from SIMULATION
+    where SIMULATION_ID = #{simulationId}
+        and CONFIRMED_AT is not null
+  </delete>
 </mapper>
