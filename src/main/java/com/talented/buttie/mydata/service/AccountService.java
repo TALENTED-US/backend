@@ -1,4 +1,4 @@
-package com.talented.buttie.account.service;
+package com.talented.buttie.mydata.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -6,4 +6,5 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AccountService {
+
 }
