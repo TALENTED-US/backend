@@ -1,6 +1,7 @@
 package com.talented.buttie.user.mapper;
 
 import com.talented.buttie.user.domain.ButtieDashboardVO;
+import com.talented.buttie.user.domain.MyProfileSummaryVO;
 import com.talented.buttie.user.domain.UserProfileVO;
 import com.talented.buttie.user.domain.UserVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -12,6 +13,8 @@ public interface UserMapper {
     UserProfileVO selectUserProfile(@Param("userId") Long userId);
 
     ButtieDashboardVO selectButtieDashboard(@Param("userId") Long userId);
+
+    MyProfileSummaryVO selectMyProfileSummary(@Param("userId") Long userId);
 
     int updateUser(@Param("user") UserVO user);
 

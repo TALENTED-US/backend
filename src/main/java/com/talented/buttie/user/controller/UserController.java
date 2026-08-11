@@ -6,10 +6,12 @@ import com.talented.buttie.common.security.annotation.AuthUser;
 import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.user.domain.ButtieDashboardVO;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
+import com.talented.buttie.user.domain.MyProfileSummaryVO;
 import com.talented.buttie.user.domain.UserProfileVO;
 import com.talented.buttie.user.dto.request.user.ModifyUserProfileRequest;
 import com.talented.buttie.user.dto.request.user.UpdateEmploymentPreparationRequest;
 import com.talented.buttie.user.dto.request.user.WithdrawUserRequest;
+import com.talented.buttie.user.dto.response.GetMyProfileSummaryResponse;
 import com.talented.buttie.user.dto.response.user.GetButtieDashboardResponse;
 import com.talented.buttie.user.dto.response.user.GetEmploymentPreparationResponse;
 import com.talented.buttie.user.dto.response.user.GetUserProfileResponse;
@@ -75,6 +77,16 @@ public class UserController {
         Long targetUserId = user.userId();
         ButtieDashboardVO buttieDashboard = userService.getButtieDashboard(targetUserId);
         return ApplicationResponse.onSuccess(GetButtieDashboardResponse.from(buttieDashboard));
+    }
+
+    @GetMapping
+    @ApiOperation("마이페이지 상단 프로필 조회")
+    public ApplicationResponse<GetMyProfileSummaryResponse> getMyProfileSummary(
+        @AuthUser AuthenticationUser user
+    ) {
+        Long targetUserId = user.userId();
+        MyProfileSummaryVO myProfileSummary = userService.getMyProfileSummary(targetUserId);
+        return ApplicationResponse.onSuccess(GetMyProfileSummaryResponse.from(myProfileSummary));
     }
 
     @GetMapping("/employment-preparation")
