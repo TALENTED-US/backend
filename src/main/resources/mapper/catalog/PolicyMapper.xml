@@ -9,4 +9,10 @@
     from POLICY
     where POLICY_ID = #{policyId}
   </select>
+
+  <select id="findAll" resultType="com.talented.buttie.catalog.domain.PolicyVO">
+    select *
+    from POLICY
+    order by POLICY_ID asc
+  </select>
 </mapper>
