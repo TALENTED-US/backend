@@ -1,7 +1,6 @@
 package com.talented.buttie.quest.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
-import com.talented.buttie.quest.domain.QuestStatus;
 import com.talented.buttie.quest.domain.QuestVO;
 import com.talented.buttie.quest.exception.QuestErrorCode;
 import com.talented.buttie.quest.mapper.QuestMapper;
@@ -32,19 +31,20 @@ public class QuestUpdateService {
             throw ApplicationException.from(QuestErrorCode.QUEST_USER_ID_MISMATCH);
         }
 
-        if (quest.getQuestStatus() == QuestStatus.COMPLETED) {
-            throw ApplicationException.from(QuestErrorCode.QUEST_ALREADY_COMPLETED);
-        }
-
         try {
-            // 1. 퀘스트 상태를 COMPLETED(완료)로 변경
-            questMapper.updateStatus(questId, QuestStatus.COMPLETED);
+            // 1. NOT_COMPLETED 상태일 때만 원자적으로 COMPLETED로 갱신 (동시 요청 중복 완료/경험치 적립 방지)
+            int updatedRows = questMapper.completeQuestStatus(questId);
+            if (updatedRows == 0) {
+                throw ApplicationException.from(QuestErrorCode.QUEST_ALREADY_COMPLETED);
+            }
+        } catch (ApplicationException e) {
+            throw e;
         } catch (Exception e) {
             throw ApplicationException.from(QuestErrorCode.QUEST_STATUS_UPDATE_FAILED);
         }
 
         try {
-            // 2. 퀘스트 완료 경험치 지급
+            // 2. 상태 전환이 정상 성공(영향 행 수 = 1)한 경우에만 경험치 지급
             Integer expReward = quest.getExpReward();
             if (expReward != null && expReward > 0) {
                 experienceService.addExperience(userId, expReward);

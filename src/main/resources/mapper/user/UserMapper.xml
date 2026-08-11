@@ -99,25 +99,39 @@
 
   <update id="deductUserExp">
     UPDATE USER_BUTTIE ub
-    SET ub.BUTTIE_TOTAL_EXP = GREATEST(0, ub.BUTTIE_TOTAL_EXP - #{expAmount}),
-        ub.BUTTIE_LEVEL = COALESCE(
-          (SELECT MAX(bl.LEVEL)
-           FROM BUTTIE_LEVEL bl
-           WHERE bl.REQUIRED_EXP &lt;= GREATEST(0, ub.BUTTIE_TOTAL_EXP - #{expAmount})),
-          1
-        )
-    WHERE ub.USER_ID = #{userId}
+    JOIN (
+      SELECT
+        c.user_id,
+        c.target_exp,
+        COALESCE(MAX(bl.LEVEL), 1) AS target_level
+      FROM (
+        SELECT USER_ID, GREATEST(0, BUTTIE_TOTAL_EXP - #{expAmount}) AS target_exp
+        FROM USER_BUTTIE
+        WHERE USER_ID = #{userId}
+      ) c
+      LEFT JOIN BUTTIE_LEVEL bl ON bl.REQUIRED_EXP &lt;= c.target_exp
+      GROUP BY c.user_id, c.target_exp
+    ) calc ON ub.USER_ID = calc.user_id
+    SET ub.BUTTIE_TOTAL_EXP = calc.target_exp,
+        ub.BUTTIE_LEVEL = calc.target_level
   </update>
 
   <update id="addUserExp">
     UPDATE USER_BUTTIE ub
-    SET ub.BUTTIE_TOTAL_EXP = ub.BUTTIE_TOTAL_EXP + #{expAmount},
-        ub.BUTTIE_LEVEL = COALESCE(
-          (SELECT MAX(bl.LEVEL)
-           FROM BUTTIE_LEVEL bl
-           WHERE bl.REQUIRED_EXP &lt;= (ub.BUTTIE_TOTAL_EXP + #{expAmount})),
-          1
-        )
-    WHERE ub.USER_ID = #{userId}
+    JOIN (
+      SELECT
+        c.user_id,
+        c.target_exp,
+        COALESCE(MAX(bl.LEVEL), 1) AS target_level
+      FROM (
+        SELECT USER_ID, (BUTTIE_TOTAL_EXP + #{expAmount}) AS target_exp
+        FROM USER_BUTTIE
+        WHERE USER_ID = #{userId}
+      ) c
+      LEFT JOIN BUTTIE_LEVEL bl ON bl.REQUIRED_EXP &lt;= c.target_exp
+      GROUP BY c.user_id, c.target_exp
+    ) calc ON ub.USER_ID = calc.user_id
+    SET ub.BUTTIE_TOTAL_EXP = calc.target_exp,
+        ub.BUTTIE_LEVEL = calc.target_level
   </update>
 </mapper>
