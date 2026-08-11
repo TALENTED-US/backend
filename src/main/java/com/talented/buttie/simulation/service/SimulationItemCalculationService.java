@@ -1,5 +1,6 @@
 package com.talented.buttie.simulation.service;
 
+import com.talented.buttie.catalog.domain.PolicyStatus;
 import com.talented.buttie.catalog.domain.PolicyVO;
 import com.talented.buttie.catalog.exception.CatalogErrorCode;
 import com.talented.buttie.catalog.mapper.PolicyMapper;
@@ -91,6 +92,10 @@ public class SimulationItemCalculationService {
 
         if (policy == null) {
             throw ApplicationException.from(CatalogErrorCode.POLICY_NOT_FOUND);
+        }
+
+        if (policy.getPolicyStatus() != PolicyStatus.AVAILABLE) {
+            throw ApplicationException.from(CatalogErrorCode.POLICY_NOT_AVAILABLE);
         }
 
         return policy;

@@ -1,6 +1,7 @@
 package com.talented.buttie.catalog.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.talented.buttie.catalog.domain.PolicyStatus;
 import com.talented.buttie.catalog.domain.PolicyVO;
 import com.talented.buttie.common.util.PKCrypto;
 import io.swagger.annotations.ApiModel;
@@ -31,7 +32,10 @@ public record PolicyResponse(
     String requiredDocument,
 
     @ApiModelProperty(value = "정책 신청 URL", example = "https://www.gov.kr/youth-housing")
-    String policyUrl
+    String policyUrl,
+
+    @ApiModelProperty(value = "정책 상태 (AVAILABLE, CLOSED)", example = "AVAILABLE")
+    PolicyStatus policyStatus
 ) {
 
     public static PolicyResponse from(PolicyVO vo) {
@@ -45,6 +49,7 @@ public record PolicyResponse(
             .dueDate(vo.getDueDate())
             .requiredDocument(vo.getRequiredDocument())
             .policyUrl(vo.getPolicyUrl())
+            .policyStatus(vo.getPolicyStatus())
             .build();
     }
 }

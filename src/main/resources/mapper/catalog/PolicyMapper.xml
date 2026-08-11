@@ -13,6 +13,7 @@
   <select id="findAll" resultType="com.talented.buttie.catalog.domain.PolicyVO">
     select *
     from POLICY
+    where POLICY_STATUS = 'AVAILABLE'
     order by POLICY_ID asc
   </select>
 </mapper>
