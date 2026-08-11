@@ -3,6 +3,7 @@ package com.talented.buttie.notification.controller;
 import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.annotation.AuthUser;
+import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.notification.domain.NotificationListVO;
 import com.talented.buttie.notification.dto.response.GetNotificationListResponse;
 import com.talented.buttie.notification.dto.response.UnreadNotificationCheckResponse;
@@ -55,11 +56,12 @@ public class NotificationController {
 
     @ApiOperation("알림 개별 읽음 처리")
     @PatchMapping("/{notificationId}/read")
-    public ApplicationResponse<Long> modifyNotificationRead(
+    public ApplicationResponse<String> modifyNotificationRead(
         @AuthUser AuthenticationUser authUser,
-        @PathVariable("notificationId") Long notificationId
+        @PathVariable("notificationId") String notificationId
     ) {
-        Long result = notificationService.modifyNotificationRead(authUser.userId(), notificationId);
-        return ApplicationResponse.onSuccess(result);
+        Long decryptedNotificationId = PKCrypto.decrypt(notificationId);
+        Long resultNotificationId = notificationService.modifyNotificationRead(authUser.userId(), decryptedNotificationId);
+        return ApplicationResponse.onSuccess(PKCrypto.encrypt(resultNotificationId));
     }
 }
