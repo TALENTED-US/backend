@@ -51,4 +51,15 @@
     WHERE USER_ID = #{userId}
   </select>
 
+  <select id="selectUserIdByNotificationId" resultType="java.lang.Long">
+    SELECT USER_ID
+    FROM NOTIFICATION
+    WHERE NOTIFICATION_ID = #{notificationId}
+  </select>
+
+  <update id="updateNotificationRead">
+    UPDATE NOTIFICATION
+    SET IS_READ = TRUE
+    WHERE NOTIFICATION_ID = #{notificationId}
+  </update>
 </mapper>

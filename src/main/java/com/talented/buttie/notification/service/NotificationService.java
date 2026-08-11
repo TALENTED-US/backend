@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.talented.buttie.notification.domain.UserNotificationVO;
 import com.talented.buttie.notification.dto.response.NotificationSettingResponse;
+import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.notification.exception.NotificationErrorCode;
 
 import java.util.List;
 @Service
@@ -40,5 +42,17 @@ public class NotificationService {
         );
     }
 
+    public Long modifyNotificationRead(Long userId, Long notificationId) {
+        Long targetUserId = notificationMapper.selectUserIdByNotificationId(notificationId);
 
+        if (targetUserId == null) {
+            throw ApplicationException.from(NotificationErrorCode.NOTIFICATION_NOT_FOUND);
+        }
+        if (!targetUserId.equals(userId)) {
+            throw ApplicationException.from(NotificationErrorCode.NOTIFICATION_ACCESS_DENIED);
+        }
+
+        notificationMapper.updateNotificationRead(notificationId);
+        return notificationId;
+    }
 }

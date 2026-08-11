@@ -12,6 +12,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,5 +51,15 @@ public class NotificationController {
         NotificationSettingResponse response = notificationService.getNotificationSettings(authUser.userId());
 
         return ApplicationResponse.onSuccess(response);
+    }
+
+    @ApiOperation("알림 개별 읽음 처리")
+    @PatchMapping("/{notificationId}/read")
+    public ApplicationResponse<Long> modifyNotificationRead(
+        @AuthUser AuthenticationUser authUser,
+        @PathVariable("notificationId") Long notificationId
+    ) {
+        Long result = notificationService.modifyNotificationRead(authUser.userId(), notificationId);
+        return ApplicationResponse.onSuccess(result);
     }
 }
