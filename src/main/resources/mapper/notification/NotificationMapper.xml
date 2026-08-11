@@ -31,4 +31,13 @@
       AND IS_READ = FALSE
   </select>
 
+  <select id="existsUnreadNotification" resultType="boolean">
+    SELECT EXISTS(
+      SELECT 1
+        FROM NOTIFICATION
+       WHERE USER_ID = #{userId}
+         AND IS_READ = FALSE
+    )
+  </select>
+
 </mapper>

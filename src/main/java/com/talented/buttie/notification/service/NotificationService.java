@@ -18,4 +18,8 @@ public class NotificationService {
 
         return NotificationListVO.createNotificationList(unreadCount, notifications);
     }
+
+    public boolean hasUnreadNotification(Long userId) {
+        return notificationMapper.existsUnreadNotification(userId);
+    }
 }
