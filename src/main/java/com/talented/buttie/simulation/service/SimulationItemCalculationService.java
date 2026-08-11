@@ -94,7 +94,7 @@ public class SimulationItemCalculationService {
             throw ApplicationException.from(CatalogErrorCode.POLICY_NOT_FOUND);
         }
 
-        if (policy.getPolicyStatus() != PolicyStatus.AVAILABLE) {
+        if (policy.getPolicyStatus() == PolicyStatus.CLOSED) {
             throw ApplicationException.from(CatalogErrorCode.POLICY_NOT_AVAILABLE);
         }
 
