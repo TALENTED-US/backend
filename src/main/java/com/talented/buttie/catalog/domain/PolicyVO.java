@@ -1,7 +1,7 @@
 package com.talented.buttie.catalog.domain;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 import lombok.*;
 
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
@@ -20,4 +20,7 @@ public class PolicyVO {
     private Integer familyCount;
     private PolicyStatus policyStatus;
     private String policyUrl;
+    private String externalSource;
+    private String externalPolicyId;
+    private AmountParseConfidence amountParseConfidence;
 }
