@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationService notificationService;
-
+    @ApiOperation("알람 목록 조회")
     @GetMapping
     public ApplicationResponse<GetNotificationListResponse> getNotificationList(
         @AuthUser AuthenticationUser authUser,
