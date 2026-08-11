@@ -20,7 +20,5 @@ public interface NotificationMapper {
 
     UserNotificationVO selectUserNotification(@Param("userId") Long userId);
 
-    int insertUserNotification(UserNotificationVO userNotificationVO);
-
-    int updateUserNotification(UserNotificationVO userNotificationVO);
+    int upsertUserNotification(UserNotificationVO userNotificationVO);
 }

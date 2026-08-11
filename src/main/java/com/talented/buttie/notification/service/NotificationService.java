@@ -50,14 +50,7 @@ public class NotificationService {
             request.serviceNoticeEnabled()
         );
 
-        UserNotificationVO existing = notificationMapper.selectUserNotification(userId);
-
-        if (existing == null) {
-            notificationMapper.insertUserNotification(vo);
-        } else {
-            notificationMapper.updateUserNotification(vo);
-        }
-
+        notificationMapper.upsertUserNotification(vo);
         return userId;
     }
 }
