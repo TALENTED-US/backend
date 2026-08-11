@@ -2,11 +2,12 @@ package com.talented.buttie.notification.service;
 
 import com.talented.buttie.notification.domain.NotificationListVO;
 import com.talented.buttie.notification.domain.NotificationVO;
+import com.talented.buttie.notification.domain.UserNotificationVO;
+import com.talented.buttie.notification.dto.request.UpdateNotificationSettingRequest;
+import com.talented.buttie.notification.dto.response.NotificationSettingResponse;
 import com.talented.buttie.notification.mapper.NotificationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.talented.buttie.notification.domain.UserNotificationVO;
-import com.talented.buttie.notification.dto.response.NotificationSettingResponse;
 
 import java.util.List;
 @Service
@@ -40,5 +41,23 @@ public class NotificationService {
         );
     }
 
+    public Long modifyNotificationSettings(Long userId, UpdateNotificationSettingRequest request) {
+        UserNotificationVO vo = new UserNotificationVO(
+            userId,
+            request.policyDeadlineEnabled(),
+            request.financialChangeEnabled(),
+            request.planDeviationEnabled(),
+            request.serviceNoticeEnabled()
+        );
 
+        UserNotificationVO existing = notificationMapper.selectUserNotification(userId);
+
+        if (existing == null) {
+            notificationMapper.insertUserNotification(vo);
+        } else {
+            notificationMapper.updateUserNotification(vo);
+        }
+
+        return userId;
+    }
 }

@@ -51,4 +51,29 @@
     WHERE USER_ID = #{userId}
   </select>
 
+  <insert id="insertUserNotification">
+    INSERT INTO USER_NOTIFICATION (
+      USER_ID,
+      POLICY_DEADLINE_NOTIFICATION_YN,
+      FINANCIAL_CHANGE_NOTIFICATION_YN,
+      PLAN_DEVIATION_NOTIFICATION_YN,
+      SERVICE_NOTICE_NOTIFICATION_YN
+    ) VALUES (
+      #{userId},
+      #{policyDeadlineNotificationYn},
+      #{financialChangeNotificationYn},
+      #{planDeviationNotificationYn},
+      #{serviceNoticeNotificationYn}
+    )
+  </insert>
+
+  <update id="updateUserNotification">
+    UPDATE USER_NOTIFICATION
+    SET POLICY_DEADLINE_NOTIFICATION_YN = #{policyDeadlineNotificationYn},
+        FINANCIAL_CHANGE_NOTIFICATION_YN = #{financialChangeNotificationYn},
+        PLAN_DEVIATION_NOTIFICATION_YN = #{planDeviationNotificationYn},
+        SERVICE_NOTICE_NOTIFICATION_YN = #{serviceNoticeNotificationYn}
+    WHERE USER_ID = #{userId}
+  </update>
+
 </mapper>

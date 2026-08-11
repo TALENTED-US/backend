@@ -3,10 +3,12 @@ package com.talented.buttie.notification.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import com.talented.buttie.notification.domain.UserNotificationVO;
+import com.talented.buttie.notification.dto.request.UpdateNotificationSettingRequest;
 import com.talented.buttie.notification.dto.response.NotificationSettingResponse;
 import com.talented.buttie.notification.mapper.NotificationMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -82,5 +84,40 @@ class NotificationServiceTest {
         assertTrue(result.planDeviationEnabled());
         assertTrue(result.serviceNoticeEnabled());
         verify(notificationMapper).selectUserNotification(userId);
+    }
+
+    @Test
+    @DisplayName("알림 수신 설정이 없으면 INSERT 후 userId를 반환한다")
+    void modifyNotificationSettingsInsert() {
+        Long userId = 1L;
+        UpdateNotificationSettingRequest request = new UpdateNotificationSettingRequest(
+            true, false, true, false
+        );
+
+        given(notificationMapper.selectUserNotification(userId)).willReturn(null);
+        given(notificationMapper.insertUserNotification(any(UserNotificationVO.class))).willReturn(1);
+
+        Long result = notificationService.modifyNotificationSettings(userId, request);
+
+        assertEquals(userId, result);
+        verify(notificationMapper).insertUserNotification(any(UserNotificationVO.class));
+    }
+
+    @Test
+    @DisplayName("알림 수신 설정이 있으면 UPDATE 후 userId를 반환한다")
+    void modifyNotificationSettingsUpdate() {
+        Long userId = 1L;
+        UpdateNotificationSettingRequest request = new UpdateNotificationSettingRequest(
+            true, false, true, false
+        );
+        UserNotificationVO existing = new UserNotificationVO(userId, true, true, true, true);
+
+        given(notificationMapper.selectUserNotification(userId)).willReturn(existing);
+        given(notificationMapper.updateUserNotification(any(UserNotificationVO.class))).willReturn(1);
+
+        Long result = notificationService.modifyNotificationSettings(userId, request);
+
+        assertEquals(userId, result);
+        verify(notificationMapper).updateUserNotification(any(UserNotificationVO.class));
     }
 }

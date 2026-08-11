@@ -7,14 +7,19 @@ import com.talented.buttie.notification.domain.NotificationListVO;
 import com.talented.buttie.notification.dto.response.GetNotificationListResponse;
 import com.talented.buttie.notification.dto.response.UnreadNotificationCheckResponse;
 import com.talented.buttie.notification.service.NotificationService;
+import com.talented.buttie.notification.dto.request.UpdateNotificationSettingRequest;
 import com.talented.buttie.notification.dto.response.NotificationSettingResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.validation.Valid;
 
 @Api(tags = "Notification")
 @RestController
@@ -49,5 +54,15 @@ public class NotificationController {
         NotificationSettingResponse response = notificationService.getNotificationSettings(authUser.userId());
 
         return ApplicationResponse.onSuccess(response);
+    }
+
+    @ApiOperation("알림 수신 설정 변경")
+    @PatchMapping("/settings")
+    public ApplicationResponse<Long> modifyNotificationSettings(
+        @AuthUser AuthenticationUser authUser,
+        @Valid @RequestBody UpdateNotificationSettingRequest request
+    ) {
+        Long userId = notificationService.modifyNotificationSettings(authUser.userId(), request);
+        return ApplicationResponse.onSuccess(userId);
     }
 }
