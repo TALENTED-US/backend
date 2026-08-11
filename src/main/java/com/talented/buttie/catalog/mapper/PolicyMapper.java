@@ -8,4 +8,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface PolicyMapper {
     PolicyVO findById(@Param("policyId") Long policyId);
+
+    List<PolicyVO> findAll();
 }
