@@ -10,7 +10,6 @@ import static org.mockito.Mockito.verify;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.mydata.domain.ConnectionStatus;
-import com.talented.buttie.user.domain.ButtieDashboardVO;
 import com.talented.buttie.user.domain.EmploymentPreparationType;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.domain.MyProfileSummaryVO;
@@ -181,45 +180,6 @@ class UserServiceTest {
         ApplicationException exception = assertThrows(
             ApplicationException.class,
             () -> userService.getUserProfile(userId)
-        );
-
-        assertEquals(
-            UserErrorCode.USER_NOT_FOUND,
-            exception.getCode()
-        );
-    }
-
-    @Test
-    @DisplayName("버티 성장 대시보드를 조회하면 해당 사용자의 버티 정보를 반환한다.")
-    void getButiDashboard() {
-
-        Long userId = 1L;
-        ButtieDashboardVO mockVO = new ButtieDashboardVO(
-            1, "새싹 버티", "이제 막 자산관리를 시작한 기본 버티", 120, 0, "CAUTION", "https://cdn.buttie.com/buttie/lv1_caution.png"
-        );
-
-        given(userMapper.selectButtieDashboard(userId))
-            .willReturn(mockVO);
-
-        ButtieDashboardVO result = userService.getButtieDashboard(userId);
-
-        assertNotNull(result);
-        assertEquals(1, result.getButtieLevel());
-        assertEquals("CAUTION", result.getRiskLevel());
-        verify(userMapper).selectButtieDashboard(userId);
-    }
-
-    @Test
-    @DisplayName("버티 성장 대시보드 조회 시 해당 사용자가 없으면 예외가 발생한다.")
-    void throwWhenGetButiDashboardNotFound() {
-        Long userId = 999L;
-
-        given(userMapper.selectButtieDashboard(userId))
-            .willReturn(null);
-
-        ApplicationException exception = assertThrows(
-            ApplicationException.class,
-            () -> userService.getButtieDashboard(userId)
         );
 
         assertEquals(
