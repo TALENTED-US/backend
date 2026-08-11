@@ -3,14 +3,14 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.talented.buttie.account.mapper.AccountMapper">
+<mapper namespace="com.talented.buttie.mydata.mapper.AccountMapper">
 
   <select id="findActiveByUserId"
-          resultType="com.talented.buttie.account.domain.AccountVO">
+    resultType="com.talented.buttie.mydata.domain.AccountVO">
     select *
     from ACCOUNT
     where USER_ID = #{userId}
-        and IS_ACTIVE = true
+      and IS_ACTIVE = true
   </select>
 
 </mapper>

@@ -1,4 +1,4 @@
-package com.talented.buttie.account.exception;
+package com.talented.buttie.mydata.exception;
 
 import com.talented.buttie.common.response.code.BaseErrorCode;
 import lombok.AllArgsConstructor;

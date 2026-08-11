@@ -1,4 +1,4 @@
-package com.talented.buttie.account.domain;
+package com.talented.buttie.mydata.domain;
 
 public enum AccountType {
     CHECKING,

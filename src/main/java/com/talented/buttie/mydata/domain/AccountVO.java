@@ -1,10 +1,18 @@
-package com.talented.buttie.account.domain;
+package com.talented.buttie.mydata.domain;
 
 import java.time.LocalDateTime;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-@Data @Builder @NoArgsConstructor @AllArgsConstructor
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AccountVO {
+
     private Long accountId;
     private Long userId;
     private String externalAccountId;
