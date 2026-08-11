@@ -25,4 +25,6 @@ public interface QuestMapper {
     List<QuestVO> findAllBySimulationIdForUpdate(@Param("simulationId") Long simulationId);
 
     int revertCompletedStatus(@Param("questId") Long questId);
+
+    int completeQuestStatus(@Param("questId") Long questId);
 }
