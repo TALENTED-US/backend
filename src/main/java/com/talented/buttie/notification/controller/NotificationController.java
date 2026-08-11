@@ -7,6 +7,7 @@ import com.talented.buttie.notification.domain.NotificationListVO;
 import com.talented.buttie.notification.dto.response.GetNotificationListResponse;
 import com.talented.buttie.notification.dto.response.UnreadNotificationCheckResponse;
 import com.talented.buttie.notification.service.NotificationService;
+import com.talented.buttie.notification.dto.response.NotificationSettingResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -38,5 +39,15 @@ public class NotificationController {
     ) {
         boolean hasUnread = notificationService.hasUnreadNotification(authUser.userId());
         return ApplicationResponse.onSuccess(UnreadNotificationCheckResponse.of(hasUnread));
+    }
+
+    @ApiOperation("알림 수신 설정 조회")
+    @GetMapping("/settings")
+    public ApplicationResponse<NotificationSettingResponse> getNotificationSettings(
+        @AuthUser AuthenticationUser authUser
+    ){
+        NotificationSettingResponse response = notificationService.getNotificationSettings(authUser.userId());
+
+        return ApplicationResponse.onSuccess(response);
     }
 }

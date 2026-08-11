@@ -40,4 +40,15 @@
     )
   </select>
 
+  <select id="selectUserNotification" resultType="com.talented.buttie.notification.domain.UserNotificationVO">
+    SELECT
+      USER_ID AS userId,
+      POLICY_DEADLINE_NOTIFICATION_YN AS policyDeadlineNotificationYn,
+      FINANCIAL_CHANGE_NOTIFICATION_YN AS financialChangeNotificationYn,
+      PLAN_DEVIATION_NOTIFICATION_YN AS planDeviationNotificationYn,
+      SERVICE_NOTICE_NOTIFICATION_YN AS serviceNoticeNotificationYn
+    FROM USER_NOTIFICATION
+    WHERE USER_ID = #{userId}
+  </select>
+
 </mapper>
