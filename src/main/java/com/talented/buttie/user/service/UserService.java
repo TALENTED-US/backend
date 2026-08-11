@@ -2,6 +2,7 @@ package com.talented.buttie.user.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
+import com.talented.buttie.user.domain.MyProfileSummaryVO;
 import com.talented.buttie.user.domain.UserProfileVO;
 import com.talented.buttie.user.domain.UserVO;
 import com.talented.buttie.user.dto.request.user.ModifyUserProfileRequest;
@@ -30,6 +31,16 @@ public class UserService {
         }
 
         return userProfile;
+    }
+
+    public MyProfileSummaryVO getMyProfileSummary(Long userId) {
+        MyProfileSummaryVO myProfileSummary = userMapper.selectMyProfileSummary(userId);
+
+        if (myProfileSummary == null) {
+            throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
+        }
+
+        return myProfileSummary;
     }
 
     public Long modifyEmploymentPreparation(Long userId, UpdateEmploymentPreparationRequest request) {
