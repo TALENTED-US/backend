@@ -5,6 +5,7 @@ import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.annotation.AuthUser;
 import com.talented.buttie.notification.domain.NotificationListVO;
 import com.talented.buttie.notification.dto.response.GetNotificationListResponse;
+import com.talented.buttie.notification.dto.response.UnreadNotificationCheckResponse;
 import com.talented.buttie.notification.service.NotificationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,5 +29,14 @@ public class NotificationController {
     ) {
         NotificationListVO vo = notificationService.getNotificationList(authUser.userId(), unreadOnly);
         return ApplicationResponse.onSuccess(GetNotificationListResponse.from(vo));
+    }
+
+    @ApiOperation("미확인 알림 존재 여부 조회")
+    @GetMapping("/unread-check")
+    public ApplicationResponse<UnreadNotificationCheckResponse> checkUnreadNotification(
+        @AuthUser AuthenticationUser authUser
+    ) {
+        boolean hasUnread = notificationService.hasUnreadNotification(authUser.userId());
+        return ApplicationResponse.onSuccess(UnreadNotificationCheckResponse.of(hasUnread));
     }
 }
