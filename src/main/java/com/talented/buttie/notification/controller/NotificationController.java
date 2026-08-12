@@ -3,6 +3,7 @@ package com.talented.buttie.notification.controller;
 import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.annotation.AuthUser;
+import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.notification.domain.NotificationListVO;
 import com.talented.buttie.notification.dto.response.GetNotificationListResponse;
 import com.talented.buttie.notification.dto.response.UnreadNotificationCheckResponse;
@@ -14,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,5 +66,16 @@ public class NotificationController {
     ) {
         Long userId = notificationService.modifyNotificationSettings(authUser.userId(), request);
         return ApplicationResponse.onSuccess(userId);
+    }
+
+    @ApiOperation("알림 개별 읽음 처리")
+    @PatchMapping("/{notificationId}/read")
+    public ApplicationResponse<String> modifyNotificationRead(
+        @AuthUser AuthenticationUser authUser,
+        @PathVariable("notificationId") String notificationId
+    ) {
+        Long decryptedNotificationId = PKCrypto.decrypt(notificationId);
+        Long resultNotificationId = notificationService.modifyNotificationRead(authUser.userId(), decryptedNotificationId);
+        return ApplicationResponse.onSuccess(PKCrypto.encrypt(resultNotificationId));
     }
 }

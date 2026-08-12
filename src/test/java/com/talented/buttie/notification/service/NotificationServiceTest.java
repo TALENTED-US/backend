@@ -2,14 +2,18 @@ package com.talented.buttie.notification.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.notification.domain.UserNotificationVO;
 import com.talented.buttie.notification.dto.request.UpdateNotificationSettingRequest;
 import com.talented.buttie.notification.dto.response.NotificationSettingResponse;
+import com.talented.buttie.notification.exception.NotificationErrorCode;
 import com.talented.buttie.notification.mapper.NotificationMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -100,5 +104,55 @@ class NotificationServiceTest {
 
         assertEquals(userId, result);
         verify(notificationMapper).upsertUserNotification(any(UserNotificationVO.class));
+    }
+
+    @Test
+    @DisplayName("알림 개별 읽음 처리 시 정상적으로 notificationId를 반환한다")
+    void modifyNotificationRead() {
+        Long userId = 1L;
+        Long notificationId = 10L;
+
+        given(notificationMapper.selectUserIdByNotificationId(notificationId)).willReturn(userId);
+        given(notificationMapper.updateNotificationRead(notificationId)).willReturn(1);
+
+        Long result = notificationService.modifyNotificationRead(userId, notificationId);
+
+        assertEquals(notificationId, result);
+        verify(notificationMapper).updateNotificationRead(notificationId);
+    }
+
+    @Test
+    @DisplayName("알림 개별 읽음 처리 시 알림이 없으면 예외가 발생한다")
+    void throwWhenNotificationNotFound() {
+        Long userId = 1L;
+        Long notificationId = 999L;
+
+        given(notificationMapper.selectUserIdByNotificationId(notificationId)).willReturn(null);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> notificationService.modifyNotificationRead(userId, notificationId)
+        );
+
+        assertEquals(NotificationErrorCode.NOTIFICATION_NOT_FOUND, exception.getCode());
+        verify(notificationMapper, never()).updateNotificationRead(notificationId);
+    }
+
+    @Test
+    @DisplayName("알림 개별 읽음 처리 시 타인 알림이면 예외가 발생한다")
+    void throwWhenNotificationAccessDenied() {
+        Long userId = 1L;
+        Long notificationId = 10L;
+        Long otherUserId = 2L;
+
+        given(notificationMapper.selectUserIdByNotificationId(notificationId)).willReturn(otherUserId);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> notificationService.modifyNotificationRead(userId, notificationId)
+        );
+
+        assertEquals(NotificationErrorCode.NOTIFICATION_ACCESS_DENIED, exception.getCode());
+        verify(notificationMapper, never()).updateNotificationRead(notificationId);
     }
 }
