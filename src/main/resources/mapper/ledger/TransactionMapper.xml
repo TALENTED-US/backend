@@ -20,13 +20,20 @@
       TRANSACTION_ID          AS transactionId,
       USER_ID                 AS userId,
       ACCOUNT_ID              AS accountId,
+      CARD_ID                 AS cardId,
       EXTERNAL_TRANSACTION_ID AS externalTransactionId,
+      TRANSACTION_SOURCE      AS transactionSource,
+      CLASSIFICATION_METHOD   AS classificationMethod,
+      MERCHANT_NAME           AS merchantName,
+      MERCHANT_REGNO          AS merchantRegistrationNumber,
+      MERCHANT_CATEGORY_CODE  AS merchantCategoryCode,
       TRANSACTION_CONTENT     AS transactionContent,
       TRANSACTION_TYPE        AS transactionType,
       EXPENSE_CATEGORY        AS expenseCategory,
       TRANSACTION_AMOUNT      AS transactionAmount,
       TRANSACTION_AT          AS transactionAt,
       TRANSACTION_MEMO        AS transactionMemo,
+      ANALYSIS_EXCLUDED       AS analysisExcluded,
       IS_DELETED              AS isDeleted,
       TRANSACTION_CREATED_AT  AS transactionCreatedAt,
       TRANSACTION_UPDATED_AT  AS transactionUpdatedAt
@@ -43,44 +50,113 @@
     INSERT INTO `TRANSACTION` (
       USER_ID,
       ACCOUNT_ID,
+      CARD_ID,
       EXTERNAL_TRANSACTION_ID,
+      TRANSACTION_SOURCE,
+      CLASSIFICATION_METHOD,
+      MERCHANT_NAME,
+      MERCHANT_REGNO,
+      MERCHANT_CATEGORY_CODE,
       TRANSACTION_CONTENT,
       TRANSACTION_TYPE,
       EXPENSE_CATEGORY,
       TRANSACTION_AMOUNT,
       TRANSACTION_AT,
       TRANSACTION_MEMO,
+      ANALYSIS_EXCLUDED,
       IS_DELETED,
       TRANSACTION_CREATED_AT,
       TRANSACTION_UPDATED_AT
     ) VALUES (
       #{userId},
       #{accountId},
+      #{cardId},
       #{externalTransactionId},
+      #{transactionSource},
+      #{classificationMethod},
+      #{merchantName},
+      #{merchantRegistrationNumber},
+      #{merchantCategoryCode},
       #{transactionContent},
       #{transactionType},
       #{expenseCategory},
       #{transactionAmount},
       #{transactionAt},
       #{transactionMemo},
+      #{analysisExcluded},
       false,
       NOW(),
       NOW()
     )
   </insert>
 
+  <select id="existsByAccountAndExternalId" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM `TRANSACTION`
+    WHERE ACCOUNT_ID = #{accountId}
+      AND EXTERNAL_TRANSACTION_ID = #{externalTransactionId}
+  </select>
+
+  <select id="existsByCardAndExternalId" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM `TRANSACTION`
+    WHERE CARD_ID = #{cardId}
+      AND EXTERNAL_TRANSACTION_ID = #{externalTransactionId}
+  </select>
+
+  <select id="findExternalTransactionsForAnalysis"
+          resultType="com.talented.buttie.ledger.domain.TransactionVO">
+    SELECT TRANSACTION_ID          AS transactionId,
+           USER_ID                 AS userId,
+           ACCOUNT_ID              AS accountId,
+           CARD_ID                 AS cardId,
+           EXTERNAL_TRANSACTION_ID AS externalTransactionId,
+           TRANSACTION_SOURCE      AS transactionSource,
+           CLASSIFICATION_METHOD   AS classificationMethod,
+           MERCHANT_NAME           AS merchantName,
+           MERCHANT_REGNO          AS merchantRegistrationNumber,
+           MERCHANT_CATEGORY_CODE  AS merchantCategoryCode,
+           TRANSACTION_CONTENT     AS transactionContent,
+           TRANSACTION_TYPE        AS transactionType,
+           EXPENSE_CATEGORY        AS expenseCategory,
+           TRANSACTION_AMOUNT      AS transactionAmount,
+           TRANSACTION_AT          AS transactionAt,
+           TRANSACTION_MEMO        AS transactionMemo,
+           ANALYSIS_EXCLUDED       AS analysisExcluded,
+           IS_DELETED              AS isDeleted
+    FROM `TRANSACTION`
+    WHERE USER_ID = #{userId}
+      AND TRANSACTION_SOURCE IN ('ACCOUNT', 'CARD')
+      AND IS_DELETED = FALSE
+    ORDER BY TRANSACTION_AT
+  </select>
+
+  <update id="updateAnalysisExcluded">
+    UPDATE `TRANSACTION`
+    SET ANALYSIS_EXCLUDED = #{analysisExcluded},
+        TRANSACTION_UPDATED_AT = NOW()
+    WHERE TRANSACTION_ID = #{transactionId}
+  </update>
+
   <select id="findById" resultType="com.talented.buttie.ledger.domain.TransactionVO">
     SELECT
       TRANSACTION_ID          AS transactionId,
       USER_ID                 AS userId,
       ACCOUNT_ID              AS accountId,
+      CARD_ID                 AS cardId,
       EXTERNAL_TRANSACTION_ID AS externalTransactionId,
+      TRANSACTION_SOURCE      AS transactionSource,
+      CLASSIFICATION_METHOD   AS classificationMethod,
+      MERCHANT_NAME           AS merchantName,
+      MERCHANT_REGNO          AS merchantRegistrationNumber,
+      MERCHANT_CATEGORY_CODE  AS merchantCategoryCode,
       TRANSACTION_CONTENT     AS transactionContent,
       TRANSACTION_TYPE        AS transactionType,
       EXPENSE_CATEGORY        AS expenseCategory,
       TRANSACTION_AMOUNT      AS transactionAmount,
       TRANSACTION_AT          AS transactionAt,
       TRANSACTION_MEMO        AS transactionMemo,
+      ANALYSIS_EXCLUDED       AS analysisExcluded,
       IS_DELETED              AS isDeleted,
       TRANSACTION_CREATED_AT  AS transactionCreatedAt,
       TRANSACTION_UPDATED_AT  AS transactionUpdatedAt
@@ -141,6 +217,7 @@
     from `TRANSACTION`
     where USER_ID = #{userId}
     and IS_DELETED = false
+    and ANALYSIS_EXCLUDED = false
     and TRANSACTION_AT >= #{fromDateTime}
     and #{toDateTime} > TRANSACTION_AT
   </select>
@@ -152,8 +229,21 @@
         TRANSACTION_TYPE = #{transactionType},
         TRANSACTION_AMOUNT = #{transactionAmount},
         EXPENSE_CATEGORY = #{expenseCategory},
+        CLASSIFICATION_METHOD = #{classificationMethod},
+        ANALYSIS_EXCLUDED = #{analysisExcluded},
         TRANSACTION_AT = #{transactionAt},
         TRANSACTION_MEMO = #{transactionMemo},
+        TRANSACTION_UPDATED_AT = NOW()
+    WHERE TRANSACTION_ID = #{transactionId}
+  </update>
+
+  <update id="updateTransactionClassification"
+          parameterType="com.talented.buttie.ledger.domain.TransactionVO">
+    UPDATE `TRANSACTION`
+    SET TRANSACTION_TYPE = #{transactionType},
+        EXPENSE_CATEGORY = #{expenseCategory},
+        CLASSIFICATION_METHOD = #{classificationMethod},
+        ANALYSIS_EXCLUDED = #{analysisExcluded},
         TRANSACTION_UPDATED_AT = NOW()
     WHERE TRANSACTION_ID = #{transactionId}
   </update>

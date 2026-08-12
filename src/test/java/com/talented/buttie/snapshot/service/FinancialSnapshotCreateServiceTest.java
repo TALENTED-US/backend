@@ -7,10 +7,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willAnswer;
 
-import com.talented.buttie.account.domain.AccountType;
-import com.talented.buttie.account.domain.AccountVO;
-import com.talented.buttie.account.mapper.AccountMapper;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
+import com.talented.buttie.mydata.domain.AccountType;
+import com.talented.buttie.mydata.domain.AccountVO;
+import com.talented.buttie.mydata.mapper.AccountMapper;
 import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
 import com.talented.buttie.snapshot.domain.RiskLevel;
 import com.talented.buttie.snapshot.dto.response.SnapshotTransactionAggregateResponse;
@@ -109,7 +109,7 @@ class FinancialSnapshotCreateServiceTest {
 
     @Test
     @DisplayName("최근 3개월 거래 집계로 평균 수입/지출을 계산한다.")
-    void recentThreeMonthsAggregate(){
+    void recentThreeMonthsAggregate() {
 
         // given
         given(accountMapper.findActiveByUserId(userId))
@@ -194,7 +194,7 @@ class FinancialSnapshotCreateServiceTest {
         SnapshotTransactionAggregateResponse aggregate = aggregateWithDailyAverage(
             0, 250_000 / weekDaysInMonth, 0,
             0, 0, 750_000
-            );
+        );
 
         given(transactionMapper.aggregateSnapshotTransactions(
             eq(userId), any(LocalDateTime.class), any(LocalDateTime.class)
