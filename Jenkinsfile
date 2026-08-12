@@ -113,7 +113,7 @@ pipeline {
                             mock_ready=false
                             for i in $(seq 1 60); do
                                 if docker exec buttie-mydata-mock \
-                                  wget -qO- http://localhost:3000/health > /dev/null; then
+                                  wget -qO- http://127.0.0.1:3000/health > /dev/null; then
                                     mock_ready=true
                                     break
                                 fi
