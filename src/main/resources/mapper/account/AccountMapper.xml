@@ -89,4 +89,12 @@
       AND IS_ACTIVE = TRUE
   </update>
 
+  <update id="deactivateByUserIdAndExternalId">
+    UPDATE `ACCOUNT`
+    SET IS_ACTIVE = FALSE
+    WHERE USER_ID = #{userId}
+      AND EXTERNAL_ACCOUNT_ID = #{externalAccountId}
+      AND IS_ACTIVE = TRUE
+  </update>
+
 </mapper>
