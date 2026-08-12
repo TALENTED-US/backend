@@ -66,6 +66,16 @@ class PolicySupportAmountParserTest {
     }
 
     @Test
+    @DisplayName("지급 주기 표현 없이 사업/과정 기간만 개월로 적혀있으면 일회성으로 확정한다.")
+    void programDurationIsNotMonthlyPayment() {
+        ParseResult result = parser.parse("교육비 최대 100만원 지원, 3개월 과정");
+
+        assertEquals(1_000_000, result.amount());
+        assertEquals(1, result.supportMonthCount());
+        assertEquals("HIGH", result.confidence());
+    }
+
+    @Test
     @DisplayName("금액 표현이 없으면 MANUAL이다.")
     void noAmountMentioned() {
         ParseResult result = parser.parse("청년 1인 1호실 독립공간 무료 제공");

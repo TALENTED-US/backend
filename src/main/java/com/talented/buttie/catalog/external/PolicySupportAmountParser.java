@@ -14,7 +14,9 @@ public class PolicySupportAmountParser {
         Pattern.compile("(\\d{1,3}(?:,\\d{3})*)만원|(\\d{1,3}(?:,\\d{3})+)원");
     private static final Pattern MONTH_COUNT_PATTERN = Pattern.compile("(\\d{1,3})\\s*개월");
     private static final Set<String> EXCLUDE_KEYWORDS = Set.of("시간당", "생활임금", "일당", "시급");
-    private static final Set<String> MONTHLY_KEYWORDS = Set.of("매월", "월별", "매달", "월 최대", "월 지원", "개월");
+    // "개월"은 뺐다 — "3개월 과정"처럼 사업기간 표현에도 걸려서 일회성 지원금을 월별 지급으로 오분류시킴.
+    // 실제 지급 주기를 나타내는 표현이 있을 때만 개월수를 지급 횟수로 확정한다.
+    private static final Set<String> MONTHLY_KEYWORDS = Set.of("매월", "월별", "매달", "월 최대", "월 지원");
     private static final int EXCLUDE_LOOKBEHIND = 10;
 
     public ParseResult parse(String plcySprtCn) {
