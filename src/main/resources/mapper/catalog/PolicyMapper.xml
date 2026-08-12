@@ -16,4 +16,99 @@
     where POLICY_STATUS = 'AVAILABLE'
     order by POLICY_ID asc
   </select>
+
+  <select id="search" resultType="com.talented.buttie.catalog.domain.PolicyVO">
+    select *
+    from POLICY
+    <where>
+      <if test="externalSource != null">
+        AND EXTERNAL_SOURCE = #{externalSource}
+      </if>
+      <if test="amountParseConfidence != null">
+        AND AMOUNT_PARSE_CONFIDENCE = #{amountParseConfidence}
+      </if>
+    </where>
+    order by POLICY_ID desc
+    limit #{size} offset #{offset}
+  </select>
+
+  <select id="countBySearch" resultType="int">
+    select count(*)
+    from POLICY
+    <where>
+      <if test="externalSource != null">
+        AND EXTERNAL_SOURCE = #{externalSource}
+      </if>
+      <if test="amountParseConfidence != null">
+        AND AMOUNT_PARSE_CONFIDENCE = #{amountParseConfidence}
+      </if>
+    </where>
+  </select>
+
+  <insert id="insert" parameterType="com.talented.buttie.catalog.domain.PolicyVO"
+          useGeneratedKeys="true" keyProperty="policyId">
+    insert into POLICY
+      (POLICY_NAME, POLICY_CATEGORY, POLICY_MIN_AGE, POLICY_MAX_AGE, POLICY_REGION,
+       POLICY_SUPPORT_AMOUNT, SUPPORT_MONTH_COUNT, DUE_DATE, REQUIRED_DOCUMENT,
+       EMPLOYMENT_PREP_STATUS, FAMILY_COUNT, POLICY_STATUS, POLICY_URL,
+       EXTERNAL_SOURCE, EXTERNAL_POLICY_ID, AMOUNT_PARSE_CONFIDENCE)
+    values
+      (#{policyName}, #{policyCategory}, #{policyMinAge}, #{policyMaxAge}, #{policyRegion},
+       #{policySupportAmount}, #{supportMonthCount}, #{dueDate}, #{requiredDocument},
+       #{employmentPrepStatus}, #{familyCount}, #{policyStatus}, #{policyUrl},
+       #{externalSource}, #{externalPolicyId}, #{amountParseConfidence})
+  </insert>
+
+  <update id="update" parameterType="com.talented.buttie.catalog.domain.PolicyVO">
+    update POLICY
+    set POLICY_NAME = #{policyName},
+        POLICY_CATEGORY = #{policyCategory},
+        POLICY_MIN_AGE = #{policyMinAge},
+        POLICY_MAX_AGE = #{policyMaxAge},
+        POLICY_REGION = #{policyRegion},
+        POLICY_SUPPORT_AMOUNT = #{policySupportAmount},
+        SUPPORT_MONTH_COUNT = #{supportMonthCount},
+        DUE_DATE = #{dueDate},
+        REQUIRED_DOCUMENT = #{requiredDocument},
+        EMPLOYMENT_PREP_STATUS = #{employmentPrepStatus},
+        FAMILY_COUNT = #{familyCount},
+        POLICY_STATUS = #{policyStatus},
+        POLICY_URL = #{policyUrl}
+    where POLICY_ID = #{policyId}
+  </update>
+
+  <delete id="deleteById">
+    delete from POLICY where POLICY_ID = #{policyId}
+  </delete>
+
+  <insert id="upsert" parameterType="com.talented.buttie.catalog.domain.PolicyVO"
+          useGeneratedKeys="true" keyProperty="policyId">
+    insert into POLICY
+      (POLICY_NAME, POLICY_CATEGORY, POLICY_MIN_AGE, POLICY_MAX_AGE, POLICY_REGION,
+       POLICY_SUPPORT_AMOUNT, SUPPORT_MONTH_COUNT, DUE_DATE, REQUIRED_DOCUMENT,
+       EMPLOYMENT_PREP_STATUS, FAMILY_COUNT, POLICY_STATUS, POLICY_URL,
+       EXTERNAL_SOURCE, EXTERNAL_POLICY_ID, AMOUNT_PARSE_CONFIDENCE)
+    values
+      (#{policyName}, #{policyCategory}, #{policyMinAge}, #{policyMaxAge}, #{policyRegion},
+       #{policySupportAmount}, #{supportMonthCount}, #{dueDate}, #{requiredDocument},
+       #{employmentPrepStatus}, #{familyCount}, #{policyStatus}, #{policyUrl},
+       #{externalSource}, #{externalPolicyId}, #{amountParseConfidence})
+    on duplicate key update
+      POLICY_ID = LAST_INSERT_ID(POLICY_ID),
+      POLICY_NAME = VALUES(POLICY_NAME),
+      POLICY_CATEGORY = VALUES(POLICY_CATEGORY),
+      POLICY_MIN_AGE = VALUES(POLICY_MIN_AGE),
+      POLICY_MAX_AGE = VALUES(POLICY_MAX_AGE),
+      POLICY_REGION = VALUES(POLICY_REGION),
+      POLICY_SUPPORT_AMOUNT = VALUES(POLICY_SUPPORT_AMOUNT),
+      SUPPORT_MONTH_COUNT = VALUES(SUPPORT_MONTH_COUNT),
+      DUE_DATE = VALUES(DUE_DATE),
+      REQUIRED_DOCUMENT = VALUES(REQUIRED_DOCUMENT),
+      EMPLOYMENT_PREP_STATUS = VALUES(EMPLOYMENT_PREP_STATUS),
+      FAMILY_COUNT = VALUES(FAMILY_COUNT),
+      POLICY_STATUS = VALUES(POLICY_STATUS),
+      POLICY_URL = VALUES(POLICY_URL),
+      AMOUNT_PARSE_CONFIDENCE = VALUES(AMOUNT_PARSE_CONFIDENCE)
+  </insert>
+
 </mapper>
