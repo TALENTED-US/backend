@@ -9,4 +9,15 @@ import org.apache.ibatis.annotations.Param;
 public interface AccountMapper {
 
     List<AccountVO> findActiveByUserId(@Param("userId") Long userId);
+
+    AccountVO findByUserIdAndExternalId(
+        @Param("userId") Long userId,
+        @Param("externalAccountId") String externalAccountId
+    );
+
+    int insert(AccountVO account);
+
+    int update(AccountVO account);
+
+    int deactivateAllByUserId(@Param("userId") Long userId);
 }

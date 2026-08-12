@@ -1,6 +1,6 @@
 -- =========================================================
 -- Buttie 시드 데이터 (Flyway Repeatable) - 전 환경 실행
--- 기준: 테이블 명세서 v1.0.0 (최종, (3)) / V1__init_schema.sql ~ V6
+-- 기준: 테이블 명세서 v1.0.0 (최종, (3)) / V1__init_schema.sql ~ V10
 -- =========================================================
 -- 메모:
 --   - 마이데이터 실연동이 없는 데모 서비스라 mock 데이터를 모든 환경에 그대로 배포함.
@@ -8,6 +8,8 @@
 --   - 부모 → 자식 순으로 INSERT (FK 충족). BUTTIE_LEVEL 먼저.
 --   - 시뮬레이션 관련 날짜(적용일 포함)는 DATE(LocalDate)라 날짜 전용 값 사용.
 --   - 실 서비스 운영처럼 보이도록 사용자 30명 규모 + 다양한 거래내역(260건)으로 증강.
+--   - 카드 승인내역은 자동 지출, 계좌 입금은 수입, 미분류 계좌이체는 분석 제외로 저장.
+--   - 월세·공과금 등 계좌 거래는 사용자가 확정한 지출(USER_CONFIRMED)만 분석에 포함.
 -- =========================================================
 
 -- ---------------------------------------------------------
@@ -322,7 +324,72 @@ ON DUPLICATE KEY UPDATE
     `BALANCE`=VALUES(`BALANCE`), `IS_ACTIVE`=VALUES(`IS_ACTIVE`), `SYNCED_AT`=VALUES(`SYNCED_AT`);
 
 -- ---------------------------------------------------------
--- 9. 거래 (TRANSACTION)  TYPE: EXPENSE/INCOME/FIXED - 260건 + 사용자별 5~8월(오늘까지) 증강 2471건
+-- 9. 체크카드 (CARD) - 계좌 보유 사용자별 2개
+-- ---------------------------------------------------------
+INSERT INTO `CARD`
+(`CARD_ID`, `USER_ID`, `LINKED_ACCOUNT_ID`, `LINKED_BANK_CODE`, `EXTERNAL_CARD_ID`,
+ `CARD_INSTITUTION_NAME`, `CARD_NAME`, `CARD_TYPE`, `CARD_NUMBER_MASKED`,
+ `CARD_BALANCE`, `CARD_IS_ACTIVE`, `CARD_SYNCED_AT`)
+SELECT
+    A.USER_ID * 10 + C.CARD_SEQ,
+    A.USER_ID,
+    A.LINKED_ACCOUNT_ID,
+    CASE A.INSTITUTION_NAME
+        WHEN '하나은행' THEN 'MOCK0001'
+        WHEN 'NH농협은행' THEN 'MOCK0002'
+        WHEN '토스뱅크' THEN 'MOCK0003'
+        WHEN 'KB국민은행' THEN 'MOCK0004'
+        WHEN 'IBK기업은행' THEN 'MOCK0005'
+        WHEN '신한은행' THEN 'MOCK0006'
+        WHEN '카카오뱅크' THEN 'MOCK0007'
+        WHEN '우리은행' THEN 'MOCK0008'
+        ELSE 'MOCK9999'
+    END,
+    CONCAT('EXT_CARD_', LPAD(A.USER_ID, 3, '0'), '_', LPAD(C.CARD_SEQ, 2, '0')),
+    A.INSTITUTION_NAME,
+    CASE C.CARD_SEQ
+        WHEN 1 THEN CONCAT(A.INSTITUTION_NAME, ' 데일리 체크카드')
+        ELSE CONCAT(A.INSTITUTION_NAME, ' 생활비 체크카드')
+    END,
+    'DEBIT',
+    CONCAT('9400-****-****-', LPAD(A.USER_ID * 10 + C.CARD_SEQ, 4, '0')),
+    0,
+    TRUE,
+    '2026-08-05 09:00:00'
+FROM (
+    SELECT
+        USER_ID,
+        COALESCE(
+            MIN(CASE WHEN ACCOUNT_TYPE = 'CHECKING' THEN ACCOUNT_ID END),
+            MIN(ACCOUNT_ID)
+        ) AS LINKED_ACCOUNT_ID,
+        SUBSTRING_INDEX(
+            GROUP_CONCAT(INSTITUTION_NAME ORDER BY (ACCOUNT_TYPE = 'CHECKING') DESC, ACCOUNT_ID),
+            ',',
+            1
+        ) AS INSTITUTION_NAME
+    FROM `ACCOUNT`
+    GROUP BY USER_ID
+) A
+CROSS JOIN (
+    SELECT 1 AS CARD_SEQ
+    UNION ALL
+    SELECT 2 AS CARD_SEQ
+) C
+WHERE TRUE
+ON DUPLICATE KEY UPDATE
+    `LINKED_ACCOUNT_ID`=VALUES(`LINKED_ACCOUNT_ID`),
+    `LINKED_BANK_CODE`=VALUES(`LINKED_BANK_CODE`),
+    `CARD_INSTITUTION_NAME`=VALUES(`CARD_INSTITUTION_NAME`),
+    `CARD_NAME`=VALUES(`CARD_NAME`),
+    `CARD_TYPE`=VALUES(`CARD_TYPE`),
+    `CARD_NUMBER_MASKED`=VALUES(`CARD_NUMBER_MASKED`),
+    `CARD_BALANCE`=VALUES(`CARD_BALANCE`),
+    `CARD_IS_ACTIVE`=VALUES(`CARD_IS_ACTIVE`),
+    `CARD_SYNCED_AT`=VALUES(`CARD_SYNCED_AT`);
+
+-- ---------------------------------------------------------
+-- 10. 거래 (TRANSACTION) - 카드 지출 / 계좌 수입·이체 / 사용자 확정 지출
 -- ---------------------------------------------------------
 INSERT INTO `TRANSACTION`
 (`TRANSACTION_ID`, `USER_ID`, `ACCOUNT_ID`, `EXTERNAL_TRANSACTION_ID`, `TRANSACTION_CONTENT`,
@@ -3110,7 +3177,87 @@ ON DUPLICATE KEY UPDATE
     `IS_DELETED`=VALUES(`IS_DELETED`);
 
 -- ---------------------------------------------------------
--- 10. 재정 스냅샷 (SNAPSHOT)
+-- 10-1. 기존 시드 거래에 원천 및 분류 정책 적용
+--   카드 가맹점 결제: CARD / MERCHANT_REGNO / 분석 포함
+--   계좌 입금: ACCOUNT / ACCOUNT_INFLOW / 분석 포함
+--   사용자 확정 월세·공과금: ACCOUNT / USER_CONFIRMED / 분석 포함
+--   수동 거래: MANUAL / MANUAL / 분석 포함
+-- ---------------------------------------------------------
+UPDATE `TRANSACTION`
+SET `CARD_ID` = NULL,
+    `TRANSACTION_SOURCE` = CASE
+        WHEN `EXTERNAL_TRANSACTION_ID` IS NULL THEN 'MANUAL'
+        WHEN `TRANSACTION_TYPE` IN ('INCOME', 'FIXED') THEN 'ACCOUNT'
+        WHEN `TRANSACTION_CONTENT` REGEXP '월세|관리비|전기요금|가스요금|수도요금|통신비 자동이체|인터넷 요금 자동이체|휴대폰 할부금|실비보험료 자동이체'
+            THEN 'ACCOUNT'
+        ELSE 'CARD'
+    END,
+    `CLASSIFICATION_METHOD` = CASE
+        WHEN `EXTERNAL_TRANSACTION_ID` IS NULL THEN 'MANUAL'
+        WHEN `TRANSACTION_TYPE` = 'INCOME' THEN 'ACCOUNT_INFLOW'
+        WHEN `TRANSACTION_TYPE` = 'FIXED' THEN 'USER_CONFIRMED'
+        WHEN `TRANSACTION_CONTENT` REGEXP '월세|관리비|전기요금|가스요금|수도요금|통신비 자동이체|인터넷 요금 자동이체|휴대폰 할부금|실비보험료 자동이체'
+            THEN 'USER_CONFIRMED'
+        ELSE 'MERCHANT_REGNO'
+    END,
+    `ANALYSIS_EXCLUDED` = FALSE
+WHERE `TRANSACTION_ID` BETWEEN 1 AND 2731;
+
+UPDATE `TRANSACTION` T
+JOIN `CARD` C
+  ON C.CARD_ID = T.USER_ID * 10 + 1
+SET T.CARD_ID = C.CARD_ID,
+    T.ACCOUNT_ID = NULL
+WHERE T.TRANSACTION_ID BETWEEN 1 AND 2731
+  AND T.TRANSACTION_SOURCE = 'CARD';
+
+-- ---------------------------------------------------------
+-- 10-2. 아직 사용자가 지출로 등록하지 않은 계좌이체
+-- ---------------------------------------------------------
+INSERT INTO `TRANSACTION`
+(`TRANSACTION_ID`, `USER_ID`, `ACCOUNT_ID`, `CARD_ID`, `EXTERNAL_TRANSACTION_ID`,
+ `TRANSACTION_SOURCE`, `CLASSIFICATION_METHOD`, `TRANSACTION_CONTENT`, `TRANSACTION_TYPE`,
+ `EXPENSE_CATEGORY`, `TRANSACTION_AMOUNT`, `TRANSACTION_AT`, `TRANSACTION_MEMO`,
+ `ANALYSIS_EXCLUDED`, `IS_DELETED`)
+SELECT
+    10000 + A.USER_ID,
+    A.USER_ID,
+    A.ACCOUNT_ID,
+    NULL,
+    CONCAT('EXT_TRANSFER_', LPAD(A.USER_ID, 3, '0')),
+    'ACCOUNT',
+    'UNCLASSIFIED',
+    '계좌이체',
+    'TRANSFER',
+    NULL,
+    50000 + A.USER_ID * 1000,
+    DATE_ADD('2026-08-06 10:00:00', INTERVAL A.USER_ID MINUTE),
+    NULL,
+    TRUE,
+    FALSE
+FROM (
+    SELECT USER_ID, MIN(ACCOUNT_ID) AS ACCOUNT_ID
+    FROM `ACCOUNT`
+    GROUP BY USER_ID
+) A
+WHERE TRUE
+ON DUPLICATE KEY UPDATE
+    `ACCOUNT_ID`=VALUES(`ACCOUNT_ID`),
+    `CARD_ID`=VALUES(`CARD_ID`),
+    `EXTERNAL_TRANSACTION_ID`=VALUES(`EXTERNAL_TRANSACTION_ID`),
+    `TRANSACTION_SOURCE`=VALUES(`TRANSACTION_SOURCE`),
+    `CLASSIFICATION_METHOD`=VALUES(`CLASSIFICATION_METHOD`),
+    `TRANSACTION_CONTENT`=VALUES(`TRANSACTION_CONTENT`),
+    `TRANSACTION_TYPE`=VALUES(`TRANSACTION_TYPE`),
+    `EXPENSE_CATEGORY`=VALUES(`EXPENSE_CATEGORY`),
+    `TRANSACTION_AMOUNT`=VALUES(`TRANSACTION_AMOUNT`),
+    `TRANSACTION_AT`=VALUES(`TRANSACTION_AT`),
+    `TRANSACTION_MEMO`=VALUES(`TRANSACTION_MEMO`),
+    `ANALYSIS_EXCLUDED`=VALUES(`ANALYSIS_EXCLUDED`),
+    `IS_DELETED`=VALUES(`IS_DELETED`);
+
+-- ---------------------------------------------------------
+-- 11. 재정 스냅샷 (SNAPSHOT)
 -- ---------------------------------------------------------
 INSERT INTO `SNAPSHOT`
 (`SNAPSHOT_ID`, `USER_ID`, `SNAPSHOT_BASE_DATE`, `LIQUID_ASSETS`, `MONTHLY_NET_CASHFLOW`,
@@ -3168,7 +3315,7 @@ ON DUPLICATE KEY UPDATE
     `RISK_LEVEL`=VALUES(`RISK_LEVEL`);
 
 -- ---------------------------------------------------------
--- 11. 정부 지원 정책 (POLICY)
+-- 12. 정부 지원 정책 (POLICY)
 -- ---------------------------------------------------------
 INSERT INTO `POLICY`
 (`POLICY_ID`, `POLICY_NAME`, `POLICY_CATEGORY`, `POLICY_MIN_AGE`, `POLICY_MAX_AGE`, `POLICY_REGION`,
@@ -3266,7 +3413,7 @@ ON DUPLICATE KEY UPDATE
     `POLICY_STATUS`=VALUES(`POLICY_STATUS`), `POLICY_URL`=VALUES(`POLICY_URL`);
 
 -- ---------------------------------------------------------
--- 12. 시뮬레이션 (SIMULATION)  * 날짜 DATE
+-- 13. 시뮬레이션 (SIMULATION)  * 날짜 DATE
 -- ---------------------------------------------------------
 INSERT INTO `SIMULATION`
 (`SIMULATION_ID`, `USER_ID`, `SNAPSHOT_ID`, `SIMULATION_START_DATE`, `SIMULATION_DUE_DATE`,
@@ -3291,7 +3438,7 @@ ON DUPLICATE KEY UPDATE
     `EXPECT_PREP_MONTHS`=VALUES(`EXPECT_PREP_MONTHS`), `CONFIRMED_AT`=VALUES(`CONFIRMED_AT`);
 
 -- ---------------------------------------------------------
--- 13. 시뮬레이션 항목 (SIMULATION_ITEM)  * 적용일 DATE
+-- 14. 시뮬레이션 항목 (SIMULATION_ITEM)  * 적용일 DATE
 -- ---------------------------------------------------------
 INSERT INTO `SIMULATION_ITEM`
 (`SIMULATION_ITEM_ID`, `SIMULATION_ID`, `SIMULATION_ITEM_CATEGORY`, `SIMULATION_ITEM_NAME`,
@@ -3391,7 +3538,7 @@ ON DUPLICATE KEY UPDATE
     `RECURRENCE_TYPE`=VALUES(`RECURRENCE_TYPE`), `IS_DELETED`=VALUES(`IS_DELETED`);
 
 -- ---------------------------------------------------------
--- 14. 월별 예상 (PROJECTION)
+-- 15. 월별 예상 (PROJECTION)
 -- ---------------------------------------------------------
 INSERT INTO `PROJECTION`
 (`PROJECTION_ID`, `SIMULATION_ID`, `PROJECTION_MONTH`,
@@ -3443,7 +3590,7 @@ ON DUPLICATE KEY UPDATE
     `ADJUSTMENT_REQUIRED`=VALUES(`ADJUSTMENT_REQUIRED`), `ADJUSTMENT_REASON`=VALUES(`ADJUSTMENT_REASON`);
 
 -- ---------------------------------------------------------
--- 15. 알림 (NOTIFICATION)
+-- 16. 알림 (NOTIFICATION)
 -- ---------------------------------------------------------
 INSERT INTO `NOTIFICATION`
 (`NOTIFICATION_ID`, `USER_ID`, `NOTIFICATION_TYPE`, `NOTIFICATION_TITLE`,
@@ -3491,7 +3638,7 @@ ON DUPLICATE KEY UPDATE
     `IS_READ`=VALUES(`IS_READ`);
 
 -- ---------------------------------------------------------
--- 16. 퀘스트 (QUEST)
+-- 17. 퀘스트 (QUEST)
 -- ---------------------------------------------------------
 INSERT INTO `QUEST`
 (`QUEST_ID`, `USER_ID`, `SIMULATION_ID`, `SIMULATION_ITEM_ID`, `TRANSACTION_ID`,
@@ -3614,7 +3761,7 @@ ON DUPLICATE KEY UPDATE
     `QUEST_COMPLETED_AT`=VALUES(`QUEST_COMPLETED_AT`);
 
 -- ---------------------------------------------------------
--- 17. 로그 (LOG) - 도메인 이벤트 이력 샘플
+-- 18. 로그 (LOG) - 도메인 이벤트 이력 샘플
 -- ---------------------------------------------------------
 INSERT INTO `LOG`
 (`LOG_ID`, `USER_ID`, `ENTITY_TYPE`, `ENTITY_ID`, `ACTION`, `LOG_DETAIL`) VALUES

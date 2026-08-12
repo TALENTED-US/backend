@@ -7,10 +7,86 @@
 
   <select id="findActiveByUserId"
     resultType="com.talented.buttie.mydata.domain.AccountVO">
-    select *
-    from ACCOUNT
-    where USER_ID = #{userId}
-      and IS_ACTIVE = true
+    SELECT ACCOUNT_ID             AS accountId,
+           USER_ID                AS userId,
+           EXTERNAL_ACCOUNT_ID    AS externalAccountId,
+           INSTITUTION_NAME       AS institutionName,
+           ACCOUNT_NAME           AS accountName,
+           ACCOUNT_TYPE           AS accountType,
+           ACCOUNT_NUMBER_MASKED  AS accountNumberMasked,
+           BALANCE                AS balance,
+           IS_ACTIVE              AS isActive,
+           SYNCED_AT              AS syncedAt
+    FROM `ACCOUNT`
+    WHERE USER_ID = #{userId}
+      AND IS_ACTIVE = TRUE
+    ORDER BY ACCOUNT_ID
   </select>
+
+  <select id="findByUserIdAndExternalId"
+          resultType="com.talented.buttie.mydata.domain.AccountVO">
+    SELECT ACCOUNT_ID             AS accountId,
+           USER_ID                AS userId,
+           EXTERNAL_ACCOUNT_ID    AS externalAccountId,
+           INSTITUTION_NAME       AS institutionName,
+           ACCOUNT_NAME           AS accountName,
+           ACCOUNT_TYPE           AS accountType,
+           ACCOUNT_NUMBER_MASKED  AS accountNumberMasked,
+           BALANCE                AS balance,
+           IS_ACTIVE              AS isActive,
+           SYNCED_AT              AS syncedAt
+    FROM `ACCOUNT`
+    WHERE USER_ID = #{userId}
+      AND EXTERNAL_ACCOUNT_ID = #{externalAccountId}
+  </select>
+
+  <insert id="insert"
+          parameterType="com.talented.buttie.mydata.domain.AccountVO"
+          useGeneratedKeys="true"
+          keyProperty="accountId"
+          keyColumn="ACCOUNT_ID">
+    INSERT INTO `ACCOUNT` (
+      USER_ID,
+      EXTERNAL_ACCOUNT_ID,
+      INSTITUTION_NAME,
+      ACCOUNT_NAME,
+      ACCOUNT_TYPE,
+      ACCOUNT_NUMBER_MASKED,
+      BALANCE,
+      IS_ACTIVE,
+      SYNCED_AT
+    ) VALUES (
+      #{userId},
+      #{externalAccountId},
+      #{institutionName},
+      #{accountName},
+      #{accountType},
+      #{accountNumberMasked},
+      #{balance},
+      #{isActive},
+      #{syncedAt}
+    )
+  </insert>
+
+  <update id="update"
+          parameterType="com.talented.buttie.mydata.domain.AccountVO">
+    UPDATE `ACCOUNT`
+    SET INSTITUTION_NAME = #{institutionName},
+        ACCOUNT_NAME = #{accountName},
+        ACCOUNT_TYPE = #{accountType},
+        ACCOUNT_NUMBER_MASKED = #{accountNumberMasked},
+        BALANCE = #{balance},
+        IS_ACTIVE = #{isActive},
+        SYNCED_AT = #{syncedAt}
+    WHERE USER_ID = #{userId}
+      AND EXTERNAL_ACCOUNT_ID = #{externalAccountId}
+  </update>
+
+  <update id="deactivateAllByUserId">
+    UPDATE `ACCOUNT`
+    SET IS_ACTIVE = FALSE
+    WHERE USER_ID = #{userId}
+      AND IS_ACTIVE = TRUE
+  </update>
 
 </mapper>
