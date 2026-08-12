@@ -103,4 +103,24 @@ class CreateFixedExpenseServiceTest {
         assertEquals(LedgerErrorCode.ALREADY_FIXED_EXPENSE, exception.getCode());
         verify(transactionMapper, never()).updateTransaction(any());
     }
+
+    @Test
+    @DisplayName("실패: 미분류 계좌이체를 카테고리 없이 고정 지출로 등록할 수 없음")
+    void whenTransferIsNotClassified() {
+        TransactionVO transfer = TransactionVO.builder()
+            .transactionId(transactionId)
+            .userId(userId)
+            .transactionType(TransactionType.TRANSFER)
+            .build();
+
+        given(transactionMapper.findById(transactionId)).willReturn(transfer);
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> createFixedExpenseService.createFixedExpense(userId, transactionId)
+        );
+
+        assertEquals(LedgerErrorCode.EXPENSE_CLASSIFICATION_REQUIRED, exception.getCode());
+        verify(transactionMapper, never()).updateTransaction(any());
+    }
 }

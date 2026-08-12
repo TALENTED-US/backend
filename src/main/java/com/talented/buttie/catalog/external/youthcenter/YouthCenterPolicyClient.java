@@ -29,6 +29,9 @@ public class YouthCenterPolicyClient {
     private final RestTemplate restTemplate;
 
     public List<YouthCenterPolicyItem> fetchAll() {
+        if (apiKey == null || apiKey.isBlank()) {
+            throw new IllegalStateException("YOUTH_CENTER_KEY가 설정되지 않았습니다.");
+        }
         List<YouthCenterPolicyItem> items = new ArrayList<>();
         int pageNum = 1;
         int totCount;
