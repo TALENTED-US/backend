@@ -4,12 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.notification.domain.UserNotificationVO;
+import com.talented.buttie.notification.dto.request.UpdateNotificationSettingRequest;
 import com.talented.buttie.notification.dto.response.NotificationSettingResponse;
 import com.talented.buttie.notification.exception.NotificationErrorCode;
 import com.talented.buttie.notification.mapper.NotificationMapper;
@@ -86,6 +88,22 @@ class NotificationServiceTest {
         assertTrue(result.planDeviationEnabled());
         assertTrue(result.serviceNoticeEnabled());
         verify(notificationMapper).selectUserNotification(userId);
+    }
+
+    @Test
+    @DisplayName("알림 수신 설정을 변경하면 userId를 반환한다")
+    void modifyNotificationSettings() {
+        Long userId = 1L;
+        UpdateNotificationSettingRequest request = new UpdateNotificationSettingRequest(
+            true, false, true, false
+        );
+
+        given(notificationMapper.upsertUserNotification(any(UserNotificationVO.class))).willReturn(1);
+
+        Long result = notificationService.modifyNotificationSettings(userId, request);
+
+        assertEquals(userId, result);
+        verify(notificationMapper).upsertUserNotification(any(UserNotificationVO.class));
     }
 
     @Test
