@@ -19,4 +19,6 @@ public interface NotificationMapper {
     boolean existsUnreadNotification(@Param("userId") Long userId);
 
     UserNotificationVO selectUserNotification(@Param("userId") Long userId);
+
+    int upsertUserNotification(UserNotificationVO userNotificationVO);
 }
