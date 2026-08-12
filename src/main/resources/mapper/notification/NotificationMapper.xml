@@ -51,4 +51,11 @@
     WHERE USER_ID = #{userId}
   </select>
 
+  <update id="updateAllNotificationsRead">
+    UPDATE NOTIFICATION
+    SET IS_READ =TRUE
+    WHERE USER_ID = #{userId}
+        AND IS_READ = FALSE
+  </update>
+
 </mapper>
