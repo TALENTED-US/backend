@@ -3,6 +3,7 @@ package com.talented.buttie.ledger.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import com.talented.buttie.common.exception.ApplicationException;
@@ -70,6 +71,26 @@ class CreateTransactionServiceTest {
 
         assertEquals(LedgerErrorCode.TRANSACTION_BAD_REQUEST.getMessage(), exception.getMessage());
         assertEquals(LedgerErrorCode.TRANSACTION_BAD_REQUEST, exception.getCode());
+    }
+
+    @Test
+    @DisplayName("수동 거래로 계좌이체를 추가할 수 없다.")
+    void cannotCreateManualTransfer() {
+        CreateTransactionRequest transferRequest = CreateTransactionRequest.builder()
+            .transactionContent("계좌이체")
+            .transactionType(TransactionType.TRANSFER)
+            .transactionAmount(10000)
+            .expenseCategory(ExpenseCategory.ETC_EXPENSE)
+            .transactionDate(LocalDateTime.parse("2026-08-12T10:00:00"))
+            .build();
+
+        ApplicationException exception = assertThrows(
+            ApplicationException.class,
+            () -> createTransactionService.createTransaction(userId, transferRequest)
+        );
+
+        assertEquals(LedgerErrorCode.INVALID_MANUAL_TRANSACTION_TYPE, exception.getCode());
+        verify(transactionMapper, never()).insertTransaction(any(TransactionVO.class));
     }
 
 }

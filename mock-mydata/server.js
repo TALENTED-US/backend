@@ -24,7 +24,7 @@ function mockUserKey(request) {
   return match ? Number(match[1]) : null;
 }
 
-function userResponse(request, response, collection) {
+function userResponse(request, response, collection, transform = (body) => body) {
   const userKey = mockUserKey(request);
   if (userKey === null) {
     return response.status(401).jsonp({
@@ -40,7 +40,7 @@ function userResponse(request, response, collection) {
       rsp_msg: '사용자별 Mock 데이터를 찾을 수 없습니다.'
     });
   }
-  return response.jsonp(body);
+  return response.jsonp(transform(body));
 }
 
 server.get('/v2/oauth/2.0/authorize', (request, response) => {
@@ -106,7 +106,12 @@ server.post('/v2/oauth/2.0/token', (request, response) => {
 });
 
 server.get('/v2/bank/accounts', (request, response) =>
-  userResponse(request, response, db.bankAccountResponses)
+  userResponse(
+    request,
+    response,
+    db.bankAccountResponses,
+    (body) => bankAccountsAt(body, seoulDateTime())
+  )
 );
 
 server.get('/v2/card/cards', (request, response) =>
@@ -134,6 +139,49 @@ function seoulDateTime() {
 
 function isDate(value) {
   return /^\d{8}$/.test(String(value || ''));
+}
+
+function bankAccountsAt(body, now) {
+  const originalTimestamp = /^\d{14}$/.test(String(body.search_timestamp || ''))
+    ? body.search_timestamp
+    : null;
+  return {
+    ...body,
+    search_timestamp: now,
+    account_list: (body.account_list || []).map((account) => ({
+      ...account,
+      balance_amt: accountBalanceAt(account, now, originalTimestamp)
+    }))
+  };
+}
+
+function accountBalanceAt(account, now, originalTimestamp) {
+  if (originalTimestamp && now >= originalTimestamp) {
+    return account.balance_amt;
+  }
+
+  const transactionBody = db.bankDepositTransactionResponses.find(
+    (item) => item.id === account.account_num
+  );
+  const transactions = (transactionBody && transactionBody.trans_list) || [];
+  const latest = transactions
+    .filter((transaction) => /^\d{14}$/.test(String(transaction.trans_dtime || '')))
+    .filter((transaction) => transaction.trans_dtime <= now)
+    .sort((left, right) => right.trans_dtime.localeCompare(left.trans_dtime))[0];
+  if (latest && Number.isFinite(latest.balance_amt)) {
+    return latest.balance_amt;
+  }
+
+  const earliest = transactions
+    .filter((transaction) => /^\d{14}$/.test(String(transaction.trans_dtime || '')))
+    .sort((left, right) => left.trans_dtime.localeCompare(right.trans_dtime))[0];
+  if (!earliest || !Number.isFinite(earliest.balance_amt)
+    || !Number.isFinite(earliest.trans_amt)) {
+    return account.balance_amt;
+  }
+  return earliest.trans_type === '01'
+    ? earliest.balance_amt - earliest.trans_amt
+    : earliest.balance_amt + earliest.trans_amt;
 }
 
 function approvalEventDateTime(approval) {

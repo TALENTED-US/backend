@@ -52,4 +52,11 @@
       AND PROVIDER = #{provider}
   </update>
 
+  <update id="updateLastSyncedAt">
+    UPDATE `MYDATA`
+    SET LAST_SYNCED_AT = #{lastSyncedAt}
+    WHERE USER_ID = #{userId}
+      AND PROVIDER = #{provider}
+  </update>
+
 </mapper>

@@ -30,9 +30,9 @@ class FixedExpenseCandidateServiceTest {
 
     @Test
     void 두달_이상_반복된_구독결제를_고정지출_후보로_반환한다() {
-        TransactionVO june = subscription(1L, 6, 17_000);
-        TransactionVO july = subscription(2L, 7, 17_000);
-        TransactionVO august = subscription(3L, 8, 17_000);
+        TransactionVO june = subscription(1L, 11L, 6, 17_000, TransactionType.EXPENSE);
+        TransactionVO july = subscription(2L, 11L, 7, 17_000, TransactionType.EXPENSE);
+        TransactionVO august = subscription(3L, 11L, 8, 17_000, TransactionType.EXPENSE);
         given(transactionMapper.findExternalTransactionsForAnalysis(101L))
             .willReturn(List.of(june, july, august));
         given(pkCrypto.encryptValue(3L)).willReturn("encrypted-3");
@@ -45,11 +45,53 @@ class FixedExpenseCandidateServiceTest {
         assertEquals("encrypted-3", result.get(0).representativeTransactionId());
     }
 
-    private TransactionVO subscription(Long id, int month, int amount) {
+    @Test
+    void 서로_다른_카드의_동일_가맹점_거래를_별도_후보로_반환한다() {
+        List<TransactionVO> transactions = List.of(
+            subscription(1L, 11L, 6, 17_000, TransactionType.EXPENSE),
+            subscription(2L, 11L, 7, 17_000, TransactionType.EXPENSE),
+            subscription(3L, 22L, 6, 25_000, TransactionType.EXPENSE),
+            subscription(4L, 22L, 7, 25_000, TransactionType.EXPENSE)
+        );
+        given(transactionMapper.findExternalTransactionsForAnalysis(101L))
+            .willReturn(transactions);
+        given(pkCrypto.encryptValue(2L)).willReturn("encrypted-2");
+        given(pkCrypto.encryptValue(4L)).willReturn("encrypted-4");
+
+        List<FixedExpenseCandidateResponse> result = service.findCandidates(101L);
+
+        assertEquals(2, result.size());
+        assertEquals(25_000, result.get(0).expectedAmount());
+        assertEquals(17_000, result.get(1).expectedAmount());
+    }
+
+    @Test
+    void 이미_고정지출로_확정한_자산_그룹은_후보에서_제외한다() {
+        List<TransactionVO> transactions = List.of(
+            subscription(1L, 11L, 6, 17_000, TransactionType.EXPENSE),
+            subscription(2L, 11L, 7, 17_000, TransactionType.EXPENSE),
+            subscription(3L, 11L, 8, 17_000, TransactionType.FIXED)
+        );
+        given(transactionMapper.findExternalTransactionsForAnalysis(101L))
+            .willReturn(transactions);
+
+        List<FixedExpenseCandidateResponse> result = service.findCandidates(101L);
+
+        assertEquals(0, result.size());
+    }
+
+    private TransactionVO subscription(
+        Long id,
+        Long cardId,
+        int month,
+        int amount,
+        TransactionType transactionType
+    ) {
         return TransactionVO.builder()
             .transactionId(id)
+            .cardId(cardId)
             .transactionSource(TransactionSource.CARD)
-            .transactionType(TransactionType.EXPENSE)
+            .transactionType(transactionType)
             .expenseCategory(ExpenseCategory.SUBSCRIPTION)
             .transactionContent("넷플릭스")
             .transactionAmount(amount)

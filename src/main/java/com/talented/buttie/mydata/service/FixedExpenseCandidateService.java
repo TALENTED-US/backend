@@ -37,7 +37,8 @@ public class FixedExpenseCandidateService {
     public List<FixedExpenseCandidateResponse> findCandidates(Long userId) {
         Map<String, List<TransactionVO>> grouped = new LinkedHashMap<>();
         transactionMapper.findExternalTransactionsForAnalysis(userId).stream()
-            .filter(transaction -> transaction.getTransactionType() == TransactionType.EXPENSE)
+            .filter(transaction -> transaction.getTransactionType() == TransactionType.EXPENSE
+                || transaction.getTransactionType() == TransactionType.FIXED)
             .filter(transaction -> !Boolean.TRUE.equals(transaction.getAnalysisExcluded()))
             .filter(transaction -> transaction.getTransactionId() != null)
             .filter(transaction -> transaction.getTransactionAt() != null)
@@ -49,6 +50,7 @@ public class FixedExpenseCandidateService {
             ).add(transaction));
 
         return grouped.values().stream()
+            .filter(this::hasNoFixedExpense)
             .filter(this::appearsInMultipleMonths)
             .map(this::toResponse)
             .sorted(Comparator.comparing(
@@ -74,6 +76,11 @@ public class FixedExpenseCandidateService {
             .count() >= 2;
     }
 
+    private boolean hasNoFixedExpense(List<TransactionVO> transactions) {
+        return transactions.stream()
+            .noneMatch(transaction -> transaction.getTransactionType() == TransactionType.FIXED);
+    }
+
     private FixedExpenseCandidateResponse toResponse(List<TransactionVO> transactions) {
         TransactionVO latest = transactions.stream()
             .max(Comparator.comparing(TransactionVO::getTransactionAt))
@@ -97,7 +104,16 @@ public class FixedExpenseCandidateService {
     private String candidateKey(TransactionVO transaction) {
         return normalize(transaction.getTransactionContent())
             + "|" + transaction.getExpenseCategory()
-            + "|" + transaction.getTransactionSource();
+            + "|" + transaction.getTransactionSource()
+            + "|" + assetKey(transaction);
+    }
+
+    private String assetKey(TransactionVO transaction) {
+        return switch (transaction.getTransactionSource()) {
+            case CARD -> "CARD:" + transaction.getCardId();
+            case ACCOUNT -> "ACCOUNT:" + transaction.getAccountId();
+            case MANUAL -> "MANUAL";
+        };
     }
 
     private String normalize(String value) {
