@@ -99,4 +99,12 @@
       AND CARD_IS_ACTIVE = TRUE
   </update>
 
+  <update id="deactivateByUserIdAndExternalId">
+    UPDATE `CARD`
+    SET CARD_IS_ACTIVE = FALSE
+    WHERE USER_ID = #{userId}
+      AND EXTERNAL_CARD_ID = #{externalCardId}
+      AND CARD_IS_ACTIVE = TRUE
+  </update>
+
 </mapper>

@@ -17,7 +17,9 @@ public enum MydataErrorCode implements BaseErrorCode {
     MYDATA_ALREADY_CONNECTED(HttpStatus.CONFLICT, "MYDATA_006", "이미 연결된 마이데이터입니다."),
     MYDATA_NOT_CONNECTED(HttpStatus.BAD_REQUEST, "MYDATA_007", "마이데이터 연결이 필요합니다."),
     MYDATA_ASSET_SELECTION_INVALID(HttpStatus.BAD_REQUEST, "MYDATA_008", "선택한 계좌 또는 카드를 찾을 수 없습니다."),
-    MYDATA_TRANSACTION_SYNC_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MYDATA_009", "마이데이터 거래내역 저장에 실패했습니다.");
+    MYDATA_TRANSACTION_SYNC_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MYDATA_009", "마이데이터 거래내역 저장에 실패했습니다."),
+    MYDATA_ASSET_NOT_REGISTERED(HttpStatus.BAD_REQUEST, "MYDATA_010", "동기화할 마이데이터 자산이 등록되어 있지 않습니다."),
+    MYDATA_ASSET_NOT_FOUND(HttpStatus.NOT_FOUND, "MYDATA_011", "연동 해제할 마이데이터 자산을 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String customCode;
