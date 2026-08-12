@@ -31,4 +31,57 @@
       AND IS_READ = FALSE
   </select>
 
+  <select id="existsUnreadNotification" resultType="boolean">
+    SELECT EXISTS(
+      SELECT 1
+        FROM NOTIFICATION
+       WHERE USER_ID = #{userId}
+         AND IS_READ = FALSE
+    )
+  </select>
+
+  <select id="selectUserNotification" resultType="com.talented.buttie.notification.domain.UserNotificationVO">
+    SELECT
+      USER_ID AS userId,
+      POLICY_DEADLINE_NOTIFICATION_YN AS policyDeadlineNotificationYn,
+      FINANCIAL_CHANGE_NOTIFICATION_YN AS financialChangeNotificationYn,
+      PLAN_DEVIATION_NOTIFICATION_YN AS planDeviationNotificationYn,
+      SERVICE_NOTICE_NOTIFICATION_YN AS serviceNoticeNotificationYn
+    FROM USER_NOTIFICATION
+    WHERE USER_ID = #{userId}
+  </select>
+
+  <insert id="upsertUserNotification">
+    INSERT INTO USER_NOTIFICATION (
+      USER_ID,
+      POLICY_DEADLINE_NOTIFICATION_YN,
+      FINANCIAL_CHANGE_NOTIFICATION_YN,
+      PLAN_DEVIATION_NOTIFICATION_YN,
+      SERVICE_NOTICE_NOTIFICATION_YN
+    ) VALUES (
+      #{userId},
+      #{policyDeadlineNotificationYn},
+      #{financialChangeNotificationYn},
+      #{planDeviationNotificationYn},
+      #{serviceNoticeNotificationYn}
+    )
+    ON DUPLICATE KEY UPDATE
+      POLICY_DEADLINE_NOTIFICATION_YN = #{policyDeadlineNotificationYn},
+      FINANCIAL_CHANGE_NOTIFICATION_YN = #{financialChangeNotificationYn},
+      PLAN_DEVIATION_NOTIFICATION_YN = #{planDeviationNotificationYn},
+      SERVICE_NOTICE_NOTIFICATION_YN = #{serviceNoticeNotificationYn}
+  </insert>
+
+  <select id="selectUserIdByNotificationId" resultType="java.lang.Long">
+    SELECT USER_ID
+    FROM NOTIFICATION
+    WHERE NOTIFICATION_ID = #{notificationId}
+  </select>
+
+  <update id="updateNotificationRead">
+    UPDATE NOTIFICATION
+    SET IS_READ = TRUE
+    WHERE NOTIFICATION_ID = #{notificationId}
+  </update>
+
 </mapper>

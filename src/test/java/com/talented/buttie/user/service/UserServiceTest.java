@@ -9,9 +9,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import com.talented.buttie.common.exception.ApplicationException;
-import com.talented.buttie.user.domain.ButtieDashboardVO;
+import com.talented.buttie.mydata.domain.ConnectionStatus;
 import com.talented.buttie.user.domain.EmploymentPreparationType;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
+import com.talented.buttie.user.domain.MyProfileSummaryVO;
 import com.talented.buttie.user.domain.UserProfileVO;
 import com.talented.buttie.user.domain.UserVO;
 import com.talented.buttie.user.dto.request.user.ModifyUserProfileRequest;
@@ -21,6 +22,7 @@ import com.talented.buttie.user.exception.UserErrorCode;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import com.talented.buttie.user.mapper.UserMapper;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -187,36 +189,47 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("버티 성장 대시보드를 조회하면 해당 사용자의 버티 정보를 반환한다.")
-    void getButiDashboard() {
-
+    @DisplayName("마이페이지 상단 프로필을 조회하면 해당 사용자의 요약 정보를 반환한다.")
+    void getMyProfileSummary() {
         Long userId = 1L;
-        ButtieDashboardVO mockVO = new ButtieDashboardVO(
-            1, "새싹 버티", "이제 막 자산관리를 시작한 기본 버티", 120, 0, "CAUTION", "https://cdn.buttie.com/buttie/lv1_caution.png"
+        MyProfileSummaryVO mockVO = new MyProfileSummaryVO(
+            "https://cdn.buttie.com/buttie/lv1_stable.png",
+            1,
+            5,
+            50,
+            "STABLE",
+            "닉넴뭐하지",
+            "jaejun.kim@email.com",
+            EmploymentPreparationType.REEMPLOYMENT,
+            LocalDate.of(2026, 5, 1),
+            LocalDate.of(2027, 1, 1),
+            ConnectionStatus.CONNECTED,
+            LocalDateTime.of(2026, 7, 29, 9, 12, 0)
         );
 
-        given(userMapper.selectButtieDashboard(userId))
+        given(userMapper.selectMyProfileSummary(userId))
             .willReturn(mockVO);
 
-        ButtieDashboardVO result = userService.getButtieDashboard(userId);
+        MyProfileSummaryVO result = userService.getMyProfileSummary(userId);
 
         assertNotNull(result);
         assertEquals(1, result.getButtieLevel());
-        assertEquals("CAUTION", result.getRiskLevel());
-        verify(userMapper).selectButtieDashboard(userId);
+        assertEquals("STABLE", result.getRiskLevel());
+        assertEquals(ConnectionStatus.CONNECTED, result.getMydataStatus());
+        verify(userMapper).selectMyProfileSummary(userId);
     }
 
     @Test
-    @DisplayName("버티 성장 대시보드 조회 시 해당 사용자가 없으면 예외가 발생한다.")
-    void throwWhenGetButiDashboardNotFound() {
+    @DisplayName("마이페이지 상단 프로필 조회 시 해당 사용자가 없으면 예외가 발생한다.")
+    void throwWhenGetMyProfileSummaryNotFound() {
         Long userId = 999L;
 
-        given(userMapper.selectButtieDashboard(userId))
+        given(userMapper.selectMyProfileSummary(userId))
             .willReturn(null);
 
         ApplicationException exception = assertThrows(
             ApplicationException.class,
-            () -> userService.getButtieDashboard(userId)
+            () -> userService.getMyProfileSummary(userId)
         );
 
         assertEquals(

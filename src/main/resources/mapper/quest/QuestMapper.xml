@@ -107,6 +107,15 @@
       and QUEST_STATUS = 'COMPLETED'
   </update>
 
+  <!--조건부 complete-->
+  <update id="completeQuestStatus">
+    update QUEST
+    set QUEST_STATUS = 'COMPLETED',
+        QUEST_COMPLETED_AT = now()
+    where QUEST_ID = #{questId}
+      and QUEST_STATUS = 'NOT_COMPLETED'
+  </update>
+
   <update id="updateStatus">
     update QUEST
     set QUEST_STATUS = #{questStatus},

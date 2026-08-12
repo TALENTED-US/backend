@@ -50,25 +50,38 @@
     WHERE USER_NICKNAME = #{nickname}
   </select>
 
-  <select id="selectButtieDashboard" resultType="com.talented.buttie.user.domain.ButtieDashboardVO">
-    SELECT ub.BUTTIE_LEVEL                  AS buttieLevel,
-           bl.STAGE_NAME                    AS stageName,
-           bl.LEVEL_DESCRIPTION             AS levelDescription,
-           ub.BUTTIE_TOTAL_EXP              AS buttieTotalExp,
-           bl.REQUIRED_EXP                  AS requiredExp,
-           COALESCE(s.RISK_LEVEL, 'STABLE') AS riskLevel,
-           CASE COALESCE(s.RISK_LEVEL, 'STABLE')
-             WHEN 'STABLE' THEN bl.IMAGE_URL_STABLE
-             WHEN 'CAUTION' THEN bl.IMAGE_URL_CAUTION
-             WHEN 'DANGER' THEN bl.IMAGE_URL_DANGER
-             END                            AS buttieImageUrl
-    FROM USER_BUTTIE ub
+  <select id="selectMyProfileSummary" resultType="com.talented.buttie.user.domain.MyProfileSummaryVO">
+    SELECT
+      CASE COALESCE(s.RISK_LEVEL, 'STABLE')
+        WHEN 'STABLE'  THEN bl.IMAGE_URL_STABLE
+        WHEN 'CAUTION' THEN bl.IMAGE_URL_CAUTION
+        WHEN 'DANGER'  THEN bl.IMAGE_URL_DANGER
+        END                                          AS buttieImageUrl,
+        ub.BUTTIE_LEVEL                              AS buttieLevel,
+        ub.BUTTIE_TOTAL_EXP                          AS buttieTotalExp,
+        (SELECT bl2.REQUIRED_EXP
+           FROM BUTTIE_LEVEL bl2
+          WHERE bl2.LEVEL = ub.BUTTIE_LEVEL + 1)     AS requiredExp,
+        COALESCE(s.RISK_LEVEL, 'STABLE')             AS riskLevel,
+        u.USER_NICKNAME                              AS userNickname,
+        u.USER_EMAIL                                 AS userEmail,
+        ep.EMPLOYMENT_PREP_TYPE                      AS employmentPrepType,
+        ep.PREP_START_DATE                           AS prepStartDate,
+        ep.TARGET_EMPLOYMENT_DATE                    AS targetEmploymentDate,
+        (SELECT m.MYDATA_STATUS
+           FROM MYDATA m
+          WHERE m.USER_ID = u.USER_ID
+          ORDER BY m.LAST_SYNCED_AT DESC
+          LIMIT 1)                                   AS mydataStatus,
+        (SELECT MAX(m.LAST_SYNCED_AT)
+           FROM MYDATA m
+          WHERE m.USER_ID = u.USER_ID)               AS lastSyncedAt
+    FROM USER u
+           JOIN USER_BUTTIE ub ON u.USER_ID = ub.USER_ID
            JOIN BUTTIE_LEVEL bl ON ub.BUTTIE_LEVEL = bl.LEVEL
-           LEFT JOIN SNAPSHOT s ON ub.USER_ID = s.USER_ID
-      AND s.SNAPSHOT_BASE_DATE = (SELECT MAX(s2.SNAPSHOT_BASE_DATE)
-                                  FROM SNAPSHOT s2
-                                  WHERE s2.USER_ID = ub.USER_ID)
-    WHERE ub.USER_ID = #{userId}
+           JOIN EMPLOYMENT_PREPARATIONS ep ON u.USER_ID = ep.USER_ID
+           LEFT JOIN SNAPSHOT s ON u.USER_ID = s.USER_ID
+    WHERE u.USER_ID = #{userId}
   </select>
 
   <insert id="createUserButtie">
@@ -86,25 +99,39 @@
 
   <update id="deductUserExp">
     UPDATE USER_BUTTIE ub
-    SET ub.BUTTIE_TOTAL_EXP = GREATEST(0, ub.BUTTIE_TOTAL_EXP - #{expAmount}),
-        ub.BUTTIE_LEVEL = COALESCE(
-          (SELECT MAX(bl.LEVEL)
-           FROM BUTTIE_LEVEL bl
-           WHERE bl.REQUIRED_EXP &lt;= GREATEST(0, ub.BUTTIE_TOTAL_EXP - #{expAmount})),
-          1
-        )
-    WHERE ub.USER_ID = #{userId}
+    JOIN (
+      SELECT
+        c.user_id,
+        c.target_exp,
+        COALESCE(MAX(bl.LEVEL), 1) AS target_level
+      FROM (
+        SELECT USER_ID, GREATEST(0, BUTTIE_TOTAL_EXP - #{expAmount}) AS target_exp
+        FROM USER_BUTTIE
+        WHERE USER_ID = #{userId}
+      ) c
+      LEFT JOIN BUTTIE_LEVEL bl ON bl.REQUIRED_EXP &lt;= c.target_exp
+      GROUP BY c.user_id, c.target_exp
+    ) calc ON ub.USER_ID = calc.user_id
+    SET ub.BUTTIE_TOTAL_EXP = calc.target_exp,
+        ub.BUTTIE_LEVEL = calc.target_level
   </update>
 
   <update id="addUserExp">
     UPDATE USER_BUTTIE ub
-    SET ub.BUTTIE_TOTAL_EXP = ub.BUTTIE_TOTAL_EXP + #{expAmount},
-        ub.BUTTIE_LEVEL = COALESCE(
-          (SELECT MAX(bl.LEVEL)
-           FROM BUTTIE_LEVEL bl
-           WHERE bl.REQUIRED_EXP &lt;= (ub.BUTTIE_TOTAL_EXP + #{expAmount})),
-          1
-        )
-    WHERE ub.USER_ID = #{userId}
+    JOIN (
+      SELECT
+        c.user_id,
+        c.target_exp,
+        COALESCE(MAX(bl.LEVEL), 1) AS target_level
+      FROM (
+        SELECT USER_ID, (BUTTIE_TOTAL_EXP + #{expAmount}) AS target_exp
+        FROM USER_BUTTIE
+        WHERE USER_ID = #{userId}
+      ) c
+      LEFT JOIN BUTTIE_LEVEL bl ON bl.REQUIRED_EXP &lt;= c.target_exp
+      GROUP BY c.user_id, c.target_exp
+    ) calc ON ub.USER_ID = calc.user_id
+    SET ub.BUTTIE_TOTAL_EXP = calc.target_exp,
+        ub.BUTTIE_LEVEL = calc.target_level
   </update>
 </mapper>

@@ -41,6 +41,7 @@ import org.springframework.web.client.RestTemplate;
     "com.talented.buttie.ledger.service",
     "com.talented.buttie.snapshot.service",
     "com.talented.buttie.simulation.service",
+    "com.talented.buttie.dashboard.service",
     "com.talented.buttie.quest.service",
     "com.talented.buttie.catalog.service",
     "com.talented.buttie.catalog.elasticsearch",

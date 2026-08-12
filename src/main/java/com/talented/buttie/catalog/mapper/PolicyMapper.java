@@ -10,6 +10,8 @@ public interface PolicyMapper {
 
     PolicyVO findById(@Param("policyId") Long policyId);
 
+    List<PolicyVO> findAll();
+
     List<PolicyVO> search(
         @Param("externalSource") String externalSource,
         @Param("amountParseConfidence") String amountParseConfidence,
