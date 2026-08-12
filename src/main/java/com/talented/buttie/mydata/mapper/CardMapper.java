@@ -20,4 +20,9 @@ public interface CardMapper {
     int update(CardVO card);
 
     int deactivateAllByUserId(@Param("userId") Long userId);
+
+    int deactivateByUserIdAndExternalId(
+        @Param("userId") Long userId,
+        @Param("externalCardId") String externalCardId
+    );
 }

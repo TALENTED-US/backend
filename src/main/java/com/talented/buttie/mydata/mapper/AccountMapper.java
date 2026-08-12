@@ -20,4 +20,9 @@ public interface AccountMapper {
     int update(AccountVO account);
 
     int deactivateAllByUserId(@Param("userId") Long userId);
+
+    int deactivateByUserIdAndExternalId(
+        @Param("userId") Long userId,
+        @Param("externalAccountId") String externalAccountId
+    );
 }
