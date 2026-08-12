@@ -1,6 +1,6 @@
 -- =========================================================
 -- Buttie 시드 데이터 (Flyway Repeatable) - 전 환경 실행
--- 기준: 테이블 명세서 v1.0.0 (최종, (3)) / V1__init_schema.sql ~ V10
+-- 기준: 테이블 명세서 v1.0.0 (최종, (3)) / V1__init_schema.sql ~ V11
 -- =========================================================
 -- 메모:
 --   - 마이데이터 실연동이 없는 데모 서비스라 mock 데이터를 모든 환경에 그대로 배포함.
@@ -3192,6 +3192,10 @@ SET `CARD_ID` = NULL,
             THEN 'ACCOUNT'
         ELSE 'CARD'
     END,
+    `EXPENSE_CATEGORY` = CASE
+        WHEN `TRANSACTION_TYPE` IN ('INCOME', 'TRANSFER') THEN NULL
+        ELSE `EXPENSE_CATEGORY`
+    END,
     `CLASSIFICATION_METHOD` = CASE
         WHEN `EXTERNAL_TRANSACTION_ID` IS NULL THEN 'MANUAL'
         WHEN `TRANSACTION_TYPE` = 'INCOME' THEN 'ACCOUNT_INFLOW'
@@ -3411,6 +3415,13 @@ ON DUPLICATE KEY UPDATE
     `DUE_DATE`=VALUES(`DUE_DATE`), `REQUIRED_DOCUMENT`=VALUES(`REQUIRED_DOCUMENT`),
     `EMPLOYMENT_PREP_STATUS`=VALUES(`EMPLOYMENT_PREP_STATUS`), `FAMILY_COUNT`=VALUES(`FAMILY_COUNT`),
     `POLICY_STATUS`=VALUES(`POLICY_STATUS`), `POLICY_URL`=VALUES(`POLICY_URL`);
+
+-- V10 외부 정책 식별 컬럼과 기본 정책 시드도 일관되게 유지한다.
+UPDATE `POLICY`
+SET `EXTERNAL_SOURCE` = 'SEED',
+    `EXTERNAL_POLICY_ID` = CONCAT('SEED-', LPAD(`POLICY_ID`, 3, '0')),
+    `AMOUNT_PARSE_CONFIDENCE` = 'MANUAL'
+WHERE `POLICY_ID` BETWEEN 1 AND 30;
 
 
 -- ---------------------------------------------------------
