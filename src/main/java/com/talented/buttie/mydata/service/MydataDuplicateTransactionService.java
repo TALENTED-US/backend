@@ -40,10 +40,11 @@ public class MydataDuplicateTransactionService {
                     accountTransaction,
                     cardTransaction
                 ));
-            if (duplicated && transactionMapper.updateAnalysisExcluded(
+            boolean analysisExcluded = transactionMapper.updateAnalysisExcluded(
                 accountTransaction.getTransactionId(),
                 true
-            ) == 1) {
+            ) == 1;
+            if (duplicated && analysisExcluded) {
                 excluded++;
             }
         }

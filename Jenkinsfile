@@ -60,7 +60,10 @@ pipeline {
                                   --name buttie-mydata-mock \
                                   --network buttie-network \
                                   --restart unless-stopped \
-                                  -v /home/ubuntu/deploy/mock-mydata:/app:ro \
+                                  -v /home/ubuntu/deploy/mock-mydata/package.json:/app/package.json:ro \
+                                  -v /home/ubuntu/deploy/mock-mydata/package-lock.json:/app/package-lock.json:ro \
+                                  -v /home/ubuntu/deploy/mock-mydata/db.json:/app/db.json:ro \
+                                  -v /home/ubuntu/deploy/mock-mydata/server.js:/app/server.js:ro \
                                   -v buttie-mydata-node-modules:/app/node_modules \
                                   -w /app \
                                   node:20-alpine \
