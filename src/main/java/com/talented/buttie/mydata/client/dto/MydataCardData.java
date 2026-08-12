@@ -12,22 +12,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MydataAccountData {
+public class MydataCardData {
 
-    @JsonProperty("account_num")
-    private String accountNum;
+    @JsonProperty("card_id")
+    private String cardId;
+    @JsonProperty("card_num")
+    private String cardNumberMasked;
     @JsonProperty("is_consent")
     private Boolean isConsent;
-    @JsonProperty("prod_name")
-    private String productName;
-    @JsonProperty("account_type")
-    private String accountType;
-    @JsonProperty("account_status")
-    private String accountStatus;
+    @JsonProperty("card_name")
+    private String cardName;
+    @JsonProperty("card_member")
+    private String cardMember;
+    @JsonProperty("card_type")
+    private String cardType;
     @JsonProperty("institution_name")
     private String institutionName;
-    @JsonProperty("account_num_masked")
-    private String accountNumberMasked;
-    @JsonProperty("balance_amt")
-    private Integer balanceAmount;
 }

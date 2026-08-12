@@ -49,7 +49,17 @@ import org.springframework.web.client.RestTemplate;
 @Import({
     RedisConfig.class
 })
-@MapperScan(basePackages = {"com.talented.buttie"})
+@MapperScan(basePackages = {
+    "com.talented.buttie.catalog.mapper",
+    "com.talented.buttie.dashboard.mapper",
+    "com.talented.buttie.ledger.mapper",
+    "com.talented.buttie.mydata.mapper",
+    "com.talented.buttie.notification.mapper",
+    "com.talented.buttie.quest.mapper",
+    "com.talented.buttie.simulation.mapper",
+    "com.talented.buttie.snapshot.mapper",
+    "com.talented.buttie.user.mapper"
+})
 public class RootConfig {
 
     @Value("${jdbc.driver}")
