@@ -51,7 +51,9 @@ public class AdminPolicyService {
         if (updatedRows == 0) {
             throw ApplicationException.from(CatalogErrorCode.POLICY_NOT_FOUND);
         }
-        return AdminPolicyResponse.from(policy);
+        // update()는 externalSource/amountParseConfidence를 안 건드리므로, 임시 객체 대신
+        // 실제 저장된 값을 재조회해서 응답한다.
+        return AdminPolicyResponse.from(policyMapper.findById(policyId));
     }
 
     @Transactional

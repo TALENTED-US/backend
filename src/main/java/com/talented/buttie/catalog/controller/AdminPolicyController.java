@@ -10,7 +10,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import com.talented.buttie.common.response.ApplicationResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/admin/policies")
 @RequiredArgsConstructor
+@Validated
 public class AdminPolicyController {
 
     private final AdminPolicyService adminPolicyService;
@@ -42,8 +46,8 @@ public class AdminPolicyController {
     public ApplicationResponse<AdminPolicyListResponse> getPolicies(
         @RequestParam(required = false) String externalSource,
         @RequestParam(required = false) AmountParseConfidence amountParseConfidence,
-        @RequestParam(defaultValue = "1") int page,
-        @RequestParam(defaultValue = "20") int size
+        @RequestParam(defaultValue = "1") @Min(1) int page,
+        @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size
     ) {
         return ApplicationResponse.onSuccess(
             adminPolicyService.getPolicies(externalSource, amountParseConfidence, page, size)
