@@ -7,6 +7,7 @@ import com.talented.buttie.catalog.dto.response.AdminPolicyListResponse;
 import com.talented.buttie.catalog.dto.response.AdminPolicyResponse;
 import com.talented.buttie.catalog.exception.CatalogErrorCode;
 import com.talented.buttie.catalog.mapper.PolicyMapper;
+import com.talented.buttie.catalog.mapper.PolicyRegionMapMapper;
 import com.talented.buttie.common.exception.ApplicationException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminPolicyService {
 
     private final PolicyMapper policyMapper;
+    private final PolicyRegionMapMapper policyRegionMapMapper;
 
     public AdminPolicyListResponse getPolicies(String externalSource, AmountParseConfidence amountParseConfidence, int page, int size) {
         int offset = (page - 1) * size;
@@ -54,6 +56,7 @@ public class AdminPolicyService {
 
     @Transactional
     public void deletePolicy(Long policyId) {
+        policyRegionMapMapper.deleteByPolicyId(policyId);
         int deletedRows = policyMapper.deleteById(policyId);
         if (deletedRows == 0) {
             throw ApplicationException.from(CatalogErrorCode.POLICY_NOT_FOUND);

@@ -1,6 +1,7 @@
 package com.talented.buttie.catalog.external.vworld;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
@@ -21,9 +22,9 @@ class RegionCodeCacheTest {
     private RegionCodeCache regionCodeCache;
 
     @Test
-    @DisplayName("캐시에 없는 zipCd는 예외 없이 전국을 반환한다.")
-    void resolveReturnsNationwideOnCacheMiss() {
-        assertEquals("전국", regionCodeCache.resolve("99999"));
+    @DisplayName("캐시에 없는 zipCd는 예외 없이 null을 반환한다 (전국으로 뭉개지 않음).")
+    void resolveReturnsNullOnCacheMiss() {
+        assertNull(regionCodeCache.resolve("99999"));
     }
 
     @Test
@@ -39,6 +40,6 @@ class RegionCodeCacheTest {
         assertEquals("서울특별시", regionCodeCache.resolve("11"));
         assertEquals("서울특별시", regionCodeCache.resolve("11000"));
         assertEquals("강남구", regionCodeCache.resolve("11680"));
-        assertEquals("전국", regionCodeCache.resolve("12345"));
+        assertNull(regionCodeCache.resolve("12345"));
     }
 }

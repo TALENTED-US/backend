@@ -14,8 +14,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RegionCodeCache {
 
-    private static final String NATIONWIDE = "전국";
-
     private final VWorldRegionClient vWorldRegionClient;
 
     private volatile Map<String, String> zipCdToRegionName = Map.of();
@@ -35,8 +33,12 @@ public class RegionCodeCache {
         }
     }
 
+    /**
+     * 캐시에 없으면 null을 반환한다. "전국"은 정책이 명시적으로 전국 대상일 때만 쓰는 값이라,
+     * 캐시 미스(조회 실패/미확인 코드)를 전국으로 뭉개면 실제 지역 정보가 유실된다.
+     */
     public String resolve(String zipCd) {
-        return zipCdToRegionName.getOrDefault(zipCd, NATIONWIDE);
+        return zipCdToRegionName.get(zipCd);
     }
 
     private Map<String, String> buildCache() {

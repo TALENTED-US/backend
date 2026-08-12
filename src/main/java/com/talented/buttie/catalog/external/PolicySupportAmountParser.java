@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class PolicySupportAmountParser {
 
     private static final Pattern AMOUNT_PATTERN =
-        Pattern.compile("(\\d+)만원|(\\d{1,3}(?:,\\d{3})+)원");
+        Pattern.compile("(\\d{1,3}(?:,\\d{3})*)만원|(\\d{1,3}(?:,\\d{3})+)원");
     private static final Pattern MONTH_COUNT_PATTERN = Pattern.compile("(\\d{1,3})\\s*개월");
     private static final Set<String> EXCLUDE_KEYWORDS = Set.of("시간당", "생활임금", "일당", "시급");
     private static final Set<String> MONTHLY_KEYWORDS = Set.of("매월", "월별", "매달", "월 최대", "월 지원", "개월");
@@ -50,7 +50,7 @@ public class PolicySupportAmountParser {
                 continue;
             }
             candidates.add(matcher.group(1) != null
-                ? Integer.parseInt(matcher.group(1)) * 10_000
+                ? Integer.parseInt(matcher.group(1).replace(",", "")) * 10_000
                 : Integer.parseInt(matcher.group(2).replace(",", "")));
         }
         return candidates;

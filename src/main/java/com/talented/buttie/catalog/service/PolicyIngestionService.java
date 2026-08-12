@@ -113,7 +113,12 @@ public class PolicyIngestionService {
             return "전국";
         }
         String[] zipCds = zipCdRaw.split(",");
-        String firstRegionName = regionCodeCache.resolve(zipCds[0].trim());
+        String firstZipCd = zipCds[0].trim();
+        String firstRegionName = regionCodeCache.resolve(firstZipCd);
+        if (firstRegionName == null) {
+            // 캐시 미확인 코드: "전국"으로 뭉개지 않고 코드 그대로 표시
+            firstRegionName = firstZipCd;
+        }
         if (zipCds.length == 1) {
             return firstRegionName;
         }

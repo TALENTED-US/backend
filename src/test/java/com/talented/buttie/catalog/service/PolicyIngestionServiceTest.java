@@ -93,6 +93,20 @@ class PolicyIngestionServiceTest {
     }
 
     @Test
+    @DisplayName("캐시에 없는 zipCd는 POLICY_REGION을 전국으로 뭉개지 않고 zipCd 그대로 표시한다.")
+    void upsertPolicyWithUnresolvedZipCdDoesNotFallBackToNationwide() {
+        given(regionCodeCache.resolve("99999")).willReturn(null);
+        YouthCenterPolicyItem item = item("99999", "20260812 ~ 20260814");
+
+        policyIngestionService.upsertPolicy(item);
+
+        verify(policyMapper).upsert(org.mockito.ArgumentMatchers.argThat(
+            policy -> "99999".equals(policy.getPolicyRegion())
+        ));
+        verify(policyRegionMapMapper).insert(100L, "99999", null);
+    }
+
+    @Test
     @DisplayName("aplyYmd가 빈 값(상시모집)이면 마감일 없이 AVAILABLE로 저장한다.")
     void upsertPolicyWithBlankAplyYmd() {
         YouthCenterPolicyItem item = item("11680", "");

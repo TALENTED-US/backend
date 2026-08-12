@@ -59,6 +59,13 @@ class PolicySupportAmountParserTest {
     }
 
     @Test
+    @DisplayName("천 단위 구분자가 있는 만원 금액도 온전히 파싱한다.")
+    void commaSeparatedManwonAmount() {
+        assertEquals(10_000_000, parser.parse("최대 1,000만원 지원").amount());
+        assertEquals(25_000_000, parser.parse("최대 2,500만원 지원").amount());
+    }
+
+    @Test
     @DisplayName("금액 표현이 없으면 MANUAL이다.")
     void noAmountMentioned() {
         ParseResult result = parser.parse("청년 1인 1호실 독립공간 무료 제공");
