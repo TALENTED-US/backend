@@ -111,11 +111,61 @@ server.get('/v2/card/cards', (request, response) =>
   userResponse(request, response, db.cardResponses)
 );
 
+function seoulDateTime() {
+  if (/^\d{14}$/.test(process.env.MOCK_NOW || '')) {
+    return process.env.MOCK_NOW;
+  }
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23'
+  }).formatToParts(new Date());
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}${values.month}${values.day}`
+    + `${values.hour}${values.minute}${values.second}`;
+}
+
+function isDate(value) {
+  return /^\d{8}$/.test(String(value || ''));
+}
+
+function approvalEventDateTime(approval) {
+  if ((approval.status === '02' || approval.status === '03') && approval.trans_dtime) {
+    return approval.trans_dtime;
+  }
+  return approval.approved_dtime;
+}
+
 server.get('/v2/card/cards/:cardId/approval-domestic', (request, response) => {
   const body = db.cardApprovalResponses.find((item) => item.id === request.params.cardId);
-  return body
-    ? response.jsonp(body)
-    : response.status(404).jsonp({ rsp_code: 'A0404', rsp_msg: '승인내역이 없습니다.' });
+  if (!body) {
+    return response.status(404).jsonp({ rsp_code: 'A0404', rsp_msg: '승인내역이 없습니다.' });
+  }
+
+  const now = seoulDateTime();
+  const fromDate = isDate(request.query.from_date) ? request.query.from_date : '00000000';
+  const requestedToDate = isDate(request.query.to_date)
+    ? `${request.query.to_date}235959`
+    : now;
+  const effectiveToDateTime = requestedToDate < now ? requestedToDate : now;
+  const fromDateTime = `${fromDate}000000`;
+  const approvedList = (body.approved_list || []).filter((approval) => {
+    const eventDateTime = approvalEventDateTime(approval);
+    return /^\d{14}$/.test(String(eventDateTime || ''))
+      && eventDateTime >= fromDateTime
+      && eventDateTime <= effectiveToDateTime;
+  });
+
+  return response.jsonp({
+    ...body,
+    approved_cnt: approvedList.length,
+    approved_list: approvedList
+  });
 });
 
 server.get('/v2/card/cards/:cardId', (request, response) => {

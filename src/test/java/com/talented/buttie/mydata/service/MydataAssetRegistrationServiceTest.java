@@ -10,12 +10,9 @@ import com.talented.buttie.mydata.client.dto.MydataAccountData;
 import com.talented.buttie.mydata.client.dto.MydataCardData;
 import com.talented.buttie.mydata.domain.AccountVO;
 import com.talented.buttie.mydata.domain.CardVO;
-import com.talented.buttie.mydata.domain.ConnectionStatus;
-import com.talented.buttie.mydata.domain.MydataConnectionVO;
 import com.talented.buttie.mydata.dto.request.RegisterMydataAssetsRequest;
 import com.talented.buttie.mydata.mapper.AccountMapper;
 import com.talented.buttie.mydata.mapper.CardMapper;
-import com.talented.buttie.mydata.mapper.MydataConnectionMapper;
 import com.talented.buttie.mydata.service.account.AccountCreateService;
 import com.talented.buttie.mydata.service.account.AccountUpdateService;
 import com.talented.buttie.mydata.service.card.CardCreateService;
@@ -33,7 +30,7 @@ class MydataAssetRegistrationServiceTest {
     @Mock
     private MydataApiClient mydataApiClient;
     @Mock
-    private MydataConnectionMapper mydataConnectionMapper;
+    private MydataConnectionValidator mydataConnectionValidator;
     @Mock
     private AccountMapper accountMapper;
     @Mock
@@ -65,10 +62,6 @@ class MydataAssetRegistrationServiceTest {
             .cardType("02")
             .institutionName("KB국민카드")
             .build();
-        given(mydataConnectionMapper.findByUserIdAndProvider(101L, "MOCK"))
-            .willReturn(MydataConnectionVO.builder()
-                .mydataStatus(ConnectionStatus.CONNECTED)
-                .build());
         given(mydataApiClient.getAccounts(101L)).willReturn(List.of(account));
         given(mydataApiClient.getDebitCards(101L)).willReturn(List.of(card));
         given(accountCreateService.create(any(AccountVO.class)))
@@ -84,6 +77,7 @@ class MydataAssetRegistrationServiceTest {
 
         assertEquals(1, result.accounts().size());
         assertEquals(1, result.cards().size());
+        verify(mydataConnectionValidator).validateConnected(101L);
         verify(accountMapper).deactivateAllByUserId(101L);
         verify(cardMapper).deactivateAllByUserId(101L);
         verify(accountCreateService).create(any(AccountVO.class));

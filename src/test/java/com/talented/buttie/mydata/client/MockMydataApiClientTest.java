@@ -121,6 +121,7 @@ class MockMydataApiClientTest {
     void 선택한_카드의_승인내역을_조회한다() {
         server.expect(requestTo(
                 "http://localhost:3000/v2/card/cards/MOCK-CARD-01-01/approval-domestic"
+                    + "?from_date=20260601&to_date=20260831"
             ))
             .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer mock-access-token-user-1"))
             .andRespond(withSuccess("""

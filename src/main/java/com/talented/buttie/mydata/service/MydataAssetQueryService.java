@@ -17,8 +17,10 @@ import org.springframework.stereotype.Service;
 public class MydataAssetQueryService {
 
     private final MydataApiClient mydataApiClient;
+    private final MydataConnectionValidator mydataConnectionValidator;
 
     public MydataAssetsResponse getAssets(Long userId) {
+        mydataConnectionValidator.validateConnected(userId);
         List<MydataAccountResponse> accounts = mydataApiClient.getAccounts(userId).stream()
             .map(MydataAccountResponse::from)
             .collect(Collectors.toList());
@@ -33,6 +35,7 @@ public class MydataAssetQueryService {
     }
 
     public List<MydataInstitutionResponse> getInstitutions(Long userId) {
+        mydataConnectionValidator.validateConnected(userId);
         Map<String, int[]> counts = new LinkedHashMap<>();
         mydataApiClient.getAccounts(userId).forEach(account -> {
             String name = normalizeInstitutionName(account.getInstitutionName());

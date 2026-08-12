@@ -217,6 +217,8 @@ public class MockMydataApiClient implements MydataApiClient {
         int mockUserKey = toMockUserKey(userId);
         String uri = UriComponentsBuilder.fromHttpUrl(baseUrl)
             .pathSegment("v2", "card", "cards", externalCardId, "approval-domestic")
+            .queryParam("from_date", "20260601")
+            .queryParam("to_date", "20260831")
             .build()
             .encode()
             .toUriString();

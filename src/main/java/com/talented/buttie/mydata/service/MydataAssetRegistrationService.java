@@ -8,13 +8,10 @@ import com.talented.buttie.mydata.domain.AccountType;
 import com.talented.buttie.mydata.domain.AccountVO;
 import com.talented.buttie.mydata.domain.CardType;
 import com.talented.buttie.mydata.domain.CardVO;
-import com.talented.buttie.mydata.domain.ConnectionStatus;
-import com.talented.buttie.mydata.domain.MydataConnectionVO;
 import com.talented.buttie.mydata.dto.request.RegisterMydataAssetsRequest;
 import com.talented.buttie.mydata.exception.MydataErrorCode;
 import com.talented.buttie.mydata.mapper.AccountMapper;
 import com.talented.buttie.mydata.mapper.CardMapper;
-import com.talented.buttie.mydata.mapper.MydataConnectionMapper;
 import com.talented.buttie.mydata.service.account.AccountCreateService;
 import com.talented.buttie.mydata.service.account.AccountUpdateService;
 import com.talented.buttie.mydata.service.card.CardCreateService;
@@ -35,10 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MydataAssetRegistrationService {
 
-    private static final String MOCK_PROVIDER = "MOCK";
-
     private final MydataApiClient mydataApiClient;
-    private final MydataConnectionMapper mydataConnectionMapper;
+    private final MydataConnectionValidator mydataConnectionValidator;
     private final AccountMapper accountMapper;
     private final CardMapper cardMapper;
     private final AccountCreateService accountCreateService;
@@ -51,7 +46,7 @@ public class MydataAssetRegistrationService {
         Long userId,
         RegisterMydataAssetsRequest request
     ) {
-        validateConnected(userId);
+        mydataConnectionValidator.validateConnected(userId);
 
         Set<String> selectedAccountIds = new LinkedHashSet<>(request.accountIds());
         Set<String> selectedCardIds = new LinkedHashSet<>(request.cardIds());
@@ -107,16 +102,6 @@ public class MydataAssetRegistrationService {
         }
 
         return new RegisteredAssets(accounts, cards);
-    }
-
-    private void validateConnected(Long userId) {
-        MydataConnectionVO connection = mydataConnectionMapper.findByUserIdAndProvider(
-            userId,
-            MOCK_PROVIDER
-        );
-        if (connection == null || connection.getMydataStatus() != ConnectionStatus.CONNECTED) {
-            throw ApplicationException.from(MydataErrorCode.MYDATA_NOT_CONNECTED);
-        }
     }
 
     private AccountVO toAccount(Long userId, MydataAccountData source) {

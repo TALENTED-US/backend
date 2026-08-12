@@ -2,6 +2,7 @@ package com.talented.buttie.mydata.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 import com.talented.buttie.mydata.client.MydataApiClient;
 import com.talented.buttie.mydata.client.dto.MydataAccountData;
@@ -19,6 +20,8 @@ class MydataAssetQueryServiceTest {
 
     @Mock
     private MydataApiClient mydataApiClient;
+    @Mock
+    private MydataConnectionValidator mydataConnectionValidator;
 
     @InjectMocks
     private MydataAssetQueryService mydataAssetQueryService;
@@ -48,8 +51,19 @@ class MydataAssetQueryServiceTest {
 
         MydataAssetsResponse result = mydataAssetQueryService.getAssets(101L);
 
+        verify(mydataConnectionValidator).validateConnected(101L);
         assertEquals(1, result.accounts().size());
         assertEquals(1_800_000, result.accounts().get(0).balance());
         assertEquals("02", result.cards().get(0).cardType());
+    }
+
+    @Test
+    void 금융기관_조회_전에_연결상태를_검증한다() {
+        given(mydataApiClient.getAccounts(101L)).willReturn(List.of());
+        given(mydataApiClient.getDebitCards(101L)).willReturn(List.of());
+
+        mydataAssetQueryService.getInstitutions(101L);
+
+        verify(mydataConnectionValidator).validateConnected(101L);
     }
 }
