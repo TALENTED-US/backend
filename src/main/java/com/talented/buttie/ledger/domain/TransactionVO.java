@@ -14,13 +14,20 @@ public class TransactionVO {
     private Long transactionId;
     private Long userId;
     private Long accountId;
+    private Long cardId;
     private String externalTransactionId;
+    private TransactionSource transactionSource;
+    private ClassificationMethod classificationMethod;
+    private String merchantName;
+    private String merchantRegistrationNumber;
+    private String merchantCategoryCode;
     private String transactionContent;
     private TransactionType transactionType;
     private ExpenseCategory expenseCategory;
     private Integer transactionAmount;
     private LocalDateTime transactionAt;
     private String transactionMemo;
+    private Boolean analysisExcluded;
     private Boolean isDeleted;
     private LocalDateTime transactionCreatedAt;
     private LocalDateTime transactionUpdatedAt;
@@ -37,6 +44,9 @@ public class TransactionVO {
             .expenseCategory(request.expenseCategory())
             .transactionAt(request.transactionDate())
             .transactionMemo(request.transactionMemo())
+            .transactionSource(TransactionSource.MANUAL)
+            .classificationMethod(ClassificationMethod.MANUAL)
+            .analysisExcluded(false)
             .build();
     }
 
@@ -66,6 +76,8 @@ public class TransactionVO {
     ){
         return transaction.toBuilder()
             .transactionType(TransactionType.FIXED)
+            .classificationMethod(ClassificationMethod.USER_CONFIRMED)
+            .analysisExcluded(false)
             .build();
     }
 
@@ -74,6 +86,20 @@ public class TransactionVO {
     ){
         return transaction.toBuilder()
             .transactionType(TransactionType.EXPENSE)
+            .analysisExcluded(false)
+            .build();
+    }
+
+    public static TransactionVO classifyAccountExpense(
+        TransactionVO transaction,
+        TransactionType transactionType,
+        ExpenseCategory expenseCategory
+    ) {
+        return transaction.toBuilder()
+            .transactionType(transactionType)
+            .expenseCategory(expenseCategory)
+            .classificationMethod(ClassificationMethod.USER_CONFIRMED)
+            .analysisExcluded(false)
             .build();
     }
 }

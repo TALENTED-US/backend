@@ -30,6 +30,9 @@ public class CreateFixedExpenseService {
         if (targetTransaction.getTransactionType() == TransactionType.FIXED) {
             throw ApplicationException.from(LedgerErrorCode.ALREADY_FIXED_EXPENSE);
         }
+        if (targetTransaction.getTransactionType() != TransactionType.EXPENSE) {
+            throw ApplicationException.from(LedgerErrorCode.EXPENSE_CLASSIFICATION_REQUIRED);
+        }
 
         TransactionVO fixedExpense = TransactionVO.createFixedExpense(targetTransaction);
 
