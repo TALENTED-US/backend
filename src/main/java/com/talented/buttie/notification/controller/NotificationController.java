@@ -54,10 +54,10 @@ public class NotificationController {
 
     @ApiOperation("알림 전체 읽음 처리")
     @PatchMapping("/read-all")
-    public ApplicationResponse<Long> modifyAllNotificationsRead(
+    public ApplicationResponse<Void> modifyAllNotificationsRead(
         @AuthUser AuthenticationUser authUser
     ) {
-        Long result = notificationService.modifyAllNotificationsRead(authUser.userId());
-        return ApplicationResponse.onSuccess(result);
+        notificationService.modifyAllNotificationsRead(authUser.userId());
+        return ApplicationResponse.onSuccess(null);
     }
 }

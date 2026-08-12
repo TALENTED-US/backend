@@ -39,9 +39,8 @@ public class NotificationService {
             setting.getServiceNoticeNotificationYn()
         );
     }
-    public Long modifyAllNotificationsRead(Long userId) {
+    public void modifyAllNotificationsRead(Long userId) {
         notificationMapper.updateAllNotificationsRead(userId);
-        return userId;
     }
 
 }

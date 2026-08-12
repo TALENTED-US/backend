@@ -85,15 +85,14 @@ class NotificationServiceTest {
     }
 
     @Test
-    @DisplayName("알림 전체 읽음 처리 시 userId를 반환한다")
+    @DisplayName("알림 전체 읽음 처리 시 정상적으로 수행된다")
     void modifyAllNotificationsRead() {
         Long userId = 1L;
 
         given(notificationMapper.updateAllNotificationsRead(userId)).willReturn(3);
 
-        Long result = notificationService.modifyAllNotificationsRead(userId);
+        notificationService.modifyAllNotificationsRead(userId);
 
-        assertEquals(userId, result);
         verify(notificationMapper).updateAllNotificationsRead(userId);
     }
 }
