@@ -52,4 +52,25 @@ class MydataDuplicateTransactionServiceTest {
         assertEquals(1, result);
         verify(transactionMapper).updateAnalysisExcluded(1L, true);
     }
+
+    @Test
+    void 카드_중복이_아닌_미분류_계좌이체도_분석에서_제외한다() {
+        TransactionVO account = TransactionVO.builder()
+            .transactionId(1L)
+            .transactionSource(TransactionSource.ACCOUNT)
+            .transactionType(TransactionType.TRANSFER)
+            .transactionAmount(50_000)
+            .transactionAt(LocalDateTime.of(2026, 8, 22, 18, 55))
+            .transactionMemo("친구 모임 정산")
+            .analysisExcluded(false)
+            .build();
+        given(transactionMapper.findExternalTransactionsForAnalysis(101L))
+            .willReturn(List.of(account));
+        given(transactionMapper.updateAnalysisExcluded(1L, true)).willReturn(1);
+
+        int duplicateCount = service.excludeLikelyAccountDuplicates(101L);
+
+        assertEquals(0, duplicateCount);
+        verify(transactionMapper).updateAnalysisExcluded(1L, true);
+    }
 }

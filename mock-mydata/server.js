@@ -2,7 +2,6 @@ const jsonServer = require('json-server');
 const db = require('./db.json');
 
 const server = jsonServer.create();
-const router = jsonServer.router(db);
 const middlewares = jsonServer.defaults();
 const port = Number(process.env.PORT || 3000);
 const mockClient = {
@@ -254,8 +253,6 @@ server.post('/v2/bank/accounts/deposit/transactions', (request, response) => {
     trans_list: transactionList
   });
 });
-
-server.use(router);
 
 server.listen(port, '0.0.0.0', () => {
   console.log(`Buttie MyData Mock Server is running on port ${port}`);
