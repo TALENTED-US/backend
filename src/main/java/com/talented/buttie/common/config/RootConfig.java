@@ -23,11 +23,14 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @EnableTransactionManagement
+@EnableScheduling
 @PropertySource({"classpath:/application.properties"})
 @ComponentScan(basePackages = {
     "com.talented.buttie.user.service",
@@ -42,6 +45,7 @@ import org.springframework.web.client.RestTemplate;
     "com.talented.buttie.quest.service",
     "com.talented.buttie.catalog.service",
     "com.talented.buttie.catalog.elasticsearch",
+    "com.talented.buttie.catalog.external",
     "com.talented.buttie.notification.service",
     "com.talented.buttie.common.security",
     "com.talented.buttie.common.util"
@@ -114,7 +118,12 @@ public class RootConfig {
 
     @Bean
     public RestTemplate restTemplate() {
-        return new RestTemplate();
+        // ponytail: RegionCodeCache가 기동 시(@PostConstruct) 외부 API를 동기 호출하므로,
+        // 타임아웃이 없으면 외부 API가 느릴 때 앱 기동 자체가 무한정 멈춘다.
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(5_000);
+        factory.setReadTimeout(10_000);
+        return new RestTemplate(factory);
     }
 
     @Bean
