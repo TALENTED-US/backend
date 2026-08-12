@@ -16,6 +16,8 @@ const mockClient = {
 server.use(middlewares);
 server.use(jsonServer.bodyParser);
 
+server.get('/health', (request, response) => response.jsonp({ status: 'UP' }));
+
 function mockUserKey(request) {
   const authorization = request.get('Authorization') || '';
   const match = authorization.match(/^Bearer mock-access-token-user-(\d)$/);
