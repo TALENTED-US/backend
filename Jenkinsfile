@@ -56,6 +56,15 @@ pipeline {
                                   || docker network create buttie-network
 
                                 docker rm -f buttie-mydata-mock || true
+
+                                docker run --rm \
+                                  -v /home/ubuntu/deploy/mock-mydata/package.json:/app/package.json:ro \
+                                  -v /home/ubuntu/deploy/mock-mydata/package-lock.json:/app/package-lock.json:ro \
+                                  -v buttie-mydata-node-modules:/app/node_modules \
+                                  -w /app \
+                                  node:20-alpine \
+                                  npm ci --omit=dev
+
                                 docker run -d \
                                   --name buttie-mydata-mock \
                                   --network buttie-network \
@@ -67,7 +76,7 @@ pipeline {
                                   -v buttie-mydata-node-modules:/app/node_modules \
                                   -w /app \
                                   node:20-alpine \
-                                  sh -c "npm ci --omit=dev && npm start"
+                                  npm start
 
                                 docker rm -f buttie-api || true
 
@@ -102,7 +111,7 @@ pipeline {
                               }
 
                             mock_ready=false
-                            for i in $(seq 1 30); do
+                            for i in $(seq 1 60); do
                                 if docker exec buttie-mydata-mock \
                                   wget -qO- http://localhost:3000/health > /dev/null; then
                                     mock_ready=true
@@ -112,6 +121,8 @@ pipeline {
                             done
 
                             if [ "$mock_ready" != true ]; then
+                                docker inspect --format="status={{.State.Status}} exit={{.State.ExitCode}} error={{.State.Error}}" \
+                                  buttie-mydata-mock || true
                                 docker logs buttie-mydata-mock || true
                                 exit 1
                             fi
