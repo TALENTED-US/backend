@@ -4,28 +4,169 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.talented.buttie.catalog.mapper.PolicyMapper">
 
+  <!-- ========================================================= -->
+  <!-- 1. 기본 조회 (단건, 전체, 페이징)                         -->
+  <!-- ========================================================= -->
   <select id="findById" resultType="com.talented.buttie.catalog.domain.PolicyVO">
-    select *
-    from POLICY
-    where POLICY_ID = #{policyId}
+    select * from POLICY where POLICY_ID = #{policyId}
   </select>
 
   <select id="findAll" resultType="com.talented.buttie.catalog.domain.PolicyVO">
-    select *
-    from POLICY
-    where POLICY_STATUS = 'AVAILABLE'
-    order by POLICY_ID asc
+    select * from POLICY where POLICY_STATUS = 'AVAILABLE'
+    order by case when EXTERNAL_SOURCE = 'YOUTHCENTER' then 0 else 1 end asc, POLICY_ID asc
   </select>
 
-  <select id="search" resultType="com.talented.buttie.catalog.domain.PolicyVO">
-    select *
-    from POLICY
+  <select id="findAllPaginated" resultType="com.talented.buttie.catalog.domain.PolicyVO">
+    select * from POLICY where POLICY_STATUS = 'AVAILABLE'
+    order by case when EXTERNAL_SOURCE = 'YOUTHCENTER' then 0 else 1 end asc, POLICY_ID asc
+    limit #{pageSize} offset #{offset}
+  </select>
+
+  <select id="countAll" resultType="long">
+    select count(*) from POLICY where POLICY_STATUS = 'AVAILABLE'
+  </select>
+
+  <!-- ========================================================= -->
+  <!-- 2. 사용자 조건 검색 WHERE 조항                              -->
+  <!-- ========================================================= -->
+  <sql id="searchWhereClause">
     <where>
-      <if test="externalSource != null">
-        AND EXTERNAL_SOURCE = #{externalSource}
+      p.POLICY_STATUS = 'AVAILABLE'
+
+      <!-- 키워드 검색 -->
+      <if test="request.keyword != null and request.keyword != ''">
+        and (p.POLICY_NAME like concat('%', #{request.keyword}, '%')
+             or p.REQUIRED_DOCUMENT like concat('%', #{request.keyword}, '%'))
       </if>
-      <if test="amountParseConfidence != null">
-        AND AMOUNT_PARSE_CONFIDENCE = #{amountParseConfidence}
+
+      <!-- 카테고리 필터 -->
+      <if test="request.category != null and request.category != ''">
+        <choose>
+          <when test="request.category == 'HOUSING' or request.category.contains('주거')">
+            and (p.POLICY_CATEGORY like '%주거%' or p.POLICY_CATEGORY like '%월세%' or p.POLICY_CATEGORY like '%전세%' or p.POLICY_CATEGORY like '%임대%')
+          </when>
+          <when test="request.category == 'TRANSPORT' or request.category.contains('교통')">
+            and (p.POLICY_CATEGORY like '%교통%' or p.POLICY_CATEGORY like '%패스%' or p.POLICY_CATEGORY like '%이동%')
+          </when>
+          <when test="request.category == 'WELFARE' or request.category.contains('복지') or request.category.contains('생활')">
+            and (p.POLICY_CATEGORY like '%복지%' or p.POLICY_CATEGORY like '%생활%' or p.POLICY_CATEGORY like '%건강%' or p.POLICY_CATEGORY like '%의료%' or p.POLICY_CATEGORY like '%지원%')
+          </when>
+          <when test="request.category == 'EMPLOYMENT' or request.category.contains('취업')">
+            and (p.POLICY_CATEGORY like '%취업%' or p.POLICY_CATEGORY like '%일자리%' or p.POLICY_CATEGORY like '%구직%' or p.POLICY_CATEGORY like '%인턴%')
+          </when>
+          <when test="request.category == 'EDUCATION' or request.category.contains('교육')">
+            and (p.POLICY_CATEGORY like '%교육%' or p.POLICY_CATEGORY like '%역량강화%' or p.POLICY_CATEGORY like '%자격증%' or p.POLICY_CATEGORY like '%학자금%' or p.POLICY_CATEGORY like '%장학%')
+          </when>
+          <when test="request.category == 'YOUTH_SUPPORT' or request.category.contains('청년') or request.category.contains('자산')">
+            and (p.POLICY_CATEGORY like '%청년%' or p.POLICY_CATEGORY like '%자산%' or p.POLICY_CATEGORY like '%참여%' or p.POLICY_CATEGORY like '%창업%')
+          </when>
+          <otherwise>
+            and p.POLICY_CATEGORY like concat('%', #{request.category}, '%')
+          </otherwise>
+        </choose>
+      </if>
+
+      <!-- 정책 지역 필터 (policyRegion 파라미터 단일 사용, 행정구역명 약어 자동 변환 및 POLICY_REGION_MAP 조인) -->
+      <if test="request.policyRegion != null and request.policyRegion != ''">
+        <bind name="shortRegion" value="request.policyRegion.replace('서울특별시','서울').replace('경기도','경기').replace('인천광역시','인천').replace('부산광역시','부산').replace('대구광역시','대구').replace('광주광역시','광주').replace('대전광역시','대전').replace('울산광역시','울산').replace('세종특별자치시','세종').replace('전라남도','전남').replace('전북특별자치도','전북').replace('경상남도','경남').replace('경상북도','경북').replace('충청남도','충남').replace('충청북도','충북').replace('강원특별자치도','강원').replace('제주특별자치도','제주')" />
+        and (
+          p.POLICY_REGION = '전국'
+          or p.POLICY_REGION like concat('%', #{request.policyRegion}, '%')
+          or p.POLICY_REGION like concat('%', #{shortRegion}, '%')
+          or p.POLICY_NAME like concat('%', #{shortRegion}, '%')
+          or (m.REGION_NAME is not null and (m.REGION_NAME like concat('%', #{request.policyRegion}, '%') or m.REGION_NAME like concat('%', #{shortRegion}, '%')))
+          or (m.ZIP_CD is not null and m.ZIP_CD = #{request.policyRegion})
+        )
+      </if>
+
+      <!-- 연령 필터 -->
+      <if test="request.age != null">
+        and (p.POLICY_MIN_AGE is null or #{request.age} &gt;= p.POLICY_MIN_AGE)
+        and (p.POLICY_MAX_AGE is null or #{request.age} &lt;= p.POLICY_MAX_AGE)
+      </if>
+
+      <!-- 취업 준비 상태 필터 -->
+      <if test="request.employmentPrepStatus != null and request.employmentPrepStatus != ''">
+        <choose>
+          <when test="request.employmentPrepStatus == 'EMPLOYED' or request.employmentPrepStatus.contains('재직')">
+            and (p.EMPLOYMENT_PREP_STATUS in ('재직자', '취업', '무관', 'ALL') or p.EMPLOYMENT_PREP_STATUS is null)
+          </when>
+          <when test="request.employmentPrepStatus == 'PROSPECTIVE_FOUNDER' or request.employmentPrepStatus.contains('창업')">
+            and (p.EMPLOYMENT_PREP_STATUS in ('예비창업자', '창업자', '무관', 'ALL') or p.EMPLOYMENT_PREP_STATUS is null)
+          </when>
+          <when test="request.employmentPrepStatus == 'UNEMPLOYED' or request.employmentPrepStatus.contains('미취업')">
+            and (p.EMPLOYMENT_PREP_STATUS in ('미취업자', '미취업', '첫취업', '재취업', '무관', 'ALL') or p.EMPLOYMENT_PREP_STATUS is null)
+          </when>
+          <when test="request.employmentPrepStatus == 'FIRST_JOB' or request.employmentPrepStatus.contains('첫')">
+            and (p.EMPLOYMENT_PREP_STATUS in ('첫취업', '미취업자', '미취업', '무관', 'ALL') or p.EMPLOYMENT_PREP_STATUS is null)
+          </when>
+          <when test="request.employmentPrepStatus == 'REEMPLOYMENT' or request.employmentPrepStatus.contains('재취업')">
+            and (p.EMPLOYMENT_PREP_STATUS in ('재취업', '미취업자', '미취업', '무관', 'ALL') or p.EMPLOYMENT_PREP_STATUS is null)
+          </when>
+          <otherwise>
+            and (p.EMPLOYMENT_PREP_STATUS = #{request.employmentPrepStatus} or p.EMPLOYMENT_PREP_STATUS = '무관' or p.EMPLOYMENT_PREP_STATUS = 'ALL' or p.EMPLOYMENT_PREP_STATUS is null)
+          </otherwise>
+        </choose>
+      </if>
+
+      <!-- 지원 금액 필터 -->
+      <if test="request.minAmount != null">
+        and (p.POLICY_SUPPORT_AMOUNT is null or p.POLICY_SUPPORT_AMOUNT &gt;= #{request.minAmount})
+      </if>
+
+      <!-- 마감일 필터 -->
+      <if test="request.dueDateFilter != null and request.dueDateFilter != ''">
+        <choose>
+          <when test="request.dueDateFilter == 'ALWAYS' or request.dueDateFilter.contains('상시')">
+            and p.DUE_DATE is null
+          </when>
+          <when test="request.dueDateFilter == 'TODAY' or request.dueDateFilter.contains('오늘')">
+            and p.DUE_DATE between current_timestamp() and concat(current_date(), ' 23:59:59')
+          </when>
+          <when test="request.dueDateFilter == 'WITHIN_3_DAYS' or request.dueDateFilter.contains('3일')">
+            and p.DUE_DATE between current_timestamp() and date_add(current_timestamp(), interval 3 day)
+          </when>
+          <when test="request.dueDateFilter == 'WITHIN_7_DAYS' or request.dueDateFilter.contains('7일')">
+            and p.DUE_DATE between current_timestamp() and date_add(current_timestamp(), interval 7 day)
+          </when>
+          <when test="request.dueDateFilter == 'WITHIN_30_DAYS' or request.dueDateFilter.contains('30일')">
+            and p.DUE_DATE between current_timestamp() and date_add(current_timestamp(), interval 30 day)
+          </when>
+        </choose>
+      </if>
+    </where>
+  </sql>
+
+  <!-- ========================================================= -->
+  <!-- 3. 조건 검색 (온통청년 API 수집 정책 최우선 정렬)             -->
+  <!-- ========================================================= -->
+  <select id="searchPolicies" resultType="com.talented.buttie.catalog.domain.PolicyVO">
+    select distinct p.*
+    from POLICY p
+    left join POLICY_REGION_MAP m on m.POLICY_ID = p.POLICY_ID
+    <include refid="searchWhereClause"/>
+    order by case when p.EXTERNAL_SOURCE = 'YOUTHCENTER' then 0 else 1 end asc, p.POLICY_ID asc
+    limit #{pageSize} offset #{offset}
+  </select>
+
+  <select id="countSearchPolicies" resultType="long">
+    select count(distinct p.POLICY_ID)
+    from POLICY p
+    left join POLICY_REGION_MAP m on m.POLICY_ID = p.POLICY_ID
+    <include refid="searchWhereClause"/>
+  </select>
+
+  <!-- ========================================================= -->
+  <!-- 4. 어드민 관리자 & Batch CUD                               -->
+  <!-- ========================================================= -->
+  <select id="search" resultType="com.talented.buttie.catalog.domain.PolicyVO">
+    select * from POLICY
+    <where>
+      <if test="externalSource != null and externalSource != ''">
+        and EXTERNAL_SOURCE = #{externalSource}
+      </if>
+      <if test="amountParseConfidence != null and amountParseConfidence != ''">
+        and AMOUNT_PARSE_CONFIDENCE = #{amountParseConfidence}
       </if>
     </where>
     order by POLICY_ID desc
@@ -33,30 +174,29 @@
   </select>
 
   <select id="countBySearch" resultType="int">
-    select count(*)
-    from POLICY
+    select count(*) from POLICY
     <where>
-      <if test="externalSource != null">
-        AND EXTERNAL_SOURCE = #{externalSource}
+      <if test="externalSource != null and externalSource != ''">
+        and EXTERNAL_SOURCE = #{externalSource}
       </if>
-      <if test="amountParseConfidence != null">
-        AND AMOUNT_PARSE_CONFIDENCE = #{amountParseConfidence}
+      <if test="amountParseConfidence != null and amountParseConfidence != ''">
+        and AMOUNT_PARSE_CONFIDENCE = #{amountParseConfidence}
       </if>
     </where>
   </select>
 
-  <insert id="insert" parameterType="com.talented.buttie.catalog.domain.PolicyVO"
-          useGeneratedKeys="true" keyProperty="policyId">
-    insert into POLICY
-      (POLICY_NAME, POLICY_CATEGORY, POLICY_MIN_AGE, POLICY_MAX_AGE, POLICY_REGION,
-       POLICY_SUPPORT_AMOUNT, SUPPORT_MONTH_COUNT, DUE_DATE, REQUIRED_DOCUMENT,
-       EMPLOYMENT_PREP_STATUS, FAMILY_COUNT, POLICY_STATUS, POLICY_URL,
-       EXTERNAL_SOURCE, EXTERNAL_POLICY_ID, AMOUNT_PARSE_CONFIDENCE)
-    values
-      (#{policyName}, #{policyCategory}, #{policyMinAge}, #{policyMaxAge}, #{policyRegion},
-       #{policySupportAmount}, #{supportMonthCount}, #{dueDate}, #{requiredDocument},
-       #{employmentPrepStatus}, #{familyCount}, #{policyStatus}, #{policyUrl},
-       #{externalSource}, #{externalPolicyId}, #{amountParseConfidence})
+  <insert id="insert" parameterType="com.talented.buttie.catalog.domain.PolicyVO" useGeneratedKeys="true" keyProperty="policyId">
+    insert into POLICY (
+      POLICY_NAME, POLICY_CATEGORY, POLICY_MIN_AGE, POLICY_MAX_AGE, POLICY_REGION,
+      POLICY_SUPPORT_AMOUNT, SUPPORT_MONTH_COUNT, DUE_DATE, REQUIRED_DOCUMENT,
+      EMPLOYMENT_PREP_STATUS, FAMILY_COUNT, POLICY_STATUS, POLICY_URL,
+      EXTERNAL_SOURCE, EXTERNAL_POLICY_ID, AMOUNT_PARSE_CONFIDENCE
+    ) values (
+      #{policyName}, #{policyCategory}, #{policyMinAge}, #{policyMaxAge}, #{policyRegion},
+      #{policySupportAmount}, #{supportMonthCount}, #{dueDate}, #{requiredDocument},
+      #{employmentPrepStatus}, #{familyCount}, #{policyStatus}, #{policyUrl},
+      #{externalSource}, #{externalPolicyId}, #{amountParseConfidence}
+    )
   </insert>
 
   <update id="update" parameterType="com.talented.buttie.catalog.domain.PolicyVO">
@@ -73,7 +213,10 @@
         EMPLOYMENT_PREP_STATUS = #{employmentPrepStatus},
         FAMILY_COUNT = #{familyCount},
         POLICY_STATUS = #{policyStatus},
-        POLICY_URL = #{policyUrl}
+        POLICY_URL = #{policyUrl},
+        EXTERNAL_SOURCE = #{externalSource},
+        EXTERNAL_POLICY_ID = #{externalPolicyId},
+        AMOUNT_PARSE_CONFIDENCE = #{amountParseConfidence}
     where POLICY_ID = #{policyId}
   </update>
 
@@ -81,34 +224,33 @@
     delete from POLICY where POLICY_ID = #{policyId}
   </delete>
 
-  <insert id="upsert" parameterType="com.talented.buttie.catalog.domain.PolicyVO"
-          useGeneratedKeys="true" keyProperty="policyId">
-    insert into POLICY
-      (POLICY_NAME, POLICY_CATEGORY, POLICY_MIN_AGE, POLICY_MAX_AGE, POLICY_REGION,
-       POLICY_SUPPORT_AMOUNT, SUPPORT_MONTH_COUNT, DUE_DATE, REQUIRED_DOCUMENT,
-       EMPLOYMENT_PREP_STATUS, FAMILY_COUNT, POLICY_STATUS, POLICY_URL,
-       EXTERNAL_SOURCE, EXTERNAL_POLICY_ID, AMOUNT_PARSE_CONFIDENCE)
-    values
-      (#{policyName}, #{policyCategory}, #{policyMinAge}, #{policyMaxAge}, #{policyRegion},
-       #{policySupportAmount}, #{supportMonthCount}, #{dueDate}, #{requiredDocument},
-       #{employmentPrepStatus}, #{familyCount}, #{policyStatus}, #{policyUrl},
-       #{externalSource}, #{externalPolicyId}, #{amountParseConfidence})
+  <insert id="upsert" parameterType="com.talented.buttie.catalog.domain.PolicyVO" useGeneratedKeys="true" keyProperty="policyId">
+    insert into POLICY (
+      POLICY_NAME, POLICY_CATEGORY, POLICY_MIN_AGE, POLICY_MAX_AGE, POLICY_REGION,
+      POLICY_SUPPORT_AMOUNT, SUPPORT_MONTH_COUNT, DUE_DATE, REQUIRED_DOCUMENT,
+      EMPLOYMENT_PREP_STATUS, FAMILY_COUNT, POLICY_STATUS, POLICY_URL,
+      EXTERNAL_SOURCE, EXTERNAL_POLICY_ID, AMOUNT_PARSE_CONFIDENCE
+    ) values (
+      #{policyName}, #{policyCategory}, #{policyMinAge}, #{policyMaxAge}, #{policyRegion},
+      #{policySupportAmount}, #{supportMonthCount}, #{dueDate}, #{requiredDocument},
+      #{employmentPrepStatus}, #{familyCount}, #{policyStatus}, #{policyUrl},
+      #{externalSource}, #{externalPolicyId}, #{amountParseConfidence}
+    )
     on duplicate key update
-      POLICY_ID = LAST_INSERT_ID(POLICY_ID),
-      POLICY_NAME = VALUES(POLICY_NAME),
-      POLICY_CATEGORY = VALUES(POLICY_CATEGORY),
-      POLICY_MIN_AGE = VALUES(POLICY_MIN_AGE),
-      POLICY_MAX_AGE = VALUES(POLICY_MAX_AGE),
-      POLICY_REGION = VALUES(POLICY_REGION),
-      POLICY_SUPPORT_AMOUNT = VALUES(POLICY_SUPPORT_AMOUNT),
-      SUPPORT_MONTH_COUNT = VALUES(SUPPORT_MONTH_COUNT),
-      DUE_DATE = VALUES(DUE_DATE),
-      REQUIRED_DOCUMENT = VALUES(REQUIRED_DOCUMENT),
-      EMPLOYMENT_PREP_STATUS = VALUES(EMPLOYMENT_PREP_STATUS),
-      FAMILY_COUNT = VALUES(FAMILY_COUNT),
-      POLICY_STATUS = VALUES(POLICY_STATUS),
-      POLICY_URL = VALUES(POLICY_URL),
-      AMOUNT_PARSE_CONFIDENCE = VALUES(AMOUNT_PARSE_CONFIDENCE)
+      POLICY_NAME = values(POLICY_NAME),
+      POLICY_CATEGORY = values(POLICY_CATEGORY),
+      POLICY_MIN_AGE = values(POLICY_MIN_AGE),
+      POLICY_MAX_AGE = values(POLICY_MAX_AGE),
+      POLICY_REGION = values(POLICY_REGION),
+      POLICY_SUPPORT_AMOUNT = values(POLICY_SUPPORT_AMOUNT),
+      SUPPORT_MONTH_COUNT = values(SUPPORT_MONTH_COUNT),
+      DUE_DATE = values(DUE_DATE),
+      REQUIRED_DOCUMENT = values(REQUIRED_DOCUMENT),
+      EMPLOYMENT_PREP_STATUS = values(EMPLOYMENT_PREP_STATUS),
+      FAMILY_COUNT = values(FAMILY_COUNT),
+      POLICY_STATUS = values(POLICY_STATUS),
+      POLICY_URL = values(POLICY_URL),
+      AMOUNT_PARSE_CONFIDENCE = values(AMOUNT_PARSE_CONFIDENCE)
   </insert>
 
 </mapper>

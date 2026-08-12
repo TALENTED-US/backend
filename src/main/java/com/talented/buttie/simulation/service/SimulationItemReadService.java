@@ -1,5 +1,6 @@
 package com.talented.buttie.simulation.service;
 
+import com.talented.buttie.catalog.domain.PolicyVO;
 import com.talented.buttie.catalog.mapper.PolicyMapper;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
@@ -74,8 +75,12 @@ public class SimulationItemReadService {
         List<SimulationItemResponse> items = simulationItemMapper
             .findAllByCategory(simulation.getSimulationId(), itemCategory)
             .stream()
-            .map(item -> SimulationItemResponse.from(
-                item, item.getPolicy(), simulation))
+            .map(item -> {
+                PolicyVO policy = item.getPolicy() != null
+                    ? item.getPolicy()
+                    : (item.getPolicyId() != null ? policyMapper.findById(item.getPolicyId()) : null);
+                return SimulationItemResponse.from(item, policy, simulation);
+            })
             .toList();
 
         return new SimulationItemsByCategoryResponse(items);
@@ -85,9 +90,12 @@ public class SimulationItemReadService {
     public List<SimulationItemResponse> findAllAppliedItems(SimulationVO simulation) {
         return simulationItemMapper.findAllActiveBySimulationId(simulation.getSimulationId())
             .stream()
-            .map(item -> SimulationItemResponse.from(
-                item, item.getPolicy(), simulation
-            ))
+            .map(item -> {
+                PolicyVO policy = item.getPolicy() != null
+                    ? item.getPolicy()
+                    : (item.getPolicyId() != null ? policyMapper.findById(item.getPolicyId()) : null);
+                return SimulationItemResponse.from(item, policy, simulation);
+            })
             .toList();
     }
 
