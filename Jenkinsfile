@@ -89,7 +89,13 @@ pipeline {
                 sshagent(credentials: ['spring-ec2-ssh']) {
                     sh '''
                         ssh ${SPRING_USER}@${SPRING_HOST} '
-                            docker inspect --format="{{.State.Running}}" buttie-mydata-mock | grep -qx true
+                            docker inspect --format="{{.State.Running}}" buttie-mydata-mock \
+                              | grep -qx true \
+                              || {
+                                docker logs buttie-mydata-mock || true
+                                exit 1
+                              }
+
                             for i in {1..30}; do
                                 curl -fsS http://localhost:8080/swagger-ui.html > /dev/null && exit 0
                                 sleep 2
