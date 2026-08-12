@@ -10,9 +10,11 @@ import static org.mockito.Mockito.verify;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.mydata.client.MydataApiClient;
 import com.talented.buttie.mydata.client.dto.MydataAuthorizationResponse;
+import com.talented.buttie.mydata.domain.ConnectionStatus;
 import com.talented.buttie.mydata.domain.MydataConnectionVO;
 import com.talented.buttie.mydata.exception.MydataErrorCode;
 import com.talented.buttie.mydata.mapper.MydataConnectionMapper;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -61,7 +63,13 @@ class MydataConnectionServiceTest {
     @Test
     void 이미_연결된_사용자는_다시_인증하지_않는다() {
         given(mydataConnectionMapper.findByUserIdAndProvider(101L, "MOCK"))
-            .willReturn(MydataConnectionVO.builder().userId(101L).provider("MOCK").build());
+            .willReturn(MydataConnectionVO.builder()
+                .userId(101L)
+                .provider("MOCK")
+                .mydataStatus(ConnectionStatus.CONNECTED)
+                .refreshTokenEncrypted("encrypted-refresh-token")
+                .refreshTokenExpiresAt(LocalDateTime.now().plusDays(1))
+                .build());
 
         ApplicationException exception = assertThrows(
             ApplicationException.class,
@@ -70,5 +78,43 @@ class MydataConnectionServiceTest {
 
         assertEquals(MydataErrorCode.MYDATA_ALREADY_CONNECTED, exception.getCode());
         verify(mydataApiClient, never()).authorize(101L);
+    }
+
+    @Test
+    void 만료된_연결은_새_토큰으로_갱신한다() {
+        MydataConnectionVO existing = MydataConnectionVO.builder()
+            .mydataId(7L)
+            .userId(101L)
+            .provider("MOCK")
+            .mydataStatus(ConnectionStatus.CONNECTED)
+            .refreshTokenEncrypted("expired-token")
+            .refreshTokenExpiresAt(LocalDateTime.now().minusDays(1))
+            .build();
+        MydataAuthorizationResponse authorization = new MydataAuthorizationResponse(
+            "mock-auth-code-user-1",
+            "state",
+            "transaction-id"
+        );
+        MydataConnectionVO renewed = MydataConnectionVO.builder()
+            .userId(101L)
+            .provider("MOCK")
+            .mydataStatus(ConnectionStatus.CONNECTED)
+            .refreshTokenEncrypted("renewed-token")
+            .refreshTokenExpiresAt(LocalDateTime.now().plusDays(30))
+            .build();
+
+        given(mydataConnectionMapper.findByUserIdAndProvider(101L, "MOCK"))
+            .willReturn(existing);
+        given(mydataApiClient.authorize(101L)).willReturn(authorization);
+        given(mydataTokenService.issueConnection(101L, "MOCK", authorization.getCode()))
+            .willReturn(renewed);
+        given(mydataConnectionMapper.update(renewed)).willReturn(1);
+
+        MydataConnectionVO result = mydataConnectionService.connect(101L);
+
+        assertSame(renewed, result);
+        assertEquals(7L, result.getMydataId());
+        verify(mydataConnectionMapper).update(renewed);
+        verify(mydataConnectionMapper, never()).insert(renewed);
     }
 }

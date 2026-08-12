@@ -13,4 +13,6 @@ public interface MydataConnectionMapper {
     );
 
     int insert(MydataConnectionVO connection);
+
+    int update(MydataConnectionVO connection);
 }

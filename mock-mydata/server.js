@@ -178,9 +178,31 @@ server.get('/v2/card/cards/:cardId', (request, response) => {
 server.post('/v2/bank/accounts/deposit/transactions', (request, response) => {
   const accountNum = request.body && request.body.account_num;
   const body = db.bankDepositTransactionResponses.find((item) => item.id === accountNum);
-  return body
-    ? response.jsonp(body)
-    : response.status(404).jsonp({ rsp_code: 'A0404', rsp_msg: '계좌 거래내역이 없습니다.' });
+  if (!body) {
+    return response.status(404).jsonp({ rsp_code: 'A0404', rsp_msg: '계좌 거래내역이 없습니다.' });
+  }
+
+  const now = seoulDateTime();
+  const fromDate = isDate(request.body && request.body.from_date)
+    ? request.body.from_date
+    : '00000000';
+  const requestedToDate = isDate(request.body && request.body.to_date)
+    ? `${request.body.to_date}235959`
+    : now;
+  const effectiveToDateTime = requestedToDate < now ? requestedToDate : now;
+  const fromDateTime = `${fromDate}000000`;
+  const transactionList = (body.trans_list || []).filter((transaction) => {
+    const transactionDateTime = transaction.trans_dtime;
+    return /^\d{14}$/.test(String(transactionDateTime || ''))
+      && transactionDateTime >= fromDateTime
+      && transactionDateTime <= effectiveToDateTime;
+  });
+
+  return response.jsonp({
+    ...body,
+    trans_cnt: transactionList.length,
+    trans_list: transactionList
+  });
 });
 
 server.use(router);

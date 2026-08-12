@@ -41,4 +41,15 @@
     )
   </insert>
 
+  <update id="update"
+          parameterType="com.talented.buttie.mydata.domain.MydataConnectionVO">
+    UPDATE `MYDATA`
+    SET REFRESH_TOKEN_ENCRYPTED = #{refreshTokenEncrypted},
+        REFRESH_TOKEN_EXPIRES_AT = #{refreshTokenExpiresAt},
+        MYDATA_STATUS = #{mydataStatus},
+        LAST_SYNCED_AT = #{lastSyncedAt}
+    WHERE USER_ID = #{userId}
+      AND PROVIDER = #{provider}
+  </update>
+
 </mapper>
