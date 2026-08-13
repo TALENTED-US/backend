@@ -34,7 +34,7 @@ import org.springframework.web.servlet.view.JstlView;
     "com.talented.buttie.notification.controller",
     "com.talented.buttie.batch.controller",
     "com.talented.buttie.common.exception"
-})
+})e
 @Import(SwaggerConfig.class)
 public class ServletConfig implements WebMvcConfigurer {
 
@@ -66,7 +66,9 @@ public class ServletConfig implements WebMvcConfigurer {
         registry.addMapping("/api/**")
             .allowedOrigins(
                 "http://localhost:5173",
-                "https://buttie.duckdns.org"
+                "https://www.buttie.site",
+                "https://buttie.site"
+                
             )
             .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
             .allowedHeaders("*")
