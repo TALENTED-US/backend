@@ -1,15 +1,21 @@
 package com.talented.buttie.simulation.domain;
 
 import com.talented.buttie.simulation.dto.request.CreateSimulationRequest;
-import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data @Builder @NoArgsConstructor @AllArgsConstructor
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SimulationVO {
+
     private Long simulationId;
     private Long userId;
     private Long snapshotId;

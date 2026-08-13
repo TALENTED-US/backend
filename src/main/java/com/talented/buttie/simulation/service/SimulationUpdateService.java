@@ -1,17 +1,17 @@
 package com.talented.buttie.simulation.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.simulation.domain.FinancialSnapshotVO;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemVO;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.request.UpdateSimulationPeriodRequest;
+import com.talented.buttie.simulation.exception.AnalysisErrorCode;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
+import com.talented.buttie.simulation.mapper.FinancialSnapshotMapper;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationItemMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
-import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
-import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
-import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -63,8 +63,9 @@ public class SimulationUpdateService {
             simulationEndAmount
         );
 
-        if (updatedRows == 0)
+        if (updatedRows == 0) {
             throw ApplicationException.from(SimulationErrorCode.NOT_CONFIRMED_SIMULATION_NOT_FOUND);
+        }
 
         monthlyProjectionMapper.deleteAllBySimulationId(simulation.getSimulationId());
         monthlyProjectionMapper.saveAll(recalculatedProjections);
@@ -83,7 +84,7 @@ public class SimulationUpdateService {
 
         int confirmedRows = simulationMapper.confirmSimulation(simulation.getSimulationId());
 
-        if(confirmedRows == 0) {
+        if (confirmedRows == 0) {
             throw ApplicationException.from(SimulationErrorCode.SIMULATION_CANNOT_BE_CONFIRMED);
         }
     }
@@ -119,17 +120,17 @@ public class SimulationUpdateService {
     public void revertSimulation(Long userId) {
         SimulationVO confirmedSimulation = simulationMapper.findLatestConfirmedByUserId(userId);
 
-        if(confirmedSimulation == null) {
+        if (confirmedSimulation == null) {
             throw ApplicationException.from(SimulationErrorCode.CONFIRMED_SIMULATION_NOT_FOUND);
         }
 
-        if(simulationMapper.findActiveByUserId(userId) != null) {
+        if (simulationMapper.findActiveByUserId(userId) != null) {
             throw ApplicationException.from(SimulationErrorCode.ALREADY_NOT_CONFIRMED_SIMULATION_EXISTS);
         }
 
         int updateRows = simulationMapper.revertSimulation(confirmedSimulation.getSimulationId());
 
-        if(updateRows == 0) {
+        if (updateRows == 0) {
             throw ApplicationException.from(SimulationErrorCode.CONFIRMED_SIMULATION_NOT_FOUND);
         }
     }

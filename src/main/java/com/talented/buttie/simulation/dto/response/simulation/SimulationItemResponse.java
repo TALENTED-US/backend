@@ -1,4 +1,4 @@
-package com.talented.buttie.simulation.dto.response;
+package com.talented.buttie.simulation.dto.response.simulation;
 
 import com.talented.buttie.catalog.domain.PolicyVO;
 import com.talented.buttie.common.util.PKCrypto;
@@ -41,6 +41,7 @@ public record SimulationItemResponse(
     @ApiModelProperty(value = "정책 정보(정책 카테고리만 해당)")
     PolicySummaryResponse policy
 ) {
+
     public static SimulationItemResponse from(
         SimulationItemVO item,
         PolicyVO policy,
@@ -74,8 +75,9 @@ public record SimulationItemResponse(
     }
 
     public static SimulationRecurrenceType resolveRecurrenceType(SimulationItemVO item, PolicyVO policy) {
-        if(item.getSimulationItemCategory() != SimulationItemCategory.POLICY)
+        if (item.getSimulationItemCategory() != SimulationItemCategory.POLICY) {
             return item.getRecurrenceType();
+        }
 
         int supportMonthCount = (policy == null || policy.getSupportMonthCount() == null)
             ? 1

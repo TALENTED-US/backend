@@ -1,4 +1,4 @@
-package com.talented.buttie.snapshot.exception;
+package com.talented.buttie.simulation.exception;
 
 import com.talented.buttie.common.response.code.BaseErrorCode;
 import lombok.AllArgsConstructor;

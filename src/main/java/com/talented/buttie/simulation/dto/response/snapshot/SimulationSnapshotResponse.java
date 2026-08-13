@@ -1,4 +1,4 @@
-package com.talented.buttie.snapshot.dto.response;
+package com.talented.buttie.simulation.dto.response.snapshot;
 
 import java.math.BigDecimal;
 
@@ -10,4 +10,5 @@ public record SimulationSnapshotResponse(
     BigDecimal currentPrepMonths,
     Boolean sustainable
 ) {
+
 }

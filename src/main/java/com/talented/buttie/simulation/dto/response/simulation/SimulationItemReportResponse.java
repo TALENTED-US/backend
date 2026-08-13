@@ -1,4 +1,4 @@
-package com.talented.buttie.simulation.dto.response;
+package com.talented.buttie.simulation.dto.response.simulation;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -31,6 +31,7 @@ public record SimulationItemReportResponse(
     @ApiModelProperty(value = "카테고리별 기여 금액 소계")
     CategoryContributionReport categoryContribution
 ) {
+
     @ApiModel("월별 재정 타임라인")
     @Builder
     public record MonthlyBalanceReport(
@@ -48,7 +49,9 @@ public record SimulationItemReportResponse(
 
         @ApiModelProperty(value = "적용 후 예상 잔액이 생활자금 최소 기준보다 낮은지 여부")
         Boolean belowLivingFundThreshold
-    ) {}
+    ) {
+
+    }
 
     @ApiModel("현금흐름 결과 보고서")
     @Builder
@@ -79,7 +82,9 @@ public record SimulationItemReportResponse(
 
         @ApiModelProperty(value = "월 순현금흐름 변화량", example = "50000")
         Integer netCashFlowDelta
-    ) {}
+    ) {
+
+    }
 
     @ApiModel("카테고리별 기여 금액")
     @Builder
@@ -101,5 +106,7 @@ public record SimulationItemReportResponse(
 
         @ApiModelProperty(value = "정책 지원 일회성 기여 금액", example = "0")
         Integer policyOnceAmount
-    ) {}
+    ) {
+
+    }
 }

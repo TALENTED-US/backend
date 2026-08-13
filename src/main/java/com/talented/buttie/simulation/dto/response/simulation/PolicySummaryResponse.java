@@ -1,4 +1,4 @@
-package com.talented.buttie.simulation.dto.response;
+package com.talented.buttie.simulation.dto.response.simulation;
 
 import com.talented.buttie.catalog.domain.PolicyStatus;
 import com.talented.buttie.catalog.domain.PolicyVO;
@@ -7,7 +7,6 @@ import com.talented.buttie.simulation.domain.SimulationItemVO;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import lombok.Builder;
 
@@ -65,6 +64,7 @@ public record PolicySummaryResponse(
     @ApiModelProperty(value = "정책 상세 URL", example = "https://www.gov.kr/youth-housing")
     String policyUrl
 ) {
+
     public static PolicySummaryResponse from(
         SimulationItemVO item,
         PolicyVO policy,

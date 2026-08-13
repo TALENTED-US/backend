@@ -7,17 +7,17 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.simulation.domain.FinancialSnapshotVO;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemCategory;
 import com.talented.buttie.simulation.domain.SimulationItemVO;
 import com.talented.buttie.simulation.domain.SimulationVO;
+import com.talented.buttie.simulation.exception.AnalysisErrorCode;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
+import com.talented.buttie.simulation.mapper.FinancialSnapshotMapper;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationItemMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
-import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
-import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
-import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -134,6 +134,7 @@ class SimulationItemDeleteServiceTest {
         assertEquals(SimulationErrorCode.SIMULATION_ITEM_NOT_FOUND, exception.getCode());
         verify(monthlyProjectionMapper, never()).deleteAllBySimulationId(simulationId);
     }
+
     @Test
     @DisplayName("실패: 다른 사용자(시뮬레이션)의 항목이면 예외가 발생한다.")
     void rejectWhenItemBelongsToAnotherSimulation() {

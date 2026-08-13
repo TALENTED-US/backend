@@ -7,18 +7,18 @@ import com.talented.buttie.catalog.mapper.PolicyMapper;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
+import com.talented.buttie.simulation.domain.FinancialSnapshotVO;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemCategory;
 import com.talented.buttie.simulation.domain.SimulationItemVO;
 import com.talented.buttie.simulation.domain.SimulationRecurrenceType;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.request.ApplySimulationItemRequest;
-import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse;
-import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse.CategoryContributionReport;
-import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse.CashFlowReport;
-import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse.MonthlyBalanceReport;
+import com.talented.buttie.simulation.dto.response.simulation.SimulationItemReportResponse;
+import com.talented.buttie.simulation.dto.response.simulation.SimulationItemReportResponse.CashFlowReport;
+import com.talented.buttie.simulation.dto.response.simulation.SimulationItemReportResponse.CategoryContributionReport;
+import com.talented.buttie.simulation.dto.response.simulation.SimulationItemReportResponse.MonthlyBalanceReport;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
-import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -244,16 +244,25 @@ public class SimulationItemCalculationService {
 
             switch (item.getSimulationItemCategory()) {
                 case EXPENSE -> {
-                    if (monthly) expenseMonthlyAmount += amount;
-                    else expenseOnceAmount += amount;
+                    if (monthly) {
+                        expenseMonthlyAmount += amount;
+                    } else {
+                        expenseOnceAmount += amount;
+                    }
                 }
                 case INCOME -> {
-                    if (monthly) incomeMonthlyAmount += amount;
-                    else incomeOnceAmount += amount;
+                    if (monthly) {
+                        incomeMonthlyAmount += amount;
+                    } else {
+                        incomeOnceAmount += amount;
+                    }
                 }
                 case POLICY -> {
-                    if (monthly) policyMonthlyAmount += amount;
-                    else policyOnceAmount += amount;
+                    if (monthly) {
+                        policyMonthlyAmount += amount;
+                    } else {
+                        policyOnceAmount += amount;
+                    }
                 }
             }
         }
@@ -279,7 +288,7 @@ public class SimulationItemCalculationService {
         List<MonthlyProjectionVO> projections,
         FinancialSnapshotVO snapshot
     ) {
-        if(projections == null || projections.isEmpty()) {
+        if (projections == null || projections.isEmpty()) {
             return new PrepMonthsCalculation(snapshot.getCurrentPrepMonths(), isCurrentSustainable(snapshot));
         }
 
@@ -361,7 +370,9 @@ public class SimulationItemCalculationService {
         return monthlyBurn != null && monthlyBurn.compareTo(BigDecimal.ZERO) <= 0;
     }
 
-    private record PrepMonthsCalculation(BigDecimal months, boolean sustainable) {}
+    private record PrepMonthsCalculation(BigDecimal months, boolean sustainable) {
+
+    }
 
     private BigDecimal capPrepMonths(BigDecimal prepMonths) {
         return prepMonths.compareTo(MAX_EXPECT_PREP_MONTHS) > 0

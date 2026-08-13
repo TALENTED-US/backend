@@ -1,4 +1,4 @@
-package com.talented.buttie.simulation.dto.response;
+package com.talented.buttie.simulation.dto.response.simulation;
 
 import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.simulation.domain.SimulationVO;
@@ -36,7 +36,8 @@ public record SimulationResponse(
     @ApiModelProperty(value = "현재 현금흐름 유지 시 자금이 고갈되지 않는지 여부")
     Boolean sustainable
 ) {
-    public static SimulationResponse from(SimulationVO simulation){
+
+    public static SimulationResponse from(SimulationVO simulation) {
         return SimulationResponse.builder()
             .simulationId(PKCrypto.encrypt(simulation.getSimulationId()))
             .userId(PKCrypto.encrypt(simulation.getUserId()))

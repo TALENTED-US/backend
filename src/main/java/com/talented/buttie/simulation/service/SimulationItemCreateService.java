@@ -2,18 +2,18 @@ package com.talented.buttie.simulation.service;
 
 import com.talented.buttie.catalog.domain.PolicyVO;
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.simulation.domain.FinancialSnapshotVO;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemVO;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.request.ApplySimulationItemRequest;
-import com.talented.buttie.simulation.dto.response.ApplySimulationItemResponse;
+import com.talented.buttie.simulation.dto.response.simulation.ApplySimulationItemResponse;
+import com.talented.buttie.simulation.exception.AnalysisErrorCode;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
+import com.talented.buttie.simulation.mapper.FinancialSnapshotMapper;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationItemMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
-import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
-import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
-import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -71,11 +71,11 @@ public class SimulationItemCreateService {
     private SimulationVO findUpdatableSimulation(Long userId) {
         SimulationVO activeSimulation = simulationMapper.findActiveByUserId(userId);
 
-        if(activeSimulation != null) {
+        if (activeSimulation != null) {
             return activeSimulation;
         }
 
-        if(simulationMapper.findLatestConfirmedByUserId(userId) != null) {
+        if (simulationMapper.findLatestConfirmedByUserId(userId) != null) {
             throw ApplicationException.from(SimulationErrorCode.CONFIRMED_SIMULATION_CANNOT_BE_UPDATED);
         }
 

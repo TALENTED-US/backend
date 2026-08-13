@@ -1,4 +1,4 @@
-package com.talented.buttie.simulation.dto.response;
+package com.talented.buttie.simulation.dto.response.simulation;
 
 import io.swagger.annotations.ApiModelProperty;
 import java.util.List;

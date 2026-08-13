@@ -1,4 +1,4 @@
-package com.talented.buttie.snapshot.dto.response;
+package com.talented.buttie.simulation.dto.response.snapshot;
 
 import java.math.BigDecimal;
 
@@ -10,6 +10,7 @@ public record SnapshotTransactionAggregateResponse(
     BigDecimal monthlyIncomeTotal,
     BigDecimal monthlyExpenseTotal
 ) {
+
     public static SnapshotTransactionAggregateResponse empty() {
         return new SnapshotTransactionAggregateResponse(
             BigDecimal.ZERO,

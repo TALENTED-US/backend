@@ -1,16 +1,16 @@
 package com.talented.buttie.simulation.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.simulation.domain.FinancialSnapshotVO;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemVO;
 import com.talented.buttie.simulation.domain.SimulationVO;
+import com.talented.buttie.simulation.exception.AnalysisErrorCode;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
+import com.talented.buttie.simulation.mapper.FinancialSnapshotMapper;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationItemMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
-import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
-import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
-import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class SimulationItemDeleteService {
 
         int deletedRows = simulationItemMapper.deleteByIdAndSimulationId(itemId, simulation.getSimulationId());
 
-        if(deletedRows == 0) {
+        if (deletedRows == 0) {
             throw ApplicationException.from(SimulationErrorCode.SIMULATION_ITEM_NOT_FOUND);
         }
 
@@ -68,7 +68,7 @@ public class SimulationItemDeleteService {
     private SimulationVO findUpdatableSimulation(Long userId) {
         SimulationVO simulation = simulationMapper.findActiveByUserId(userId);
 
-        if(simulation != null) {
+        if (simulation != null) {
             return simulation;
         }
 

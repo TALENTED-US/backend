@@ -1,4 +1,4 @@
-package com.talented.buttie.simulation.dto.response;
+package com.talented.buttie.simulation.dto.response.simulation;
 
 import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
@@ -35,7 +35,8 @@ public record MonthlyProjectionResponse(
     @ApiModelProperty(value = "재정 조정 필요 사유", example = "예상 지출이 예상 수입을 초과합니다.")
     String adjustmentReason
 ) {
-    public static MonthlyProjectionResponse from(MonthlyProjectionVO monthlyProjection){
+
+    public static MonthlyProjectionResponse from(MonthlyProjectionVO monthlyProjection) {
         return MonthlyProjectionResponse.builder()
             .projectionId(PKCrypto.encrypt(monthlyProjection.getProjectionId()))
             .projectionMonth(monthlyProjection.getProjectionMonth())

@@ -16,24 +16,23 @@ import com.talented.buttie.catalog.mapper.PolicyMapper;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
+import com.talented.buttie.simulation.domain.FinancialSnapshotVO;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemCategory;
 import com.talented.buttie.simulation.domain.SimulationItemVO;
 import com.talented.buttie.simulation.domain.SimulationRecurrenceType;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.request.ApplySimulationItemRequest;
-import com.talented.buttie.simulation.dto.response.ApplySimulationItemResponse;
+import com.talented.buttie.simulation.dto.response.simulation.ApplySimulationItemResponse;
+import com.talented.buttie.simulation.exception.AnalysisErrorCode;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
+import com.talented.buttie.simulation.mapper.FinancialSnapshotMapper;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationItemMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
-import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
-import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
-import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.BeforeEach;
@@ -601,11 +600,11 @@ class SimulationItemCreateServiceTest {
         given(simulationItemMapper.findAllActiveBySimulationId(100L))
             .willAnswer(invocation -> List.of(savedItem.get()));
         doAnswer(invocation -> {
-                SimulationItemVO item = invocation.getArgument(0);
-                item.setSimulationItemId(1L);
-                savedItem.set(item);
-                return null;
-            })
+            SimulationItemVO item = invocation.getArgument(0);
+            item.setSimulationItemId(1L);
+            savedItem.set(item);
+            return null;
+        })
             .when(simulationItemMapper)
             .save(any(SimulationItemVO.class));
 

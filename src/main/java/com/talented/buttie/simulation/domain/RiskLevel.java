@@ -1,4 +1,4 @@
-package com.talented.buttie.snapshot.domain;
+package com.talented.buttie.simulation.domain;
 
 public enum RiskLevel {
     STABLE,
