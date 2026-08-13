@@ -15,7 +15,7 @@ import com.talented.buttie.simulation.domain.FinancialSnapshotVO;
 import com.talented.buttie.simulation.domain.RiskLevel;
 import com.talented.buttie.simulation.dto.response.snapshot.SnapshotTransactionAggregateResponse;
 import com.talented.buttie.simulation.mapper.FinancialSnapshotMapper;
-import com.talented.buttie.simulation.service.SimulationItemReadService;
+import com.talented.buttie.simulation.service.FinancialSnapshotCreateService;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import java.math.BigDecimal;
@@ -48,7 +48,7 @@ class FinancialSnapshotCreateServiceTest {
     private EmploymentPreparationMapper employmentPreparationMapper;
 
     @InjectMocks
-    private SimulationItemReadService.FinancialSnapshotCreateService financialSnapshotCreateService;
+    private FinancialSnapshotCreateService financialSnapshotCreateService;
 
     private Long userId;
     private LocalDate today;

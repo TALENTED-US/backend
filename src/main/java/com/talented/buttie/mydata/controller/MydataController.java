@@ -12,12 +12,12 @@ import com.talented.buttie.mydata.dto.response.MydataAssetsResponse;
 import com.talented.buttie.mydata.dto.response.MydataConnectionResponse;
 import com.talented.buttie.mydata.dto.response.MydataInstitutionResponse;
 import com.talented.buttie.mydata.dto.response.MydataTransactionSyncResponse;
+import com.talented.buttie.mydata.facade.MydataSnapshotSyncFacade;
 import com.talented.buttie.mydata.service.mydata.FixedExpenseCandidateService;
 import com.talented.buttie.mydata.service.mydata.MydataAssetDeleteService;
 import com.talented.buttie.mydata.service.mydata.MydataAssetQueryService;
 import com.talented.buttie.mydata.service.mydata.MydataAssetRegistrationService;
 import com.talented.buttie.mydata.service.mydata.MydataConnectionService;
-import com.talented.buttie.mydata.service.mydata.MydataTransactionSyncService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
@@ -40,7 +40,7 @@ public class MydataController {
     private final MydataAssetQueryService mydataAssetQueryService;
     private final MydataConnectionService mydataConnectionService;
     private final MydataAssetRegistrationService mydataAssetRegistrationService;
-    private final MydataTransactionSyncService mydataTransactionSyncService;
+    private final MydataSnapshotSyncFacade mydataSnapshotSyncFacade;
     private final MydataAssetDeleteService mydataAssetDeleteService;
     private final FixedExpenseCandidateService fixedExpenseCandidateService;
 
@@ -88,13 +88,13 @@ public class MydataController {
         );
     }
 
-    @ApiOperation("마이데이터 거래내역 동기화 및 분석")
+    @ApiOperation("마이데이터 거래내역 동기화, 분석 및 스냅샷 갱신")
     @PostMapping("/transactions/sync")
     public ApplicationResponse<MydataTransactionSyncResponse> syncTransactions(
         @AuthUser AuthenticationUser user
     ) {
         return ApplicationResponse.onSuccess(
-            mydataTransactionSyncService.syncAndAnalyze(user.userId())
+            mydataSnapshotSyncFacade.syncAndRefreshSnapshot(user.userId())
         );
     }
 

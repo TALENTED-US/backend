@@ -8,7 +8,6 @@ import com.talented.buttie.simulation.dto.request.CreateSimulationRequest;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
-import com.talented.buttie.simulation.service.SimulationItemReadService.FinancialSnapshotCreateService;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import java.math.BigDecimal;
 import java.util.List;
