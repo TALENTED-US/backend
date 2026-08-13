@@ -20,7 +20,9 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -35,11 +37,9 @@ import org.springframework.web.client.RestTemplate;
 @ComponentScan(basePackages = {
     "com.talented.buttie.user.service",
     "com.talented.buttie.mydata.service",
-    "com.talented.buttie.mydata.redis",
     "com.talented.buttie.mydata.client",
-    "com.talented.buttie.account.service",
+    "com.talented.buttie.mydata.facade",
     "com.talented.buttie.ledger.service",
-    "com.talented.buttie.snapshot.service",
     "com.talented.buttie.simulation.service",
     "com.talented.buttie.dashboard.service",
     "com.talented.buttie.quest.service",
@@ -53,7 +53,16 @@ import org.springframework.web.client.RestTemplate;
 @Import({
     RedisConfig.class
 })
-@MapperScan(basePackages = {"com.talented.buttie"})
+@MapperScan(basePackages = {
+    "com.talented.buttie.catalog.mapper",
+    "com.talented.buttie.dashboard.mapper",
+    "com.talented.buttie.ledger.mapper",
+    "com.talented.buttie.mydata.mapper",
+    "com.talented.buttie.notification.mapper",
+    "com.talented.buttie.quest.mapper",
+    "com.talented.buttie.simulation.mapper",
+    "com.talented.buttie.user.mapper"
+})
 public class RootConfig {
 
     @Value("${jdbc.driver}")

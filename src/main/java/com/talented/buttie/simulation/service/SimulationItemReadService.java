@@ -1,20 +1,21 @@
 package com.talented.buttie.simulation.service;
 
+import com.talented.buttie.catalog.domain.PolicyVO;
 import com.talented.buttie.catalog.mapper.PolicyMapper;
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.simulation.domain.FinancialSnapshotVO;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemCategory;
 import com.talented.buttie.simulation.domain.SimulationItemVO;
 import com.talented.buttie.simulation.domain.SimulationVO;
-import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse;
-import com.talented.buttie.simulation.dto.response.SimulationItemResponse;
-import com.talented.buttie.simulation.dto.response.SimulationItemsByCategoryResponse;
+import com.talented.buttie.simulation.dto.response.simulation.SimulationItemReportResponse;
+import com.talented.buttie.simulation.dto.response.simulation.SimulationItemResponse;
+import com.talented.buttie.simulation.dto.response.simulation.SimulationItemsByCategoryResponse;
+import com.talented.buttie.simulation.exception.AnalysisErrorCode;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
+import com.talented.buttie.simulation.mapper.FinancialSnapshotMapper;
 import com.talented.buttie.simulation.mapper.SimulationItemMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
-import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
-import com.talented.buttie.snapshot.exception.AnalysisErrorCode;
-import com.talented.buttie.snapshot.mapper.FinancialSnapshotMapper;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -74,8 +75,12 @@ public class SimulationItemReadService {
         List<SimulationItemResponse> items = simulationItemMapper
             .findAllByCategory(simulation.getSimulationId(), itemCategory)
             .stream()
-            .map(item -> SimulationItemResponse.from(
-                item, item.getPolicy(), simulation))
+            .map(item -> {
+                PolicyVO policy = item.getPolicy() != null
+                    ? item.getPolicy()
+                    : (item.getPolicyId() != null ? policyMapper.findById(item.getPolicyId()) : null);
+                return SimulationItemResponse.from(item, policy, simulation);
+            })
             .toList();
 
         return new SimulationItemsByCategoryResponse(items);
@@ -85,9 +90,12 @@ public class SimulationItemReadService {
     public List<SimulationItemResponse> findAllAppliedItems(SimulationVO simulation) {
         return simulationItemMapper.findAllActiveBySimulationId(simulation.getSimulationId())
             .stream()
-            .map(item -> SimulationItemResponse.from(
-                item, item.getPolicy(), simulation
-            ))
+            .map(item -> {
+                PolicyVO policy = item.getPolicy() != null
+                    ? item.getPolicy()
+                    : (item.getPolicyId() != null ? policyMapper.findById(item.getPolicyId()) : null);
+                return SimulationItemResponse.from(item, policy, simulation);
+            })
             .toList();
     }
 
@@ -101,4 +109,5 @@ public class SimulationItemReadService {
 
         return snapshot.getCurrentPrepMonths();
     }
+
 }

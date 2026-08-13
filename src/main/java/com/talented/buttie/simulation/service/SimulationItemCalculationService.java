@@ -7,18 +7,18 @@ import com.talented.buttie.catalog.mapper.PolicyMapper;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
+import com.talented.buttie.simulation.domain.FinancialSnapshotVO;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationItemCategory;
 import com.talented.buttie.simulation.domain.SimulationItemVO;
 import com.talented.buttie.simulation.domain.SimulationRecurrenceType;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.request.ApplySimulationItemRequest;
-import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse;
-import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse.CategoryContributionReport;
-import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse.CashFlowReport;
-import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse.MonthlyBalanceReport;
+import com.talented.buttie.simulation.dto.response.simulation.SimulationItemReportResponse;
+import com.talented.buttie.simulation.dto.response.simulation.SimulationItemReportResponse.CashFlowReport;
+import com.talented.buttie.simulation.dto.response.simulation.SimulationItemReportResponse.CategoryContributionReport;
+import com.talented.buttie.simulation.dto.response.simulation.SimulationItemReportResponse.MonthlyBalanceReport;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
-import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -94,7 +94,7 @@ public class SimulationItemCalculationService {
             throw ApplicationException.from(CatalogErrorCode.POLICY_NOT_FOUND);
         }
 
-        if (policy.getPolicyStatus() != PolicyStatus.AVAILABLE) {
+        if (policy.getPolicyStatus() == PolicyStatus.CLOSED) {
             throw ApplicationException.from(CatalogErrorCode.POLICY_NOT_AVAILABLE);
         }
 
@@ -147,8 +147,9 @@ public class SimulationItemCalculationService {
         int livingThreshold = valueOf(employmentPreparationMapper.getLivingThresholdByUserId(simulation.getUserId()));
         Map<Long, PolicyVO> policyById = appliedItems.stream()
             .filter(item -> item.getPolicyId() != null)
-            .collect(Collectors.toMap(SimulationItemVO::getPolicyId, SimulationItemVO::getPolicy,
-                (a, b) -> a));
+            .map(item -> item.getPolicy() != null ? item.getPolicy() : policyMapper.findById(item.getPolicyId()))
+            .filter(policy -> policy != null && policy.getPolicyId() != null)
+            .collect(Collectors.toMap(PolicyVO::getPolicyId, policy -> policy, (a, b) -> a));
 
         List<MonthlyProjectionVO> baselineProjections = createBaselineProjections(simulation, snapshot);
 
@@ -243,16 +244,25 @@ public class SimulationItemCalculationService {
 
             switch (item.getSimulationItemCategory()) {
                 case EXPENSE -> {
-                    if (monthly) expenseMonthlyAmount += amount;
-                    else expenseOnceAmount += amount;
+                    if (monthly) {
+                        expenseMonthlyAmount += amount;
+                    } else {
+                        expenseOnceAmount += amount;
+                    }
                 }
                 case INCOME -> {
-                    if (monthly) incomeMonthlyAmount += amount;
-                    else incomeOnceAmount += amount;
+                    if (monthly) {
+                        incomeMonthlyAmount += amount;
+                    } else {
+                        incomeOnceAmount += amount;
+                    }
                 }
                 case POLICY -> {
-                    if (monthly) policyMonthlyAmount += amount;
-                    else policyOnceAmount += amount;
+                    if (monthly) {
+                        policyMonthlyAmount += amount;
+                    } else {
+                        policyOnceAmount += amount;
+                    }
                 }
             }
         }
@@ -278,7 +288,7 @@ public class SimulationItemCalculationService {
         List<MonthlyProjectionVO> projections,
         FinancialSnapshotVO snapshot
     ) {
-        if(projections == null || projections.isEmpty()) {
+        if (projections == null || projections.isEmpty()) {
             return new PrepMonthsCalculation(snapshot.getCurrentPrepMonths(), isCurrentSustainable(snapshot));
         }
 
@@ -360,7 +370,9 @@ public class SimulationItemCalculationService {
         return monthlyBurn != null && monthlyBurn.compareTo(BigDecimal.ZERO) <= 0;
     }
 
-    private record PrepMonthsCalculation(BigDecimal months, boolean sustainable) {}
+    private record PrepMonthsCalculation(BigDecimal months, boolean sustainable) {
+
+    }
 
     private BigDecimal capPrepMonths(BigDecimal prepMonths) {
         return prepMonths.compareTo(MAX_EXPECT_PREP_MONTHS) > 0
@@ -512,10 +524,18 @@ public class SimulationItemCalculationService {
     ) {
         LocalDate applyEndDate;
         if (item.getSimulationItemCategory() == SimulationItemCategory.POLICY) {
-            int supportMonthCount = policy == null || policy.getSupportMonthCount() == null
-                ? 1
-                : Math.max(policy.getSupportMonthCount(), 1);
-            applyEndDate = item.getApplyStartDate().plusMonths(supportMonthCount - 1L);
+            PolicyVO resolvedPolicy = policy != null
+                ? policy
+                : (item.getPolicyId() != null ? policyMapper.findById(item.getPolicyId()) : null);
+
+            if (resolvedPolicy == null || resolvedPolicy.getSupportMonthCount() == null) {
+                applyEndDate = item.getApplyEndDate() == null
+                    ? item.getApplyStartDate()
+                    : item.getApplyEndDate();
+            } else {
+                int supportMonthCount = Math.max(resolvedPolicy.getSupportMonthCount(), 1);
+                applyEndDate = item.getApplyStartDate().plusMonths(supportMonthCount - 1L);
+            }
         } else {
             applyEndDate = item.getApplyEndDate() == null
                 ? item.getApplyStartDate()
@@ -546,9 +566,17 @@ public class SimulationItemCalculationService {
             return item.getRecurrenceType();
         }
 
-        int supportMonthCount = policy == null || policy.getSupportMonthCount() == null
-            ? 1
-            : Math.max(policy.getSupportMonthCount(), 1);
+        PolicyVO resolvedPolicy = policy != null
+            ? policy
+            : (item != null && item.getPolicyId() != null ? policyMapper.findById(item.getPolicyId()) : null);
+
+        if (resolvedPolicy == null || resolvedPolicy.getSupportMonthCount() == null) {
+            return item != null && item.getRecurrenceType() != null
+                ? item.getRecurrenceType()
+                : SimulationRecurrenceType.ONCE;
+        }
+
+        int supportMonthCount = Math.max(resolvedPolicy.getSupportMonthCount(), 1);
 
         return supportMonthCount == 1
             ? SimulationRecurrenceType.ONCE

@@ -11,13 +11,13 @@ import com.talented.buttie.simulation.dto.request.ApplySimulationItemRequest;
 import com.talented.buttie.simulation.dto.request.CreateSimulationRequest;
 import com.talented.buttie.simulation.dto.request.UpdateSimulationItemRequest;
 import com.talented.buttie.simulation.dto.request.UpdateSimulationPeriodRequest;
-import com.talented.buttie.simulation.dto.response.ApplySimulationItemResponse;
-import com.talented.buttie.simulation.dto.response.ConfirmedSimulationResponse;
-import com.talented.buttie.simulation.dto.response.SimulationDetailResponse;
-import com.talented.buttie.simulation.dto.response.SimulationItemResponse;
-import com.talented.buttie.simulation.dto.response.SimulationItemsByCategoryResponse;
-import com.talented.buttie.simulation.dto.response.SimulationItemReportResponse;
-import com.talented.buttie.simulation.dto.response.SimulationResponse;
+import com.talented.buttie.simulation.dto.response.simulation.ApplySimulationItemResponse;
+import com.talented.buttie.simulation.dto.response.simulation.ConfirmedSimulationResponse;
+import com.talented.buttie.simulation.dto.response.simulation.SimulationDetailResponse;
+import com.talented.buttie.simulation.dto.response.simulation.SimulationItemReportResponse;
+import com.talented.buttie.simulation.dto.response.simulation.SimulationItemResponse;
+import com.talented.buttie.simulation.dto.response.simulation.SimulationItemsByCategoryResponse;
+import com.talented.buttie.simulation.dto.response.simulation.SimulationResponse;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.service.SimulationCreateService;
 import com.talented.buttie.simulation.service.SimulationDeleteService;
@@ -154,7 +154,7 @@ public class SimulationController {
     ) {
         Long itemId = decryptItemId(encryptedItemId);
 
-        simulationItemDeleteService.deleteItem(authUser.userId(),itemId);
+        simulationItemDeleteService.deleteItem(authUser.userId(), itemId);
 
         return ApplicationResponse.onSuccess(null);
     }
@@ -172,7 +172,7 @@ public class SimulationController {
     @ApiOperation("확정 시뮬레이션 삭제")
     @DeleteMapping("/confirmed")
     public ApplicationResponse<Void> simulationDelete(
-       @AuthUser AuthenticationUser authUser
+        @AuthUser AuthenticationUser authUser
     ) {
         simulationDeleteService.deleteSimulation(authUser.userId());
 

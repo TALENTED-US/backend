@@ -4,7 +4,7 @@
 
 <mapper namespace="com.talented.buttie.ledger.mapper.TransactionMapper">
   <resultMap id="snapshotTransactionAggregateResultMap"
-             type="com.talented.buttie.snapshot.dto.response.SnapshotTransactionAggregateResponse">
+    type="com.talented.buttie.simulation.dto.response.snapshot.SnapshotTransactionAggregateResponse">
     <constructor>
       <arg column="weekIncomeTotal" javaType="java.math.BigDecimal"/>
       <arg column="weekExpenseTotal" javaType="java.math.BigDecimal"/>
@@ -16,20 +16,26 @@
   </resultMap>
 
   <select id="findAllByUserId" resultType="com.talented.buttie.ledger.domain.TransactionVO">
-    SELECT
-      TRANSACTION_ID          AS transactionId,
-      USER_ID                 AS userId,
-      ACCOUNT_ID              AS accountId,
-      EXTERNAL_TRANSACTION_ID AS externalTransactionId,
-      TRANSACTION_CONTENT     AS transactionContent,
-      TRANSACTION_TYPE        AS transactionType,
-      EXPENSE_CATEGORY        AS expenseCategory,
-      TRANSACTION_AMOUNT      AS transactionAmount,
-      TRANSACTION_AT          AS transactionAt,
-      TRANSACTION_MEMO        AS transactionMemo,
-      IS_DELETED              AS isDeleted,
-      TRANSACTION_CREATED_AT  AS transactionCreatedAt,
-      TRANSACTION_UPDATED_AT  AS transactionUpdatedAt
+    SELECT TRANSACTION_ID          AS transactionId,
+           USER_ID                 AS userId,
+           ACCOUNT_ID              AS accountId,
+           CARD_ID                 AS cardId,
+           EXTERNAL_TRANSACTION_ID AS externalTransactionId,
+           TRANSACTION_SOURCE      AS transactionSource,
+           CLASSIFICATION_METHOD   AS classificationMethod,
+           MERCHANT_NAME           AS merchantName,
+           MERCHANT_REGNO          AS merchantRegistrationNumber,
+           MERCHANT_CATEGORY_CODE  AS merchantCategoryCode,
+           TRANSACTION_CONTENT     AS transactionContent,
+           TRANSACTION_TYPE        AS transactionType,
+           EXPENSE_CATEGORY        AS expenseCategory,
+           TRANSACTION_AMOUNT      AS transactionAmount,
+           TRANSACTION_AT          AS transactionAt,
+           TRANSACTION_MEMO        AS transactionMemo,
+           ANALYSIS_EXCLUDED       AS analysisExcluded,
+           IS_DELETED              AS isDeleted,
+           TRANSACTION_CREATED_AT  AS transactionCreatedAt,
+           TRANSACTION_UPDATED_AT  AS transactionUpdatedAt
     FROM `TRANSACTION`
     WHERE USER_ID = #{userId}
       AND IS_DELETED = false
@@ -40,120 +46,197 @@
     parameterType="com.talented.buttie.ledger.domain.TransactionVO"
     useGeneratedKeys="true"
     keyProperty="transactionId">
-    INSERT INTO `TRANSACTION` (
-      USER_ID,
-      ACCOUNT_ID,
-      EXTERNAL_TRANSACTION_ID,
-      TRANSACTION_CONTENT,
-      TRANSACTION_TYPE,
-      EXPENSE_CATEGORY,
-      TRANSACTION_AMOUNT,
-      TRANSACTION_AT,
-      TRANSACTION_MEMO,
-      IS_DELETED,
-      TRANSACTION_CREATED_AT,
-      TRANSACTION_UPDATED_AT
-    ) VALUES (
-      #{userId},
-      #{accountId},
-      #{externalTransactionId},
-      #{transactionContent},
-      #{transactionType},
-      #{expenseCategory},
-      #{transactionAmount},
-      #{transactionAt},
-      #{transactionMemo},
-      false,
-      NOW(),
-      NOW()
-    )
+    INSERT INTO `TRANSACTION` (USER_ID,
+                               ACCOUNT_ID,
+                               CARD_ID,
+                               EXTERNAL_TRANSACTION_ID,
+                               TRANSACTION_SOURCE,
+                               CLASSIFICATION_METHOD,
+                               MERCHANT_NAME,
+                               MERCHANT_REGNO,
+                               MERCHANT_CATEGORY_CODE,
+                               TRANSACTION_CONTENT,
+                               TRANSACTION_TYPE,
+                               EXPENSE_CATEGORY,
+                               TRANSACTION_AMOUNT,
+                               TRANSACTION_AT,
+                               TRANSACTION_MEMO,
+                               ANALYSIS_EXCLUDED,
+                               IS_DELETED,
+                               TRANSACTION_CREATED_AT,
+                               TRANSACTION_UPDATED_AT)
+    VALUES (#{userId},
+            #{accountId},
+            #{cardId},
+            #{externalTransactionId},
+            #{transactionSource},
+            #{classificationMethod},
+            #{merchantName},
+            #{merchantRegistrationNumber},
+            #{merchantCategoryCode},
+            #{transactionContent},
+            #{transactionType},
+            #{expenseCategory},
+            #{transactionAmount},
+            #{transactionAt},
+            #{transactionMemo},
+            #{analysisExcluded},
+            false,
+            NOW(),
+            NOW())
   </insert>
 
+  <select id="existsByAccountAndExternalId" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM `TRANSACTION`
+    WHERE ACCOUNT_ID = #{accountId}
+      AND EXTERNAL_TRANSACTION_ID = #{externalTransactionId}
+  </select>
+
+  <select id="existsByCardAndExternalId" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM `TRANSACTION`
+    WHERE CARD_ID = #{cardId}
+      AND EXTERNAL_TRANSACTION_ID = #{externalTransactionId}
+  </select>
+
+  <select id="findExternalTransactionsForAnalysis"
+    resultType="com.talented.buttie.ledger.domain.TransactionVO">
+    SELECT TRANSACTION_ID          AS transactionId,
+           USER_ID                 AS userId,
+           ACCOUNT_ID              AS accountId,
+           CARD_ID                 AS cardId,
+           EXTERNAL_TRANSACTION_ID AS externalTransactionId,
+           TRANSACTION_SOURCE      AS transactionSource,
+           CLASSIFICATION_METHOD   AS classificationMethod,
+           MERCHANT_NAME           AS merchantName,
+           MERCHANT_REGNO          AS merchantRegistrationNumber,
+           MERCHANT_CATEGORY_CODE  AS merchantCategoryCode,
+           TRANSACTION_CONTENT     AS transactionContent,
+           TRANSACTION_TYPE        AS transactionType,
+           EXPENSE_CATEGORY        AS expenseCategory,
+           TRANSACTION_AMOUNT      AS transactionAmount,
+           TRANSACTION_AT          AS transactionAt,
+           TRANSACTION_MEMO        AS transactionMemo,
+           ANALYSIS_EXCLUDED       AS analysisExcluded,
+           IS_DELETED              AS isDeleted
+    FROM `TRANSACTION`
+    WHERE USER_ID = #{userId}
+      AND TRANSACTION_SOURCE IN ('ACCOUNT', 'CARD')
+      AND IS_DELETED = FALSE
+    ORDER BY TRANSACTION_AT
+  </select>
+
+  <update id="updateAnalysisExcluded">
+    UPDATE `TRANSACTION`
+    SET ANALYSIS_EXCLUDED      = #{analysisExcluded},
+        TRANSACTION_UPDATED_AT = NOW()
+    WHERE TRANSACTION_ID = #{transactionId}
+  </update>
+
   <select id="findById" resultType="com.talented.buttie.ledger.domain.TransactionVO">
-    SELECT
-      TRANSACTION_ID          AS transactionId,
-      USER_ID                 AS userId,
-      ACCOUNT_ID              AS accountId,
-      EXTERNAL_TRANSACTION_ID AS externalTransactionId,
-      TRANSACTION_CONTENT     AS transactionContent,
-      TRANSACTION_TYPE        AS transactionType,
-      EXPENSE_CATEGORY        AS expenseCategory,
-      TRANSACTION_AMOUNT      AS transactionAmount,
-      TRANSACTION_AT          AS transactionAt,
-      TRANSACTION_MEMO        AS transactionMemo,
-      IS_DELETED              AS isDeleted,
-      TRANSACTION_CREATED_AT  AS transactionCreatedAt,
-      TRANSACTION_UPDATED_AT  AS transactionUpdatedAt
+    SELECT TRANSACTION_ID          AS transactionId,
+           USER_ID                 AS userId,
+           ACCOUNT_ID              AS accountId,
+           CARD_ID                 AS cardId,
+           EXTERNAL_TRANSACTION_ID AS externalTransactionId,
+           TRANSACTION_SOURCE      AS transactionSource,
+           CLASSIFICATION_METHOD   AS classificationMethod,
+           MERCHANT_NAME           AS merchantName,
+           MERCHANT_REGNO          AS merchantRegistrationNumber,
+           MERCHANT_CATEGORY_CODE  AS merchantCategoryCode,
+           TRANSACTION_CONTENT     AS transactionContent,
+           TRANSACTION_TYPE        AS transactionType,
+           EXPENSE_CATEGORY        AS expenseCategory,
+           TRANSACTION_AMOUNT      AS transactionAmount,
+           TRANSACTION_AT          AS transactionAt,
+           TRANSACTION_MEMO        AS transactionMemo,
+           ANALYSIS_EXCLUDED       AS analysisExcluded,
+           IS_DELETED              AS isDeleted,
+           TRANSACTION_CREATED_AT  AS transactionCreatedAt,
+           TRANSACTION_UPDATED_AT  AS transactionUpdatedAt
     FROM `TRANSACTION`
     WHERE TRANSACTION_ID = #{transactionId}
       AND IS_DELETED = false
   </select>
 
   <select id="aggregateSnapshotTransactions"
-          resultMap="snapshotTransactionAggregateResultMap">
-    select
-        coalesce(sum(
-            case
-                when TRANSACTION_TYPE = 'INCOME'
-                    and dayofweek(TRANSACTION_AT) between 2 and 6
-                then TRANSACTION_AMOUNT
-                else 0
-            end
-        ), 0) as weekIncomeTotal,
-        coalesce(sum(
-            case
-                when TRANSACTION_TYPE in ('EXPENSE', 'FIXED')
-                    and dayofweek(TRANSACTION_AT) between 2 and 6
-                then TRANSACTION_AMOUNT
-                else 0
-            end
-        ), 0) as weekExpenseTotal,
-        coalesce(sum(
-            case
-                when TRANSACTION_TYPE = 'INCOME'
-                    and dayofweek(TRANSACTION_AT) in (1, 7)
-                then TRANSACTION_AMOUNT
-                else 0
-            end
-        ), 0) as weekendIncomeTotal,
-        coalesce(sum(
-            case
-                when TRANSACTION_TYPE in ('EXPENSE', 'FIXED')
-                    and dayofweek(TRANSACTION_AT) in (1, 7)
-                then TRANSACTION_AMOUNT
-                else 0
-            end
-        ), 0) as weekendExpenseTotal,
-        coalesce(sum(
-            case
-                when TRANSACTION_TYPE = 'INCOME'
-                then TRANSACTION_AMOUNT
-                else 0
-            end
-        ), 0) as monthlyIncomeTotal,
-        coalesce(sum(
-            case
-                when TRANSACTION_TYPE in ('EXPENSE', 'FIXED')
-                then TRANSACTION_AMOUNT
-                else 0
-            end
-        ), 0) as monthlyExpenseTotal
+    resultMap="snapshotTransactionAggregateResultMap">
+    select coalesce(sum(
+                      case
+                        when TRANSACTION_TYPE = 'INCOME'
+                          and dayofweek(TRANSACTION_AT) between 2 and 6
+                          then TRANSACTION_AMOUNT
+                        else 0
+                        end
+                    ), 0) as weekIncomeTotal,
+           coalesce(sum(
+                      case
+                        when TRANSACTION_TYPE in ('EXPENSE', 'FIXED')
+                          and dayofweek(TRANSACTION_AT) between 2 and 6
+                          then TRANSACTION_AMOUNT
+                        else 0
+                        end
+                    ), 0) as weekExpenseTotal,
+           coalesce(sum(
+                      case
+                        when TRANSACTION_TYPE = 'INCOME'
+                          and dayofweek(TRANSACTION_AT) in (1, 7)
+                          then TRANSACTION_AMOUNT
+                        else 0
+                        end
+                    ), 0) as weekendIncomeTotal,
+           coalesce(sum(
+                      case
+                        when TRANSACTION_TYPE in ('EXPENSE', 'FIXED')
+                          and dayofweek(TRANSACTION_AT) in (1, 7)
+                          then TRANSACTION_AMOUNT
+                        else 0
+                        end
+                    ), 0) as weekendExpenseTotal,
+           coalesce(sum(
+                      case
+                        when TRANSACTION_TYPE = 'INCOME'
+                          then TRANSACTION_AMOUNT
+                        else 0
+                        end
+                    ), 0) as monthlyIncomeTotal,
+           coalesce(sum(
+                      case
+                        when TRANSACTION_TYPE in ('EXPENSE', 'FIXED')
+                          then TRANSACTION_AMOUNT
+                        else 0
+                        end
+                    ), 0) as monthlyExpenseTotal
     from `TRANSACTION`
     where USER_ID = #{userId}
-    and IS_DELETED = false
-    and TRANSACTION_AT >= #{fromDateTime}
-    and #{toDateTime} > TRANSACTION_AT
+      and IS_DELETED = false
+      and ANALYSIS_EXCLUDED = false
+      and TRANSACTION_AT >= #{fromDateTime}
+      and #{toDateTime} > TRANSACTION_AT
   </select>
 
   <!-- 수동 등록 거래 전체 수정 (외부거래 ID가 없을 때 사용) -->
   <update id="updateTransaction" parameterType="com.talented.buttie.ledger.domain.TransactionVO">
     UPDATE TRANSACTION
-    SET
-        TRANSACTION_TYPE = #{transactionType},
-        TRANSACTION_AMOUNT = #{transactionAmount},
-        EXPENSE_CATEGORY = #{expenseCategory},
-        TRANSACTION_AT = #{transactionAt},
-        TRANSACTION_MEMO = #{transactionMemo},
+    SET TRANSACTION_TYPE       = #{transactionType},
+        TRANSACTION_AMOUNT     = #{transactionAmount},
+        EXPENSE_CATEGORY       = #{expenseCategory},
+        CLASSIFICATION_METHOD  = #{classificationMethod},
+        ANALYSIS_EXCLUDED      = #{analysisExcluded},
+        TRANSACTION_AT         = #{transactionAt},
+        TRANSACTION_MEMO       = #{transactionMemo},
+        TRANSACTION_UPDATED_AT = NOW()
+    WHERE TRANSACTION_ID = #{transactionId}
+  </update>
+
+  <update id="updateTransactionClassification"
+    parameterType="com.talented.buttie.ledger.domain.TransactionVO">
+    UPDATE `TRANSACTION`
+    SET TRANSACTION_TYPE       = #{transactionType},
+        EXPENSE_CATEGORY       = #{expenseCategory},
+        CLASSIFICATION_METHOD  = #{classificationMethod},
+        ANALYSIS_EXCLUDED      = #{analysisExcluded},
         TRANSACTION_UPDATED_AT = NOW()
     WHERE TRANSACTION_ID = #{transactionId}
   </update>
@@ -161,7 +244,7 @@
   <!-- 외부 연동 거래 메모 단일 수정 (외부거래 ID가 있을 때 사용) -->
   <update id="updateTransactionMemo">
     UPDATE `TRANSACTION`
-    SET TRANSACTION_MEMO = #{transactionMemo},
+    SET TRANSACTION_MEMO       = #{transactionMemo},
         TRANSACTION_UPDATED_AT = NOW()
     WHERE TRANSACTION_ID = #{transactionId}
   </update>
@@ -169,19 +252,19 @@
   <!-- 수동 등록 거래 삭제 (Soft Delete) -->
   <update id="deleteTransaction">
     UPDATE `TRANSACTION`
-    SET IS_DELETED = true,
+    SET IS_DELETED             = true,
         TRANSACTION_UPDATED_AT = NOW()
     WHERE TRANSACTION_ID = #{transactionId}
   </update>
 
   <!-- 고정 지출 상세 목록 조회 (TransactionType이 FIXED인 항목 - Response 필요 컬럼만 조회) -->
-  <select id="findFixedExpensesByUserId" resultType="com.talented.buttie.ledger.domain.TransactionVO">
-    SELECT
-      TRANSACTION_ID          AS transactionId,
-      TRANSACTION_CONTENT     AS transactionContent,
-      EXPENSE_CATEGORY        AS expenseCategory,
-      TRANSACTION_AMOUNT      AS transactionAmount,
-      TRANSACTION_AT          AS transactionAt
+  <select id="findFixedExpensesByUserId"
+    resultType="com.talented.buttie.ledger.domain.TransactionVO">
+    SELECT TRANSACTION_ID      AS transactionId,
+           TRANSACTION_CONTENT AS transactionContent,
+           EXPENSE_CATEGORY    AS expenseCategory,
+           TRANSACTION_AMOUNT  AS transactionAmount,
+           TRANSACTION_AT      AS transactionAt
     FROM `TRANSACTION`
     WHERE USER_ID = #{userId}
       AND TRANSACTION_TYPE = 'FIXED'

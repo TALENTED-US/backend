@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-@ApiModel("로그인 요청 DTO")
+@ApiModel("비밀번호 변경 요청 DTO")
 public record AuthPasswordRequest(
 
     @NotBlank(message = "비밀번호 입력은 필수입니다.")

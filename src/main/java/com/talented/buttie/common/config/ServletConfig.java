@@ -66,7 +66,9 @@ public class ServletConfig implements WebMvcConfigurer {
         registry.addMapping("/api/**")
             .allowedOrigins(
                 "http://localhost:5173",
-                "https://buttie.duckdns.org"
+                "https://www.buttie.site",
+                "https://buttie.site"
+                
             )
             .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
             .allowedHeaders("*")

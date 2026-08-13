@@ -1,14 +1,13 @@
 package com.talented.buttie.simulation.service;
 
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.simulation.domain.FinancialSnapshotVO;
 import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
 import com.talented.buttie.simulation.domain.SimulationVO;
 import com.talented.buttie.simulation.dto.request.CreateSimulationRequest;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
 import com.talented.buttie.simulation.mapper.SimulationMapper;
-import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
-import com.talented.buttie.snapshot.service.FinancialSnapshotCreateService;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,16 +27,16 @@ public class SimulationCreateService {
 
     // 시뮬레이션 생성
     @Transactional
-    public SimulationVO createSimulation(Long userId, CreateSimulationRequest request){
+    public SimulationVO createSimulation(Long userId, CreateSimulationRequest request) {
         SimulationVO activeSimulation = simulationMapper.findActiveByUserId(userId);
 
-        if(activeSimulation != null) {
+        if (activeSimulation != null) {
             throw ApplicationException.from(SimulationErrorCode.ALREADY_NOT_CONFIRMED_SIMULATION_EXISTS);
         }
 
         SimulationVO confirmedSimulation = simulationMapper.findLatestConfirmedByUserId(userId);
 
-        if(confirmedSimulation != null) {
+        if (confirmedSimulation != null) {
             throw ApplicationException.from(SimulationErrorCode.ALREADY_CONFIRMED_SIMULATION_EXISTS);
         }
 
@@ -59,7 +58,7 @@ public class SimulationCreateService {
         return simulation;
     }
 
-    private int valueOf(Integer value){
+    private int valueOf(Integer value) {
         return value == null ? 0 : value;
     }
 

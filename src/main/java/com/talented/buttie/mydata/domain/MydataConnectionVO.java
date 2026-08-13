@@ -13,4 +13,20 @@ public class MydataConnectionVO {
     private LocalDateTime refreshTokenExpiresAt;
     private ConnectionStatus mydataStatus;
     private LocalDateTime lastSyncedAt;
+
+    public static MydataConnectionVO connected(
+        Long userId,
+        String provider,
+        String encryptedRefreshToken,
+        LocalDateTime refreshTokenExpiresAt
+    ) {
+        return MydataConnectionVO.builder()
+            .userId(userId)
+            .provider(provider)
+            .refreshTokenEncrypted(encryptedRefreshToken)
+            .refreshTokenExpiresAt(refreshTokenExpiresAt)
+            .mydataStatus(ConnectionStatus.CONNECTED)
+            .lastSyncedAt(null)
+            .build();
+    }
 }
