@@ -46,25 +46,25 @@
              or p.REQUIRED_DOCUMENT like concat('%', #{request.keyword}, '%'))
       </if>
 
-      <!-- 카테고리 필터 (policyCategory 단일 파라미터 사용) -->
+      <!-- 카테고리 필터 (policyCategory 단일 파라미터 사용, OGNL 안전 동등 비교) -->
       <if test="request.policyCategory != null and request.policyCategory != ''">
         <choose>
-          <when test="request.policyCategory == 'HOUSING' or request.policyCategory.contains('주거')">
+          <when test="request.policyCategory == 'HOUSING' or request.policyCategory == '주거'">
             and (p.POLICY_CATEGORY like '%주거%' or p.POLICY_CATEGORY like '%월세%' or p.POLICY_CATEGORY like '%전세%' or p.POLICY_CATEGORY like '%임대%')
           </when>
-          <when test="request.policyCategory == 'TRANSPORT' or request.policyCategory.contains('교통')">
+          <when test="request.policyCategory == 'TRANSPORT' or request.policyCategory == '교통'">
             and (p.POLICY_CATEGORY like '%교통%' or p.POLICY_CATEGORY like '%패스%' or p.POLICY_CATEGORY like '%이동%')
           </when>
-          <when test="request.policyCategory == 'WELFARE' or request.policyCategory.contains('복지') or request.policyCategory.contains('생활')">
+          <when test="request.policyCategory == 'WELFARE' or request.policyCategory == '복지' or request.policyCategory == '생활'">
             and (p.POLICY_CATEGORY like '%복지%' or p.POLICY_CATEGORY like '%생활%' or p.POLICY_CATEGORY like '%건강%' or p.POLICY_CATEGORY like '%의료%' or p.POLICY_CATEGORY like '%지원%')
           </when>
-          <when test="request.policyCategory == 'EMPLOYMENT' or request.policyCategory.contains('취업')">
+          <when test="request.policyCategory == 'EMPLOYMENT' or request.policyCategory == '취업'">
             and (p.POLICY_CATEGORY like '%취업%' or p.POLICY_CATEGORY like '%일자리%' or p.POLICY_CATEGORY like '%구직%' or p.POLICY_CATEGORY like '%인턴%')
           </when>
-          <when test="request.policyCategory == 'EDUCATION' or request.policyCategory.contains('교육')">
+          <when test="request.policyCategory == 'EDUCATION' or request.policyCategory == '교육'">
             and (p.POLICY_CATEGORY like '%교육%' or p.POLICY_CATEGORY like '%역량강화%' or p.POLICY_CATEGORY like '%자격증%' or p.POLICY_CATEGORY like '%학자금%' or p.POLICY_CATEGORY like '%장학%')
           </when>
-          <when test="request.policyCategory == 'YOUTH_SUPPORT' or request.policyCategory.contains('청년') or request.policyCategory.contains('자산')">
+          <when test="request.policyCategory == 'YOUTH_SUPPORT' or request.policyCategory == '청년지원' or request.policyCategory == '청년'">
             and (p.POLICY_CATEGORY like '%청년%' or p.POLICY_CATEGORY like '%자산%' or p.POLICY_CATEGORY like '%참여%' or p.POLICY_CATEGORY like '%창업%')
           </when>
           <otherwise>
@@ -94,22 +94,22 @@
         and (p.POLICY_MAX_AGE is null or #{request.age} &lt;= p.POLICY_MAX_AGE)
       </if>
 
-      <!-- 취업 준비 상태 필터 (쉼표 다중 값 저장 대응: 토큰 부분 일치 검색) -->
+      <!-- 취업 준비 상태 필터 (OGNL 예외를 방지하는 완전 동등 비교 및 쉼표 다중 값 토큰 포함 SQL 매핑) -->
       <if test="request.employmentPrepStatus != null and request.employmentPrepStatus != ''">
         <choose>
-          <when test="request.employmentPrepStatus == 'EMPLOYED' or request.employmentPrepStatus.contains('재직')">
+          <when test="request.employmentPrepStatus == 'EMPLOYED' or request.employmentPrepStatus == '재직자' or request.employmentPrepStatus == '재직'">
             and (p.EMPLOYMENT_PREP_STATUS like '%재직%' or p.EMPLOYMENT_PREP_STATUS like '%취업%' or p.EMPLOYMENT_PREP_STATUS like '%무관%' or p.EMPLOYMENT_PREP_STATUS like '%ALL%' or p.EMPLOYMENT_PREP_STATUS is null)
           </when>
-          <when test="request.employmentPrepStatus == 'PROSPECTIVE_FOUNDER' or request.employmentPrepStatus.contains('창업')">
+          <when test="request.employmentPrepStatus == 'PROSPECTIVE_FOUNDER' or request.employmentPrepStatus == '예비창업자' or request.employmentPrepStatus == '창업자' or request.employmentPrepStatus == '창업'">
             and (p.EMPLOYMENT_PREP_STATUS like '%창업%' or p.EMPLOYMENT_PREP_STATUS like '%무관%' or p.EMPLOYMENT_PREP_STATUS like '%ALL%' or p.EMPLOYMENT_PREP_STATUS is null)
           </when>
-          <when test="request.employmentPrepStatus == 'UNEMPLOYED' or request.employmentPrepStatus.contains('미취업')">
+          <when test="request.employmentPrepStatus == 'UNEMPLOYED' or request.employmentPrepStatus == '미취업자' or request.employmentPrepStatus == '미취업'">
             and (p.EMPLOYMENT_PREP_STATUS like '%미취업%' or p.EMPLOYMENT_PREP_STATUS like '%첫취업%' or p.EMPLOYMENT_PREP_STATUS like '%재취업%' or p.EMPLOYMENT_PREP_STATUS like '%무관%' or p.EMPLOYMENT_PREP_STATUS like '%ALL%' or p.EMPLOYMENT_PREP_STATUS is null)
           </when>
-          <when test="request.employmentPrepStatus == 'FIRST_JOB' or request.employmentPrepStatus.contains('첫')">
+          <when test="request.employmentPrepStatus == 'FIRST_JOB' or request.employmentPrepStatus == '첫취업' or request.employmentPrepStatus == '첫'">
             and (p.EMPLOYMENT_PREP_STATUS like '%첫취업%' or p.EMPLOYMENT_PREP_STATUS like '%첫%' or p.EMPLOYMENT_PREP_STATUS like '%미취업%' or p.EMPLOYMENT_PREP_STATUS like '%무관%' or p.EMPLOYMENT_PREP_STATUS like '%ALL%' or p.EMPLOYMENT_PREP_STATUS is null)
           </when>
-          <when test="request.employmentPrepStatus == 'REEMPLOYMENT' or request.employmentPrepStatus.contains('재취업')">
+          <when test="request.employmentPrepStatus == 'REEMPLOYMENT' or request.employmentPrepStatus == '재취업'">
             and (p.EMPLOYMENT_PREP_STATUS like '%재취업%' or p.EMPLOYMENT_PREP_STATUS like '%미취업%' or p.EMPLOYMENT_PREP_STATUS like '%무관%' or p.EMPLOYMENT_PREP_STATUS like '%ALL%' or p.EMPLOYMENT_PREP_STATUS is null)
           </when>
           <otherwise>
@@ -129,19 +129,19 @@
       </if>
       <if test="request.dueDateFilter != null and request.dueDateFilter != ''">
         <choose>
-          <when test="request.dueDateFilter == 'ALWAYS' or request.dueDateFilter.contains('상시')">
+          <when test="request.dueDateFilter == 'ALWAYS' or request.dueDateFilter == '상시'">
             and p.DUE_DATE is null
           </when>
-          <when test="request.dueDateFilter == 'TODAY' or request.dueDateFilter.contains('오늘')">
+          <when test="request.dueDateFilter == 'TODAY' or request.dueDateFilter == '오늘' or request.dueDateFilter == '오늘 마감'">
             and p.DUE_DATE between current_date() and concat(current_date(), ' 23:59:59')
           </when>
-          <when test="request.dueDateFilter == 'WITHIN_3_DAYS' or request.dueDateFilter.contains('3일')">
+          <when test="request.dueDateFilter == 'WITHIN_3_DAYS' or request.dueDateFilter == '3일' or request.dueDateFilter == '3일 이내'">
             and p.DUE_DATE between current_date() and concat(date_add(current_date(), interval 3 day), ' 23:59:59')
           </when>
-          <when test="request.dueDateFilter == 'WITHIN_7_DAYS' or request.dueDateFilter.contains('7일')">
+          <when test="request.dueDateFilter == 'WITHIN_7_DAYS' or request.dueDateFilter == '7일' or request.dueDateFilter == '7일 이내'">
             and p.DUE_DATE between current_date() and concat(date_add(current_date(), interval 7 day), ' 23:59:59')
           </when>
-          <when test="request.dueDateFilter == 'WITHIN_30_DAYS' or request.dueDateFilter.contains('30일')">
+          <when test="request.dueDateFilter == 'WITHIN_30_DAYS' or request.dueDateFilter == '30일' or request.dueDateFilter == '30일 이내'">
             and p.DUE_DATE between current_date() and concat(date_add(current_date(), interval 30 day), ' 23:59:59')
           </when>
         </choose>
