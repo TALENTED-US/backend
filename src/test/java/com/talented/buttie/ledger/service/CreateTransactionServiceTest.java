@@ -80,7 +80,7 @@ class CreateTransactionServiceTest {
             .transactionContent("계좌이체")
             .transactionType(TransactionType.TRANSFER)
             .transactionAmount(10000)
-            .expenseCategory(ExpenseCategory.ETC_EXPENSE)
+            .expenseCategory(ExpenseCategory.OTHER_FINANCE)
             .transactionDate(LocalDateTime.parse("2026-08-12T10:00:00"))
             .build();
 

@@ -43,7 +43,7 @@ class GetSumFixedExpenseServiceTest {
             .transactionId(101L)
             .userId(userId)
             .transactionAmount(500000)
-            .expenseCategory(ExpenseCategory.HOUSING)
+            .expenseCategory(ExpenseCategory.HOUSING_COMMUNICATION)
             .transactionType(TransactionType.FIXED)
             .build();
 
@@ -51,7 +51,7 @@ class GetSumFixedExpenseServiceTest {
             .transactionId(102L)
             .userId(userId)
             .transactionAmount(60000)
-            .expenseCategory(ExpenseCategory.COMMUNICATION)
+            .expenseCategory(ExpenseCategory.HOUSING_COMMUNICATION)
             .transactionType(TransactionType.FIXED)
             .build();
 

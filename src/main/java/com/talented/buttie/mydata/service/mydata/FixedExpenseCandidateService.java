@@ -23,9 +23,9 @@ import org.springframework.stereotype.Service;
 public class FixedExpenseCandidateService {
 
     private static final Set<ExpenseCategory> RECURRING_CATEGORIES = Set.of(
-        ExpenseCategory.SUBSCRIPTION,
-        ExpenseCategory.COMMUNICATION,
-        ExpenseCategory.HOUSING
+        ExpenseCategory.HOBBY_LEISURE,
+        ExpenseCategory.HOUSING_COMMUNICATION,
+        ExpenseCategory.HEALTH_FITNESS
     );
     private static final List<String> RECURRING_KEYWORDS = List.of(
         "구독", "넷플릭스", "유튜브", "보험", "월세", "공과금", "정기권"
