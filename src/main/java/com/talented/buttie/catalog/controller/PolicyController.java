@@ -6,8 +6,6 @@ import com.talented.buttie.catalog.dto.response.PolicyResponse;
 import com.talented.buttie.catalog.service.PolicyService;
 import com.talented.buttie.common.dto.PageResponse;
 import com.talented.buttie.common.response.ApplicationResponse;
-import com.talented.buttie.common.security.AuthenticationUser;
-import com.talented.buttie.common.security.annotation.AuthUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -29,10 +27,9 @@ public class PolicyController {
 
     private final PolicyService policyService;
 
-    @ApiOperation("정책 목록 조회 및 GET Query Param 조건 필터링 (페이지네이션 10개씩 지원)")
+    @ApiOperation("정책 목록 조회 및 GET Query Param 조건 필터링 (비인증/공개 API, 페이지네이션 10개씩 지원)")
     @GetMapping("")
     public ApplicationResponse<PageResponse<PolicyResponse>> getAllPolicies(
-        @AuthUser AuthenticationUser user,
         @ApiParam(value = "검색 키워드 (정책명, 필요서류)") @RequestParam(value = "keyword", required = false) String keyword,
         @ApiParam(value = "정책 카테고리 (주거, 교통, 복지, 취업, 교육, 청년지원)") @RequestParam(value = "policyCategory", required = false) String policyCategory,
         @ApiParam(value = "정책 지역 (서울, 경기, 인천, 부산, 대구, 광주, 대전, 울산, 세종, 전국 또는 우편번호 zipCd)") @RequestParam(value = "policyRegion", required = false) String policyRegion,
@@ -45,8 +42,6 @@ public class PolicyController {
         @ApiParam(value = "페이지 번호 (1부터 시작, 기본값: 1)", defaultValue = "1") @RequestParam(value = "page", defaultValue = "1") int page,
         @ApiParam(value = "페이지 당 항목 수 (기본값: 10)", defaultValue = "10") @RequestParam(value = "size", defaultValue = "10") int size
     ) {
-        Long userId = user != null ? user.userId() : null;
-
         PolicySearchRequest request = PolicySearchRequest.builder()
             .keyword(keyword)
             .policyCategory(policyCategory)
@@ -61,19 +56,16 @@ public class PolicyController {
             .size(size)
             .build();
 
-        PageResponse<PolicyResponse> pageResponse = policyService.searchPolicies(userId, request);
+        PageResponse<PolicyResponse> pageResponse = policyService.searchPolicies(null, request);
         return ApplicationResponse.onSuccess(pageResponse);
     }
 
-    @ApiOperation("정책 목록 검색 및 POST Body 조건별 상세 필터링 (페이지네이션 10개씩 지원)")
+    @ApiOperation("정책 목록 검색 및 POST Body 조건별 상세 필터링 (비인증/공개 API, 페이지네이션 10개씩 지원)")
     @PostMapping("/search")
     public ApplicationResponse<PageResponse<PolicyResponse>> searchPolicies(
-        @AuthUser AuthenticationUser user,
         @RequestBody(required = false) PolicySearchRequest request
     ) {
-        Long userId = user != null ? user.userId() : null;
-        PageResponse<PolicyResponse> pageResponse = policyService.searchPolicies(userId, request);
-
+        PageResponse<PolicyResponse> pageResponse = policyService.searchPolicies(null, request);
         return ApplicationResponse.onSuccess(pageResponse);
     }
 }

@@ -34,13 +34,9 @@ public class PolicyService {
             throw ApplicationException.from(CatalogErrorCode.POLICY_FETCH_FAILED);
         }
 
-        if (policies == null || policies.isEmpty()) {
-            throw ApplicationException.from(CatalogErrorCode.POLICY_LIST_EMPTY);
-        }
-
-        List<PolicyResponse> responseList = policies.stream()
-            .map(PolicyResponse::from)
-            .toList();
+        List<PolicyResponse> responseList = (policies != null)
+            ? policies.stream().map(PolicyResponse::from).toList()
+            : List.of();
 
         return PageResponse.of(responseList, validPage, validSize, totalElements);
     }
@@ -77,13 +73,9 @@ public class PolicyService {
             throw ApplicationException.from(CatalogErrorCode.POLICY_FETCH_FAILED);
         }
 
-        if (policies == null || policies.isEmpty()) {
-            throw ApplicationException.from(CatalogErrorCode.POLICY_LIST_EMPTY);
-        }
-
-        List<PolicyResponse> responseList = policies.stream()
-            .map(PolicyResponse::from)
-            .toList();
+        List<PolicyResponse> responseList = (policies != null)
+            ? policies.stream().map(PolicyResponse::from).toList()
+            : List.of();
 
         return PageResponse.of(responseList, validPage, validSize, totalElements);
     }

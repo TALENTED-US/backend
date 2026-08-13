@@ -94,36 +94,36 @@
         and (p.POLICY_MAX_AGE is null or #{request.age} &lt;= p.POLICY_MAX_AGE)
       </if>
 
-      <!-- 취업 준비 상태 필터 -->
+      <!-- 취업 준비 상태 필터 (쉼표 다중 값 저장 대응: 토큰 부분 일치 검색) -->
       <if test="request.employmentPrepStatus != null and request.employmentPrepStatus != ''">
         <choose>
           <when test="request.employmentPrepStatus == 'EMPLOYED' or request.employmentPrepStatus.contains('재직')">
-            and (p.EMPLOYMENT_PREP_STATUS in ('재직자', '취업', '무관', 'ALL') or p.EMPLOYMENT_PREP_STATUS is null)
+            and (p.EMPLOYMENT_PREP_STATUS like '%재직%' or p.EMPLOYMENT_PREP_STATUS like '%취업%' or p.EMPLOYMENT_PREP_STATUS like '%무관%' or p.EMPLOYMENT_PREP_STATUS like '%ALL%' or p.EMPLOYMENT_PREP_STATUS is null)
           </when>
           <when test="request.employmentPrepStatus == 'PROSPECTIVE_FOUNDER' or request.employmentPrepStatus.contains('창업')">
-            and (p.EMPLOYMENT_PREP_STATUS in ('예비창업자', '창업자', '무관', 'ALL') or p.EMPLOYMENT_PREP_STATUS is null)
+            and (p.EMPLOYMENT_PREP_STATUS like '%창업%' or p.EMPLOYMENT_PREP_STATUS like '%무관%' or p.EMPLOYMENT_PREP_STATUS like '%ALL%' or p.EMPLOYMENT_PREP_STATUS is null)
           </when>
           <when test="request.employmentPrepStatus == 'UNEMPLOYED' or request.employmentPrepStatus.contains('미취업')">
-            and (p.EMPLOYMENT_PREP_STATUS in ('미취업자', '미취업', '첫취업', '재취업', '무관', 'ALL') or p.EMPLOYMENT_PREP_STATUS is null)
+            and (p.EMPLOYMENT_PREP_STATUS like '%미취업%' or p.EMPLOYMENT_PREP_STATUS like '%첫취업%' or p.EMPLOYMENT_PREP_STATUS like '%재취업%' or p.EMPLOYMENT_PREP_STATUS like '%무관%' or p.EMPLOYMENT_PREP_STATUS like '%ALL%' or p.EMPLOYMENT_PREP_STATUS is null)
           </when>
           <when test="request.employmentPrepStatus == 'FIRST_JOB' or request.employmentPrepStatus.contains('첫')">
-            and (p.EMPLOYMENT_PREP_STATUS in ('첫취업', '미취업자', '미취업', '무관', 'ALL') or p.EMPLOYMENT_PREP_STATUS is null)
+            and (p.EMPLOYMENT_PREP_STATUS like '%첫취업%' or p.EMPLOYMENT_PREP_STATUS like '%첫%' or p.EMPLOYMENT_PREP_STATUS like '%미취업%' or p.EMPLOYMENT_PREP_STATUS like '%무관%' or p.EMPLOYMENT_PREP_STATUS like '%ALL%' or p.EMPLOYMENT_PREP_STATUS is null)
           </when>
           <when test="request.employmentPrepStatus == 'REEMPLOYMENT' or request.employmentPrepStatus.contains('재취업')">
-            and (p.EMPLOYMENT_PREP_STATUS in ('재취업', '미취업자', '미취업', '무관', 'ALL') or p.EMPLOYMENT_PREP_STATUS is null)
+            and (p.EMPLOYMENT_PREP_STATUS like '%재취업%' or p.EMPLOYMENT_PREP_STATUS like '%미취업%' or p.EMPLOYMENT_PREP_STATUS like '%무관%' or p.EMPLOYMENT_PREP_STATUS like '%ALL%' or p.EMPLOYMENT_PREP_STATUS is null)
           </when>
           <otherwise>
-            and (p.EMPLOYMENT_PREP_STATUS = #{request.employmentPrepStatus} or p.EMPLOYMENT_PREP_STATUS = '무관' or p.EMPLOYMENT_PREP_STATUS = 'ALL' or p.EMPLOYMENT_PREP_STATUS is null)
+            and (p.EMPLOYMENT_PREP_STATUS like concat('%', #{request.employmentPrepStatus}, '%') or p.EMPLOYMENT_PREP_STATUS like '%무관%' or p.EMPLOYMENT_PREP_STATUS like '%ALL%' or p.EMPLOYMENT_PREP_STATUS is null)
           </otherwise>
         </choose>
       </if>
 
-      <!-- 지원 금액 필터 (policySupportAmount 단일 파라미터 사용) -->
+      <!-- 지원 금액 필터 (policySupportAmount 요청 시 최소 금액 조건이 엄격히 검증된 정책만 반환) -->
       <if test="request.policySupportAmount != null">
-        and (p.POLICY_SUPPORT_AMOUNT is null or p.POLICY_SUPPORT_AMOUNT &gt;= #{request.policySupportAmount})
+        and p.POLICY_SUPPORT_AMOUNT &gt;= #{request.policySupportAmount}
       </if>
 
-      <!-- 마감일 (정확한 마감일 또는 마감일 범위 필터) -->
+      <!-- 마감일 (정확한 마감일 또는 마감일 범위 필터, 하한을 current_date()로 설정해 오늘 마감 정책의 00:00:00 포함) -->
       <if test="request.dueDate != null">
         and (p.DUE_DATE is null or p.DUE_DATE &lt;= #{request.dueDate})
       </if>
@@ -133,16 +133,16 @@
             and p.DUE_DATE is null
           </when>
           <when test="request.dueDateFilter == 'TODAY' or request.dueDateFilter.contains('오늘')">
-            and p.DUE_DATE between current_timestamp() and concat(current_date(), ' 23:59:59')
+            and p.DUE_DATE between current_date() and concat(current_date(), ' 23:59:59')
           </when>
           <when test="request.dueDateFilter == 'WITHIN_3_DAYS' or request.dueDateFilter.contains('3일')">
-            and p.DUE_DATE between current_timestamp() and date_add(current_timestamp(), interval 3 day)
+            and p.DUE_DATE between current_date() and concat(date_add(current_date(), interval 3 day), ' 23:59:59')
           </when>
           <when test="request.dueDateFilter == 'WITHIN_7_DAYS' or request.dueDateFilter.contains('7일')">
-            and p.DUE_DATE between current_timestamp() and date_add(current_timestamp(), interval 7 day)
+            and p.DUE_DATE between current_date() and concat(date_add(current_date(), interval 7 day), ' 23:59:59')
           </when>
           <when test="request.dueDateFilter == 'WITHIN_30_DAYS' or request.dueDateFilter.contains('30일')">
-            and p.DUE_DATE between current_timestamp() and date_add(current_timestamp(), interval 30 day)
+            and p.DUE_DATE between current_date() and concat(date_add(current_date(), interval 30 day), ' 23:59:59')
           </when>
         </choose>
       </if>
@@ -225,10 +225,16 @@
         EMPLOYMENT_PREP_STATUS = #{employmentPrepStatus},
         FAMILY_COUNT = #{familyCount},
         POLICY_STATUS = #{policyStatus},
-        POLICY_URL = #{policyUrl},
-        EXTERNAL_SOURCE = #{externalSource},
-        EXTERNAL_POLICY_ID = #{externalPolicyId},
-        AMOUNT_PARSE_CONFIDENCE = #{amountParseConfidence}
+        POLICY_URL = #{policyUrl}
+        <if test="externalSource != null and externalSource != ''">
+          , EXTERNAL_SOURCE = #{externalSource}
+        </if>
+        <if test="externalPolicyId != null and externalPolicyId != ''">
+          , EXTERNAL_POLICY_ID = #{externalPolicyId}
+        </if>
+        <if test="amountParseConfidence != null">
+          , AMOUNT_PARSE_CONFIDENCE = #{amountParseConfidence}
+        </if>
     where POLICY_ID = #{policyId}
   </update>
 
@@ -249,6 +255,7 @@
       #{externalSource}, #{externalPolicyId}, #{amountParseConfidence}
     )
     on duplicate key update
+      POLICY_ID = last_insert_id(POLICY_ID),
       POLICY_NAME = values(POLICY_NAME),
       POLICY_CATEGORY = values(POLICY_CATEGORY),
       POLICY_MIN_AGE = values(POLICY_MIN_AGE),
