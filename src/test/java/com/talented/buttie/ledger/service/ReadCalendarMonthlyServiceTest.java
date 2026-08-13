@@ -46,15 +46,15 @@ class ReadCalendarMonthlyServiceTest {
         // given
         List<CalendarTransactionVO> mockTransactions = List.of(
             new CalendarTransactionVO(1L, LocalDateTime.of(2026, 7, 10, 18, 0),
-                "알바 급여", ExpenseCategory.ETC_EXPENSE, TransactionType.INCOME, 480000, "KB국민은행"),
+                "알바 급여", ExpenseCategory.OTHER_FINANCE, TransactionType.INCOME, 480000, "KB국민은행"),
             new CalendarTransactionVO(2L, LocalDateTime.of(2026, 7, 1, 9, 0),
-                "월세", ExpenseCategory.HOUSING, TransactionType.FIXED, 500000, "KB국민은행"),
+                "월세", ExpenseCategory.HOUSING_COMMUNICATION, TransactionType.FIXED, 500000, "KB국민은행"),
             new CalendarTransactionVO(3L, LocalDateTime.of(2026, 7, 20, 10, 15),
                 "스벅", ExpenseCategory.FOOD, TransactionType.EXPENSE, 6300, "KB국민은행")
         );
 
         List<CalendarCategoryExpenseVO> mockCategoryExpenses = List.of(
-            new CalendarCategoryExpenseVO(ExpenseCategory.HOUSING, 500000),
+            new CalendarCategoryExpenseVO(ExpenseCategory.HOUSING_COMMUNICATION, 500000),
             new CalendarCategoryExpenseVO(ExpenseCategory.FOOD, 6300)
         );
 
@@ -100,7 +100,7 @@ class ReadCalendarMonthlyServiceTest {
         // given
         List<CalendarTransactionVO> mockTransactions = List.of(
             new CalendarTransactionVO(1L, LocalDateTime.of(2026, 7, 1, 9, 0),
-                "월세", ExpenseCategory.HOUSING, TransactionType.FIXED, 500000, "KB국민은행"),
+                "월세", ExpenseCategory.HOUSING_COMMUNICATION, TransactionType.FIXED, 500000, "KB국민은행"),
             new CalendarTransactionVO(2L, LocalDateTime.of(2026, 7, 20, 10, 15),
                 "스벅", ExpenseCategory.FOOD, TransactionType.EXPENSE, 6300, "KB국민은행")
         );
@@ -124,7 +124,7 @@ class ReadCalendarMonthlyServiceTest {
         // given
         List<CalendarTransactionVO> mockTransactions = List.of(
             new CalendarTransactionVO(1L, LocalDateTime.of(2026, 7, 10, 18, 0),
-                "알바 급여", ExpenseCategory.ETC_EXPENSE, TransactionType.INCOME, 480000, "KB국민은행"),
+                "알바 급여", ExpenseCategory.OTHER_FINANCE, TransactionType.INCOME, 480000, "KB국민은행"),
             new CalendarTransactionVO(2L, LocalDateTime.of(2026, 7, 20, 10, 15),
                 "스벅", ExpenseCategory.FOOD, TransactionType.EXPENSE, 6300, "KB국민은행")
         );

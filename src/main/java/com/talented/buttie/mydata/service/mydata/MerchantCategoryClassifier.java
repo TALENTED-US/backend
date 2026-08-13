@@ -1,61 +1,79 @@
 package com.talented.buttie.mydata.service.mydata;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import com.talented.buttie.ledger.domain.ClassificationMethod;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
 import com.talented.buttie.mydata.client.dto.MydataCardApprovalData;
-import java.util.Map;
-import org.springframework.stereotype.Component;
+import com.talented.buttie.mydata.domain.MerchantCategoryMappingType;
+import com.talented.buttie.mydata.mapper.MerchantCategoryMappingMapper;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class MerchantCategoryClassifier {
 
-    private static final Map<String, ExpenseCategory> REGISTRATION_NUMBER_CATEGORIES = Map.ofEntries(
-        Map.entry("900-00-00001", ExpenseCategory.FOOD),
-        Map.entry("900-00-00002", ExpenseCategory.FOOD),
-        Map.entry("900-00-00003", ExpenseCategory.SUBSCRIPTION),
-        Map.entry("900-00-00004", ExpenseCategory.TRANSPORT),
-        Map.entry("900-00-00005", ExpenseCategory.ETC_EXPENSE),
-        Map.entry("900-00-00006", ExpenseCategory.FOOD),
-        Map.entry("900-00-00007", ExpenseCategory.ETC_EXPENSE),
-        Map.entry("900-00-00008", ExpenseCategory.TRANSPORT),
-        Map.entry("900-00-00009", ExpenseCategory.EDUCATION),
-        Map.entry("900-00-00010", ExpenseCategory.ETC_EXPENSE)
-    );
+    private final MerchantCategoryMappingMapper merchantCategoryMappingMapper;
 
-    private static final Map<String, ExpenseCategory> MERCHANT_CODE_CATEGORIES = Map.ofEntries(
-        Map.entry("5411", ExpenseCategory.FOOD),
-        Map.entry("5812", ExpenseCategory.FOOD),
-        Map.entry("5814", ExpenseCategory.FOOD),
-        Map.entry("4111", ExpenseCategory.TRANSPORT),
-        Map.entry("5541", ExpenseCategory.TRANSPORT),
-        Map.entry("4899", ExpenseCategory.SUBSCRIPTION),
-        Map.entry("5942", ExpenseCategory.EDUCATION)
-    );
+    private final Cache<String, Optional<ExpenseCategory>> merchantCategoryCache;
+
+    //Qualifier 어노테이션을 사용하여 "merchantCategoryCache"라는 이름의 캐시 빈을 주입받습니다.
+    //@RequiredArgsConstructor를 사용하지 않고 생성자를 직접 정의하여 의존성을 주입받습니다.
+    public MerchantCategoryClassifier(
+        MerchantCategoryMappingMapper merchantCategoryMappingMapper,
+        @Qualifier("merchantCategoryCache") Cache<String, Optional<ExpenseCategory>> merchantCategoryCache
+    ) {
+        this.merchantCategoryMappingMapper = merchantCategoryMappingMapper;
+        this.merchantCategoryCache = merchantCategoryCache;
+    }
 
     public ClassificationResult classify(MydataCardApprovalData approval) {
-        ExpenseCategory byRegistrationNumber = REGISTRATION_NUMBER_CATEGORIES.get(
+        Optional<ExpenseCategory> byRegistrationNumber = findCategory(
+            MerchantCategoryMappingType.MERCHANT_REGNO,
             approval.getMerchantRegistrationNumber()
         );
-        if (byRegistrationNumber != null) {
+        if (byRegistrationNumber.isPresent()) {
             return new ClassificationResult(
-                byRegistrationNumber,
+                byRegistrationNumber.get(),
                 ClassificationMethod.MERCHANT_REGNO
             );
         }
 
-        ExpenseCategory byMerchantCode = MERCHANT_CODE_CATEGORIES.get(
+        Optional<ExpenseCategory> byMerchantCode = findCategory(
+            MerchantCategoryMappingType.MERCHANT_CATEGORY_CODE,
             approval.getMerchantCategoryCode()
         );
-        if (byMerchantCode != null) {
-            return new ClassificationResult(
-                byMerchantCode,
-                ClassificationMethod.MERCHANT_CATEGORY_CODE
-            );
+        return byMerchantCode.map(expenseCategory -> new ClassificationResult(
+            expenseCategory,
+            ClassificationMethod.MERCHANT_CATEGORY_CODE
+        )).orElseGet(() -> new ClassificationResult(
+            ExpenseCategory.OTHER_FINANCE,
+            ClassificationMethod.UNCLASSIFIED
+        ));
+
+    }
+
+    public void clearCache() {
+        merchantCategoryCache.invalidateAll();
+    }
+
+    private Optional<ExpenseCategory> findCategory(
+        MerchantCategoryMappingType mappingType,
+        String mappingValue
+    ) {
+        if (mappingValue == null || mappingValue.isBlank()) {
+            return Optional.empty();
         }
 
-        return new ClassificationResult(
-            ExpenseCategory.ETC_EXPENSE,
-            ClassificationMethod.UNCLASSIFIED
+        String cacheKey = mappingType.name() + ":" + mappingValue.trim();
+        return merchantCategoryCache.get(
+            cacheKey,
+            key -> Optional.ofNullable(
+                merchantCategoryMappingMapper.findActiveExpenseCategory(
+                    mappingType,
+                    mappingValue.trim()
+                )
+            )
         );
     }
 

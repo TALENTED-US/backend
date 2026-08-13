@@ -93,7 +93,7 @@ class FixedExpenseCandidateServiceTest {
             .cardId(cardId)
             .transactionSource(TransactionSource.CARD)
             .transactionType(transactionType)
-            .expenseCategory(ExpenseCategory.SUBSCRIPTION)
+            .expenseCategory(ExpenseCategory.HOBBY_LEISURE)
             .transactionContent("넷플릭스")
             .transactionAmount(amount)
             .transactionAt(LocalDateTime.of(2026, month, 14, 10, 0))

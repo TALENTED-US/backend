@@ -2,10 +2,12 @@ package com.talented.buttie.common.config;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.talented.buttie.ledger.domain.ExpenseCategory;
 import com.talented.buttie.user.dto.response.auth.VerifiedCustomer;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.time.Duration;
+import java.util.Optional;
 import javax.sql.DataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.flywaydb.core.Flyway;
@@ -137,6 +139,14 @@ public class RootConfig {
 
     @Bean
     public Cache<String, VerifiedCustomer> identityVerificationCache() {
+        return Caffeine.newBuilder()
+            .maximumSize(10_000)
+            .expireAfterWrite(Duration.ofMinutes(30))
+            .build();
+    }
+
+    @Bean
+    public Cache<String, Optional<ExpenseCategory>> merchantCategoryCache() {
         return Caffeine.newBuilder()
             .maximumSize(10_000)
             .expireAfterWrite(Duration.ofMinutes(30))
