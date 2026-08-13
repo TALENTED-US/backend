@@ -34,7 +34,7 @@ import org.springframework.web.servlet.view.JstlView;
     "com.talented.buttie.notification.controller",
     "com.talented.buttie.batch.controller",
     "com.talented.buttie.common.exception"
-})e
+})
 @Import(SwaggerConfig.class)
 public class ServletConfig implements WebMvcConfigurer {
 
