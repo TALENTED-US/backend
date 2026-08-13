@@ -54,8 +54,6 @@ public class PolicyService {
             .policyCategory(raw.policyCategory() != null ? raw.policyCategory().trim() : null)
             .policyRegion(raw.policyRegion() != null ? raw.policyRegion().trim() : null)
             .age(raw.age())
-            .policyMinAge(raw.policyMinAge())
-            .policyMaxAge(raw.policyMaxAge())
             .policySupportAmount(raw.policySupportAmount())
             .dueDate(raw.dueDate())
             .dueDateFilter(raw.dueDateFilter() != null ? raw.dueDateFilter().trim() : null)

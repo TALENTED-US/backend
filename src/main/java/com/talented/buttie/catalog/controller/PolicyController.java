@@ -37,8 +37,6 @@ public class PolicyController {
         @ApiParam(value = "정책 카테고리 (주거, 교통, 복지, 취업, 교육, 청년지원)") @RequestParam(value = "policyCategory", required = false) String policyCategory,
         @ApiParam(value = "정책 지역 (서울, 경기, 인천, 부산, 대구, 광주, 대전, 울산, 세종, 전국 또는 우편번호 zipCd)") @RequestParam(value = "policyRegion", required = false) String policyRegion,
         @ApiParam(value = "사용자 나이") @RequestParam(value = "age", required = false) Integer age,
-        @ApiParam(value = "최소 연령 제한 필터") @RequestParam(value = "policyMinAge", required = false) Integer policyMinAge,
-        @ApiParam(value = "최대 연령 제한 필터") @RequestParam(value = "policyMaxAge", required = false) Integer policyMaxAge,
         @ApiParam(value = "취업 준비 상태 (첫취업, 재취업, 재직자, 예비창업자, 미취업자)") @RequestParam(value = "employmentPrepStatus", required = false) String employmentPrepStatus,
         @ApiParam(value = "지원 금액 필터") @RequestParam(value = "policySupportAmount", required = false) Integer policySupportAmount,
         @ApiParam(value = "신청 마감일 (YYYY-MM-DD)") @RequestParam(value = "dueDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dueDate,
@@ -54,8 +52,6 @@ public class PolicyController {
             .policyCategory(policyCategory)
             .policyRegion(policyRegion)
             .age(age)
-            .policyMinAge(policyMinAge)
-            .policyMaxAge(policyMaxAge)
             .employmentPrepStatus(employmentPrepStatus)
             .policySupportAmount(policySupportAmount)
             .dueDate(dueDate)

@@ -19,12 +19,6 @@ public record PolicySearchRequest(
     @ApiModelProperty(value = "사용자 나이", example = "25")
     Integer age,
 
-    @ApiModelProperty(value = "최소 연령 제한 필터", example = "19")
-    Integer policyMinAge,
-
-    @ApiModelProperty(value = "최대 연령 제한 필터", example = "34")
-    Integer policyMaxAge,
-
     @ApiModelProperty(value = "지원 금액 필터", example = "200000")
     Integer policySupportAmount,
 

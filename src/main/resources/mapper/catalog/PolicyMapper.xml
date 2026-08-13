@@ -94,14 +94,6 @@
         and (p.POLICY_MAX_AGE is null or #{request.age} &lt;= p.POLICY_MAX_AGE)
       </if>
 
-      <!-- 최소/최대 연령 범위 필터 -->
-      <if test="request.policyMinAge != null">
-        and (p.POLICY_MIN_AGE is null or p.POLICY_MIN_AGE &gt;= #{request.policyMinAge})
-      </if>
-      <if test="request.policyMaxAge != null">
-        and (p.POLICY_MAX_AGE is null or p.POLICY_MAX_AGE &lt;= #{request.policyMaxAge})
-      </if>
-
       <!-- 취업 준비 상태 필터 -->
       <if test="request.employmentPrepStatus != null and request.employmentPrepStatus != ''">
         <choose>
