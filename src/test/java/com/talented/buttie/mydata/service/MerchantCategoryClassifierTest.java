@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.talented.buttie.ledger.domain.ClassificationMethod;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
 import com.talented.buttie.mydata.client.dto.MydataCardApprovalData;
+import com.talented.buttie.mydata.service.mydata.MerchantCategoryClassifier;
 import org.junit.jupiter.api.Test;
 
 class MerchantCategoryClassifierTest {

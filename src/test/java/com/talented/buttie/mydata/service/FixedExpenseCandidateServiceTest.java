@@ -10,6 +10,7 @@ import com.talented.buttie.ledger.domain.TransactionType;
 import com.talented.buttie.ledger.domain.TransactionVO;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
 import com.talented.buttie.mydata.dto.response.FixedExpenseCandidateResponse;
+import com.talented.buttie.mydata.service.mydata.FixedExpenseCandidateService;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;

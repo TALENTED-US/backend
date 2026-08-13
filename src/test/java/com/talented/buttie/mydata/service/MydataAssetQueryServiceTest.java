@@ -8,6 +8,8 @@ import com.talented.buttie.mydata.client.MydataApiClient;
 import com.talented.buttie.mydata.client.dto.MydataAccountData;
 import com.talented.buttie.mydata.client.dto.MydataCardData;
 import com.talented.buttie.mydata.dto.response.MydataAssetsResponse;
+import com.talented.buttie.mydata.service.mydata.MydataAssetQueryService;
+import com.talented.buttie.mydata.service.mydata.MydataConnectionValidator;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

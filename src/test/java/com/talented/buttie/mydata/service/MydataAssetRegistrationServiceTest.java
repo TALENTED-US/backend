@@ -17,6 +17,8 @@ import com.talented.buttie.mydata.service.account.AccountCreateService;
 import com.talented.buttie.mydata.service.account.AccountUpdateService;
 import com.talented.buttie.mydata.service.card.CardCreateService;
 import com.talented.buttie.mydata.service.card.CardUpdateService;
+import com.talented.buttie.mydata.service.mydata.MydataAssetRegistrationService;
+import com.talented.buttie.mydata.service.mydata.MydataConnectionValidator;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

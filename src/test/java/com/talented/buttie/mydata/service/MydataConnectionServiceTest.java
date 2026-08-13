@@ -14,6 +14,8 @@ import com.talented.buttie.mydata.domain.ConnectionStatus;
 import com.talented.buttie.mydata.domain.MydataConnectionVO;
 import com.talented.buttie.mydata.exception.MydataErrorCode;
 import com.talented.buttie.mydata.mapper.MydataConnectionMapper;
+import com.talented.buttie.mydata.service.mydata.MydataConnectionService;
+import com.talented.buttie.mydata.service.mydata.MydataTokenService;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
