@@ -33,6 +33,10 @@ public class VWorldRegionClient {
     private final RestTemplate restTemplate;
 
     public List<AdmCodeItem> fetchSidoList() {
+        if (apiKey == null || apiKey.isBlank()) {
+            log.info("VWORLD_API_KEY가 없어 행정구역코드 조회를 건너뜁니다.");
+            return List.of();
+        }
         String url = UriComponentsBuilder.fromHttpUrl(SIDO_URL)
             .queryParam("key", apiKey)
             .queryParam("domain", domain)
@@ -44,6 +48,9 @@ public class VWorldRegionClient {
     }
 
     public List<AdmCodeItem> fetchSigunguList(String sidoAdmCode) {
+        if (apiKey == null || apiKey.isBlank()) {
+            return List.of();
+        }
         String url = UriComponentsBuilder.fromHttpUrl(SIGUNGU_URL)
             .queryParam("admCode", sidoAdmCode)
             .queryParam("key", apiKey)

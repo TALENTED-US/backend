@@ -50,3 +50,6 @@ bin/
 .env
 !.env.example
 /postman/
+
+### MyData Mock Server ###
+/mock-mydata/node_modules/

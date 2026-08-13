@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.talented.buttie.mydata.mapper.MydataConnectionMapper">
+
+  <select id="findByUserIdAndProvider"
+          resultType="com.talented.buttie.mydata.domain.MydataConnectionVO">
+    SELECT MYDATA_ID                 AS mydataId,
+           USER_ID                   AS userId,
+           PROVIDER                  AS provider,
+           REFRESH_TOKEN_ENCRYPTED   AS refreshTokenEncrypted,
+           REFRESH_TOKEN_EXPIRES_AT  AS refreshTokenExpiresAt,
+           MYDATA_STATUS             AS mydataStatus,
+           LAST_SYNCED_AT            AS lastSyncedAt
+    FROM `MYDATA`
+    WHERE USER_ID = #{userId}
+      AND PROVIDER = #{provider}
+  </select>
+
+  <insert id="insert"
+          parameterType="com.talented.buttie.mydata.domain.MydataConnectionVO"
+          useGeneratedKeys="true"
+          keyProperty="mydataId"
+          keyColumn="MYDATA_ID">
+    INSERT INTO `MYDATA` (
+      USER_ID,
+      PROVIDER,
+      REFRESH_TOKEN_ENCRYPTED,
+      REFRESH_TOKEN_EXPIRES_AT,
+      MYDATA_STATUS,
+      LAST_SYNCED_AT
+    ) VALUES (
+      #{userId},
+      #{provider},
+      #{refreshTokenEncrypted},
+      #{refreshTokenExpiresAt},
+      #{mydataStatus},
+      #{lastSyncedAt}
+    )
+  </insert>
+
+  <update id="update"
+          parameterType="com.talented.buttie.mydata.domain.MydataConnectionVO">
+    UPDATE `MYDATA`
+    SET REFRESH_TOKEN_ENCRYPTED = #{refreshTokenEncrypted},
+        REFRESH_TOKEN_EXPIRES_AT = #{refreshTokenExpiresAt},
+        MYDATA_STATUS = #{mydataStatus},
+        LAST_SYNCED_AT = #{lastSyncedAt}
+    WHERE USER_ID = #{userId}
+      AND PROVIDER = #{provider}
+  </update>
+
+  <update id="updateLastSyncedAt">
+    UPDATE `MYDATA`
+    SET LAST_SYNCED_AT = #{lastSyncedAt}
+    WHERE USER_ID = #{userId}
+      AND PROVIDER = #{provider}
+  </update>
+
+</mapper>

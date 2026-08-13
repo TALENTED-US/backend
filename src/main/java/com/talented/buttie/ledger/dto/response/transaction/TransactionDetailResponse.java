@@ -2,6 +2,10 @@ package com.talented.buttie.ledger.dto.response.transaction;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.talented.buttie.common.util.PKCrypto;
+import com.talented.buttie.ledger.domain.ClassificationMethod;
+import com.talented.buttie.ledger.domain.ExpenseCategory;
+import com.talented.buttie.ledger.domain.TransactionSource;
+import com.talented.buttie.ledger.domain.TransactionType;
 import com.talented.buttie.ledger.domain.TransactionVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -24,6 +28,24 @@ public record TransactionDetailResponse(
     @NotBlank(message = "거래 내용은 필수입니다.")
     String transactionContent,
 
+    @ApiModelProperty(value = "거래 유형", example = "EXPENSE, INCOME, FIXED, TRANSFER")
+    TransactionType transactionType,
+
+    @ApiModelProperty(value = "거래 출처", example = "ACCOUNT, CARD, MANUAL")
+    TransactionSource transactionSource,
+
+    @ApiModelProperty(value = "분류 방식", example = "UNCLASSIFIED, USER_CONFIRMED")
+    ClassificationMethod classificationMethod,
+
+    @ApiModelProperty(value = "가맹점명")
+    String merchantName,
+
+    @ApiModelProperty(value = "가맹점 사업자등록번호")
+    String merchantRegistrationNumber,
+
+    @ApiModelProperty(value = "지출 카테고리", example = "HOUSING")
+    ExpenseCategory expenseCategory,
+
     @ApiModelProperty(value = "거래 일시", example = "2026-08-03T12:30:00")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     LocalDateTime transactionAt,
@@ -34,7 +56,10 @@ public record TransactionDetailResponse(
     @ApiModelProperty(value = "거래 금액", example = "Integer", required = true)
     @NotNull
     @Positive(message = "거래 금액은 0보다 커야합니다.")
-    Integer transactionAmount
+    Integer transactionAmount,
+
+    @ApiModelProperty(value = "분석 제외 여부", example = "true")
+    Boolean analysisExcluded
 ) {
 
     public static TransactionDetailResponse from(TransactionVO vo) {
@@ -42,9 +67,16 @@ public record TransactionDetailResponse(
             .userId(PKCrypto.encrypt(vo.getUserId()))
             .transactionId(PKCrypto.encrypt(vo.getTransactionId()))
             .transactionContent(vo.getTransactionContent())
+            .transactionType(vo.getTransactionType())
+            .transactionSource(vo.getTransactionSource())
+            .classificationMethod(vo.getClassificationMethod())
+            .merchantName(vo.getMerchantName())
+            .merchantRegistrationNumber(vo.getMerchantRegistrationNumber())
+            .expenseCategory(vo.getExpenseCategory())
             .transactionAt(vo.getTransactionAt())
             .transactionMemo(vo.getTransactionMemo())
             .transactionAmount(vo.getTransactionAmount())
+            .analysisExcluded(vo.getAnalysisExcluded())
             .build();
     }
 }

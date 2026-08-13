@@ -1,9 +1,9 @@
 package com.talented.buttie.snapshot.service;
 
-import com.talented.buttie.account.domain.AccountType;
-import com.talented.buttie.account.domain.AccountVO;
-import com.talented.buttie.account.mapper.AccountMapper;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
+import com.talented.buttie.mydata.domain.AccountType;
+import com.talented.buttie.mydata.domain.AccountVO;
+import com.talented.buttie.mydata.mapper.AccountMapper;
 import com.talented.buttie.snapshot.domain.FinancialSnapshotVO;
 import com.talented.buttie.snapshot.domain.RiskLevel;
 import com.talented.buttie.snapshot.dto.response.SnapshotTransactionAggregateResponse;
@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class FinancialSnapshotCreateService {
+
     private static final int SCALE = 2;
     private static final BigDecimal DAYS_IN_MONTH = new BigDecimal("30");
     private static final BigDecimal MAX_CURRENT_PREP_MONTHS = new BigDecimal("999.99");
@@ -37,7 +38,7 @@ public class FinancialSnapshotCreateService {
     private final EmploymentPreparationMapper employmentPreparationMapper;
 
     @Transactional
-    public FinancialSnapshotVO createSnapshot(Long userId){
+    public FinancialSnapshotVO createSnapshot(Long userId) {
         LocalDate today = LocalDate.now();
         LocalDateTime fromDateTime = today.minusMonths(3).atStartOfDay();
         LocalDateTime toDateTime = today.plusDays(1).atStartOfDay();
@@ -48,7 +49,9 @@ public class FinancialSnapshotCreateService {
             userId, fromDateTime, toDateTime
         );
 
-        if(aggregate == null) aggregate = SnapshotTransactionAggregateResponse.empty();
+        if (aggregate == null) {
+            aggregate = SnapshotTransactionAggregateResponse.empty();
+        }
 
         int weekDaysInSnapshotPeriod = countDaysInPeriod(fromDateTime.toLocalDate(), toDateTime.toLocalDate(), false);
         int weekendDaysInSnapshotPeriod = countDaysInPeriod(fromDateTime.toLocalDate(), toDateTime.toLocalDate(), true);
@@ -89,8 +92,10 @@ public class FinancialSnapshotCreateService {
         return snapshot;
     }
 
-    private int calculateLiquidAssets(List<AccountVO> accounts){
-        if(accounts == null || accounts.isEmpty()) return 0;
+    private int calculateLiquidAssets(List<AccountVO> accounts) {
+        if (accounts == null || accounts.isEmpty()) {
+            return 0;
+        }
 
         return accounts.stream()
             .filter(account -> account.getAccountType() != null)
@@ -101,8 +106,8 @@ public class FinancialSnapshotCreateService {
             .sum();
     }
 
-    private BigDecimal divide(BigDecimal value, Integer divisor){
-        if(value == null || divisor == null || divisor == 0){
+    private BigDecimal divide(BigDecimal value, Integer divisor) {
+        if (value == null || divisor == null || divisor == 0) {
             return BigDecimal.ZERO.setScale(SCALE, RoundingMode.HALF_UP);
         }
         return value.divide(BigDecimal.valueOf(divisor), SCALE, RoundingMode.HALF_UP);
@@ -112,33 +117,41 @@ public class FinancialSnapshotCreateService {
         return value == null ? 0 : value;
     }
 
-    private BigDecimal calculateCurrentPrepMonths(int liquidAssets, BigDecimal monthlyBurn){
-        if(monthlyBurn.compareTo(BigDecimal.ZERO) <= 0) return MAX_CURRENT_PREP_MONTHS;
+    private BigDecimal calculateCurrentPrepMonths(int liquidAssets, BigDecimal monthlyBurn) {
+        if (monthlyBurn.compareTo(BigDecimal.ZERO) <= 0) {
+            return MAX_CURRENT_PREP_MONTHS;
+        }
 
         BigDecimal currentPrepMonths = BigDecimal.valueOf(liquidAssets)
             .divide(monthlyBurn, SCALE, RoundingMode.HALF_UP);
 
-        if(currentPrepMonths.compareTo(MAX_CURRENT_PREP_MONTHS) > 0) return MAX_CURRENT_PREP_MONTHS;
+        if (currentPrepMonths.compareTo(MAX_CURRENT_PREP_MONTHS) > 0) {
+            return MAX_CURRENT_PREP_MONTHS;
+        }
 
         return currentPrepMonths;
     }
 
-    private BigDecimal calculateSurvivalDays(int liquidAssets, BigDecimal monthlyBurn){
-        if(monthlyBurn.compareTo(BigDecimal.ZERO) <= 0) return null;
+    private BigDecimal calculateSurvivalDays(int liquidAssets, BigDecimal monthlyBurn) {
+        if (monthlyBurn.compareTo(BigDecimal.ZERO) <= 0) {
+            return null;
+        }
 
         return BigDecimal.valueOf(liquidAssets)
             .multiply(DAYS_IN_MONTH)
             .divide(monthlyBurn, SCALE, RoundingMode.HALF_UP);
     }
 
-    private RiskLevel resolveRiskLevel(Long userId, LocalDate today, BigDecimal monthlyBurn, BigDecimal survivalDays){
-        if(monthlyBurn.compareTo(BigDecimal.ZERO) <= 0) return RiskLevel.STABLE;
+    private RiskLevel resolveRiskLevel(Long userId, LocalDate today, BigDecimal monthlyBurn, BigDecimal survivalDays) {
+        if (monthlyBurn.compareTo(BigDecimal.ZERO) <= 0) {
+            return RiskLevel.STABLE;
+        }
 
         EmploymentPreparationVO employmentPreparation = employmentPreparationMapper.selectEmploymentPreparation(userId);
 
-        if(employmentPreparation == null
+        if (employmentPreparation == null
             || employmentPreparation.getTargetEmploymentDate() == null
-            || !employmentPreparation.getTargetEmploymentDate().isAfter(today)){
+            || !employmentPreparation.getTargetEmploymentDate().isAfter(today)) {
             return RiskLevel.DANGER;
         }
 
@@ -151,16 +164,16 @@ public class FinancialSnapshotCreateService {
 
         long stableBoundary = remainingDays + stableMarginDays;
 
-        if(survivalDaysForRisk >= stableBoundary){
+        if (survivalDaysForRisk >= stableBoundary) {
             return RiskLevel.STABLE;
         }
-        if(survivalDaysForRisk >= remainingDays){
+        if (survivalDaysForRisk >= remainingDays) {
             return RiskLevel.CAUTION;
         }
         return RiskLevel.DANGER;
     }
 
-    private long calculateStableMarginDays(long remainingDays){
+    private long calculateStableMarginDays(long remainingDays) {
         long twentyPrecent = BigDecimal.valueOf(remainingDays)
             .multiply(new BigDecimal("0.2"))
             .setScale(0, RoundingMode.CEILING)
@@ -169,20 +182,22 @@ public class FinancialSnapshotCreateService {
         return Math.min(Math.max(twentyPrecent, 14), 60);
     }
 
-    private int countDaysInPeriod(LocalDate fromInclusive, LocalDate toExclusive, boolean weekend){
+    private int countDaysInPeriod(LocalDate fromInclusive, LocalDate toExclusive, boolean weekend) {
         LocalDate current = fromInclusive;
 
         int count = 0;
 
-        while(current.isBefore(toExclusive)){
+        while (current.isBefore(toExclusive)) {
             boolean currentIsWeekend = isWeekend(current.getDayOfWeek());
-            if(currentIsWeekend == weekend) count++;
+            if (currentIsWeekend == weekend) {
+                count++;
+            }
             current = current.plusDays(1);
         }
         return count;
     }
 
-    private boolean isWeekend(DayOfWeek dayOfWeek){
+    private boolean isWeekend(DayOfWeek dayOfWeek) {
         return dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY;
     }
 }

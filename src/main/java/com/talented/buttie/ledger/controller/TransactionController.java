@@ -5,6 +5,7 @@ import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.annotation.AuthUser;
 import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.ledger.domain.TransactionVO;
+import com.talented.buttie.ledger.dto.request.transaction.ClassifyAccountTransactionRequest;
 import com.talented.buttie.ledger.dto.request.transaction.CreateTransactionRequest;
 import com.talented.buttie.ledger.dto.request.transaction.UpdateTransactionMemoRequest;
 import com.talented.buttie.ledger.dto.request.transaction.UpdateTransactionRequest;
@@ -15,6 +16,7 @@ import com.talented.buttie.ledger.dto.response.transaction.TransactionResponse;
 import com.talented.buttie.ledger.service.fixed.GetSumFixedExpenseService;
 import com.talented.buttie.ledger.service.fixed.CreateFixedExpenseService;
 import com.talented.buttie.ledger.service.transaction.CreateTransactionService;
+import com.talented.buttie.ledger.service.transaction.ClassifyAccountTransactionService;
 import com.talented.buttie.ledger.service.fixed.DeleteFixedExpenseService;
 import com.talented.buttie.ledger.service.transaction.DeleteTransactionService;
 import com.talented.buttie.ledger.service.fixed.ReadFixedExpenseDetailService;
@@ -44,6 +46,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TransactionController {
     private final ReadTransactionService readTransactionService;
     private final CreateTransactionService createTransactionService;
+    private final ClassifyAccountTransactionService classifyAccountTransactionService;
     private final UpdateTransactionService updateTransactionService;
     private final DeleteTransactionService deleteTransactionService;
     private final ReadTransactionDetailService readTransactionDetailService;
@@ -104,6 +107,22 @@ public class TransactionController {
         Long decryptedTransactionId = PKCrypto.decrypt(transactionId);
         TransactionVO transactionMemo = updateTransactionService.updateTransactionMemo(targetUserId, decryptedTransactionId, request);
         return ApplicationResponse.onSuccess(TransactionResponse.from(transactionMemo));
+    }
+
+    @ApiOperation("계좌이체 거래를 지출 또는 고정 지출로 등록")
+    @PatchMapping("/{transactionId}/classification")
+    public ApplicationResponse<TransactionResponse> classifyAccountTransaction(
+        @PathVariable("transactionId") String transactionId,
+        @AuthUser AuthenticationUser user,
+        @Valid @RequestBody ClassifyAccountTransactionRequest request
+    ) {
+        Long decryptedTransactionId = PKCrypto.decrypt(transactionId);
+        TransactionVO transaction = classifyAccountTransactionService.classify(
+            user.userId(),
+            decryptedTransactionId,
+            request
+        );
+        return ApplicationResponse.onSuccess(TransactionResponse.from(transaction));
     }
 
     @ApiOperation("수동 거래 내역 삭제 (외부거래 ID가 없을 때 사용)")

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.talented.buttie.mydata.mapper.CardMapper">
+
+  <select id="findActiveByUserId"
+          resultType="com.talented.buttie.mydata.domain.CardVO">
+    SELECT CARD_ID                  AS cardId,
+           USER_ID                  AS userId,
+           LINKED_ACCOUNT_ID        AS linkedAccountId,
+           LINKED_BANK_CODE         AS linkedBankCode,
+           EXTERNAL_CARD_ID         AS externalCardId,
+           CARD_INSTITUTION_NAME    AS cardInstitutionName,
+           CARD_NAME                AS cardName,
+           CARD_TYPE                AS cardType,
+           CARD_NUMBER_MASKED       AS cardNumberMasked,
+           CARD_BALANCE             AS cardBalance,
+           CARD_IS_ACTIVE           AS cardIsActive,
+           CARD_SYNCED_AT           AS cardSyncedAt
+    FROM `CARD`
+    WHERE USER_ID = #{userId}
+      AND CARD_IS_ACTIVE = TRUE
+    ORDER BY CARD_ID
+  </select>
+
+  <select id="findByUserIdAndExternalId"
+          resultType="com.talented.buttie.mydata.domain.CardVO">
+    SELECT CARD_ID                  AS cardId,
+           USER_ID                  AS userId,
+           LINKED_ACCOUNT_ID        AS linkedAccountId,
+           LINKED_BANK_CODE         AS linkedBankCode,
+           EXTERNAL_CARD_ID         AS externalCardId,
+           CARD_INSTITUTION_NAME    AS cardInstitutionName,
+           CARD_NAME                AS cardName,
+           CARD_TYPE                AS cardType,
+           CARD_NUMBER_MASKED       AS cardNumberMasked,
+           CARD_BALANCE             AS cardBalance,
+           CARD_IS_ACTIVE           AS cardIsActive,
+           CARD_SYNCED_AT           AS cardSyncedAt
+    FROM `CARD`
+    WHERE USER_ID = #{userId}
+      AND EXTERNAL_CARD_ID = #{externalCardId}
+  </select>
+
+  <insert id="insert"
+          parameterType="com.talented.buttie.mydata.domain.CardVO"
+          useGeneratedKeys="true"
+          keyProperty="cardId"
+          keyColumn="CARD_ID">
+    INSERT INTO `CARD` (
+      USER_ID,
+      LINKED_ACCOUNT_ID,
+      LINKED_BANK_CODE,
+      EXTERNAL_CARD_ID,
+      CARD_INSTITUTION_NAME,
+      CARD_NAME,
+      CARD_TYPE,
+      CARD_NUMBER_MASKED,
+      CARD_BALANCE,
+      CARD_IS_ACTIVE,
+      CARD_SYNCED_AT
+    ) VALUES (
+      #{userId},
+      #{linkedAccountId},
+      #{linkedBankCode},
+      #{externalCardId},
+      #{cardInstitutionName},
+      #{cardName},
+      #{cardType},
+      #{cardNumberMasked},
+      #{cardBalance},
+      #{cardIsActive},
+      #{cardSyncedAt}
+    )
+  </insert>
+
+  <update id="update"
+          parameterType="com.talented.buttie.mydata.domain.CardVO">
+    UPDATE `CARD`
+    SET LINKED_ACCOUNT_ID = #{linkedAccountId},
+        LINKED_BANK_CODE = #{linkedBankCode},
+        CARD_INSTITUTION_NAME = #{cardInstitutionName},
+        CARD_NAME = #{cardName},
+        CARD_TYPE = #{cardType},
+        CARD_NUMBER_MASKED = #{cardNumberMasked},
+        CARD_BALANCE = #{cardBalance},
+        CARD_IS_ACTIVE = #{cardIsActive},
+        CARD_SYNCED_AT = #{cardSyncedAt}
+    WHERE USER_ID = #{userId}
+      AND EXTERNAL_CARD_ID = #{externalCardId}
+  </update>
+
+  <update id="deactivateAllByUserId">
+    UPDATE `CARD`
+    SET CARD_IS_ACTIVE = FALSE
+    WHERE USER_ID = #{userId}
+      AND CARD_IS_ACTIVE = TRUE
+  </update>
+
+  <update id="deactivateByUserIdAndExternalId">
+    UPDATE `CARD`
+    SET CARD_IS_ACTIVE = FALSE
+    WHERE USER_ID = #{userId}
+      AND EXTERNAL_CARD_ID = #{externalCardId}
+      AND CARD_IS_ACTIVE = TRUE
+  </update>
+
+</mapper>
