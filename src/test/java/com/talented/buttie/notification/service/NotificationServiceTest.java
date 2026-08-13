@@ -155,4 +155,16 @@ class NotificationServiceTest {
         assertEquals(NotificationErrorCode.NOTIFICATION_ACCESS_DENIED, exception.getCode());
         verify(notificationMapper, never()).updateNotificationRead(notificationId);
     }
+
+    @Test
+    @DisplayName("알림 전체 읽음 처리 시 정상적으로 수행된다")
+    void modifyAllNotificationsRead() {
+        Long userId = 1L;
+
+        given(notificationMapper.updateAllNotificationsRead(userId)).willReturn(3);
+
+        notificationService.modifyAllNotificationsRead(userId);
+
+        verify(notificationMapper).updateAllNotificationsRead(userId);
+    }
 }

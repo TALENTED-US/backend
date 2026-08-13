@@ -16,6 +16,8 @@ public interface NotificationMapper {
     );
     int selectUnreadCount(@Param("userId") Long userId);
 
+    int updateAllNotificationsRead(@Param("userId") Long userId);
+
     boolean existsUnreadNotification(@Param("userId") Long userId);
 
     Long selectUserIdByNotificationId(@Param("notificationId") Long notificationId);

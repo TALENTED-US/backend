@@ -78,4 +78,13 @@ public class NotificationController {
         Long resultNotificationId = notificationService.modifyNotificationRead(authUser.userId(), decryptedNotificationId);
         return ApplicationResponse.onSuccess(PKCrypto.encrypt(resultNotificationId));
     }
+
+    @ApiOperation("알림 전체 읽음 처리")
+    @PatchMapping("/read-all")
+    public ApplicationResponse<Void> modifyAllNotificationsRead(
+        @AuthUser AuthenticationUser authUser
+    ) {
+        notificationService.modifyAllNotificationsRead(authUser.userId());
+        return ApplicationResponse.onSuccess(null);
+    }
 }
