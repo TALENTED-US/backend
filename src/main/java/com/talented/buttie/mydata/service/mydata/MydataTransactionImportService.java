@@ -1,4 +1,4 @@
-package com.talented.buttie.mydata.service;
+package com.talented.buttie.mydata.service.mydata;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.ledger.domain.ClassificationMethod;
@@ -46,9 +46,9 @@ public class MydataTransactionImportService {
             for (MydataAccountTransactionData source : transactions) {
                 if (!isValidAccountTransaction(source)
                     || transactionMapper.existsByAccountAndExternalId(
-                        account.getAccountId(),
-                        source.getTransactionNumber()
-                    )) {
+                    account.getAccountId(),
+                    source.getTransactionNumber()
+                )) {
                     skipped++;
                     continue;
                 }
@@ -65,9 +65,9 @@ public class MydataTransactionImportService {
             for (MydataCardApprovalData source : approvals) {
                 if (!isValidCardApproval(source)
                     || transactionMapper.existsByCardAndExternalId(
-                        card.getCardId(),
-                        source.getApprovalNumber()
-                    )) {
+                    card.getCardId(),
+                    source.getApprovalNumber()
+                )) {
                     skipped++;
                     continue;
                 }
@@ -163,5 +163,6 @@ public class MydataTransactionImportService {
     }
 
     public record SyncResult(int insertedCount, int skippedCount) {
+
     }
 }

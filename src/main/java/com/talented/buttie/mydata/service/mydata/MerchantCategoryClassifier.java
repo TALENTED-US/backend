@@ -1,4 +1,4 @@
-package com.talented.buttie.mydata.service;
+package com.talented.buttie.mydata.service.mydata;
 
 import com.talented.buttie.ledger.domain.ClassificationMethod;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
@@ -63,5 +63,6 @@ public class MerchantCategoryClassifier {
         ExpenseCategory category,
         ClassificationMethod method
     ) {
+
     }
 }

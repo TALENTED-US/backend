@@ -1,4 +1,4 @@
-package com.talented.buttie.mydata.service;
+package com.talented.buttie.mydata.service.mydata;
 
 import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.mydata.client.MydataApiClient;

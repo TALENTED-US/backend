@@ -1,4 +1,4 @@
-package com.talented.buttie.mydata.service;
+package com.talented.buttie.mydata.service.mydata;
 
 import com.talented.buttie.ledger.domain.TransactionSource;
 import com.talented.buttie.ledger.domain.TransactionType;
@@ -57,8 +57,8 @@ public class MydataDuplicateTransactionService {
     ) {
         if (accountTransaction.getTransactionAmount() == null
             || !accountTransaction.getTransactionAmount().equals(
-                cardTransaction.getTransactionAmount()
-            )
+            cardTransaction.getTransactionAmount()
+        )
             || accountTransaction.getTransactionAt() == null
             || cardTransaction.getTransactionAt() == null) {
             return false;

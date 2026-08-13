@@ -1,4 +1,4 @@
-package com.talented.buttie.mydata.service;
+package com.talented.buttie.mydata.service.mydata;
 
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.mydata.client.MydataApiClient;
@@ -144,5 +144,6 @@ public class MydataAssetRegistrationService {
     }
 
     public record RegisteredAssets(List<AccountVO> accounts, List<CardVO> cards) {
+
     }
 }
