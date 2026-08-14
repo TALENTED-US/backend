@@ -1,8 +1,8 @@
 {
   "mockServerMeta": {
     "description": "Buttie 마이데이터 시연용 실제 상품명 기반 계좌·체크카드 및 페르소나별 소비 패턴 Mock 데이터. 사업자등록번호는 실제 사업자와 무관한 테스트 값입니다.",
-    "dataRange": "2026-06-01 ~ 2026-08-31",
-    "monthlyTransactionsPerUser": "계좌 2~4개, 체크카드 2~4개 및 사용자별 차등 소비 패턴",
+    "dataRange": "2026-06-01 ~ 2026-08-26",
+    "monthlyTransactionsPerUser": "계좌 2~3개, 체크카드 2~3개 및 사용자별 차등 소비 패턴",
     "classificationPolicy": "merchantRegno 하이픈 제거 후 merchantCategoryMappings의 normalizedMerchantRegno와 정확 매칭",
     "userSelectionPolicy": "Authorization 사용자 ID의 마지막 자리(0~9)를 Mock 사용자 키로 사용",
     "supportedUris": [
@@ -133,7 +133,7 @@
       "orgName": "Buttie Mock 금융",
       "status": "CONNECTED",
       "connectedAt": "2026-06-01T09:01:00+09:00",
-      "lastSyncedAt": "2026-08-31T23:00:00+09:00",
+      "lastSyncedAt": "2026-08-26T23:00:00+09:00",
       "consentScope": [
         "account",
         "card",
@@ -147,7 +147,7 @@
       "orgName": "Buttie Mock 금융",
       "status": "CONNECTED",
       "connectedAt": "2026-06-01T09:02:00+09:00",
-      "lastSyncedAt": "2026-08-31T23:00:00+09:00",
+      "lastSyncedAt": "2026-08-26T23:00:00+09:00",
       "consentScope": [
         "account",
         "card",
@@ -161,7 +161,7 @@
       "orgName": "Buttie Mock 금융",
       "status": "CONNECTED",
       "connectedAt": "2026-06-01T09:03:00+09:00",
-      "lastSyncedAt": "2026-08-31T23:00:00+09:00",
+      "lastSyncedAt": "2026-08-26T23:00:00+09:00",
       "consentScope": [
         "account",
         "card",
@@ -175,7 +175,7 @@
       "orgName": "Buttie Mock 금융",
       "status": "CONNECTED",
       "connectedAt": "2026-06-01T09:04:00+09:00",
-      "lastSyncedAt": "2026-08-31T23:00:00+09:00",
+      "lastSyncedAt": "2026-08-26T23:00:00+09:00",
       "consentScope": [
         "account",
         "card",
@@ -189,7 +189,7 @@
       "orgName": "Buttie Mock 금융",
       "status": "CONNECTED",
       "connectedAt": "2026-06-01T09:05:00+09:00",
-      "lastSyncedAt": "2026-08-31T23:00:00+09:00",
+      "lastSyncedAt": "2026-08-26T23:00:00+09:00",
       "consentScope": [
         "account",
         "card",
@@ -203,7 +203,7 @@
       "orgName": "Buttie Mock 금융",
       "status": "CONNECTED",
       "connectedAt": "2026-06-01T09:06:00+09:00",
-      "lastSyncedAt": "2026-08-31T23:00:00+09:00",
+      "lastSyncedAt": "2026-08-26T23:00:00+09:00",
       "consentScope": [
         "account",
         "card",
@@ -217,7 +217,7 @@
       "orgName": "Buttie Mock 금융",
       "status": "CONNECTED",
       "connectedAt": "2026-06-01T09:07:00+09:00",
-      "lastSyncedAt": "2026-08-31T23:00:00+09:00",
+      "lastSyncedAt": "2026-08-26T23:00:00+09:00",
       "consentScope": [
         "account",
         "card",
@@ -231,7 +231,7 @@
       "orgName": "Buttie Mock 금융",
       "status": "CONNECTED",
       "connectedAt": "2026-06-01T09:08:00+09:00",
-      "lastSyncedAt": "2026-08-31T23:00:00+09:00",
+      "lastSyncedAt": "2026-08-26T23:00:00+09:00",
       "consentScope": [
         "account",
         "card",
@@ -245,7 +245,7 @@
       "orgName": "Buttie Mock 금융",
       "status": "CONNECTED",
       "connectedAt": "2026-06-01T09:09:00+09:00",
-      "lastSyncedAt": "2026-08-31T23:00:00+09:00",
+      "lastSyncedAt": "2026-08-26T23:00:00+09:00",
       "consentScope": [
         "account",
         "card",
@@ -259,7 +259,7 @@
       "orgName": "Buttie Mock 금융",
       "status": "CONNECTED",
       "connectedAt": "2026-06-01T09:10:00+09:00",
-      "lastSyncedAt": "2026-08-31T23:00:00+09:00",
+      "lastSyncedAt": "2026-08-26T23:00:00+09:00",
       "consentScope": [
         "account",
         "card",
@@ -275,9 +275,9 @@
       "accountName": "KB Star*t 통장",
       "accountType": "CHECKING",
       "accountNumberMasked": "110-001-****-1001",
-      "balance": 1039000,
+      "balance": 700000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100001000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -293,9 +293,9 @@
       "accountName": "신한 슈퍼SOL 통장",
       "accountType": "CHECKING",
       "accountNumberMasked": "110-002-****-1002",
-      "balance": 1428000,
+      "balance": 700000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100002000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -311,9 +311,9 @@
       "accountName": "우리 첫거래우대 정기예금",
       "accountType": "DEPOSIT",
       "accountNumberMasked": "110-003-****-1003",
-      "balance": 1817000,
+      "balance": 700000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100003000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -329,9 +329,9 @@
       "accountName": "신한 슈퍼SOL 통장",
       "accountType": "CHECKING",
       "accountNumberMasked": "110-011-****-1011",
-      "balance": 1256000,
+      "balance": 250000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100101000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -347,9 +347,9 @@
       "accountName": "우리 첫거래우대 정기예금",
       "accountType": "DEPOSIT",
       "accountNumberMasked": "110-012-****-1012",
-      "balance": 1645000,
+      "balance": 300000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100102000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -365,9 +365,9 @@
       "accountName": "하나 주거래 통장",
       "accountType": "CHECKING",
       "accountNumberMasked": "110-013-****-1013",
-      "balance": 2034000,
+      "balance": 350000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100103000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -383,9 +383,9 @@
       "accountName": "우리 첫거래우대 정기예금",
       "accountType": "DEPOSIT",
       "accountNumberMasked": "110-021-****-1021",
-      "balance": 1473000,
+      "balance": 150000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100201000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -401,9 +401,9 @@
       "accountName": "하나 주거래 통장",
       "accountType": "CHECKING",
       "accountNumberMasked": "110-022-****-1022",
-      "balance": 1862000,
+      "balance": 170000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100202000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -419,9 +419,9 @@
       "accountName": "NH1934우대통장",
       "accountType": "CHECKING",
       "accountNumberMasked": "110-023-****-1023",
-      "balance": 2251000,
+      "balance": 180000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100203000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -437,9 +437,9 @@
       "accountName": "하나 주거래 통장",
       "accountType": "CHECKING",
       "accountNumberMasked": "110-031-****-1031",
-      "balance": 1690000,
+      "balance": 750000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100301000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -455,9 +455,9 @@
       "accountName": "NH1934우대통장",
       "accountType": "CHECKING",
       "accountNumberMasked": "110-032-****-1032",
-      "balance": 2079000,
+      "balance": 850000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100302000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -473,9 +473,9 @@
       "accountName": "NH1934우대통장",
       "accountType": "CHECKING",
       "accountNumberMasked": "110-041-****-1041",
-      "balance": 1907000,
+      "balance": 200000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100401000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -491,9 +491,9 @@
       "accountName": "IBK청년도약계좌",
       "accountType": "SAVINGS",
       "accountNumberMasked": "110-042-****-1042",
-      "balance": 2296000,
+      "balance": 250000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100402000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -509,9 +509,9 @@
       "accountName": "BNK 썸통장",
       "accountType": "CHECKING",
       "accountNumberMasked": "110-043-****-1043",
-      "balance": 2685000,
+      "balance": 350000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100403000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -527,9 +527,9 @@
       "accountName": "IBK청년도약계좌",
       "accountType": "SAVINGS",
       "accountNumberMasked": "110-051-****-1051",
-      "balance": 2124000,
+      "balance": 400000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100501000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -545,9 +545,9 @@
       "accountName": "BNK 썸통장",
       "accountType": "CHECKING",
       "accountNumberMasked": "110-052-****-1052",
-      "balance": 2513000,
+      "balance": 500000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100502000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -563,9 +563,9 @@
       "accountName": "BNK 청년희망적금",
       "accountType": "SAVINGS",
       "accountNumberMasked": "110-053-****-1053",
-      "balance": 702000,
+      "balance": 600000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100503000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -581,9 +581,9 @@
       "accountName": "BNK 썸통장",
       "accountType": "CHECKING",
       "accountNumberMasked": "110-061-****-1061",
-      "balance": 2341000,
+      "balance": 600000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100601000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -599,9 +599,9 @@
       "accountName": "BNK 청년희망적금",
       "accountType": "SAVINGS",
       "accountNumberMasked": "110-062-****-1062",
-      "balance": 2730000,
+      "balance": 700000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100602000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -617,9 +617,9 @@
       "accountName": "BNK 청년희망적금",
       "accountType": "SAVINGS",
       "accountNumberMasked": "110-071-****-1071",
-      "balance": 2558000,
+      "balance": 150000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100701000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -635,9 +635,9 @@
       "accountName": "카카오뱅크 한달적금",
       "accountType": "SAVINGS",
       "accountNumberMasked": "110-072-****-1072",
-      "balance": 747000,
+      "balance": 160000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100702000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -653,9 +653,9 @@
       "accountName": "토스뱅크 통장",
       "accountType": "CHECKING",
       "accountNumberMasked": "110-073-****-1073",
-      "balance": 1136000,
+      "balance": 190000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100703000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -671,9 +671,9 @@
       "accountName": "카카오뱅크 한달적금",
       "accountType": "SAVINGS",
       "accountNumberMasked": "110-081-****-1081",
-      "balance": 2775000,
+      "balance": 50000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100801000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -689,9 +689,9 @@
       "accountName": "토스뱅크 통장",
       "accountType": "CHECKING",
       "accountNumberMasked": "110-082-****-1082",
-      "balance": 964000,
+      "balance": 60000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100802000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -707,9 +707,9 @@
       "accountName": "KB국민UP정기예금",
       "accountType": "DEPOSIT",
       "accountNumberMasked": "110-083-****-1083",
-      "balance": 1353000,
+      "balance": 65000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100803000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -725,9 +725,9 @@
       "accountName": "토스뱅크 통장",
       "accountType": "CHECKING",
       "accountNumberMasked": "110-091-****-1091",
-      "balance": 4650000,
+      "balance": 30000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100901000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -743,9 +743,9 @@
       "accountName": "KB국민UP정기예금",
       "accountType": "DEPOSIT",
       "accountNumberMasked": "110-092-****-1092",
-      "balance": 5800000,
+      "balance": 30000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100902000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -761,9 +761,9 @@
       "accountName": "신한 청년처음적금",
       "accountType": "SAVINGS",
       "accountNumberMasked": "110-093-****-1093",
-      "balance": 6950000,
+      "balance": 40000,
       "currency": "KRW",
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "accountNum": "1100903000001",
       "accountTypeCode": "1001",
       "accountStatus": "01",
@@ -783,7 +783,7 @@
       "cardCompany": "IBK기업은행",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20220215",
       "externalCardId": "MOCK-CARD-00-01",
@@ -799,7 +799,7 @@
       "cardCompany": "신한카드",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20220315",
       "externalCardId": "MOCK-CARD-00-02",
@@ -815,7 +815,7 @@
       "cardCompany": "KB국민카드",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20220415",
       "externalCardId": "MOCK-CARD-00-03",
@@ -831,7 +831,7 @@
       "cardCompany": "신한카드",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20230215",
       "externalCardId": "MOCK-CARD-01-01",
@@ -847,7 +847,7 @@
       "cardCompany": "KB국민카드",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20230315",
       "externalCardId": "MOCK-CARD-01-02",
@@ -863,7 +863,7 @@
       "cardCompany": "하나카드",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20230415",
       "externalCardId": "MOCK-CARD-01-03",
@@ -879,7 +879,7 @@
       "cardCompany": "KB국민카드",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20240215",
       "externalCardId": "MOCK-CARD-02-01",
@@ -895,7 +895,7 @@
       "cardCompany": "하나카드",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20240315",
       "externalCardId": "MOCK-CARD-02-02",
@@ -911,7 +911,7 @@
       "cardCompany": "하나카드",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20250215",
       "externalCardId": "MOCK-CARD-03-01",
@@ -927,7 +927,7 @@
       "cardCompany": "우리카드",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20250315",
       "externalCardId": "MOCK-CARD-03-02",
@@ -943,7 +943,7 @@
       "cardCompany": "NH농협카드",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20250415",
       "externalCardId": "MOCK-CARD-03-03",
@@ -959,7 +959,7 @@
       "cardCompany": "우리카드",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20220215",
       "externalCardId": "MOCK-CARD-04-01",
@@ -975,7 +975,7 @@
       "cardCompany": "NH농협카드",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20220315",
       "externalCardId": "MOCK-CARD-04-02",
@@ -991,7 +991,7 @@
       "cardCompany": "BNK부산은행",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20220415",
       "externalCardId": "MOCK-CARD-04-03",
@@ -1007,7 +1007,7 @@
       "cardCompany": "NH농협카드",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20230215",
       "externalCardId": "MOCK-CARD-05-01",
@@ -1023,7 +1023,7 @@
       "cardCompany": "BNK부산은행",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20230315",
       "externalCardId": "MOCK-CARD-05-02",
@@ -1039,7 +1039,7 @@
       "cardCompany": "BNK부산은행",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20240215",
       "externalCardId": "MOCK-CARD-06-01",
@@ -1055,7 +1055,7 @@
       "cardCompany": "카카오뱅크",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20240315",
       "externalCardId": "MOCK-CARD-06-02",
@@ -1071,7 +1071,7 @@
       "cardCompany": "토스뱅크",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20240415",
       "externalCardId": "MOCK-CARD-06-03",
@@ -1087,7 +1087,7 @@
       "cardCompany": "카카오뱅크",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20250215",
       "externalCardId": "MOCK-CARD-07-01",
@@ -1103,7 +1103,7 @@
       "cardCompany": "토스뱅크",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20250315",
       "externalCardId": "MOCK-CARD-07-02",
@@ -1119,7 +1119,7 @@
       "cardCompany": "신한카드",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20250415",
       "externalCardId": "MOCK-CARD-07-03",
@@ -1135,7 +1135,7 @@
       "cardCompany": "토스뱅크",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20220215",
       "externalCardId": "MOCK-CARD-08-01",
@@ -1151,7 +1151,7 @@
       "cardCompany": "신한카드",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20220315",
       "externalCardId": "MOCK-CARD-08-02",
@@ -1167,7 +1167,7 @@
       "cardCompany": "신한카드",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20230215",
       "externalCardId": "MOCK-CARD-09-01",
@@ -1183,7 +1183,7 @@
       "cardCompany": "IBK기업은행",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20230315",
       "externalCardId": "MOCK-CARD-09-02",
@@ -1199,7 +1199,7 @@
       "cardCompany": "신한카드",
       "cardType": "DEBIT",
       "billingDay": null,
-      "lastUpdatedAt": "2026-08-31T23:00:00+09:00",
+      "lastUpdatedAt": "2026-08-26T23:00:00+09:00",
       "isConsent": true,
       "regDate": "20230415",
       "externalCardId": "MOCK-CARD-09-03",
@@ -1398,7 +1398,7 @@
       "userId": 0,
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2500000,
+      "amount": 1000000,
       "balanceAfter": 7387000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -1431,7 +1431,7 @@
       "userId": 0,
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2500000,
+      "amount": 1000000,
       "balanceAfter": 5253000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -1464,20 +1464,9 @@
       "userId": 0,
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2500000,
+      "amount": 1000000,
       "balanceAfter": 3119000,
       "description": "급여",
-      "counterpartyName": "(주)Buttie Demo"
-    },
-    {
-      "id": 100200,
-      "accountId": 102,
-      "userId": 0,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 621000,
-      "balanceAfter": 1428000,
-      "description": "예치금 입금",
       "counterpartyName": "(주)Buttie Demo"
     },
     {
@@ -1512,17 +1501,6 @@
       "balanceAfter": 941000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
-    },
-    {
-      "id": 100300,
-      "accountId": 103,
-      "userId": 0,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 654000,
-      "balanceAfter": 1817000,
-      "description": "예치금 입금",
-      "counterpartyName": "(주)Buttie Demo"
     },
     {
       "id": 100301,
@@ -1585,7 +1563,7 @@
       "userId": 1,
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2400000,
+      "amount": 200000,
       "balanceAfter": 7281000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -1618,7 +1596,7 @@
       "userId": 1,
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2400000,
+      "amount": 200000,
       "balanceAfter": 5258500,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -1651,20 +1629,9 @@
       "userId": 1,
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2400000,
+      "amount": 200000,
       "balanceAfter": 3236000,
       "description": "급여",
-      "counterpartyName": "(주)Buttie Demo"
-    },
-    {
-      "id": 200200,
-      "accountId": 202,
-      "userId": 1,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 628500,
-      "balanceAfter": 1645000,
-      "description": "예치금 입금",
       "counterpartyName": "(주)Buttie Demo"
     },
     {
@@ -1699,17 +1666,6 @@
       "balanceAfter": 1155500,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
-    },
-    {
-      "id": 200300,
-      "accountId": 203,
-      "userId": 1,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 661500,
-      "balanceAfter": 2034000,
-      "description": "예치금 입금",
-      "counterpartyName": "(주)Buttie Demo"
     },
     {
       "id": 200301,
@@ -1772,7 +1728,7 @@
       "userId": 2,
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2700000,
+      "amount": 800000,
       "balanceAfter": 8375000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -1805,7 +1761,7 @@
       "userId": 2,
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2700000,
+      "amount": 800000,
       "balanceAfter": 6064000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -1838,20 +1794,9 @@
       "userId": 2,
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2700000,
+      "amount": 800000,
       "balanceAfter": 3753000,
       "description": "급여",
-      "counterpartyName": "(주)Buttie Demo"
-    },
-    {
-      "id": 300200,
-      "accountId": 302,
-      "userId": 2,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 636000,
-      "balanceAfter": 1862000,
-      "description": "예치금 입금",
       "counterpartyName": "(주)Buttie Demo"
     },
     {
@@ -1886,17 +1831,6 @@
       "balanceAfter": 1370000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
-    },
-    {
-      "id": 300300,
-      "accountId": 303,
-      "userId": 2,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 669000,
-      "balanceAfter": 2251000,
-      "description": "예치금 입금",
-      "counterpartyName": "(주)Buttie Demo"
     },
     {
       "id": 300301,
@@ -1959,7 +1893,7 @@
       "userId": 3,
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2300000,
+      "amount": 450000,
       "balanceAfter": 7369000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -1992,7 +1926,7 @@
       "userId": 3,
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2300000,
+      "amount": 450000,
       "balanceAfter": 5469500,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -2025,20 +1959,9 @@
       "userId": 3,
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2300000,
+      "amount": 450000,
       "balanceAfter": 3570000,
       "description": "급여",
-      "counterpartyName": "(주)Buttie Demo"
-    },
-    {
-      "id": 400200,
-      "accountId": 402,
-      "userId": 3,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 643500,
-      "balanceAfter": 2079000,
-      "description": "예치금 입금",
       "counterpartyName": "(주)Buttie Demo"
     },
     {
@@ -2102,7 +2025,7 @@
       "userId": 4,
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2600000,
+      "amount": 750000,
       "balanceAfter": 8463000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -2135,7 +2058,7 @@
       "userId": 4,
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2600000,
+      "amount": 750000,
       "balanceAfter": 6275000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -2168,20 +2091,9 @@
       "userId": 4,
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2600000,
+      "amount": 750000,
       "balanceAfter": 4087000,
       "description": "급여",
-      "counterpartyName": "(주)Buttie Demo"
-    },
-    {
-      "id": 500200,
-      "accountId": 502,
-      "userId": 4,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 651000,
-      "balanceAfter": 2296000,
-      "description": "예치금 입금",
       "counterpartyName": "(주)Buttie Demo"
     },
     {
@@ -2216,17 +2128,6 @@
       "balanceAfter": 1799000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
-    },
-    {
-      "id": 500300,
-      "accountId": 503,
-      "userId": 4,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 684000,
-      "balanceAfter": 2685000,
-      "description": "예치금 입금",
-      "counterpartyName": "(주)Buttie Demo"
     },
     {
       "id": 500301,
@@ -2289,7 +2190,7 @@
       "userId": 5,
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2500000,
+      "amount": 700000,
       "balanceAfter": 8357000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -2322,7 +2223,7 @@
       "userId": 5,
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2500000,
+      "amount": 700000,
       "balanceAfter": 6280500,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -2355,20 +2256,9 @@
       "userId": 5,
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2500000,
+      "amount": 700000,
       "balanceAfter": 4204000,
       "description": "급여",
-      "counterpartyName": "(주)Buttie Demo"
-    },
-    {
-      "id": 600200,
-      "accountId": 602,
-      "userId": 5,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 658500,
-      "balanceAfter": 2513000,
-      "description": "예치금 입금",
       "counterpartyName": "(주)Buttie Demo"
     },
     {
@@ -2403,17 +2293,6 @@
       "balanceAfter": 2013500,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
-    },
-    {
-      "id": 600300,
-      "accountId": 603,
-      "userId": 5,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 691500,
-      "balanceAfter": 702000,
-      "description": "예치금 입금",
-      "counterpartyName": "(주)Buttie Demo"
     },
     {
       "id": 600301,
@@ -2476,7 +2355,7 @@
       "userId": 6,
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2100000,
+      "amount": 1200000,
       "balanceAfter": 7351000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -2509,7 +2388,7 @@
       "userId": 6,
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2100000,
+      "amount": 1200000,
       "balanceAfter": 5686000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -2542,20 +2421,9 @@
       "userId": 6,
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2100000,
+      "amount": 1200000,
       "balanceAfter": 4021000,
       "description": "급여",
-      "counterpartyName": "(주)Buttie Demo"
-    },
-    {
-      "id": 700200,
-      "accountId": 702,
-      "userId": 6,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 666000,
-      "balanceAfter": 2730000,
-      "description": "예치금 입금",
       "counterpartyName": "(주)Buttie Demo"
     },
     {
@@ -2619,7 +2487,7 @@
       "userId": 7,
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2700000,
+      "amount": 650000,
       "balanceAfter": 9345000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -2652,7 +2520,7 @@
       "userId": 7,
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2700000,
+      "amount": 650000,
       "balanceAfter": 7091500,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -2685,20 +2553,9 @@
       "userId": 7,
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 2700000,
+      "amount": 650000,
       "balanceAfter": 4838000,
       "description": "급여",
-      "counterpartyName": "(주)Buttie Demo"
-    },
-    {
-      "id": 800200,
-      "accountId": 802,
-      "userId": 7,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 673500,
-      "balanceAfter": 747000,
-      "description": "예치금 입금",
       "counterpartyName": "(주)Buttie Demo"
     },
     {
@@ -2733,17 +2590,6 @@
       "balanceAfter": 242500,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
-    },
-    {
-      "id": 800300,
-      "accountId": 803,
-      "userId": 7,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 706500,
-      "balanceAfter": 1136000,
-      "description": "예치금 입금",
-      "counterpartyName": "(주)Buttie Demo"
     },
     {
       "id": 800301,
@@ -2806,7 +2652,7 @@
       "userId": 8,
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 3000000,
+      "amount": 400000,
       "balanceAfter": 10439000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -2839,7 +2685,7 @@
       "userId": 8,
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 3000000,
+      "amount": 400000,
       "balanceAfter": 7897000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
@@ -2872,20 +2718,9 @@
       "userId": 8,
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 3000000,
+      "amount": 400000,
       "balanceAfter": 5355000,
       "description": "급여",
-      "counterpartyName": "(주)Buttie Demo"
-    },
-    {
-      "id": 900200,
-      "accountId": 902,
-      "userId": 8,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 681000,
-      "balanceAfter": 964000,
-      "description": "예치금 입금",
       "counterpartyName": "(주)Buttie Demo"
     },
     {
@@ -2920,17 +2755,6 @@
       "balanceAfter": 457000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
-    },
-    {
-      "id": 900300,
-      "accountId": 903,
-      "userId": 8,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 714000,
-      "balanceAfter": 1353000,
-      "description": "예치금 입금",
-      "counterpartyName": "(주)Buttie Demo"
     },
     {
       "id": 900301,
@@ -2993,7 +2817,7 @@
       "userId": 9,
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 4800000,
+      "amount": 200000,
       "balanceAfter": 17691000,
       "description": "급여 및 성과급",
       "counterpartyName": "(주)Buttie Demo"
@@ -3026,7 +2850,7 @@
       "userId": 9,
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 4800000,
+      "amount": 200000,
       "balanceAfter": 13360500,
       "description": "급여 및 성과급",
       "counterpartyName": "(주)Buttie Demo"
@@ -3059,20 +2883,9 @@
       "userId": 9,
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
-      "amount": 4800000,
+      "amount": 200000,
       "balanceAfter": 9030000,
       "description": "급여 및 성과급",
-      "counterpartyName": "(주)Buttie Demo"
-    },
-    {
-      "id": 1000200,
-      "accountId": 1002,
-      "userId": 9,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 688500,
-      "balanceAfter": 5800000,
-      "description": "예치금 입금",
       "counterpartyName": "(주)Buttie Demo"
     },
     {
@@ -3107,17 +2920,6 @@
       "balanceAfter": 5290500,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
-    },
-    {
-      "id": 1000300,
-      "accountId": 1003,
-      "userId": 9,
-      "transactionAt": "2026-08-31T19:30:00+09:00",
-      "type": "DEPOSIT",
-      "amount": 721500,
-      "balanceAfter": 6950000,
-      "description": "예치금 입금",
-      "counterpartyName": "(주)Buttie Demo"
     },
     {
       "id": 1000301,
@@ -3555,26 +3357,6 @@
       "paymentMethod": "체크카드"
     },
     {
-      "id": 101086,
-      "cardId": 1001,
-      "userId": 0,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 52000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "쿠팡",
-      "sourceMerchantRegno": "900-00-00010",
-      "merchantName": "쿠팡",
-      "merchantRegno": "900-00-00010",
-      "normalizedMerchantRegno": "9000000010",
-      "merchantCategoryCode": "5311",
-      "merchantCategoryName": "쇼핑",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
-    },
-    {
       "id": 102060,
       "cardId": 1002,
       "userId": 0,
@@ -3973,26 +3755,6 @@
       "classificationConfidence": 1,
       "parserVersion": "v2-persona",
       "paymentMethod": "체크카드"
-    },
-    {
-      "id": 102086,
-      "cardId": 1002,
-      "userId": 0,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 45000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "올리브영 홍대점",
-      "sourceMerchantRegno": "900-00-00005",
-      "merchantName": "올리브영 홍대점",
-      "merchantRegno": "900-00-00005",
-      "normalizedMerchantRegno": "9000000005",
-      "merchantCategoryCode": "5912",
-      "merchantCategoryName": "생활·건강",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
     },
     {
       "id": 103060,
@@ -4395,26 +4157,6 @@
       "paymentMethod": "체크카드"
     },
     {
-      "id": 103086,
-      "cardId": 1003,
-      "userId": 0,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 125000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "준오헤어 강남점",
-      "sourceMerchantRegno": "900-00-00015",
-      "merchantName": "준오헤어 강남점",
-      "merchantRegno": "900-00-00015",
-      "normalizedMerchantRegno": "9000000015",
-      "merchantCategoryCode": "7230",
-      "merchantCategoryName": "미용",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
-    },
-    {
       "id": 201060,
       "cardId": 2001,
       "userId": 1,
@@ -4813,26 +4555,6 @@
       "classificationConfidence": 1,
       "parserVersion": "v2-persona",
       "paymentMethod": "체크카드"
-    },
-    {
-      "id": 201086,
-      "cardId": 2001,
-      "userId": 1,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 8500,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "스타벅스 강남역점",
-      "sourceMerchantRegno": "900-00-00001",
-      "merchantName": "스타벅스 강남역점",
-      "merchantRegno": "900-00-00001",
-      "normalizedMerchantRegno": "9000000001",
-      "merchantCategoryCode": "5812",
-      "merchantCategoryName": "카페",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
     },
     {
       "id": 202060,
@@ -5235,26 +4957,6 @@
       "paymentMethod": "체크카드"
     },
     {
-      "id": 202086,
-      "cardId": 2002,
-      "userId": 1,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 9700,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "스타벅스 강남역점",
-      "sourceMerchantRegno": "900-00-00001",
-      "merchantName": "스타벅스 강남역점",
-      "merchantRegno": "900-00-00001",
-      "normalizedMerchantRegno": "9000000001",
-      "merchantCategoryCode": "5812",
-      "merchantCategoryName": "카페",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
-    },
-    {
       "id": 203060,
       "cardId": 2003,
       "userId": 1,
@@ -5653,26 +5355,6 @@
       "classificationConfidence": 1,
       "parserVersion": "v2-persona",
       "paymentMethod": "체크카드"
-    },
-    {
-      "id": 203086,
-      "cardId": 2003,
-      "userId": 1,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 15000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "GS25 편의점",
-      "sourceMerchantRegno": "900-00-00020",
-      "merchantName": "GS25 편의점",
-      "merchantRegno": "900-00-00020",
-      "normalizedMerchantRegno": "9000000020",
-      "merchantCategoryCode": "5411",
-      "merchantCategoryName": "편의점",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
     },
     {
       "id": 301060,
@@ -6075,26 +5757,6 @@
       "paymentMethod": "체크카드"
     },
     {
-      "id": 301086,
-      "cardId": 3001,
-      "userId": 2,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 143000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "NOL 인터파크",
-      "sourceMerchantRegno": "900-00-00012",
-      "merchantName": "NOL 인터파크",
-      "merchantRegno": "900-00-00012",
-      "normalizedMerchantRegno": "9000000012",
-      "merchantCategoryCode": "7011",
-      "merchantCategoryName": "여행·숙박",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
-    },
-    {
       "id": 302060,
       "cardId": 3002,
       "userId": 2,
@@ -6493,26 +6155,6 @@
       "classificationConfidence": 1,
       "parserVersion": "v2-persona",
       "paymentMethod": "체크카드"
-    },
-    {
-      "id": 302086,
-      "cardId": 3002,
-      "userId": 2,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 246000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "대한항공",
-      "sourceMerchantRegno": "900-00-00018",
-      "merchantName": "대한항공",
-      "merchantRegno": "900-00-00018",
-      "normalizedMerchantRegno": "9000000018",
-      "merchantCategoryCode": "4511",
-      "merchantCategoryName": "항공",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
     },
     {
       "id": 401060,
@@ -6915,26 +6557,6 @@
       "paymentMethod": "체크카드"
     },
     {
-      "id": 401086,
-      "cardId": 4001,
-      "userId": 3,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 54000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "성수다이닝",
-      "sourceMerchantRegno": "900-00-00019",
-      "merchantName": "성수다이닝",
-      "merchantRegno": "900-00-00019",
-      "normalizedMerchantRegno": "9000000019",
-      "merchantCategoryCode": "5812",
-      "merchantCategoryName": "일반 음식점",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
-    },
-    {
       "id": 402060,
       "cardId": 4002,
       "userId": 3,
@@ -7333,26 +6955,6 @@
       "classificationConfidence": 1,
       "parserVersion": "v2-persona",
       "paymentMethod": "체크카드"
-    },
-    {
-      "id": 402086,
-      "cardId": 4002,
-      "userId": 3,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 48000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "마켓컬리",
-      "sourceMerchantRegno": "900-00-00002",
-      "merchantName": "마켓컬리",
-      "merchantRegno": "900-00-00002",
-      "normalizedMerchantRegno": "9000000002",
-      "merchantCategoryCode": "5411",
-      "merchantCategoryName": "식료품",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
     },
     {
       "id": 403060,
@@ -7755,26 +7357,6 @@
       "paymentMethod": "체크카드"
     },
     {
-      "id": 403086,
-      "cardId": 4003,
-      "userId": 3,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 15000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "GS25 편의점",
-      "sourceMerchantRegno": "900-00-00020",
-      "merchantName": "GS25 편의점",
-      "merchantRegno": "900-00-00020",
-      "normalizedMerchantRegno": "9000000020",
-      "merchantCategoryCode": "5411",
-      "merchantCategoryName": "편의점",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
-    },
-    {
       "id": 501060,
       "cardId": 5001,
       "userId": 4,
@@ -8173,26 +7755,6 @@
       "classificationConfidence": 1,
       "parserVersion": "v2-persona",
       "paymentMethod": "체크카드"
-    },
-    {
-      "id": 501086,
-      "cardId": 5001,
-      "userId": 4,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 79000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "바디채널 피트니스",
-      "sourceMerchantRegno": "900-00-00014",
-      "merchantName": "바디채널 피트니스",
-      "merchantRegno": "900-00-00014",
-      "normalizedMerchantRegno": "9000000014",
-      "merchantCategoryCode": "7997",
-      "merchantCategoryName": "피트니스",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
     },
     {
       "id": 502060,
@@ -8595,26 +8157,6 @@
       "paymentMethod": "체크카드"
     },
     {
-      "id": 502086,
-      "cardId": 5002,
-      "userId": 4,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 25000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "종로약국",
-      "sourceMerchantRegno": "900-00-00017",
-      "merchantName": "종로약국",
-      "merchantRegno": "900-00-00017",
-      "normalizedMerchantRegno": "9000000017",
-      "merchantCategoryCode": "5912",
-      "merchantCategoryName": "약국",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
-    },
-    {
       "id": 503060,
       "cardId": 5003,
       "userId": 4,
@@ -9013,26 +8555,6 @@
       "classificationConfidence": 1,
       "parserVersion": "v2-persona",
       "paymentMethod": "체크카드"
-    },
-    {
-      "id": 503086,
-      "cardId": 5003,
-      "userId": 4,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 101000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "바디채널 피트니스",
-      "sourceMerchantRegno": "900-00-00014",
-      "merchantName": "바디채널 피트니스",
-      "merchantRegno": "900-00-00014",
-      "normalizedMerchantRegno": "9000000014",
-      "merchantCategoryCode": "7997",
-      "merchantCategoryName": "피트니스",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
     },
     {
       "id": 601060,
@@ -9435,26 +8957,6 @@
       "paymentMethod": "체크카드"
     },
     {
-      "id": 601086,
-      "cardId": 6001,
-      "userId": 5,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 68000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "SK에너지 역삼주유소",
-      "sourceMerchantRegno": "900-00-00008",
-      "merchantName": "SK에너지 역삼주유소",
-      "merchantRegno": "900-00-00008",
-      "normalizedMerchantRegno": "9000000008",
-      "merchantCategoryCode": "5541",
-      "merchantCategoryName": "주유",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
-    },
-    {
       "id": 602060,
       "cardId": 6002,
       "userId": 5,
@@ -9853,26 +9355,6 @@
       "classificationConfidence": 1,
       "parserVersion": "v2-persona",
       "paymentMethod": "체크카드"
-    },
-    {
-      "id": 602086,
-      "cardId": 6002,
-      "userId": 5,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 246000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "대한항공",
-      "sourceMerchantRegno": "900-00-00018",
-      "merchantName": "대한항공",
-      "merchantRegno": "900-00-00018",
-      "normalizedMerchantRegno": "9000000018",
-      "merchantCategoryCode": "4511",
-      "merchantCategoryName": "항공",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
     },
     {
       "id": 701060,
@@ -10275,26 +9757,6 @@
       "paymentMethod": "체크카드"
     },
     {
-      "id": 701086,
-      "cardId": 7001,
-      "userId": 6,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 185000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "해커스어학원",
-      "sourceMerchantRegno": "900-00-00016",
-      "merchantName": "해커스어학원",
-      "merchantRegno": "900-00-00016",
-      "normalizedMerchantRegno": "9000000016",
-      "merchantCategoryCode": "8299",
-      "merchantCategoryName": "교육",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
-    },
-    {
       "id": 702060,
       "cardId": 7002,
       "userId": 6,
@@ -10693,26 +10155,6 @@
       "classificationConfidence": 1,
       "parserVersion": "v2-persona",
       "paymentMethod": "체크카드"
-    },
-    {
-      "id": 702086,
-      "cardId": 7002,
-      "userId": 6,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 27000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "교보문고 광화문점",
-      "sourceMerchantRegno": "900-00-00009",
-      "merchantName": "교보문고 광화문점",
-      "merchantRegno": "900-00-00009",
-      "normalizedMerchantRegno": "9000000009",
-      "merchantCategoryCode": "5942",
-      "merchantCategoryName": "도서",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
     },
     {
       "id": 703060,
@@ -11115,26 +10557,6 @@
       "paymentMethod": "체크카드"
     },
     {
-      "id": 703086,
-      "cardId": 7003,
-      "userId": 6,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 237000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "해커스어학원",
-      "sourceMerchantRegno": "900-00-00016",
-      "merchantName": "해커스어학원",
-      "merchantRegno": "900-00-00016",
-      "normalizedMerchantRegno": "9000000016",
-      "merchantCategoryCode": "8299",
-      "merchantCategoryName": "교육",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
-    },
-    {
       "id": 801060,
       "cardId": 8001,
       "userId": 7,
@@ -11533,26 +10955,6 @@
       "classificationConfidence": 1,
       "parserVersion": "v2-persona",
       "paymentMethod": "체크카드"
-    },
-    {
-      "id": 801086,
-      "cardId": 8001,
-      "userId": 7,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 76000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "을지로 포차",
-      "sourceMerchantRegno": "900-00-00011",
-      "merchantName": "을지로 포차",
-      "merchantRegno": "900-00-00011",
-      "normalizedMerchantRegno": "9000000011",
-      "merchantCategoryCode": "5813",
-      "merchantCategoryName": "주점",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
     },
     {
       "id": 802060,
@@ -11955,26 +11357,6 @@
       "paymentMethod": "체크카드"
     },
     {
-      "id": 802086,
-      "cardId": 8002,
-      "userId": 7,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 62000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "성수다이닝",
-      "sourceMerchantRegno": "900-00-00019",
-      "merchantName": "성수다이닝",
-      "merchantRegno": "900-00-00019",
-      "normalizedMerchantRegno": "9000000019",
-      "merchantCategoryCode": "5812",
-      "merchantCategoryName": "일반 음식점",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
-    },
-    {
       "id": 803060,
       "cardId": 8003,
       "userId": 7,
@@ -12373,26 +11755,6 @@
       "classificationConfidence": 1,
       "parserVersion": "v2-persona",
       "paymentMethod": "체크카드"
-    },
-    {
-      "id": 803086,
-      "cardId": 8003,
-      "userId": 7,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 11000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "스타벅스 강남역점",
-      "sourceMerchantRegno": "900-00-00001",
-      "merchantName": "스타벅스 강남역점",
-      "merchantRegno": "900-00-00001",
-      "normalizedMerchantRegno": "9000000001",
-      "merchantCategoryCode": "5812",
-      "merchantCategoryName": "카페",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
     },
     {
       "id": 901060,
@@ -12795,26 +12157,6 @@
       "paymentMethod": "체크카드"
     },
     {
-      "id": 901086,
-      "cardId": 9001,
-      "userId": 8,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 8500,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "스타벅스 강남역점",
-      "sourceMerchantRegno": "900-00-00001",
-      "merchantName": "스타벅스 강남역점",
-      "merchantRegno": "900-00-00001",
-      "normalizedMerchantRegno": "9000000001",
-      "merchantCategoryCode": "5812",
-      "merchantCategoryName": "카페",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
-    },
-    {
       "id": 902060,
       "cardId": 9002,
       "userId": 8,
@@ -13213,26 +12555,6 @@
       "classificationConfidence": 1,
       "parserVersion": "v2-persona",
       "paymentMethod": "체크카드"
-    },
-    {
-      "id": 902086,
-      "cardId": 9002,
-      "userId": 8,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 1900,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "서울교통공사",
-      "sourceMerchantRegno": "900-00-00004",
-      "merchantName": "서울교통공사",
-      "merchantRegno": "900-00-00004",
-      "normalizedMerchantRegno": "9000000004",
-      "merchantCategoryCode": "4111",
-      "merchantCategoryName": "대중교통",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
     },
     {
       "id": 1001060,
@@ -13635,26 +12957,6 @@
       "paymentMethod": "체크카드"
     },
     {
-      "id": 1001086,
-      "cardId": 10001,
-      "userId": 9,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 1200,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "서울교통공사",
-      "sourceMerchantRegno": "900-00-00004",
-      "merchantName": "서울교통공사",
-      "merchantRegno": "900-00-00004",
-      "normalizedMerchantRegno": "9000000004",
-      "merchantCategoryCode": "4111",
-      "merchantCategoryName": "대중교통",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
-    },
-    {
       "id": 1002060,
       "cardId": 10002,
       "userId": 9,
@@ -14055,26 +13357,6 @@
       "paymentMethod": "체크카드"
     },
     {
-      "id": 1002086,
-      "cardId": 10002,
-      "userId": 9,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 20000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "배달의민족",
-      "sourceMerchantRegno": "900-00-00006",
-      "merchantName": "배달의민족",
-      "merchantRegno": "900-00-00006",
-      "normalizedMerchantRegno": "9000000006",
-      "merchantCategoryCode": "5814",
-      "merchantCategoryName": "배달·외식",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
-    },
-    {
       "id": 1003060,
       "cardId": 10003,
       "userId": 9,
@@ -14473,26 +13755,6 @@
       "classificationConfidence": 1,
       "parserVersion": "v2-persona",
       "paymentMethod": "체크카드"
-    },
-    {
-      "id": 1003086,
-      "cardId": 10003,
-      "userId": 9,
-      "approvedAt": "2026-08-27T15:16:00+09:00",
-      "amount": 6000,
-      "transactionType": "APPROVAL",
-      "sourceMerchantName": "스타벅스 강남역점",
-      "sourceMerchantRegno": "900-00-00001",
-      "merchantName": "스타벅스 강남역점",
-      "merchantRegno": "900-00-00001",
-      "normalizedMerchantRegno": "9000000001",
-      "merchantCategoryCode": "5812",
-      "merchantCategoryName": "카페",
-      "merchantAddress": "서울특별시 중구 테스트로 1",
-      "classificationMethod": "REGNO_EXACT",
-      "classificationConfidence": 1,
-      "parserVersion": "v2-persona",
-      "paymentMethod": "일시불"
     }
   ],
   "bankAccountResponses": [
@@ -14500,7 +13762,7 @@
       "id": 0,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "reg_date": "20200101",
       "account_cnt": 3,
       "account_list": [
@@ -14514,7 +13776,7 @@
           "account_status": "01",
           "institution_name": "KB국민은행",
           "account_num_masked": "110-001-****-1001",
-          "balance_amt": 1039000
+          "balance_amt": 700000
         },
         {
           "account_num": "1100002000001",
@@ -14526,7 +13788,7 @@
           "account_status": "01",
           "institution_name": "신한은행",
           "account_num_masked": "110-002-****-1002",
-          "balance_amt": 1428000
+          "balance_amt": 700000
         },
         {
           "account_num": "1100003000001",
@@ -14538,7 +13800,7 @@
           "account_status": "01",
           "institution_name": "우리은행",
           "account_num_masked": "110-003-****-1003",
-          "balance_amt": 1817000
+          "balance_amt": 700000
         }
       ]
     },
@@ -14546,7 +13808,7 @@
       "id": 1,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "reg_date": "20200101",
       "account_cnt": 3,
       "account_list": [
@@ -14560,7 +13822,7 @@
           "account_status": "01",
           "institution_name": "신한은행",
           "account_num_masked": "110-011-****-1011",
-          "balance_amt": 1256000
+          "balance_amt": 250000
         },
         {
           "account_num": "1100102000001",
@@ -14572,7 +13834,7 @@
           "account_status": "01",
           "institution_name": "우리은행",
           "account_num_masked": "110-012-****-1012",
-          "balance_amt": 1645000
+          "balance_amt": 300000
         },
         {
           "account_num": "1100103000001",
@@ -14584,7 +13846,7 @@
           "account_status": "01",
           "institution_name": "하나은행",
           "account_num_masked": "110-013-****-1013",
-          "balance_amt": 2034000
+          "balance_amt": 350000
         }
       ]
     },
@@ -14592,7 +13854,7 @@
       "id": 2,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "reg_date": "20200101",
       "account_cnt": 3,
       "account_list": [
@@ -14606,7 +13868,7 @@
           "account_status": "01",
           "institution_name": "우리은행",
           "account_num_masked": "110-021-****-1021",
-          "balance_amt": 1473000
+          "balance_amt": 150000
         },
         {
           "account_num": "1100202000001",
@@ -14618,7 +13880,7 @@
           "account_status": "01",
           "institution_name": "하나은행",
           "account_num_masked": "110-022-****-1022",
-          "balance_amt": 1862000
+          "balance_amt": 170000
         },
         {
           "account_num": "1100203000001",
@@ -14630,7 +13892,7 @@
           "account_status": "01",
           "institution_name": "NH농협은행",
           "account_num_masked": "110-023-****-1023",
-          "balance_amt": 2251000
+          "balance_amt": 180000
         }
       ]
     },
@@ -14638,7 +13900,7 @@
       "id": 3,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "reg_date": "20200101",
       "account_cnt": 2,
       "account_list": [
@@ -14652,7 +13914,7 @@
           "account_status": "01",
           "institution_name": "하나은행",
           "account_num_masked": "110-031-****-1031",
-          "balance_amt": 1690000
+          "balance_amt": 750000
         },
         {
           "account_num": "1100302000001",
@@ -14664,7 +13926,7 @@
           "account_status": "01",
           "institution_name": "NH농협은행",
           "account_num_masked": "110-032-****-1032",
-          "balance_amt": 2079000
+          "balance_amt": 850000
         }
       ]
     },
@@ -14672,7 +13934,7 @@
       "id": 4,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "reg_date": "20200101",
       "account_cnt": 3,
       "account_list": [
@@ -14686,7 +13948,7 @@
           "account_status": "01",
           "institution_name": "NH농협은행",
           "account_num_masked": "110-041-****-1041",
-          "balance_amt": 1907000
+          "balance_amt": 200000
         },
         {
           "account_num": "1100402000001",
@@ -14698,7 +13960,7 @@
           "account_status": "01",
           "institution_name": "IBK기업은행",
           "account_num_masked": "110-042-****-1042",
-          "balance_amt": 2296000
+          "balance_amt": 250000
         },
         {
           "account_num": "1100403000001",
@@ -14710,7 +13972,7 @@
           "account_status": "01",
           "institution_name": "BNK부산은행",
           "account_num_masked": "110-043-****-1043",
-          "balance_amt": 2685000
+          "balance_amt": 350000
         }
       ]
     },
@@ -14718,7 +13980,7 @@
       "id": 5,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "reg_date": "20200101",
       "account_cnt": 3,
       "account_list": [
@@ -14732,7 +13994,7 @@
           "account_status": "01",
           "institution_name": "IBK기업은행",
           "account_num_masked": "110-051-****-1051",
-          "balance_amt": 2124000
+          "balance_amt": 400000
         },
         {
           "account_num": "1100502000001",
@@ -14744,7 +14006,7 @@
           "account_status": "01",
           "institution_name": "BNK부산은행",
           "account_num_masked": "110-052-****-1052",
-          "balance_amt": 2513000
+          "balance_amt": 500000
         },
         {
           "account_num": "1100503000001",
@@ -14756,7 +14018,7 @@
           "account_status": "01",
           "institution_name": "BNK경남은행",
           "account_num_masked": "110-053-****-1053",
-          "balance_amt": 702000
+          "balance_amt": 600000
         }
       ]
     },
@@ -14764,7 +14026,7 @@
       "id": 6,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "reg_date": "20200101",
       "account_cnt": 2,
       "account_list": [
@@ -14778,7 +14040,7 @@
           "account_status": "01",
           "institution_name": "BNK부산은행",
           "account_num_masked": "110-061-****-1061",
-          "balance_amt": 2341000
+          "balance_amt": 600000
         },
         {
           "account_num": "1100602000001",
@@ -14790,7 +14052,7 @@
           "account_status": "01",
           "institution_name": "BNK경남은행",
           "account_num_masked": "110-062-****-1062",
-          "balance_amt": 2730000
+          "balance_amt": 700000
         }
       ]
     },
@@ -14798,7 +14060,7 @@
       "id": 7,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "reg_date": "20200101",
       "account_cnt": 3,
       "account_list": [
@@ -14812,7 +14074,7 @@
           "account_status": "01",
           "institution_name": "BNK경남은행",
           "account_num_masked": "110-071-****-1071",
-          "balance_amt": 2558000
+          "balance_amt": 150000
         },
         {
           "account_num": "1100702000001",
@@ -14824,7 +14086,7 @@
           "account_status": "01",
           "institution_name": "카카오뱅크",
           "account_num_masked": "110-072-****-1072",
-          "balance_amt": 747000
+          "balance_amt": 160000
         },
         {
           "account_num": "1100703000001",
@@ -14836,7 +14098,7 @@
           "account_status": "01",
           "institution_name": "토스뱅크",
           "account_num_masked": "110-073-****-1073",
-          "balance_amt": 1136000
+          "balance_amt": 190000
         }
       ]
     },
@@ -14844,7 +14106,7 @@
       "id": 8,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "reg_date": "20200101",
       "account_cnt": 3,
       "account_list": [
@@ -14858,7 +14120,7 @@
           "account_status": "01",
           "institution_name": "카카오뱅크",
           "account_num_masked": "110-081-****-1081",
-          "balance_amt": 2775000
+          "balance_amt": 50000
         },
         {
           "account_num": "1100802000001",
@@ -14870,7 +14132,7 @@
           "account_status": "01",
           "institution_name": "토스뱅크",
           "account_num_masked": "110-082-****-1082",
-          "balance_amt": 964000
+          "balance_amt": 60000
         },
         {
           "account_num": "1100803000001",
@@ -14882,7 +14144,7 @@
           "account_status": "01",
           "institution_name": "KB국민은행",
           "account_num_masked": "110-083-****-1083",
-          "balance_amt": 1353000
+          "balance_amt": 65000
         }
       ]
     },
@@ -14890,7 +14152,7 @@
       "id": 9,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "reg_date": "20200101",
       "account_cnt": 3,
       "account_list": [
@@ -14904,7 +14166,7 @@
           "account_status": "01",
           "institution_name": "토스뱅크",
           "account_num_masked": "110-091-****-1091",
-          "balance_amt": 4650000
+          "balance_amt": 30000
         },
         {
           "account_num": "1100902000001",
@@ -14916,7 +14178,7 @@
           "account_status": "01",
           "institution_name": "KB국민은행",
           "account_num_masked": "110-092-****-1092",
-          "balance_amt": 5800000
+          "balance_amt": 30000
         },
         {
           "account_num": "1100903000001",
@@ -14928,7 +14190,7 @@
           "account_status": "01",
           "institution_name": "신한은행",
           "account_num_masked": "110-093-****-1093",
-          "balance_amt": 6950000
+          "balance_amt": 40000
         }
       ]
     }
@@ -14961,7 +14223,7 @@
           "trans_dtime": "20260801100000",
           "trans_no": "010004",
           "trans_type": "01",
-          "trans_amt": 2500000,
+          "trans_amt": 1000000,
           "balance_amt": 7387000,
           "trans_memo": "급여"
         },
@@ -14985,7 +14247,7 @@
           "trans_dtime": "20260701100000",
           "trans_no": "010007",
           "trans_type": "01",
-          "trans_amt": 2500000,
+          "trans_amt": 1000000,
           "balance_amt": 5253000,
           "trans_memo": "급여"
         },
@@ -15009,7 +14271,7 @@
           "trans_dtime": "20260601100000",
           "trans_no": "010010",
           "trans_type": "01",
-          "trans_amt": 2500000,
+          "trans_amt": 1000000,
           "balance_amt": 3119000,
           "trans_memo": "급여"
         }
@@ -15020,16 +14282,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "020001",
-          "trans_type": "01",
-          "trans_amt": 621000,
-          "balance_amt": 1428000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "020002",
@@ -15061,16 +14315,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "030001",
-          "trans_type": "01",
-          "trans_amt": 654000,
-          "balance_amt": 1817000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "030002",
@@ -15124,7 +14370,7 @@
           "trans_dtime": "20260801100000",
           "trans_no": "110004",
           "trans_type": "01",
-          "trans_amt": 2400000,
+          "trans_amt": 200000,
           "balance_amt": 7281000,
           "trans_memo": "급여"
         },
@@ -15148,7 +14394,7 @@
           "trans_dtime": "20260701100000",
           "trans_no": "110007",
           "trans_type": "01",
-          "trans_amt": 2400000,
+          "trans_amt": 200000,
           "balance_amt": 5258500,
           "trans_memo": "급여"
         },
@@ -15172,7 +14418,7 @@
           "trans_dtime": "20260601100000",
           "trans_no": "110010",
           "trans_type": "01",
-          "trans_amt": 2400000,
+          "trans_amt": 200000,
           "balance_amt": 3236000,
           "trans_memo": "급여"
         }
@@ -15183,16 +14429,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "120001",
-          "trans_type": "01",
-          "trans_amt": 628500,
-          "balance_amt": 1645000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "120002",
@@ -15224,16 +14462,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "130001",
-          "trans_type": "01",
-          "trans_amt": 661500,
-          "balance_amt": 2034000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "130002",
@@ -15287,7 +14517,7 @@
           "trans_dtime": "20260801100000",
           "trans_no": "210004",
           "trans_type": "01",
-          "trans_amt": 2700000,
+          "trans_amt": 800000,
           "balance_amt": 8375000,
           "trans_memo": "급여"
         },
@@ -15311,7 +14541,7 @@
           "trans_dtime": "20260701100000",
           "trans_no": "210007",
           "trans_type": "01",
-          "trans_amt": 2700000,
+          "trans_amt": 800000,
           "balance_amt": 6064000,
           "trans_memo": "급여"
         },
@@ -15335,7 +14565,7 @@
           "trans_dtime": "20260601100000",
           "trans_no": "210010",
           "trans_type": "01",
-          "trans_amt": 2700000,
+          "trans_amt": 800000,
           "balance_amt": 3753000,
           "trans_memo": "급여"
         }
@@ -15346,16 +14576,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "220001",
-          "trans_type": "01",
-          "trans_amt": 636000,
-          "balance_amt": 1862000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "220002",
@@ -15387,16 +14609,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "230001",
-          "trans_type": "01",
-          "trans_amt": 669000,
-          "balance_amt": 2251000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "230002",
@@ -15450,7 +14664,7 @@
           "trans_dtime": "20260801100000",
           "trans_no": "310004",
           "trans_type": "01",
-          "trans_amt": 2300000,
+          "trans_amt": 450000,
           "balance_amt": 7369000,
           "trans_memo": "급여"
         },
@@ -15474,7 +14688,7 @@
           "trans_dtime": "20260701100000",
           "trans_no": "310007",
           "trans_type": "01",
-          "trans_amt": 2300000,
+          "trans_amt": 450000,
           "balance_amt": 5469500,
           "trans_memo": "급여"
         },
@@ -15498,7 +14712,7 @@
           "trans_dtime": "20260601100000",
           "trans_no": "310010",
           "trans_type": "01",
-          "trans_amt": 2300000,
+          "trans_amt": 450000,
           "balance_amt": 3570000,
           "trans_memo": "급여"
         }
@@ -15509,16 +14723,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "320001",
-          "trans_type": "01",
-          "trans_amt": 643500,
-          "balance_amt": 2079000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "320002",
@@ -15572,7 +14778,7 @@
           "trans_dtime": "20260801100000",
           "trans_no": "410004",
           "trans_type": "01",
-          "trans_amt": 2600000,
+          "trans_amt": 750000,
           "balance_amt": 8463000,
           "trans_memo": "급여"
         },
@@ -15596,7 +14802,7 @@
           "trans_dtime": "20260701100000",
           "trans_no": "410007",
           "trans_type": "01",
-          "trans_amt": 2600000,
+          "trans_amt": 750000,
           "balance_amt": 6275000,
           "trans_memo": "급여"
         },
@@ -15620,7 +14826,7 @@
           "trans_dtime": "20260601100000",
           "trans_no": "410010",
           "trans_type": "01",
-          "trans_amt": 2600000,
+          "trans_amt": 750000,
           "balance_amt": 4087000,
           "trans_memo": "급여"
         }
@@ -15631,16 +14837,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "420001",
-          "trans_type": "01",
-          "trans_amt": 651000,
-          "balance_amt": 2296000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "420002",
@@ -15672,16 +14870,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "430001",
-          "trans_type": "01",
-          "trans_amt": 684000,
-          "balance_amt": 2685000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "430002",
@@ -15735,7 +14925,7 @@
           "trans_dtime": "20260801100000",
           "trans_no": "510004",
           "trans_type": "01",
-          "trans_amt": 2500000,
+          "trans_amt": 700000,
           "balance_amt": 8357000,
           "trans_memo": "급여"
         },
@@ -15759,7 +14949,7 @@
           "trans_dtime": "20260701100000",
           "trans_no": "510007",
           "trans_type": "01",
-          "trans_amt": 2500000,
+          "trans_amt": 700000,
           "balance_amt": 6280500,
           "trans_memo": "급여"
         },
@@ -15783,7 +14973,7 @@
           "trans_dtime": "20260601100000",
           "trans_no": "510010",
           "trans_type": "01",
-          "trans_amt": 2500000,
+          "trans_amt": 700000,
           "balance_amt": 4204000,
           "trans_memo": "급여"
         }
@@ -15794,16 +14984,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "520001",
-          "trans_type": "01",
-          "trans_amt": 658500,
-          "balance_amt": 2513000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "520002",
@@ -15835,16 +15017,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "530001",
-          "trans_type": "01",
-          "trans_amt": 691500,
-          "balance_amt": 702000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "530002",
@@ -15898,7 +15072,7 @@
           "trans_dtime": "20260801100000",
           "trans_no": "610004",
           "trans_type": "01",
-          "trans_amt": 2100000,
+          "trans_amt": 1200000,
           "balance_amt": 7351000,
           "trans_memo": "급여"
         },
@@ -15922,7 +15096,7 @@
           "trans_dtime": "20260701100000",
           "trans_no": "610007",
           "trans_type": "01",
-          "trans_amt": 2100000,
+          "trans_amt": 1200000,
           "balance_amt": 5686000,
           "trans_memo": "급여"
         },
@@ -15946,7 +15120,7 @@
           "trans_dtime": "20260601100000",
           "trans_no": "610010",
           "trans_type": "01",
-          "trans_amt": 2100000,
+          "trans_amt": 1200000,
           "balance_amt": 4021000,
           "trans_memo": "급여"
         }
@@ -15957,16 +15131,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "620001",
-          "trans_type": "01",
-          "trans_amt": 666000,
-          "balance_amt": 2730000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "620002",
@@ -16020,7 +15186,7 @@
           "trans_dtime": "20260801100000",
           "trans_no": "710004",
           "trans_type": "01",
-          "trans_amt": 2700000,
+          "trans_amt": 650000,
           "balance_amt": 9345000,
           "trans_memo": "급여"
         },
@@ -16044,7 +15210,7 @@
           "trans_dtime": "20260701100000",
           "trans_no": "710007",
           "trans_type": "01",
-          "trans_amt": 2700000,
+          "trans_amt": 650000,
           "balance_amt": 7091500,
           "trans_memo": "급여"
         },
@@ -16068,7 +15234,7 @@
           "trans_dtime": "20260601100000",
           "trans_no": "710010",
           "trans_type": "01",
-          "trans_amt": 2700000,
+          "trans_amt": 650000,
           "balance_amt": 4838000,
           "trans_memo": "급여"
         }
@@ -16079,16 +15245,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "720001",
-          "trans_type": "01",
-          "trans_amt": 673500,
-          "balance_amt": 747000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "720002",
@@ -16120,16 +15278,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "730001",
-          "trans_type": "01",
-          "trans_amt": 706500,
-          "balance_amt": 1136000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "730002",
@@ -16183,7 +15333,7 @@
           "trans_dtime": "20260801100000",
           "trans_no": "810004",
           "trans_type": "01",
-          "trans_amt": 3000000,
+          "trans_amt": 400000,
           "balance_amt": 10439000,
           "trans_memo": "급여"
         },
@@ -16207,7 +15357,7 @@
           "trans_dtime": "20260701100000",
           "trans_no": "810007",
           "trans_type": "01",
-          "trans_amt": 3000000,
+          "trans_amt": 400000,
           "balance_amt": 7897000,
           "trans_memo": "급여"
         },
@@ -16231,7 +15381,7 @@
           "trans_dtime": "20260601100000",
           "trans_no": "810010",
           "trans_type": "01",
-          "trans_amt": 3000000,
+          "trans_amt": 400000,
           "balance_amt": 5355000,
           "trans_memo": "급여"
         }
@@ -16242,16 +15392,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "820001",
-          "trans_type": "01",
-          "trans_amt": 681000,
-          "balance_amt": 964000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "820002",
@@ -16283,16 +15425,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "830001",
-          "trans_type": "01",
-          "trans_amt": 714000,
-          "balance_amt": 1353000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "830002",
@@ -16346,7 +15480,7 @@
           "trans_dtime": "20260801100000",
           "trans_no": "910004",
           "trans_type": "01",
-          "trans_amt": 4800000,
+          "trans_amt": 200000,
           "balance_amt": 17691000,
           "trans_memo": "급여 및 성과급"
         },
@@ -16370,7 +15504,7 @@
           "trans_dtime": "20260701100000",
           "trans_no": "910007",
           "trans_type": "01",
-          "trans_amt": 4800000,
+          "trans_amt": 200000,
           "balance_amt": 13360500,
           "trans_memo": "급여 및 성과급"
         },
@@ -16394,7 +15528,7 @@
           "trans_dtime": "20260601100000",
           "trans_no": "910010",
           "trans_type": "01",
-          "trans_amt": 4800000,
+          "trans_amt": 200000,
           "balance_amt": 9030000,
           "trans_memo": "급여 및 성과급"
         }
@@ -16405,16 +15539,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "920001",
-          "trans_type": "01",
-          "trans_amt": 688500,
-          "balance_amt": 5800000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "920002",
@@ -16446,16 +15572,8 @@
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
       "next_page": null,
-      "trans_cnt": 4,
+      "trans_cnt": 3,
       "trans_list": [
-        {
-          "trans_dtime": "20260831193000",
-          "trans_no": "930001",
-          "trans_type": "01",
-          "trans_amt": 721500,
-          "balance_amt": 6950000,
-          "trans_memo": "예치금 입금"
-        },
         {
           "trans_dtime": "20260812143000",
           "trans_no": "930002",
@@ -16488,7 +15606,7 @@
       "id": 0,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "card_cnt": 3,
       "card_list": [
         {
@@ -16530,7 +15648,7 @@
       "id": 1,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "card_cnt": 3,
       "card_list": [
         {
@@ -16572,7 +15690,7 @@
       "id": 2,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "card_cnt": 2,
       "card_list": [
         {
@@ -16603,7 +15721,7 @@
       "id": 3,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "card_cnt": 3,
       "card_list": [
         {
@@ -16645,7 +15763,7 @@
       "id": 4,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "card_cnt": 3,
       "card_list": [
         {
@@ -16687,7 +15805,7 @@
       "id": 5,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "card_cnt": 2,
       "card_list": [
         {
@@ -16718,7 +15836,7 @@
       "id": 6,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "card_cnt": 3,
       "card_list": [
         {
@@ -16760,7 +15878,7 @@
       "id": 7,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "card_cnt": 3,
       "card_list": [
         {
@@ -16802,7 +15920,7 @@
       "id": 8,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "card_cnt": 2,
       "card_list": [
         {
@@ -16833,7 +15951,7 @@
       "id": 9,
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "card_cnt": 3,
       "card_list": [
         {
@@ -16877,7 +15995,7 @@
       "id": "MOCK-CARD-00-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0001",
@@ -16890,7 +16008,7 @@
       "id": "MOCK-CARD-00-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0002",
@@ -16903,7 +16021,7 @@
       "id": "MOCK-CARD-00-03",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0003",
@@ -16916,7 +16034,7 @@
       "id": "MOCK-CARD-01-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0002",
@@ -16929,7 +16047,7 @@
       "id": "MOCK-CARD-01-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0003",
@@ -16942,7 +16060,7 @@
       "id": "MOCK-CARD-01-03",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0004",
@@ -16955,7 +16073,7 @@
       "id": "MOCK-CARD-02-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0003",
@@ -16968,7 +16086,7 @@
       "id": "MOCK-CARD-02-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0004",
@@ -16981,7 +16099,7 @@
       "id": "MOCK-CARD-03-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0004",
@@ -16994,7 +16112,7 @@
       "id": "MOCK-CARD-03-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0005",
@@ -17007,7 +16125,7 @@
       "id": "MOCK-CARD-03-03",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0004",
@@ -17020,7 +16138,7 @@
       "id": "MOCK-CARD-04-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0005",
@@ -17033,7 +16151,7 @@
       "id": "MOCK-CARD-04-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0006",
@@ -17046,7 +16164,7 @@
       "id": "MOCK-CARD-04-03",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0007",
@@ -17059,7 +16177,7 @@
       "id": "MOCK-CARD-05-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0006",
@@ -17072,7 +16190,7 @@
       "id": "MOCK-CARD-05-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0007",
@@ -17085,7 +16203,7 @@
       "id": "MOCK-CARD-06-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0007",
@@ -17098,7 +16216,7 @@
       "id": "MOCK-CARD-06-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0008",
@@ -17111,7 +16229,7 @@
       "id": "MOCK-CARD-06-03",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0007",
@@ -17124,7 +16242,7 @@
       "id": "MOCK-CARD-07-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0008",
@@ -17137,7 +16255,7 @@
       "id": "MOCK-CARD-07-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0009",
@@ -17150,7 +16268,7 @@
       "id": "MOCK-CARD-07-03",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0010",
@@ -17163,7 +16281,7 @@
       "id": "MOCK-CARD-08-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0009",
@@ -17176,7 +16294,7 @@
       "id": "MOCK-CARD-08-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0010",
@@ -17189,7 +16307,7 @@
       "id": "MOCK-CARD-09-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0010",
@@ -17202,7 +16320,7 @@
       "id": "MOCK-CARD-09-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0001",
@@ -17215,7 +16333,7 @@
       "id": "MOCK-CARD-09-03",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "search_timestamp": "20260831230000",
+      "search_timestamp": "20260826230000",
       "is_trans_payable": false,
       "is_cash_card": true,
       "linked_bank_code": "MOCK0002",
@@ -17230,20 +16348,8 @@
       "id": "MOCK-CARD-00-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "0180007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "쿠팡",
-          "merchant_regno": "900-00-00010",
-          "approved_amt": 52000,
-          "merchant_category_code": "5311",
-          "merchant_category_name": "쇼핑",
-          "classification_method": "REGNO_EXACT"
-        },
         {
           "approved_num": "0180006",
           "approved_dtime": "20260823141500",
@@ -17503,21 +16609,8 @@
       "id": "MOCK-CARD-00-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "0280007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "올리브영 홍대점",
-          "merchant_regno": "900-00-00005",
-          "approved_amt": 45000,
-          "merchant_category_code": "5912",
-          "merchant_category_name": "생활·건강",
-          "classification_method": "REGNO_EXACT",
-          "modified_amt": 45000
-        },
         {
           "approved_num": "0280006",
           "approved_dtime": "20260823141500",
@@ -17777,21 +16870,8 @@
       "id": "MOCK-CARD-00-03",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "0380007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "준오헤어 강남점",
-          "merchant_regno": "900-00-00015",
-          "approved_amt": 125000,
-          "merchant_category_code": "7230",
-          "merchant_category_name": "미용",
-          "classification_method": "REGNO_EXACT",
-          "modified_amt": 125000
-        },
         {
           "approved_num": "0380006",
           "approved_dtime": "20260823141500",
@@ -18051,20 +17131,8 @@
       "id": "MOCK-CARD-01-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "1180007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "스타벅스 강남역점",
-          "merchant_regno": "900-00-00001",
-          "approved_amt": 8500,
-          "merchant_category_code": "5812",
-          "merchant_category_name": "카페",
-          "classification_method": "REGNO_EXACT"
-        },
         {
           "approved_num": "1180006",
           "approved_dtime": "20260823141500",
@@ -18324,20 +17392,8 @@
       "id": "MOCK-CARD-01-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "1280007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "스타벅스 강남역점",
-          "merchant_regno": "900-00-00001",
-          "approved_amt": 9700,
-          "merchant_category_code": "5812",
-          "merchant_category_name": "카페",
-          "classification_method": "REGNO_EXACT"
-        },
         {
           "approved_num": "1280006",
           "approved_dtime": "20260823141500",
@@ -18597,21 +17653,8 @@
       "id": "MOCK-CARD-01-03",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "1380007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "GS25 편의점",
-          "merchant_regno": "900-00-00020",
-          "approved_amt": 15000,
-          "merchant_category_code": "5411",
-          "merchant_category_name": "편의점",
-          "classification_method": "REGNO_EXACT",
-          "modified_amt": 15000
-        },
         {
           "approved_num": "1380006",
           "approved_dtime": "20260823141500",
@@ -18869,20 +17912,8 @@
       "id": "MOCK-CARD-02-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "2180007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "NOL 인터파크",
-          "merchant_regno": "900-00-00012",
-          "approved_amt": 143000,
-          "merchant_category_code": "7011",
-          "merchant_category_name": "여행·숙박",
-          "classification_method": "REGNO_EXACT"
-        },
         {
           "approved_num": "2180006",
           "approved_dtime": "20260823141500",
@@ -19141,21 +18172,8 @@
       "id": "MOCK-CARD-02-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "2280007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "대한항공",
-          "merchant_regno": "900-00-00018",
-          "approved_amt": 246000,
-          "merchant_category_code": "4511",
-          "merchant_category_name": "항공",
-          "classification_method": "REGNO_EXACT",
-          "modified_amt": 246000
-        },
         {
           "approved_num": "2280006",
           "approved_dtime": "20260823141500",
@@ -19414,20 +18432,8 @@
       "id": "MOCK-CARD-03-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "3180007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "성수다이닝",
-          "merchant_regno": "900-00-00019",
-          "approved_amt": 54000,
-          "merchant_category_code": "5812",
-          "merchant_category_name": "일반 음식점",
-          "classification_method": "REGNO_EXACT"
-        },
         {
           "approved_num": "3180006",
           "approved_dtime": "20260823141500",
@@ -19685,21 +18691,8 @@
       "id": "MOCK-CARD-03-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "3280007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "마켓컬리",
-          "merchant_regno": "900-00-00002",
-          "approved_amt": 48000,
-          "merchant_category_code": "5411",
-          "merchant_category_name": "식료품",
-          "classification_method": "REGNO_EXACT",
-          "modified_amt": 48000
-        },
         {
           "approved_num": "3280006",
           "approved_dtime": "20260823141500",
@@ -19956,21 +18949,8 @@
       "id": "MOCK-CARD-03-03",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "3380007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "GS25 편의점",
-          "merchant_regno": "900-00-00020",
-          "approved_amt": 15000,
-          "merchant_category_code": "5411",
-          "merchant_category_name": "편의점",
-          "classification_method": "REGNO_EXACT",
-          "modified_amt": 15000
-        },
         {
           "approved_num": "3380006",
           "approved_dtime": "20260823141500",
@@ -20227,20 +19207,8 @@
       "id": "MOCK-CARD-04-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "4180007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "바디채널 피트니스",
-          "merchant_regno": "900-00-00014",
-          "approved_amt": 79000,
-          "merchant_category_code": "7997",
-          "merchant_category_name": "피트니스",
-          "classification_method": "REGNO_EXACT"
-        },
         {
           "approved_num": "4180006",
           "approved_dtime": "20260823141500",
@@ -20501,21 +19469,8 @@
       "id": "MOCK-CARD-04-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "4280007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "종로약국",
-          "merchant_regno": "900-00-00017",
-          "approved_amt": 25000,
-          "merchant_category_code": "5912",
-          "merchant_category_name": "약국",
-          "classification_method": "REGNO_EXACT",
-          "modified_amt": 25000
-        },
         {
           "approved_num": "4280006",
           "approved_dtime": "20260823141500",
@@ -20775,21 +19730,8 @@
       "id": "MOCK-CARD-04-03",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "4380007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "바디채널 피트니스",
-          "merchant_regno": "900-00-00014",
-          "approved_amt": 101000,
-          "merchant_category_code": "7997",
-          "merchant_category_name": "피트니스",
-          "classification_method": "REGNO_EXACT",
-          "modified_amt": 101000
-        },
         {
           "approved_num": "4380006",
           "approved_dtime": "20260823141500",
@@ -21049,20 +19991,8 @@
       "id": "MOCK-CARD-05-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "5180007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "SK에너지 역삼주유소",
-          "merchant_regno": "900-00-00008",
-          "approved_amt": 68000,
-          "merchant_category_code": "5541",
-          "merchant_category_name": "주유",
-          "classification_method": "REGNO_EXACT"
-        },
         {
           "approved_num": "5180006",
           "approved_dtime": "20260823141500",
@@ -21312,21 +20242,8 @@
       "id": "MOCK-CARD-05-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "5280007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "대한항공",
-          "merchant_regno": "900-00-00018",
-          "approved_amt": 246000,
-          "merchant_category_code": "4511",
-          "merchant_category_name": "항공",
-          "classification_method": "REGNO_EXACT",
-          "modified_amt": 246000
-        },
         {
           "approved_num": "5280006",
           "approved_dtime": "20260823141500",
@@ -21576,20 +20493,8 @@
       "id": "MOCK-CARD-06-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "6180007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "해커스어학원",
-          "merchant_regno": "900-00-00016",
-          "approved_amt": 185000,
-          "merchant_category_code": "8299",
-          "merchant_category_name": "교육",
-          "classification_method": "REGNO_EXACT"
-        },
         {
           "approved_num": "6180006",
           "approved_dtime": "20260823141500",
@@ -21850,21 +20755,8 @@
       "id": "MOCK-CARD-06-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "6280007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "교보문고 광화문점",
-          "merchant_regno": "900-00-00009",
-          "approved_amt": 27000,
-          "merchant_category_code": "5942",
-          "merchant_category_name": "도서",
-          "classification_method": "REGNO_EXACT",
-          "modified_amt": 27000
-        },
         {
           "approved_num": "6280006",
           "approved_dtime": "20260823141500",
@@ -22124,21 +21016,8 @@
       "id": "MOCK-CARD-06-03",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "6380007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "해커스어학원",
-          "merchant_regno": "900-00-00016",
-          "approved_amt": 237000,
-          "merchant_category_code": "8299",
-          "merchant_category_name": "교육",
-          "classification_method": "REGNO_EXACT",
-          "modified_amt": 237000
-        },
         {
           "approved_num": "6380006",
           "approved_dtime": "20260823141500",
@@ -22398,20 +21277,8 @@
       "id": "MOCK-CARD-07-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "7180007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "을지로 포차",
-          "merchant_regno": "900-00-00011",
-          "approved_amt": 76000,
-          "merchant_category_code": "5813",
-          "merchant_category_name": "주점",
-          "classification_method": "REGNO_EXACT"
-        },
         {
           "approved_num": "7180006",
           "approved_dtime": "20260823141500",
@@ -22669,21 +21536,8 @@
       "id": "MOCK-CARD-07-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "7280007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "성수다이닝",
-          "merchant_regno": "900-00-00019",
-          "approved_amt": 62000,
-          "merchant_category_code": "5812",
-          "merchant_category_name": "일반 음식점",
-          "classification_method": "REGNO_EXACT",
-          "modified_amt": 62000
-        },
         {
           "approved_num": "7280006",
           "approved_dtime": "20260823141500",
@@ -22940,21 +21794,8 @@
       "id": "MOCK-CARD-07-03",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "7380007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "스타벅스 강남역점",
-          "merchant_regno": "900-00-00001",
-          "approved_amt": 11000,
-          "merchant_category_code": "5812",
-          "merchant_category_name": "카페",
-          "classification_method": "REGNO_EXACT",
-          "modified_amt": 11000
-        },
         {
           "approved_num": "7380006",
           "approved_dtime": "20260823141500",
@@ -23212,20 +22053,8 @@
       "id": "MOCK-CARD-08-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "8180007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "스타벅스 강남역점",
-          "merchant_regno": "900-00-00001",
-          "approved_amt": 8500,
-          "merchant_category_code": "5812",
-          "merchant_category_name": "카페",
-          "classification_method": "REGNO_EXACT"
-        },
         {
           "approved_num": "8180006",
           "approved_dtime": "20260823141500",
@@ -23486,20 +22315,8 @@
       "id": "MOCK-CARD-08-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "8280007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "서울교통공사",
-          "merchant_regno": "900-00-00004",
-          "approved_amt": 1900,
-          "merchant_category_code": "4111",
-          "merchant_category_name": "대중교통",
-          "classification_method": "REGNO_EXACT"
-        },
         {
           "approved_num": "8280006",
           "approved_dtime": "20260823141500",
@@ -23759,20 +22576,8 @@
       "id": "MOCK-CARD-09-01",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "9180007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "서울교통공사",
-          "merchant_regno": "900-00-00004",
-          "approved_amt": 1200,
-          "merchant_category_code": "4111",
-          "merchant_category_name": "대중교통",
-          "classification_method": "REGNO_EXACT"
-        },
         {
           "approved_num": "9180006",
           "approved_dtime": "20260823141500",
@@ -24031,21 +22836,8 @@
       "id": "MOCK-CARD-09-02",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "9280007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "배달의민족",
-          "merchant_regno": "900-00-00006",
-          "approved_amt": 20000,
-          "merchant_category_code": "5814",
-          "merchant_category_name": "배달·외식",
-          "classification_method": "REGNO_EXACT",
-          "modified_amt": 20000
-        },
         {
           "approved_num": "9280006",
           "approved_dtime": "20260823141500",
@@ -24303,20 +23095,8 @@
       "id": "MOCK-CARD-09-03",
       "rsp_code": "00000",
       "rsp_msg": "정상처리",
-      "approved_cnt": 21,
+      "approved_cnt": 20,
       "approved_list": [
-        {
-          "approved_num": "9380007",
-          "approved_dtime": "20260827151600",
-          "status": "01",
-          "pay_type": "02",
-          "merchant_name": "스타벅스 강남역점",
-          "merchant_regno": "900-00-00001",
-          "approved_amt": 6000,
-          "merchant_category_code": "5812",
-          "merchant_category_name": "카페",
-          "classification_method": "REGNO_EXACT"
-        },
         {
           "approved_num": "9380006",
           "approved_dtime": "20260823141500",
