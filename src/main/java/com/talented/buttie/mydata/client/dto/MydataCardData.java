@@ -28,4 +28,8 @@ public class MydataCardData {
     private String cardType;
     @JsonProperty("institution_name")
     private String institutionName;
+    @JsonProperty("linked_account_num")
+    private String linkedAccountNumber;
+    @JsonProperty("linked_bank_code")
+    private String linkedBankCode;
 }

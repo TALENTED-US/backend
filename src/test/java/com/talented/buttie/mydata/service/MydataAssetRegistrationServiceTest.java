@@ -23,6 +23,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -63,11 +64,17 @@ class MydataAssetRegistrationServiceTest {
             .cardName("체크카드")
             .cardType("02")
             .institutionName("KB국민카드")
+            .linkedAccountNumber("ACCOUNT-1")
+            .linkedBankCode("KB0001")
             .build();
         given(mydataApiClient.getAccounts(101L)).willReturn(List.of(account));
         given(mydataApiClient.getDebitCards(101L)).willReturn(List.of(card));
         given(accountCreateService.create(any(AccountVO.class)))
-            .willAnswer(invocation -> invocation.getArgument(0));
+            .willAnswer(invocation -> {
+                AccountVO saved = invocation.getArgument(0);
+                saved.setAccountId(100L);
+                return saved;
+            });
         given(cardCreateService.create(any(CardVO.class)))
             .willAnswer(invocation -> invocation.getArgument(0));
 
@@ -84,5 +91,9 @@ class MydataAssetRegistrationServiceTest {
         verify(cardMapper).deactivateAllByUserId(101L);
         verify(accountCreateService).create(any(AccountVO.class));
         verify(cardCreateService).create(any(CardVO.class));
+        ArgumentCaptor<CardVO> cardCaptor = ArgumentCaptor.forClass(CardVO.class);
+        verify(cardCreateService).create(cardCaptor.capture());
+        assertEquals(100L, cardCaptor.getValue().getLinkedAccountId());
+        assertEquals("KB0001", cardCaptor.getValue().getLinkedBankCode());
     }
 }
