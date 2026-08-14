@@ -1357,7 +1357,7 @@
       "transactionAt": "2026-08-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 310000,
-      "balanceAfter": 7021000,
+      "balanceAfter": 700000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -1368,7 +1368,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 56000,
-      "balanceAfter": 7331000,
+      "balanceAfter": 1010000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1379,7 +1379,7 @@
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 1000000,
-      "balanceAfter": 7387000,
+      "balanceAfter": 1066000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -1390,7 +1390,7 @@
       "transactionAt": "2026-07-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 310000,
-      "balanceAfter": 4887000,
+      "balanceAfter": 66000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -1401,7 +1401,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 56000,
-      "balanceAfter": 5197000,
+      "balanceAfter": 376000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1412,7 +1412,7 @@
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 1000000,
-      "balanceAfter": 5253000,
+      "balanceAfter": 432000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -1423,7 +1423,7 @@
       "transactionAt": "2026-06-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 310000,
-      "balanceAfter": 2753000,
+      "balanceAfter": -568000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -1434,7 +1434,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 56000,
-      "balanceAfter": 3063000,
+      "balanceAfter": -258000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1445,7 +1445,7 @@
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 1000000,
-      "balanceAfter": 3119000,
+      "balanceAfter": -202000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -1456,7 +1456,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 67000,
-      "balanceAfter": 807000,
+      "balanceAfter": 700000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -1467,7 +1467,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 67000,
-      "balanceAfter": 874000,
+      "balanceAfter": 767000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -1478,7 +1478,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 67000,
-      "balanceAfter": 941000,
+      "balanceAfter": 834000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -1489,7 +1489,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 78000,
-      "balanceAfter": 1163000,
+      "balanceAfter": 700000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1500,7 +1500,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 78000,
-      "balanceAfter": 1241000,
+      "balanceAfter": 778000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1511,7 +1511,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 78000,
-      "balanceAfter": 1319000,
+      "balanceAfter": 856000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1522,7 +1522,7 @@
       "transactionAt": "2026-08-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 319000,
-      "balanceAfter": 6903500,
+      "balanceAfter": 250000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -1533,7 +1533,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 58500,
-      "balanceAfter": 7222500,
+      "balanceAfter": 569000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1544,7 +1544,7 @@
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 200000,
-      "balanceAfter": 7281000,
+      "balanceAfter": 627500,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -1555,7 +1555,7 @@
       "transactionAt": "2026-07-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 319000,
-      "balanceAfter": 4881000,
+      "balanceAfter": 427500,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -1566,7 +1566,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 58500,
-      "balanceAfter": 5200000,
+      "balanceAfter": 746500,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1577,7 +1577,7 @@
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 200000,
-      "balanceAfter": 5258500,
+      "balanceAfter": 805000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -1588,7 +1588,7 @@
       "transactionAt": "2026-06-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 319000,
-      "balanceAfter": 2858500,
+      "balanceAfter": 605000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -1599,7 +1599,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 58500,
-      "balanceAfter": 3177500,
+      "balanceAfter": 924000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1610,7 +1610,7 @@
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 200000,
-      "balanceAfter": 3236000,
+      "balanceAfter": 982500,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -1621,7 +1621,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 69500,
-      "balanceAfter": 1016500,
+      "balanceAfter": 300000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -1632,7 +1632,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 69500,
-      "balanceAfter": 1086000,
+      "balanceAfter": 369500,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -1643,7 +1643,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 69500,
-      "balanceAfter": 1155500,
+      "balanceAfter": 439000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -1654,7 +1654,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 80500,
-      "balanceAfter": 1372500,
+      "balanceAfter": 350000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1665,7 +1665,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 80500,
-      "balanceAfter": 1453000,
+      "balanceAfter": 430500,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1676,7 +1676,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 80500,
-      "balanceAfter": 1533500,
+      "balanceAfter": 511000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1687,7 +1687,7 @@
       "transactionAt": "2026-08-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 328000,
-      "balanceAfter": 7986000,
+      "balanceAfter": 150000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -1698,7 +1698,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 61000,
-      "balanceAfter": 8314000,
+      "balanceAfter": 478000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1709,7 +1709,7 @@
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 800000,
-      "balanceAfter": 8375000,
+      "balanceAfter": 539000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -1720,7 +1720,7 @@
       "transactionAt": "2026-07-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 328000,
-      "balanceAfter": 5675000,
+      "balanceAfter": -261000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -1731,7 +1731,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 61000,
-      "balanceAfter": 6003000,
+      "balanceAfter": 67000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1742,7 +1742,7 @@
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 800000,
-      "balanceAfter": 6064000,
+      "balanceAfter": 128000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -1753,7 +1753,7 @@
       "transactionAt": "2026-06-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 328000,
-      "balanceAfter": 3364000,
+      "balanceAfter": -672000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -1764,7 +1764,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 61000,
-      "balanceAfter": 3692000,
+      "balanceAfter": -344000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1775,7 +1775,7 @@
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 800000,
-      "balanceAfter": 3753000,
+      "balanceAfter": -283000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -1786,7 +1786,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 72000,
-      "balanceAfter": 1226000,
+      "balanceAfter": 170000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -1797,7 +1797,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 72000,
-      "balanceAfter": 1298000,
+      "balanceAfter": 242000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -1808,7 +1808,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 72000,
-      "balanceAfter": 1370000,
+      "balanceAfter": 314000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -1819,7 +1819,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 83000,
-      "balanceAfter": 1582000,
+      "balanceAfter": 180000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1830,7 +1830,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 83000,
-      "balanceAfter": 1665000,
+      "balanceAfter": 263000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1841,7 +1841,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 83000,
-      "balanceAfter": 1748000,
+      "balanceAfter": 346000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1852,7 +1852,7 @@
       "transactionAt": "2026-08-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 337000,
-      "balanceAfter": 6968500,
+      "balanceAfter": 750000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -1863,7 +1863,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 63500,
-      "balanceAfter": 7305500,
+      "balanceAfter": 1087000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1874,7 +1874,7 @@
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 450000,
-      "balanceAfter": 7369000,
+      "balanceAfter": 1150500,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -1885,7 +1885,7 @@
       "transactionAt": "2026-07-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 337000,
-      "balanceAfter": 5069000,
+      "balanceAfter": 700500,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -1896,7 +1896,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 63500,
-      "balanceAfter": 5406000,
+      "balanceAfter": 1037500,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1907,7 +1907,7 @@
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 450000,
-      "balanceAfter": 5469500,
+      "balanceAfter": 1101000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -1918,7 +1918,7 @@
       "transactionAt": "2026-06-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 337000,
-      "balanceAfter": 3169500,
+      "balanceAfter": 651000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -1929,7 +1929,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 63500,
-      "balanceAfter": 3506500,
+      "balanceAfter": 988000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -1940,7 +1940,7 @@
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 450000,
-      "balanceAfter": 3570000,
+      "balanceAfter": 1051500,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -1951,7 +1951,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 74500,
-      "balanceAfter": 1435500,
+      "balanceAfter": 850000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -1962,7 +1962,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 74500,
-      "balanceAfter": 1510000,
+      "balanceAfter": 924500,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -1973,7 +1973,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 74500,
-      "balanceAfter": 1584500,
+      "balanceAfter": 999000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -1984,7 +1984,7 @@
       "transactionAt": "2026-08-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 346000,
-      "balanceAfter": 8051000,
+      "balanceAfter": 200000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -1995,7 +1995,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 66000,
-      "balanceAfter": 8397000,
+      "balanceAfter": 546000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2006,7 +2006,7 @@
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 750000,
-      "balanceAfter": 8463000,
+      "balanceAfter": 612000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2017,7 +2017,7 @@
       "transactionAt": "2026-07-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 346000,
-      "balanceAfter": 5863000,
+      "balanceAfter": -138000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -2028,7 +2028,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 66000,
-      "balanceAfter": 6209000,
+      "balanceAfter": 208000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2039,7 +2039,7 @@
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 750000,
-      "balanceAfter": 6275000,
+      "balanceAfter": 274000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2050,7 +2050,7 @@
       "transactionAt": "2026-06-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 346000,
-      "balanceAfter": 3675000,
+      "balanceAfter": -476000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -2061,7 +2061,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 66000,
-      "balanceAfter": 4021000,
+      "balanceAfter": -130000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2072,7 +2072,7 @@
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 750000,
-      "balanceAfter": 4087000,
+      "balanceAfter": -64000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2083,7 +2083,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 77000,
-      "balanceAfter": 1645000,
+      "balanceAfter": 250000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2094,7 +2094,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 77000,
-      "balanceAfter": 1722000,
+      "balanceAfter": 327000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2105,7 +2105,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 77000,
-      "balanceAfter": 1799000,
+      "balanceAfter": 404000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2116,7 +2116,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 88000,
-      "balanceAfter": 2001000,
+      "balanceAfter": 350000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2127,7 +2127,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 88000,
-      "balanceAfter": 2089000,
+      "balanceAfter": 438000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2138,7 +2138,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 88000,
-      "balanceAfter": 2177000,
+      "balanceAfter": 526000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2149,7 +2149,7 @@
       "transactionAt": "2026-08-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 355000,
-      "balanceAfter": 7933500,
+      "balanceAfter": 400000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -2160,7 +2160,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 68500,
-      "balanceAfter": 8288500,
+      "balanceAfter": 755000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2171,7 +2171,7 @@
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 700000,
-      "balanceAfter": 8357000,
+      "balanceAfter": 823500,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2182,7 +2182,7 @@
       "transactionAt": "2026-07-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 355000,
-      "balanceAfter": 5857000,
+      "balanceAfter": 123500,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -2193,7 +2193,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 68500,
-      "balanceAfter": 6212000,
+      "balanceAfter": 478500,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2204,7 +2204,7 @@
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 700000,
-      "balanceAfter": 6280500,
+      "balanceAfter": 547000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2215,7 +2215,7 @@
       "transactionAt": "2026-06-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 355000,
-      "balanceAfter": 3780500,
+      "balanceAfter": -153000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -2226,7 +2226,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 68500,
-      "balanceAfter": 4135500,
+      "balanceAfter": 202000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2237,7 +2237,7 @@
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 700000,
-      "balanceAfter": 4204000,
+      "balanceAfter": 270500,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2248,7 +2248,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 79500,
-      "balanceAfter": 1854500,
+      "balanceAfter": 500000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2259,7 +2259,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 79500,
-      "balanceAfter": 1934000,
+      "balanceAfter": 579500,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2270,7 +2270,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 79500,
-      "balanceAfter": 2013500,
+      "balanceAfter": 659000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2281,7 +2281,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 90500,
-      "balanceAfter": 10500,
+      "balanceAfter": 600000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2292,7 +2292,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 90500,
-      "balanceAfter": 101000,
+      "balanceAfter": 690500,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2303,7 +2303,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 90500,
-      "balanceAfter": 191500,
+      "balanceAfter": 781000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2314,7 +2314,7 @@
       "transactionAt": "2026-08-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 364000,
-      "balanceAfter": 6916000,
+      "balanceAfter": 600000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -2325,7 +2325,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 71000,
-      "balanceAfter": 7280000,
+      "balanceAfter": 964000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2336,7 +2336,7 @@
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 1200000,
-      "balanceAfter": 7351000,
+      "balanceAfter": 1035000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2347,7 +2347,7 @@
       "transactionAt": "2026-07-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 364000,
-      "balanceAfter": 5251000,
+      "balanceAfter": -165000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -2358,7 +2358,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 71000,
-      "balanceAfter": 5615000,
+      "balanceAfter": 199000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2369,7 +2369,7 @@
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 1200000,
-      "balanceAfter": 5686000,
+      "balanceAfter": 270000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2380,7 +2380,7 @@
       "transactionAt": "2026-06-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 364000,
-      "balanceAfter": 3586000,
+      "balanceAfter": -930000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -2391,7 +2391,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 71000,
-      "balanceAfter": 3950000,
+      "balanceAfter": -566000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2402,7 +2402,7 @@
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 1200000,
-      "balanceAfter": 4021000,
+      "balanceAfter": -495000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2413,7 +2413,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 82000,
-      "balanceAfter": 2064000,
+      "balanceAfter": 700000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2424,7 +2424,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 82000,
-      "balanceAfter": 2146000,
+      "balanceAfter": 782000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2435,7 +2435,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 82000,
-      "balanceAfter": 2228000,
+      "balanceAfter": 864000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2446,7 +2446,7 @@
       "transactionAt": "2026-08-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 373000,
-      "balanceAfter": 8898500,
+      "balanceAfter": 150000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -2457,7 +2457,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 73500,
-      "balanceAfter": 9271500,
+      "balanceAfter": 523000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2468,7 +2468,7 @@
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 650000,
-      "balanceAfter": 9345000,
+      "balanceAfter": 596500,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2479,7 +2479,7 @@
       "transactionAt": "2026-07-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 373000,
-      "balanceAfter": 6645000,
+      "balanceAfter": -53500,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -2490,7 +2490,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 73500,
-      "balanceAfter": 7018000,
+      "balanceAfter": 319500,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2501,7 +2501,7 @@
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 650000,
-      "balanceAfter": 7091500,
+      "balanceAfter": 393000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2512,7 +2512,7 @@
       "transactionAt": "2026-06-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 373000,
-      "balanceAfter": 4391500,
+      "balanceAfter": -257000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -2523,7 +2523,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 73500,
-      "balanceAfter": 4764500,
+      "balanceAfter": 116000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2534,7 +2534,7 @@
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 650000,
-      "balanceAfter": 4838000,
+      "balanceAfter": 189500,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2545,7 +2545,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 84500,
-      "balanceAfter": 73500,
+      "balanceAfter": 160000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2556,7 +2556,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 84500,
-      "balanceAfter": 158000,
+      "balanceAfter": 244500,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2567,7 +2567,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 84500,
-      "balanceAfter": 242500,
+      "balanceAfter": 329000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2578,7 +2578,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 95500,
-      "balanceAfter": 429500,
+      "balanceAfter": 190000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2589,7 +2589,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 95500,
-      "balanceAfter": 525000,
+      "balanceAfter": 285500,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2600,7 +2600,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 95500,
-      "balanceAfter": 620500,
+      "balanceAfter": 381000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2611,7 +2611,7 @@
       "transactionAt": "2026-08-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 382000,
-      "balanceAfter": 9981000,
+      "balanceAfter": 50000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -2622,7 +2622,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 76000,
-      "balanceAfter": 10363000,
+      "balanceAfter": 432000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2633,7 +2633,7 @@
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 400000,
-      "balanceAfter": 10439000,
+      "balanceAfter": 508000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2644,7 +2644,7 @@
       "transactionAt": "2026-07-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 382000,
-      "balanceAfter": 7439000,
+      "balanceAfter": 108000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -2655,7 +2655,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 76000,
-      "balanceAfter": 7821000,
+      "balanceAfter": 490000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2666,7 +2666,7 @@
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 400000,
-      "balanceAfter": 7897000,
+      "balanceAfter": 566000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2677,7 +2677,7 @@
       "transactionAt": "2026-06-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 382000,
-      "balanceAfter": 4897000,
+      "balanceAfter": 166000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -2688,7 +2688,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 76000,
-      "balanceAfter": 5279000,
+      "balanceAfter": 548000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2699,7 +2699,7 @@
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 400000,
-      "balanceAfter": 5355000,
+      "balanceAfter": 624000,
       "description": "급여",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2710,7 +2710,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 87000,
-      "balanceAfter": 283000,
+      "balanceAfter": 60000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2721,7 +2721,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 87000,
-      "balanceAfter": 370000,
+      "balanceAfter": 147000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2732,7 +2732,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 87000,
-      "balanceAfter": 457000,
+      "balanceAfter": 234000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2743,7 +2743,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 98000,
-      "balanceAfter": 639000,
+      "balanceAfter": 65000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2754,7 +2754,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 98000,
-      "balanceAfter": 737000,
+      "balanceAfter": 163000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2765,7 +2765,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 98000,
-      "balanceAfter": 835000,
+      "balanceAfter": 261000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2776,7 +2776,7 @@
       "transactionAt": "2026-08-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 391000,
-      "balanceAfter": 17221500,
+      "balanceAfter": 30000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -2787,7 +2787,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 78500,
-      "balanceAfter": 17612500,
+      "balanceAfter": 421000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2798,7 +2798,7 @@
       "transactionAt": "2026-08-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 200000,
-      "balanceAfter": 17691000,
+      "balanceAfter": 499500,
       "description": "급여 및 성과급",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2809,7 +2809,7 @@
       "transactionAt": "2026-07-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 391000,
-      "balanceAfter": 12891000,
+      "balanceAfter": 299500,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -2820,7 +2820,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 78500,
-      "balanceAfter": 13282000,
+      "balanceAfter": 690500,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2831,7 +2831,7 @@
       "transactionAt": "2026-07-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 200000,
-      "balanceAfter": 13360500,
+      "balanceAfter": 769000,
       "description": "급여 및 성과급",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2842,7 +2842,7 @@
       "transactionAt": "2026-06-25T18:00:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 391000,
-      "balanceAfter": 8560500,
+      "balanceAfter": 569000,
       "description": "월세 및 공과금",
       "counterpartyName": "개인 지출"
     },
@@ -2853,7 +2853,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 78500,
-      "balanceAfter": 8951500,
+      "balanceAfter": 960000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2864,7 +2864,7 @@
       "transactionAt": "2026-06-01T10:00:00+09:00",
       "type": "DEPOSIT",
       "amount": 200000,
-      "balanceAfter": 9030000,
+      "balanceAfter": 1038500,
       "description": "급여 및 성과급",
       "counterpartyName": "(주)Buttie Demo"
     },
@@ -2875,7 +2875,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 89500,
-      "balanceAfter": 5111500,
+      "balanceAfter": 30000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2886,7 +2886,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 89500,
-      "balanceAfter": 5201000,
+      "balanceAfter": 119500,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2897,7 +2897,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 89500,
-      "balanceAfter": 5290500,
+      "balanceAfter": 209000,
       "description": "정기저축",
       "counterpartyName": "개인 지출"
     },
@@ -2908,7 +2908,7 @@
       "transactionAt": "2026-08-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 100500,
-      "balanceAfter": 6228500,
+      "balanceAfter": 40000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2919,7 +2919,7 @@
       "transactionAt": "2026-07-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 100500,
-      "balanceAfter": 6329000,
+      "balanceAfter": 140500,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     },
@@ -2930,7 +2930,7 @@
       "transactionAt": "2026-06-12T14:30:00+09:00",
       "type": "WITHDRAWAL",
       "amount": 100500,
-      "balanceAfter": 6429500,
+      "balanceAfter": 241000,
       "description": "생활비 이체",
       "counterpartyName": "개인 지출"
     }
@@ -12568,7 +12568,7 @@
           "trans_no": "010002",
           "trans_type": "02",
           "trans_amt": 310000,
-          "balance_amt": 7021000,
+          "balance_amt": 700000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -12576,7 +12576,7 @@
           "trans_no": "010003",
           "trans_type": "02",
           "trans_amt": 56000,
-          "balance_amt": 7331000,
+          "balance_amt": 1010000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -12584,7 +12584,7 @@
           "trans_no": "010004",
           "trans_type": "01",
           "trans_amt": 1000000,
-          "balance_amt": 7387000,
+          "balance_amt": 1066000,
           "trans_memo": "급여"
         },
         {
@@ -12592,7 +12592,7 @@
           "trans_no": "010005",
           "trans_type": "02",
           "trans_amt": 310000,
-          "balance_amt": 4887000,
+          "balance_amt": 66000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -12600,7 +12600,7 @@
           "trans_no": "010006",
           "trans_type": "02",
           "trans_amt": 56000,
-          "balance_amt": 5197000,
+          "balance_amt": 376000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -12608,7 +12608,7 @@
           "trans_no": "010007",
           "trans_type": "01",
           "trans_amt": 1000000,
-          "balance_amt": 5253000,
+          "balance_amt": 432000,
           "trans_memo": "급여"
         },
         {
@@ -12616,7 +12616,7 @@
           "trans_no": "010008",
           "trans_type": "02",
           "trans_amt": 310000,
-          "balance_amt": 2753000,
+          "balance_amt": -568000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -12624,7 +12624,7 @@
           "trans_no": "010009",
           "trans_type": "02",
           "trans_amt": 56000,
-          "balance_amt": 3063000,
+          "balance_amt": -258000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -12632,7 +12632,7 @@
           "trans_no": "010010",
           "trans_type": "01",
           "trans_amt": 1000000,
-          "balance_amt": 3119000,
+          "balance_amt": -202000,
           "trans_memo": "급여"
         }
       ]
@@ -12649,7 +12649,7 @@
           "trans_no": "020002",
           "trans_type": "02",
           "trans_amt": 67000,
-          "balance_amt": 807000,
+          "balance_amt": 700000,
           "trans_memo": "정기저축"
         },
         {
@@ -12657,7 +12657,7 @@
           "trans_no": "020003",
           "trans_type": "02",
           "trans_amt": 67000,
-          "balance_amt": 874000,
+          "balance_amt": 767000,
           "trans_memo": "정기저축"
         },
         {
@@ -12665,7 +12665,7 @@
           "trans_no": "020004",
           "trans_type": "02",
           "trans_amt": 67000,
-          "balance_amt": 941000,
+          "balance_amt": 834000,
           "trans_memo": "정기저축"
         }
       ]
@@ -12682,7 +12682,7 @@
           "trans_no": "030002",
           "trans_type": "02",
           "trans_amt": 78000,
-          "balance_amt": 1163000,
+          "balance_amt": 700000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -12690,7 +12690,7 @@
           "trans_no": "030003",
           "trans_type": "02",
           "trans_amt": 78000,
-          "balance_amt": 1241000,
+          "balance_amt": 778000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -12698,7 +12698,7 @@
           "trans_no": "030004",
           "trans_type": "02",
           "trans_amt": 78000,
-          "balance_amt": 1319000,
+          "balance_amt": 856000,
           "trans_memo": "생활비 이체"
         }
       ]
@@ -12715,7 +12715,7 @@
           "trans_no": "110002",
           "trans_type": "02",
           "trans_amt": 319000,
-          "balance_amt": 6903500,
+          "balance_amt": 250000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -12723,7 +12723,7 @@
           "trans_no": "110003",
           "trans_type": "02",
           "trans_amt": 58500,
-          "balance_amt": 7222500,
+          "balance_amt": 569000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -12731,7 +12731,7 @@
           "trans_no": "110004",
           "trans_type": "01",
           "trans_amt": 200000,
-          "balance_amt": 7281000,
+          "balance_amt": 627500,
           "trans_memo": "급여"
         },
         {
@@ -12739,7 +12739,7 @@
           "trans_no": "110005",
           "trans_type": "02",
           "trans_amt": 319000,
-          "balance_amt": 4881000,
+          "balance_amt": 427500,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -12747,7 +12747,7 @@
           "trans_no": "110006",
           "trans_type": "02",
           "trans_amt": 58500,
-          "balance_amt": 5200000,
+          "balance_amt": 746500,
           "trans_memo": "생활비 이체"
         },
         {
@@ -12755,7 +12755,7 @@
           "trans_no": "110007",
           "trans_type": "01",
           "trans_amt": 200000,
-          "balance_amt": 5258500,
+          "balance_amt": 805000,
           "trans_memo": "급여"
         },
         {
@@ -12763,7 +12763,7 @@
           "trans_no": "110008",
           "trans_type": "02",
           "trans_amt": 319000,
-          "balance_amt": 2858500,
+          "balance_amt": 605000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -12771,7 +12771,7 @@
           "trans_no": "110009",
           "trans_type": "02",
           "trans_amt": 58500,
-          "balance_amt": 3177500,
+          "balance_amt": 924000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -12779,7 +12779,7 @@
           "trans_no": "110010",
           "trans_type": "01",
           "trans_amt": 200000,
-          "balance_amt": 3236000,
+          "balance_amt": 982500,
           "trans_memo": "급여"
         }
       ]
@@ -12796,7 +12796,7 @@
           "trans_no": "120002",
           "trans_type": "02",
           "trans_amt": 69500,
-          "balance_amt": 1016500,
+          "balance_amt": 300000,
           "trans_memo": "정기저축"
         },
         {
@@ -12804,7 +12804,7 @@
           "trans_no": "120003",
           "trans_type": "02",
           "trans_amt": 69500,
-          "balance_amt": 1086000,
+          "balance_amt": 369500,
           "trans_memo": "정기저축"
         },
         {
@@ -12812,7 +12812,7 @@
           "trans_no": "120004",
           "trans_type": "02",
           "trans_amt": 69500,
-          "balance_amt": 1155500,
+          "balance_amt": 439000,
           "trans_memo": "정기저축"
         }
       ]
@@ -12829,7 +12829,7 @@
           "trans_no": "130002",
           "trans_type": "02",
           "trans_amt": 80500,
-          "balance_amt": 1372500,
+          "balance_amt": 350000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -12837,7 +12837,7 @@
           "trans_no": "130003",
           "trans_type": "02",
           "trans_amt": 80500,
-          "balance_amt": 1453000,
+          "balance_amt": 430500,
           "trans_memo": "생활비 이체"
         },
         {
@@ -12845,7 +12845,7 @@
           "trans_no": "130004",
           "trans_type": "02",
           "trans_amt": 80500,
-          "balance_amt": 1533500,
+          "balance_amt": 511000,
           "trans_memo": "생활비 이체"
         }
       ]
@@ -12862,7 +12862,7 @@
           "trans_no": "210002",
           "trans_type": "02",
           "trans_amt": 328000,
-          "balance_amt": 7986000,
+          "balance_amt": 150000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -12870,7 +12870,7 @@
           "trans_no": "210003",
           "trans_type": "02",
           "trans_amt": 61000,
-          "balance_amt": 8314000,
+          "balance_amt": 478000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -12878,7 +12878,7 @@
           "trans_no": "210004",
           "trans_type": "01",
           "trans_amt": 800000,
-          "balance_amt": 8375000,
+          "balance_amt": 539000,
           "trans_memo": "급여"
         },
         {
@@ -12886,7 +12886,7 @@
           "trans_no": "210005",
           "trans_type": "02",
           "trans_amt": 328000,
-          "balance_amt": 5675000,
+          "balance_amt": -261000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -12894,7 +12894,7 @@
           "trans_no": "210006",
           "trans_type": "02",
           "trans_amt": 61000,
-          "balance_amt": 6003000,
+          "balance_amt": 67000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -12902,7 +12902,7 @@
           "trans_no": "210007",
           "trans_type": "01",
           "trans_amt": 800000,
-          "balance_amt": 6064000,
+          "balance_amt": 128000,
           "trans_memo": "급여"
         },
         {
@@ -12910,7 +12910,7 @@
           "trans_no": "210008",
           "trans_type": "02",
           "trans_amt": 328000,
-          "balance_amt": 3364000,
+          "balance_amt": -672000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -12918,7 +12918,7 @@
           "trans_no": "210009",
           "trans_type": "02",
           "trans_amt": 61000,
-          "balance_amt": 3692000,
+          "balance_amt": -344000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -12926,7 +12926,7 @@
           "trans_no": "210010",
           "trans_type": "01",
           "trans_amt": 800000,
-          "balance_amt": 3753000,
+          "balance_amt": -283000,
           "trans_memo": "급여"
         }
       ]
@@ -12943,7 +12943,7 @@
           "trans_no": "220002",
           "trans_type": "02",
           "trans_amt": 72000,
-          "balance_amt": 1226000,
+          "balance_amt": 170000,
           "trans_memo": "정기저축"
         },
         {
@@ -12951,7 +12951,7 @@
           "trans_no": "220003",
           "trans_type": "02",
           "trans_amt": 72000,
-          "balance_amt": 1298000,
+          "balance_amt": 242000,
           "trans_memo": "정기저축"
         },
         {
@@ -12959,7 +12959,7 @@
           "trans_no": "220004",
           "trans_type": "02",
           "trans_amt": 72000,
-          "balance_amt": 1370000,
+          "balance_amt": 314000,
           "trans_memo": "정기저축"
         }
       ]
@@ -12976,7 +12976,7 @@
           "trans_no": "230002",
           "trans_type": "02",
           "trans_amt": 83000,
-          "balance_amt": 1582000,
+          "balance_amt": 180000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -12984,7 +12984,7 @@
           "trans_no": "230003",
           "trans_type": "02",
           "trans_amt": 83000,
-          "balance_amt": 1665000,
+          "balance_amt": 263000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -12992,7 +12992,7 @@
           "trans_no": "230004",
           "trans_type": "02",
           "trans_amt": 83000,
-          "balance_amt": 1748000,
+          "balance_amt": 346000,
           "trans_memo": "생활비 이체"
         }
       ]
@@ -13009,7 +13009,7 @@
           "trans_no": "310002",
           "trans_type": "02",
           "trans_amt": 337000,
-          "balance_amt": 6968500,
+          "balance_amt": 750000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13017,7 +13017,7 @@
           "trans_no": "310003",
           "trans_type": "02",
           "trans_amt": 63500,
-          "balance_amt": 7305500,
+          "balance_amt": 1087000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13025,7 +13025,7 @@
           "trans_no": "310004",
           "trans_type": "01",
           "trans_amt": 450000,
-          "balance_amt": 7369000,
+          "balance_amt": 1150500,
           "trans_memo": "급여"
         },
         {
@@ -13033,7 +13033,7 @@
           "trans_no": "310005",
           "trans_type": "02",
           "trans_amt": 337000,
-          "balance_amt": 5069000,
+          "balance_amt": 700500,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13041,7 +13041,7 @@
           "trans_no": "310006",
           "trans_type": "02",
           "trans_amt": 63500,
-          "balance_amt": 5406000,
+          "balance_amt": 1037500,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13049,7 +13049,7 @@
           "trans_no": "310007",
           "trans_type": "01",
           "trans_amt": 450000,
-          "balance_amt": 5469500,
+          "balance_amt": 1101000,
           "trans_memo": "급여"
         },
         {
@@ -13057,7 +13057,7 @@
           "trans_no": "310008",
           "trans_type": "02",
           "trans_amt": 337000,
-          "balance_amt": 3169500,
+          "balance_amt": 651000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13065,7 +13065,7 @@
           "trans_no": "310009",
           "trans_type": "02",
           "trans_amt": 63500,
-          "balance_amt": 3506500,
+          "balance_amt": 988000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13073,7 +13073,7 @@
           "trans_no": "310010",
           "trans_type": "01",
           "trans_amt": 450000,
-          "balance_amt": 3570000,
+          "balance_amt": 1051500,
           "trans_memo": "급여"
         }
       ]
@@ -13090,7 +13090,7 @@
           "trans_no": "320002",
           "trans_type": "02",
           "trans_amt": 74500,
-          "balance_amt": 1435500,
+          "balance_amt": 850000,
           "trans_memo": "정기저축"
         },
         {
@@ -13098,7 +13098,7 @@
           "trans_no": "320003",
           "trans_type": "02",
           "trans_amt": 74500,
-          "balance_amt": 1510000,
+          "balance_amt": 924500,
           "trans_memo": "정기저축"
         },
         {
@@ -13106,7 +13106,7 @@
           "trans_no": "320004",
           "trans_type": "02",
           "trans_amt": 74500,
-          "balance_amt": 1584500,
+          "balance_amt": 999000,
           "trans_memo": "정기저축"
         }
       ]
@@ -13123,7 +13123,7 @@
           "trans_no": "410002",
           "trans_type": "02",
           "trans_amt": 346000,
-          "balance_amt": 8051000,
+          "balance_amt": 200000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13131,7 +13131,7 @@
           "trans_no": "410003",
           "trans_type": "02",
           "trans_amt": 66000,
-          "balance_amt": 8397000,
+          "balance_amt": 546000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13139,7 +13139,7 @@
           "trans_no": "410004",
           "trans_type": "01",
           "trans_amt": 750000,
-          "balance_amt": 8463000,
+          "balance_amt": 612000,
           "trans_memo": "급여"
         },
         {
@@ -13147,7 +13147,7 @@
           "trans_no": "410005",
           "trans_type": "02",
           "trans_amt": 346000,
-          "balance_amt": 5863000,
+          "balance_amt": -138000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13155,7 +13155,7 @@
           "trans_no": "410006",
           "trans_type": "02",
           "trans_amt": 66000,
-          "balance_amt": 6209000,
+          "balance_amt": 208000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13163,7 +13163,7 @@
           "trans_no": "410007",
           "trans_type": "01",
           "trans_amt": 750000,
-          "balance_amt": 6275000,
+          "balance_amt": 274000,
           "trans_memo": "급여"
         },
         {
@@ -13171,7 +13171,7 @@
           "trans_no": "410008",
           "trans_type": "02",
           "trans_amt": 346000,
-          "balance_amt": 3675000,
+          "balance_amt": -476000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13179,7 +13179,7 @@
           "trans_no": "410009",
           "trans_type": "02",
           "trans_amt": 66000,
-          "balance_amt": 4021000,
+          "balance_amt": -130000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13187,7 +13187,7 @@
           "trans_no": "410010",
           "trans_type": "01",
           "trans_amt": 750000,
-          "balance_amt": 4087000,
+          "balance_amt": -64000,
           "trans_memo": "급여"
         }
       ]
@@ -13204,7 +13204,7 @@
           "trans_no": "420002",
           "trans_type": "02",
           "trans_amt": 77000,
-          "balance_amt": 1645000,
+          "balance_amt": 250000,
           "trans_memo": "정기저축"
         },
         {
@@ -13212,7 +13212,7 @@
           "trans_no": "420003",
           "trans_type": "02",
           "trans_amt": 77000,
-          "balance_amt": 1722000,
+          "balance_amt": 327000,
           "trans_memo": "정기저축"
         },
         {
@@ -13220,7 +13220,7 @@
           "trans_no": "420004",
           "trans_type": "02",
           "trans_amt": 77000,
-          "balance_amt": 1799000,
+          "balance_amt": 404000,
           "trans_memo": "정기저축"
         }
       ]
@@ -13237,7 +13237,7 @@
           "trans_no": "430002",
           "trans_type": "02",
           "trans_amt": 88000,
-          "balance_amt": 2001000,
+          "balance_amt": 350000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13245,7 +13245,7 @@
           "trans_no": "430003",
           "trans_type": "02",
           "trans_amt": 88000,
-          "balance_amt": 2089000,
+          "balance_amt": 438000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13253,7 +13253,7 @@
           "trans_no": "430004",
           "trans_type": "02",
           "trans_amt": 88000,
-          "balance_amt": 2177000,
+          "balance_amt": 526000,
           "trans_memo": "생활비 이체"
         }
       ]
@@ -13270,7 +13270,7 @@
           "trans_no": "510002",
           "trans_type": "02",
           "trans_amt": 355000,
-          "balance_amt": 7933500,
+          "balance_amt": 400000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13278,7 +13278,7 @@
           "trans_no": "510003",
           "trans_type": "02",
           "trans_amt": 68500,
-          "balance_amt": 8288500,
+          "balance_amt": 755000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13286,7 +13286,7 @@
           "trans_no": "510004",
           "trans_type": "01",
           "trans_amt": 700000,
-          "balance_amt": 8357000,
+          "balance_amt": 823500,
           "trans_memo": "급여"
         },
         {
@@ -13294,7 +13294,7 @@
           "trans_no": "510005",
           "trans_type": "02",
           "trans_amt": 355000,
-          "balance_amt": 5857000,
+          "balance_amt": 123500,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13302,7 +13302,7 @@
           "trans_no": "510006",
           "trans_type": "02",
           "trans_amt": 68500,
-          "balance_amt": 6212000,
+          "balance_amt": 478500,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13310,7 +13310,7 @@
           "trans_no": "510007",
           "trans_type": "01",
           "trans_amt": 700000,
-          "balance_amt": 6280500,
+          "balance_amt": 547000,
           "trans_memo": "급여"
         },
         {
@@ -13318,7 +13318,7 @@
           "trans_no": "510008",
           "trans_type": "02",
           "trans_amt": 355000,
-          "balance_amt": 3780500,
+          "balance_amt": -153000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13326,7 +13326,7 @@
           "trans_no": "510009",
           "trans_type": "02",
           "trans_amt": 68500,
-          "balance_amt": 4135500,
+          "balance_amt": 202000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13334,7 +13334,7 @@
           "trans_no": "510010",
           "trans_type": "01",
           "trans_amt": 700000,
-          "balance_amt": 4204000,
+          "balance_amt": 270500,
           "trans_memo": "급여"
         }
       ]
@@ -13351,7 +13351,7 @@
           "trans_no": "520002",
           "trans_type": "02",
           "trans_amt": 79500,
-          "balance_amt": 1854500,
+          "balance_amt": 500000,
           "trans_memo": "정기저축"
         },
         {
@@ -13359,7 +13359,7 @@
           "trans_no": "520003",
           "trans_type": "02",
           "trans_amt": 79500,
-          "balance_amt": 1934000,
+          "balance_amt": 579500,
           "trans_memo": "정기저축"
         },
         {
@@ -13367,7 +13367,7 @@
           "trans_no": "520004",
           "trans_type": "02",
           "trans_amt": 79500,
-          "balance_amt": 2013500,
+          "balance_amt": 659000,
           "trans_memo": "정기저축"
         }
       ]
@@ -13384,7 +13384,7 @@
           "trans_no": "530002",
           "trans_type": "02",
           "trans_amt": 90500,
-          "balance_amt": 10500,
+          "balance_amt": 600000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13392,7 +13392,7 @@
           "trans_no": "530003",
           "trans_type": "02",
           "trans_amt": 90500,
-          "balance_amt": 101000,
+          "balance_amt": 690500,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13400,7 +13400,7 @@
           "trans_no": "530004",
           "trans_type": "02",
           "trans_amt": 90500,
-          "balance_amt": 191500,
+          "balance_amt": 781000,
           "trans_memo": "생활비 이체"
         }
       ]
@@ -13417,7 +13417,7 @@
           "trans_no": "610002",
           "trans_type": "02",
           "trans_amt": 364000,
-          "balance_amt": 6916000,
+          "balance_amt": 600000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13425,7 +13425,7 @@
           "trans_no": "610003",
           "trans_type": "02",
           "trans_amt": 71000,
-          "balance_amt": 7280000,
+          "balance_amt": 964000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13433,7 +13433,7 @@
           "trans_no": "610004",
           "trans_type": "01",
           "trans_amt": 1200000,
-          "balance_amt": 7351000,
+          "balance_amt": 1035000,
           "trans_memo": "급여"
         },
         {
@@ -13441,7 +13441,7 @@
           "trans_no": "610005",
           "trans_type": "02",
           "trans_amt": 364000,
-          "balance_amt": 5251000,
+          "balance_amt": -165000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13449,7 +13449,7 @@
           "trans_no": "610006",
           "trans_type": "02",
           "trans_amt": 71000,
-          "balance_amt": 5615000,
+          "balance_amt": 199000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13457,7 +13457,7 @@
           "trans_no": "610007",
           "trans_type": "01",
           "trans_amt": 1200000,
-          "balance_amt": 5686000,
+          "balance_amt": 270000,
           "trans_memo": "급여"
         },
         {
@@ -13465,7 +13465,7 @@
           "trans_no": "610008",
           "trans_type": "02",
           "trans_amt": 364000,
-          "balance_amt": 3586000,
+          "balance_amt": -930000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13473,7 +13473,7 @@
           "trans_no": "610009",
           "trans_type": "02",
           "trans_amt": 71000,
-          "balance_amt": 3950000,
+          "balance_amt": -566000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13481,7 +13481,7 @@
           "trans_no": "610010",
           "trans_type": "01",
           "trans_amt": 1200000,
-          "balance_amt": 4021000,
+          "balance_amt": -495000,
           "trans_memo": "급여"
         }
       ]
@@ -13498,7 +13498,7 @@
           "trans_no": "620002",
           "trans_type": "02",
           "trans_amt": 82000,
-          "balance_amt": 2064000,
+          "balance_amt": 700000,
           "trans_memo": "정기저축"
         },
         {
@@ -13506,7 +13506,7 @@
           "trans_no": "620003",
           "trans_type": "02",
           "trans_amt": 82000,
-          "balance_amt": 2146000,
+          "balance_amt": 782000,
           "trans_memo": "정기저축"
         },
         {
@@ -13514,7 +13514,7 @@
           "trans_no": "620004",
           "trans_type": "02",
           "trans_amt": 82000,
-          "balance_amt": 2228000,
+          "balance_amt": 864000,
           "trans_memo": "정기저축"
         }
       ]
@@ -13531,7 +13531,7 @@
           "trans_no": "710002",
           "trans_type": "02",
           "trans_amt": 373000,
-          "balance_amt": 8898500,
+          "balance_amt": 150000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13539,7 +13539,7 @@
           "trans_no": "710003",
           "trans_type": "02",
           "trans_amt": 73500,
-          "balance_amt": 9271500,
+          "balance_amt": 523000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13547,7 +13547,7 @@
           "trans_no": "710004",
           "trans_type": "01",
           "trans_amt": 650000,
-          "balance_amt": 9345000,
+          "balance_amt": 596500,
           "trans_memo": "급여"
         },
         {
@@ -13555,7 +13555,7 @@
           "trans_no": "710005",
           "trans_type": "02",
           "trans_amt": 373000,
-          "balance_amt": 6645000,
+          "balance_amt": -53500,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13563,7 +13563,7 @@
           "trans_no": "710006",
           "trans_type": "02",
           "trans_amt": 73500,
-          "balance_amt": 7018000,
+          "balance_amt": 319500,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13571,7 +13571,7 @@
           "trans_no": "710007",
           "trans_type": "01",
           "trans_amt": 650000,
-          "balance_amt": 7091500,
+          "balance_amt": 393000,
           "trans_memo": "급여"
         },
         {
@@ -13579,7 +13579,7 @@
           "trans_no": "710008",
           "trans_type": "02",
           "trans_amt": 373000,
-          "balance_amt": 4391500,
+          "balance_amt": -257000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13587,7 +13587,7 @@
           "trans_no": "710009",
           "trans_type": "02",
           "trans_amt": 73500,
-          "balance_amt": 4764500,
+          "balance_amt": 116000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13595,7 +13595,7 @@
           "trans_no": "710010",
           "trans_type": "01",
           "trans_amt": 650000,
-          "balance_amt": 4838000,
+          "balance_amt": 189500,
           "trans_memo": "급여"
         }
       ]
@@ -13612,7 +13612,7 @@
           "trans_no": "720002",
           "trans_type": "02",
           "trans_amt": 84500,
-          "balance_amt": 73500,
+          "balance_amt": 160000,
           "trans_memo": "정기저축"
         },
         {
@@ -13620,7 +13620,7 @@
           "trans_no": "720003",
           "trans_type": "02",
           "trans_amt": 84500,
-          "balance_amt": 158000,
+          "balance_amt": 244500,
           "trans_memo": "정기저축"
         },
         {
@@ -13628,7 +13628,7 @@
           "trans_no": "720004",
           "trans_type": "02",
           "trans_amt": 84500,
-          "balance_amt": 242500,
+          "balance_amt": 329000,
           "trans_memo": "정기저축"
         }
       ]
@@ -13645,7 +13645,7 @@
           "trans_no": "730002",
           "trans_type": "02",
           "trans_amt": 95500,
-          "balance_amt": 429500,
+          "balance_amt": 190000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13653,7 +13653,7 @@
           "trans_no": "730003",
           "trans_type": "02",
           "trans_amt": 95500,
-          "balance_amt": 525000,
+          "balance_amt": 285500,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13661,7 +13661,7 @@
           "trans_no": "730004",
           "trans_type": "02",
           "trans_amt": 95500,
-          "balance_amt": 620500,
+          "balance_amt": 381000,
           "trans_memo": "생활비 이체"
         }
       ]
@@ -13678,7 +13678,7 @@
           "trans_no": "810002",
           "trans_type": "02",
           "trans_amt": 382000,
-          "balance_amt": 9981000,
+          "balance_amt": 50000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13686,7 +13686,7 @@
           "trans_no": "810003",
           "trans_type": "02",
           "trans_amt": 76000,
-          "balance_amt": 10363000,
+          "balance_amt": 432000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13694,7 +13694,7 @@
           "trans_no": "810004",
           "trans_type": "01",
           "trans_amt": 400000,
-          "balance_amt": 10439000,
+          "balance_amt": 508000,
           "trans_memo": "급여"
         },
         {
@@ -13702,7 +13702,7 @@
           "trans_no": "810005",
           "trans_type": "02",
           "trans_amt": 382000,
-          "balance_amt": 7439000,
+          "balance_amt": 108000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13710,7 +13710,7 @@
           "trans_no": "810006",
           "trans_type": "02",
           "trans_amt": 76000,
-          "balance_amt": 7821000,
+          "balance_amt": 490000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13718,7 +13718,7 @@
           "trans_no": "810007",
           "trans_type": "01",
           "trans_amt": 400000,
-          "balance_amt": 7897000,
+          "balance_amt": 566000,
           "trans_memo": "급여"
         },
         {
@@ -13726,7 +13726,7 @@
           "trans_no": "810008",
           "trans_type": "02",
           "trans_amt": 382000,
-          "balance_amt": 4897000,
+          "balance_amt": 166000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13734,7 +13734,7 @@
           "trans_no": "810009",
           "trans_type": "02",
           "trans_amt": 76000,
-          "balance_amt": 5279000,
+          "balance_amt": 548000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13742,7 +13742,7 @@
           "trans_no": "810010",
           "trans_type": "01",
           "trans_amt": 400000,
-          "balance_amt": 5355000,
+          "balance_amt": 624000,
           "trans_memo": "급여"
         }
       ]
@@ -13759,7 +13759,7 @@
           "trans_no": "820002",
           "trans_type": "02",
           "trans_amt": 87000,
-          "balance_amt": 283000,
+          "balance_amt": 60000,
           "trans_memo": "정기저축"
         },
         {
@@ -13767,7 +13767,7 @@
           "trans_no": "820003",
           "trans_type": "02",
           "trans_amt": 87000,
-          "balance_amt": 370000,
+          "balance_amt": 147000,
           "trans_memo": "정기저축"
         },
         {
@@ -13775,7 +13775,7 @@
           "trans_no": "820004",
           "trans_type": "02",
           "trans_amt": 87000,
-          "balance_amt": 457000,
+          "balance_amt": 234000,
           "trans_memo": "정기저축"
         }
       ]
@@ -13792,7 +13792,7 @@
           "trans_no": "830002",
           "trans_type": "02",
           "trans_amt": 98000,
-          "balance_amt": 639000,
+          "balance_amt": 65000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13800,7 +13800,7 @@
           "trans_no": "830003",
           "trans_type": "02",
           "trans_amt": 98000,
-          "balance_amt": 737000,
+          "balance_amt": 163000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13808,7 +13808,7 @@
           "trans_no": "830004",
           "trans_type": "02",
           "trans_amt": 98000,
-          "balance_amt": 835000,
+          "balance_amt": 261000,
           "trans_memo": "생활비 이체"
         }
       ]
@@ -13825,7 +13825,7 @@
           "trans_no": "910002",
           "trans_type": "02",
           "trans_amt": 391000,
-          "balance_amt": 17221500,
+          "balance_amt": 30000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13833,7 +13833,7 @@
           "trans_no": "910003",
           "trans_type": "02",
           "trans_amt": 78500,
-          "balance_amt": 17612500,
+          "balance_amt": 421000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13841,7 +13841,7 @@
           "trans_no": "910004",
           "trans_type": "01",
           "trans_amt": 200000,
-          "balance_amt": 17691000,
+          "balance_amt": 499500,
           "trans_memo": "급여 및 성과급"
         },
         {
@@ -13849,7 +13849,7 @@
           "trans_no": "910005",
           "trans_type": "02",
           "trans_amt": 391000,
-          "balance_amt": 12891000,
+          "balance_amt": 299500,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13857,7 +13857,7 @@
           "trans_no": "910006",
           "trans_type": "02",
           "trans_amt": 78500,
-          "balance_amt": 13282000,
+          "balance_amt": 690500,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13865,7 +13865,7 @@
           "trans_no": "910007",
           "trans_type": "01",
           "trans_amt": 200000,
-          "balance_amt": 13360500,
+          "balance_amt": 769000,
           "trans_memo": "급여 및 성과급"
         },
         {
@@ -13873,7 +13873,7 @@
           "trans_no": "910008",
           "trans_type": "02",
           "trans_amt": 391000,
-          "balance_amt": 8560500,
+          "balance_amt": 569000,
           "trans_memo": "월세 및 공과금"
         },
         {
@@ -13881,7 +13881,7 @@
           "trans_no": "910009",
           "trans_type": "02",
           "trans_amt": 78500,
-          "balance_amt": 8951500,
+          "balance_amt": 960000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13889,7 +13889,7 @@
           "trans_no": "910010",
           "trans_type": "01",
           "trans_amt": 200000,
-          "balance_amt": 9030000,
+          "balance_amt": 1038500,
           "trans_memo": "급여 및 성과급"
         }
       ]
@@ -13906,7 +13906,7 @@
           "trans_no": "920002",
           "trans_type": "02",
           "trans_amt": 89500,
-          "balance_amt": 5111500,
+          "balance_amt": 30000,
           "trans_memo": "정기저축"
         },
         {
@@ -13914,7 +13914,7 @@
           "trans_no": "920003",
           "trans_type": "02",
           "trans_amt": 89500,
-          "balance_amt": 5201000,
+          "balance_amt": 119500,
           "trans_memo": "정기저축"
         },
         {
@@ -13922,7 +13922,7 @@
           "trans_no": "920004",
           "trans_type": "02",
           "trans_amt": 89500,
-          "balance_amt": 5290500,
+          "balance_amt": 209000,
           "trans_memo": "정기저축"
         }
       ]
@@ -13939,7 +13939,7 @@
           "trans_no": "930002",
           "trans_type": "02",
           "trans_amt": 100500,
-          "balance_amt": 6228500,
+          "balance_amt": 40000,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13947,7 +13947,7 @@
           "trans_no": "930003",
           "trans_type": "02",
           "trans_amt": 100500,
-          "balance_amt": 6329000,
+          "balance_amt": 140500,
           "trans_memo": "생활비 이체"
         },
         {
@@ -13955,7 +13955,7 @@
           "trans_no": "930004",
           "trans_type": "02",
           "trans_amt": 100500,
-          "balance_amt": 6429500,
+          "balance_amt": 241000,
           "trans_memo": "생활비 이체"
         }
       ]
