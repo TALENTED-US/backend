@@ -14,7 +14,7 @@ public record ClassifyAccountTransactionRequest(
     @NotNull(message = "지출 유형 선택은 필수입니다.")
     TransactionType transactionType,
 
-    @ApiModelProperty(value = "지출 카테고리", example = "HOUSING", required = true)
+    @ApiModelProperty(value = "지출 카테고리", example = "HOUSING_COMMUNICATION", required = true)
     @NotNull(message = "지출 카테고리 선택은 필수입니다.")
     ExpenseCategory expenseCategory
 ) {

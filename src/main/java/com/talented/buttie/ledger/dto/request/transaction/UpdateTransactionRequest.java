@@ -20,7 +20,7 @@ public record UpdateTransactionRequest(
     @Positive(message = "금액은 0보다 커야합니다.")
     Integer transactionAmount,
 
-    @ApiModelProperty(value = "카테고리", example = "FOOD, TRANSPORT, HOUSING, COMMUNICATION, SUBSCRIPTION, EDUCATION, CERTIFICATE, ETC_EXPENSE", required = true)
+    @ApiModelProperty(value = "카테고리", example = "FOOD, ALCOHOL_ENTERTAINMENT, CAFE_SNACK, JOB_PREPARATION, SHOPPING, HOBBY_LEISURE, HOUSING_COMMUNICATION, TRANSPORT_FUEL, HEALTH_FITNESS, OTHER_FINANCE", required = true)
     @NotNull(message = "지출 카테고리 선택은 필수입니다.")
     ExpenseCategory expenseCategory,
 
