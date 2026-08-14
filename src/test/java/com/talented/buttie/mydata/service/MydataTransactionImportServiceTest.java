@@ -63,7 +63,6 @@ class MydataTransactionImportServiceTest {
             .approvedDateTime("20260804123300")
             .merchantName("넷플릭스")
             .merchantRegistrationNumber("900-00-00003")
-            .merchantCategoryCode("4899")
             .build();
 
         given(mydataApiClient.getAccountTransactions(101L, "ACCOUNT-1"))

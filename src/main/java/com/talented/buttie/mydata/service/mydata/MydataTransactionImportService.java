@@ -118,13 +118,12 @@ public class MydataTransactionImportService {
             .classificationMethod(classification.method())
             .merchantName(source.getMerchantName())
             .merchantRegistrationNumber(source.getMerchantRegistrationNumber())
-            .merchantCategoryCode(source.getMerchantCategoryCode())
             .transactionContent(defaultText(source.getMerchantName(), "카드 결제"))
             .transactionType(TransactionType.EXPENSE)
             .expenseCategory(classification.category())
             .transactionAmount(source.getApprovedAmount())
             .transactionAt(parseDateTime(source.getApprovedDateTime()))
-            .transactionMemo(source.getMerchantCategoryName())
+            .transactionMemo(null)
             .analysisExcluded(false)
             .build();
     }

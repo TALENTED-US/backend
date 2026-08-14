@@ -29,8 +29,4 @@ public class MydataCardApprovalData {
     private Integer approvedAmount;
     @JsonProperty("modified_amt")
     private Integer modifiedAmount;
-    @JsonProperty("merchant_category_code")
-    private String merchantCategoryCode;
-    @JsonProperty("merchant_category_name")
-    private String merchantCategoryName;
 }

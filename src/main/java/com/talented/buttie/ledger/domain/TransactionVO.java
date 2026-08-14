@@ -20,7 +20,6 @@ public class TransactionVO {
     private ClassificationMethod classificationMethod;
     private String merchantName;
     private String merchantRegistrationNumber;
-    private String merchantCategoryCode;
     private String transactionContent;
     private TransactionType transactionType;
     private ExpenseCategory expenseCategory;

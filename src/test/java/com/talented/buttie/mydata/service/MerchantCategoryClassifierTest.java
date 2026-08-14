@@ -42,7 +42,7 @@ class MerchantCategoryClassifierTest {
         )).willReturn(ExpenseCategory.HOBBY_LEISURE);
         MydataCardApprovalData approval = MydataCardApprovalData.builder()
             .merchantRegistrationNumber("900-00-00003")
-            .merchantCategoryCode("5812")
+            .merchantName("넷플릭스")
             .build();
 
         MerchantCategoryClassifier.ClassificationResult result = classifier.classify(approval);
@@ -52,24 +52,24 @@ class MerchantCategoryClassifierTest {
     }
 
     @Test
-    void 등록번호를_모르면_가맹점업종코드로_분류한다() {
+    void 등록번호를_모르면_정규화한_가맹점명으로_분류한다() {
         given(merchantCategoryMappingMapper.findActiveExpenseCategory(
             MerchantCategoryMappingType.MERCHANT_REGNO,
             "unknown"
         )).willReturn(null);
         given(merchantCategoryMappingMapper.findActiveExpenseCategory(
-            MerchantCategoryMappingType.MERCHANT_CATEGORY_CODE,
-            "4111"
-        )).willReturn(ExpenseCategory.TRANSPORT_FUEL);
+            MerchantCategoryMappingType.MERCHANT_NAME,
+            "NOL 인터파크"
+        )).willReturn(ExpenseCategory.HOBBY_LEISURE);
         MydataCardApprovalData approval = MydataCardApprovalData.builder()
             .merchantRegistrationNumber("unknown")
-            .merchantCategoryCode("4111")
+            .merchantName("  nol   인터파크  ")
             .build();
 
         MerchantCategoryClassifier.ClassificationResult result = classifier.classify(approval);
 
-        assertEquals(ExpenseCategory.TRANSPORT_FUEL, result.category());
-        assertEquals(ClassificationMethod.MERCHANT_CATEGORY_CODE, result.method());
+        assertEquals(ExpenseCategory.HOBBY_LEISURE, result.category());
+        assertEquals(ClassificationMethod.MERCHANT_NAME, result.method());
     }
 
     @Test
@@ -80,7 +80,6 @@ class MerchantCategoryClassifierTest {
         )).willReturn(ExpenseCategory.ALCOHOL_ENTERTAINMENT);
         MydataCardApprovalData approval = MydataCardApprovalData.builder()
             .merchantRegistrationNumber("900-00-00011")
-            .merchantCategoryCode("5813")
             .build();
 
         MerchantCategoryClassifier.ClassificationResult result = classifier.classify(approval);
