@@ -134,8 +134,7 @@ class MockMydataApiClientTest {
                     "status": "01",
                     "merchant_name": "넷플릭스",
                     "merchant_regno": "900-00-00003",
-                    "approved_amt": 17000,
-                    "merchant_category_code": "4899"
+                    "approved_amt": 17000
                   }]
                 }
                 """, MediaType.APPLICATION_JSON));

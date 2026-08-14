@@ -25,7 +25,7 @@ public record FixedExpenseDetailResponse(
     @NotNull
     Integer transactionAmount,
 
-    @ApiModelProperty(value = "지출 카테고리", example = "HOUSING")
+    @ApiModelProperty(value = "지출 카테고리", example = "HOUSING_COMMUNICATION")
     @NotNull
     ExpenseCategory expenseCategory,
 

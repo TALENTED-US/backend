@@ -6,6 +6,7 @@ import com.talented.buttie.ledger.domain.ExpenseCategory;
 import com.talented.buttie.mydata.client.dto.MydataCardApprovalData;
 import com.talented.buttie.mydata.domain.MerchantCategoryMappingType;
 import com.talented.buttie.mydata.mapper.MerchantCategoryMappingMapper;
+import java.util.Locale;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -39,13 +40,13 @@ public class MerchantCategoryClassifier {
             );
         }
 
-        Optional<ExpenseCategory> byMerchantCode = findCategory(
-            MerchantCategoryMappingType.MERCHANT_CATEGORY_CODE,
-            approval.getMerchantCategoryCode()
+        Optional<ExpenseCategory> byMerchantName = findCategory(
+            MerchantCategoryMappingType.MERCHANT_NAME,
+            approval.getMerchantName()
         );
-        return byMerchantCode.map(expenseCategory -> new ClassificationResult(
+        return byMerchantName.map(expenseCategory -> new ClassificationResult(
             expenseCategory,
-            ClassificationMethod.MERCHANT_CATEGORY_CODE
+            ClassificationMethod.MERCHANT_NAME
         )).orElseGet(() -> new ClassificationResult(
             ExpenseCategory.OTHER_FINANCE,
             ClassificationMethod.UNCLASSIFIED
@@ -65,16 +66,28 @@ public class MerchantCategoryClassifier {
             return Optional.empty();
         }
 
-        String cacheKey = mappingType.name() + ":" + mappingValue.trim();
+        String normalizedMappingValue = normalizeMappingValue(mappingType, mappingValue);
+        String cacheKey = mappingType.name() + ":" + normalizedMappingValue;
         return merchantCategoryCache.get(
             cacheKey,
             key -> Optional.ofNullable(
                 merchantCategoryMappingMapper.findActiveExpenseCategory(
                     mappingType,
-                    mappingValue.trim()
+                    normalizedMappingValue
                 )
             )
         );
+    }
+
+    private String normalizeMappingValue(
+        MerchantCategoryMappingType mappingType,
+        String mappingValue
+    ) {
+        String trimmedValue = mappingValue.trim();
+        if (mappingType == MerchantCategoryMappingType.MERCHANT_NAME) {
+            return trimmedValue.replaceAll("\\s+", " ").toUpperCase(Locale.ROOT);
+        }
+        return trimmedValue;
     }
 
     public record ClassificationResult(

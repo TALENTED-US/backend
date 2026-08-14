@@ -87,15 +87,20 @@ public class MydataAssetRegistrationService {
         }
 
         List<CardVO> cards = new ArrayList<>();
+        Map<String, AccountVO> selectedAccounts = accounts.stream()
+            .collect(Collectors.toMap(AccountVO::getExternalAccountId, Function.identity()));
         for (String externalCardId : selectedCardIds) {
-            CardVO card = toCard(userId, availableCards.get(externalCardId));
+            CardVO card = toCard(
+                userId,
+                availableCards.get(externalCardId),
+                selectedAccounts
+            );
             CardVO existing = cardMapper.findByUserIdAndExternalId(userId, externalCardId);
             if (existing == null) {
                 cardCreateService.create(card);
             } else {
                 card.setCardId(existing.getCardId());
-                card.setLinkedAccountId(existing.getLinkedAccountId());
-                card.setLinkedBankCode(existing.getLinkedBankCode());
+                preserveExistingLinkWhenSourceDoesNotProvideOne(card, existing);
                 cardUpdateService.update(card);
             }
             cards.add(card);
@@ -118,9 +123,16 @@ public class MydataAssetRegistrationService {
             .build();
     }
 
-    private CardVO toCard(Long userId, MydataCardData source) {
+    private CardVO toCard(
+        Long userId,
+        MydataCardData source,
+        Map<String, AccountVO> selectedAccounts
+    ) {
+        AccountVO linkedAccount = selectedAccounts.get(source.getLinkedAccountNumber());
         return CardVO.builder()
             .userId(userId)
+            .linkedAccountId(linkedAccount == null ? null : linkedAccount.getAccountId())
+            .linkedBankCode(source.getLinkedBankCode())
             .externalCardId(source.getCardId())
             .cardInstitutionName(source.getInstitutionName())
             .cardName(source.getCardName())
@@ -130,6 +142,18 @@ public class MydataAssetRegistrationService {
             .cardIsActive(true)
             .cardSyncedAt(LocalDateTime.now())
             .build();
+    }
+
+    private void preserveExistingLinkWhenSourceDoesNotProvideOne(
+        CardVO card,
+        CardVO existing
+    ) {
+        if (card.getLinkedAccountId() == null) {
+            card.setLinkedAccountId(existing.getLinkedAccountId());
+        }
+        if (card.getLinkedBankCode() == null || card.getLinkedBankCode().isBlank()) {
+            card.setLinkedBankCode(existing.getLinkedBankCode());
+        }
     }
 
     private AccountType toAccountType(String accountTypeCode) {
