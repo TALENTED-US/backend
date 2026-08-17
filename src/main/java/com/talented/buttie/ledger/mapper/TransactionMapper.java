@@ -2,6 +2,7 @@ package com.talented.buttie.ledger.mapper;
 
 import com.talented.buttie.ledger.domain.TransactionVO;
 import com.talented.buttie.simulation.dto.response.snapshot.SnapshotTransactionAggregateResponse;
+import com.talented.buttie.simulation.dto.response.recommendation.CategoryExpenseAggregateResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
@@ -45,6 +46,12 @@ public interface TransactionMapper {
     int deleteTransaction(@Param("transactionId") Long transactionId);
 
     SnapshotTransactionAggregateResponse aggregateSnapshotTransactions(
+        @Param("userId") Long userId,
+        @Param("fromDateTime") LocalDateTime fromDateTime,
+        @Param("toDateTime") LocalDateTime toDateTime
+    );
+
+    List<CategoryExpenseAggregateResponse> aggregateExpenseByCategory(
         @Param("userId") Long userId,
         @Param("fromDateTime") LocalDateTime fromDateTime,
         @Param("toDateTime") LocalDateTime toDateTime

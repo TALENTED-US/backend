@@ -1,5 +1,6 @@
 package com.talented.buttie.simulation.controller;
 
+import com.talented.buttie.catalog.dto.response.PolicyResponse;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.common.response.ApplicationResponse;
 import com.talented.buttie.common.security.AuthenticationUser;
@@ -7,10 +8,14 @@ import com.talented.buttie.common.security.annotation.AuthUser;
 import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.simulation.domain.SimulationItemCategory;
 import com.talented.buttie.simulation.domain.SimulationVO;
+import com.talented.buttie.simulation.dto.request.AiRecommendationRequest;
 import com.talented.buttie.simulation.dto.request.ApplySimulationItemRequest;
 import com.talented.buttie.simulation.dto.request.CreateSimulationRequest;
 import com.talented.buttie.simulation.dto.request.UpdateSimulationItemRequest;
 import com.talented.buttie.simulation.dto.request.UpdateSimulationPeriodRequest;
+import com.talented.buttie.simulation.dto.response.recommendation.AiRecommendationBundleResponse;
+import com.talented.buttie.simulation.dto.response.recommendation.FinancialRecommendationResponse;
+import com.talented.buttie.simulation.dto.response.recommendation.IncomeJobSearchResponse;
 import com.talented.buttie.simulation.dto.response.simulation.ApplySimulationItemResponse;
 import com.talented.buttie.simulation.dto.response.simulation.ConfirmedSimulationResponse;
 import com.talented.buttie.simulation.dto.response.simulation.SimulationDetailResponse;
@@ -27,6 +32,7 @@ import com.talented.buttie.simulation.service.SimulationItemReadService;
 import com.talented.buttie.simulation.service.SimulationItemUpdateService;
 import com.talented.buttie.simulation.service.SimulationReadService;
 import com.talented.buttie.simulation.service.SimulationUpdateService;
+import com.talented.buttie.simulation.service.llm.AiRecommendationFacade;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.math.BigDecimal;
@@ -58,6 +64,61 @@ public class SimulationController {
     private final SimulationItemUpdateService simulationItemUpdateService;
     private final SimulationItemDeleteService simulationItemDeleteService;
     private final SimulationDeleteService simulationDeleteService;
+    private final AiRecommendationFacade aiRecommendationFacade;
+
+    @ApiOperation("AI 맞춤 재정·수입·정책 추천 생성")
+    @PostMapping("/recommendations")
+    public ApplicationResponse<AiRecommendationBundleResponse> getRecommendations(
+        @AuthUser AuthenticationUser authUser
+    ) {
+        return ApplicationResponse.onSuccess(
+            aiRecommendationFacade.getDefault(authUser.userId())
+        );
+    }
+
+    @ApiOperation("사용자 요청 기반 AI 종합 추천 생성")
+    @PostMapping("/recommendations/custom")
+    public ApplicationResponse<AiRecommendationBundleResponse> getCustomRecommendations(
+        @AuthUser AuthenticationUser authUser,
+        @Valid @RequestBody AiRecommendationRequest request
+    ) {
+        return ApplicationResponse.onSuccess(
+            aiRecommendationFacade.getCustom(authUser.userId(), request.getPrompt())
+        );
+    }
+
+    @ApiOperation("지출 줄이기 AI 추천 생성")
+    @PostMapping("/recommendations/expense")
+    public ApplicationResponse<FinancialRecommendationResponse> getExpenseRecommendations(
+        @AuthUser AuthenticationUser authUser,
+        @Valid @RequestBody AiRecommendationRequest request
+    ) {
+        return ApplicationResponse.onSuccess(
+            aiRecommendationFacade.getExpense(authUser.userId(), request.getPrompt())
+        );
+    }
+
+    @ApiOperation("수입 늘리기용 알바 플랫폼 검색 링크 생성")
+    @PostMapping("/recommendations/income")
+    public ApplicationResponse<IncomeJobSearchResponse> getIncomeRecommendations(
+        @AuthUser AuthenticationUser authUser,
+        @Valid @RequestBody AiRecommendationRequest request
+    ) {
+        return ApplicationResponse.onSuccess(
+            aiRecommendationFacade.getIncome(authUser.userId(), request.getPrompt())
+        );
+    }
+
+    @ApiOperation("사용자 조건 기반 정책 추천 조회")
+    @PostMapping("/recommendations/policies")
+    public ApplicationResponse<List<PolicyResponse>> getPolicyRecommendations(
+        @AuthUser AuthenticationUser authUser,
+        @Valid @RequestBody AiRecommendationRequest request
+    ) {
+        return ApplicationResponse.onSuccess(
+            aiRecommendationFacade.getPolicies(authUser.userId(), request.getPrompt())
+        );
+    }
 
     @ApiOperation("시뮬레이션 생성")
     @PostMapping
