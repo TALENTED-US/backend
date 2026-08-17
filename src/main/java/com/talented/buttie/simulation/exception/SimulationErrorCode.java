@@ -24,7 +24,9 @@ public enum SimulationErrorCode implements BaseErrorCode {
 
     ALREADY_NOT_CONFIRMED_SIMULATION_EXISTS(HttpStatus.CONFLICT, "SIMULATION_901", "이미 미확정 시뮬레이션이 존재합니다."),
     ALREADY_CONFIRMED_SIMULATION_EXISTS(HttpStatus.CONFLICT, "SIMULATION_902", "이미 확정 시뮬레이션이 존재합니다."),
-    CONFIRMED_SIMULATION_CANNOT_BE_UPDATED(HttpStatus.CONFLICT, "SIMULATION_903", "확정 재정 계획은 수정 불가합니다.");
+    CONFIRMED_SIMULATION_CANNOT_BE_UPDATED(HttpStatus.CONFLICT, "SIMULATION_903", "확정 재정 계획은 수정 불가합니다."),
+
+    AI_RECOMMENDATION_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "SIMULATION_504", "AI 재정 추천을 지금 생성할 수 없습니다.");
 
 
     private final HttpStatus httpStatus;

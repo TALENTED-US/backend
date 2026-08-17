@@ -211,6 +211,22 @@
       and #{toDateTime} > TRANSACTION_AT
   </select>
 
+  <select id="aggregateExpenseByCategory"
+    resultType="com.talented.buttie.simulation.dto.response.recommendation.CategoryExpenseAggregateResponse">
+    SELECT EXPENSE_CATEGORY AS expenseCategory,
+           COALESCE(SUM(TRANSACTION_AMOUNT), 0) AS totalAmount
+    FROM `TRANSACTION`
+    WHERE USER_ID = #{userId}
+      AND IS_DELETED = false
+      AND ANALYSIS_EXCLUDED = false
+      AND TRANSACTION_TYPE IN ('EXPENSE', 'FIXED')
+      AND EXPENSE_CATEGORY IS NOT NULL
+      AND TRANSACTION_AT >= #{fromDateTime}
+      AND #{toDateTime} > TRANSACTION_AT
+    GROUP BY EXPENSE_CATEGORY
+    ORDER BY totalAmount DESC
+  </select>
+
   <!-- 수동 등록 거래 전체 수정 (외부거래 ID가 없을 때 사용) -->
   <update id="updateTransaction" parameterType="com.talented.buttie.ledger.domain.TransactionVO">
     UPDATE TRANSACTION
