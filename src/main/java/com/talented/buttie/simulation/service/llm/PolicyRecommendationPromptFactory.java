@@ -41,6 +41,7 @@ public class PolicyRecommendationPromptFactory {
             5. 면접 참여, 소득 기준, 거주 기간처럼 제공된 사용자 정보만으로 확인할 수 없는 추가 자격이 있으면 [추가 조건 확인]으로 시작하고, 확인이 필요한 항목을 명시한다.
             6. 제공되지 않은 사실을 만들어 "면접을 보지 않았다", "자격이 확정됐다"라고 단정하지 않는다.
             7. DB 필터를 통과한 정책만 전달되므로, 근거 없이 [부적합] 또는 다른 정책 추천을 작성하지 않는다.
+            8. FIRST_JOB, REEMPLOYMENT 등 내부 enum 이름은 사용자에게 노출하지 않고, 반드시 자연스러운 한국어로 표현한다.
 
             반드시 JSON 객체만 반환한다.
             형식:
@@ -59,8 +60,7 @@ public class PolicyRecommendationPromptFactory {
             """.formatted(
             preparation == null ? "미입력" : value(preparation.getEmploymentPrepRegion()),
             resolveAge(preparation),
-            preparation == null || preparation.getEmploymentPrepType() == null
-                ? "미입력" : preparation.getEmploymentPrepType().name(),
+            describeEmploymentPrepType(preparation),
             snapshot == null ? "미입력" : value(snapshot.getAvgMonthlyIncome()),
             snapshot == null ? "미입력" : value(snapshot.getAvgMonthlyExpense()),
             snapshot == null ? "미입력" : value(snapshot.getLiquidAssets()),
@@ -71,6 +71,16 @@ public class PolicyRecommendationPromptFactory {
     private String resolveAge(EmploymentPreparationVO preparation) {
         return preparation == null || preparation.getBirthDate() == null
             ? "미입력" : String.valueOf(Period.between(preparation.getBirthDate(), LocalDate.now()).getYears());
+    }
+
+    private String describeEmploymentPrepType(EmploymentPreparationVO preparation) {
+        if (preparation == null || preparation.getEmploymentPrepType() == null) {
+            return "미입력";
+        }
+        return switch (preparation.getEmploymentPrepType()) {
+            case FIRST_JOB -> "첫 취업을 준비 중";
+            case REEMPLOYMENT -> "재취업을 준비 중";
+        };
     }
 
     private String value(Object value) {
