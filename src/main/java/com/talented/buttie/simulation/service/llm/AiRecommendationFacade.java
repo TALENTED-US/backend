@@ -23,9 +23,6 @@ public class AiRecommendationFacade {
 
     public AiRecommendationBundleResponse getCustom(Long userId, String prompt) {
         promptScopeValidator.validate(prompt);
-        financialRecommendationService.invalidateForUser(userId);
-        incomeJobSearchLinkService.invalidateForUser(userId);
-        policySuggestionService.invalidateForUser(userId);
         return createBundle(userId, prompt);
     }
 

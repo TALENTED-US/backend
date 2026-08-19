@@ -1,8 +1,6 @@
 package com.talented.buttie.simulation.service.llm;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import com.talented.buttie.simulation.dto.response.recommendation.IncomeJobSearchResponse;
-import com.talented.buttie.common.util.CacheKeyUtils;
 import com.talented.buttie.simulation.domain.FinancialSnapshotVO;
 import com.talented.buttie.simulation.domain.SimulationItemCategory;
 import com.talented.buttie.simulation.domain.SimulationRecurrenceType;
@@ -51,7 +49,6 @@ public class IncomeJobSearchLinkService {
     private final FinancialSnapshotMapper financialSnapshotMapper;
     private final SimulationMapper simulationMapper;
     private final SimulationItemMapper simulationItemMapper;
-    private final Cache<String, IncomeJobSearchResponse> incomeJobSearchCache;
 
     public IncomeJobSearchResponse create(Long userId, String prompt) {
         EmploymentPreparationVO preparation = employmentPreparationMapper.selectEmploymentPreparation(userId);
@@ -59,14 +56,8 @@ public class IncomeJobSearchLinkService {
             ? "내 주변" : preparation.getEmploymentPrepRegion();
         String keyword = region + " 지역 공고";
         IncomeTarget target = calculateIncomeTarget(userId);
-        String cacheKey = "income-job-search:" + userId + ":" + target.cacheSignature() + ":"
-            + CacheKeyUtils.sha256(keyword);
-        IncomeJobSearchResponse cached = incomeJobSearchCache.getIfPresent(cacheKey);
-        if (cached != null) {
-            return cached;
-        }
 
-        IncomeJobSearchResponse response = IncomeJobSearchResponse.builder()
+        return IncomeJobSearchResponse.builder()
             .searchKeyword(keyword)
             .region(region)
             .requiredMonthlyIncome(target.requiredMonthlyIncome())
@@ -86,13 +77,6 @@ public class IncomeJobSearchLinkService {
             ))
             .jobs(List.of())
             .build();
-        incomeJobSearchCache.put(cacheKey, response);
-        return response;
-    }
-
-    public void invalidateForUser(Long userId) {
-        String keyPrefix = "income-job-search:" + userId + ":";
-        incomeJobSearchCache.asMap().keySet().removeIf(key -> key.startsWith(keyPrefix));
     }
 
     private IncomeTarget calculateIncomeTarget(Long userId) {
@@ -115,10 +99,7 @@ public class IncomeJobSearchLinkService {
         int minimumHourlyWage = requiredMonthlyIncome == 0 ? 0 : Math.max(MINIMUM_HOURLY_WAGE,
             roundUpToHundred(requiredMonthlyIncome / (AVERAGE_WEEKS_PER_MONTH * DEFAULT_AVAILABLE_HOURS_PER_WEEK)
                 * HOURLY_WAGE_BUFFER_RATE));
-        String cacheSignature = (snapshot == null ? "no-snapshot" : snapshot.getSnapshotId()) + ":"
-            + (simulation == null ? "no-simulation" : simulation.getSimulationId()) + ":"
-            + monthlyExpenseReduction + ":" + requiredMonthlyIncome;
-        return new IncomeTarget(requiredMonthlyIncome, monthlyExpenseReduction, minimumHourlyWage, cacheSignature);
+        return new IncomeTarget(requiredMonthlyIncome, monthlyExpenseReduction, minimumHourlyWage);
     }
 
     private int roundUpToHundred(double amount) {
@@ -178,8 +159,7 @@ public class IncomeJobSearchLinkService {
     private record IncomeTarget(
         int requiredMonthlyIncome,
         int appliedMonthlyExpenseReduction,
-        int recommendedMinimumHourlyWage,
-        String cacheSignature
+        int recommendedMinimumHourlyWage
     ) {
     }
 

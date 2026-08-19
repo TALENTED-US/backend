@@ -1,8 +1,6 @@
 package com.talented.buttie.simulation.service.llm;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import com.talented.buttie.catalog.dto.request.PolicySearchRequest;
-import com.talented.buttie.common.util.CacheKeyUtils;
 import com.talented.buttie.catalog.dto.response.PolicyResponse;
 import com.talented.buttie.catalog.service.PolicyService;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
@@ -29,7 +27,6 @@ public class PolicySuggestionService {
     private final FinancialSnapshotMapper financialSnapshotMapper;
     private final PolicyRecommendationPromptFactory policyRecommendationPromptFactory;
     private final OpenAiChatClient openAiChatClient;
-    private final Cache<String, List<PolicyResponse>> policyRecommendationCache;
 
     public List<PolicyResponse> find(Long userId, String prompt) {
         EmploymentPreparationVO preparation = employmentPreparationMapper.selectEmploymentPreparation(userId);
@@ -37,14 +34,6 @@ public class PolicySuggestionService {
         Integer age = resolveAge(preparation);
         String status = preparation == null || preparation.getEmploymentPrepType() == null
             ? null : preparation.getEmploymentPrepType().name();
-        String cacheKey = "policy-recommendation:v3:" + userId + ":" + nullSafe(region) + ":"
-            + nullSafe(status) + ":" + nullSafe(age) + ":" + CacheKeyUtils.sha256(nullSafe(prompt));
-
-        List<PolicyResponse> cached = policyRecommendationCache.getIfPresent(cacheKey);
-        if (cached != null) {
-            return cached;
-        }
-
         String category = resolveCategory(prompt);
         PolicySearchRequest request = PolicySearchRequest.builder()
             .keyword(category == null ? normalize(prompt) : null)
@@ -65,13 +54,7 @@ public class PolicySuggestionService {
             financialSnapshotMapper.findLatestByUserId(userId),
             results
         );
-        policyRecommendationCache.put(cacheKey, enrichedResults);
         return enrichedResults;
-    }
-
-    public void invalidateForUser(Long userId) {
-        String keyPrefix = "policy-recommendation:v3:" + userId + ":";
-        policyRecommendationCache.asMap().keySet().removeIf(key -> key.startsWith(keyPrefix));
     }
 
     private List<PolicyResponse> search(PolicySearchRequest request) {
@@ -198,7 +181,4 @@ public class PolicySuggestionService {
         return value == null ? "" : value.trim();
     }
 
-    private String nullSafe(Object value) {
-        return value == null ? "" : value.toString();
-    }
 }

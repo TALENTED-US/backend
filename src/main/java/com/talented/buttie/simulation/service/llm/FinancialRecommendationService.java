@@ -1,8 +1,6 @@
 package com.talented.buttie.simulation.service.llm;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import com.talented.buttie.common.exception.ApplicationException;
-import com.talented.buttie.common.util.CacheKeyUtils;
 import com.talented.buttie.ledger.mapper.TransactionMapper;
 import com.talented.buttie.ledger.domain.ExpenseCategory;
 import com.talented.buttie.simulation.domain.FinancialSnapshotVO;
@@ -33,19 +31,11 @@ public class FinancialRecommendationService {
     private final TransactionMapper transactionMapper;
     private final FinancialRecommendationPromptFactory promptFactory;
     private final OpenAiChatClient openAiChatClient;
-    private final Cache<String, FinancialRecommendationResponse> financialRecommendationCache;
 
     public FinancialRecommendationResponse getRecommendations(Long userId, String userPrompt, RecommendationFocus focus) {
         FinancialSnapshotVO snapshot = financialSnapshotMapper.findLatestByUserId(userId);
         if (snapshot == null || snapshot.getSnapshotId() == null) {
             throw ApplicationException.from(AnalysisErrorCode.SNAPSHOT_NOT_FOUND);
-        }
-
-        String cacheKey = "financial-recommendation:v3:" + userId + ":" + snapshot.getSnapshotId()
-            + ":" + focus.name() + ":" + CacheKeyUtils.sha256(normalize(userPrompt));
-        FinancialRecommendationResponse cached = financialRecommendationCache.getIfPresent(cacheKey);
-        if (cached != null) {
-            return cached;
         }
 
         LocalDate today = LocalDate.now();
@@ -65,14 +55,7 @@ public class FinancialRecommendationService {
         OpenAiRecommendationResult result = openAiChatClient.createFinancialRecommendation(
             promptFactory.create(snapshot, categoryExpenses, userPrompt, focus)
         );
-        FinancialRecommendationResponse response = toResponse(result, previousMonthLimits, userPrompt);
-        financialRecommendationCache.put(cacheKey, response);
-        return response;
-    }
-
-    public void invalidateForUser(Long userId) {
-        String keyPrefix = "financial-recommendation:v3:" + userId + ":";
-        financialRecommendationCache.asMap().keySet().removeIf(key -> key.startsWith(keyPrefix));
+        return toResponse(result, previousMonthLimits, userPrompt);
     }
 
     private FinancialRecommendationResponse toResponse(
