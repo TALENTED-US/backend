@@ -51,25 +51,35 @@ public class FinancialRecommendationService {
             .filter(item -> item.getExpenseCategory() != null && item.getTotalAmount() != null)
             .collect(Collectors.toMap(CategoryExpenseAggregateResponse::getExpenseCategory,
                 item -> item.getTotalAmount().intValue(), Integer::max));
+        Map<ExpenseCategory, Integer> analysisPeriodAverageLimits = categoryExpenses.stream()
+            .filter(item -> item.getExpenseCategory() != null && item.getTotalAmount() != null)
+            .collect(Collectors.toMap(
+                CategoryExpenseAggregateResponse::getExpenseCategory,
+                item -> item.getTotalAmount().intValue() / ANALYSIS_MONTHS,
+                Integer::max
+            ));
 
         OpenAiRecommendationResult result = openAiChatClient.createFinancialRecommendation(
             promptFactory.create(snapshot, categoryExpenses, userPrompt, focus)
         );
-        return toResponse(result, previousMonthLimits, userPrompt);
+        return toResponse(result, previousMonthLimits, analysisPeriodAverageLimits, userPrompt);
     }
 
     private FinancialRecommendationResponse toResponse(
         OpenAiRecommendationResult result,
         Map<ExpenseCategory, Integer> previousMonthLimits,
+        Map<ExpenseCategory, Integer> analysisPeriodAverageLimits,
         String userPrompt
     ) {
         if (result == null || result.getSummary() == null || result.getRecommendations() == null) {
             throw ApplicationException.from(SimulationErrorCode.AI_RECOMMENDATION_UNAVAILABLE);
         }
 
+        ExpenseCategory protectedCategory = findProtectedExpenseCategory(userPrompt);
         List<FinancialRecommendationResponse.RecommendationItem> items = result.getRecommendations().stream()
-            .map(item -> toItem(item, previousMonthLimits))
+            .map(item -> toItem(item, previousMonthLimits, analysisPeriodAverageLimits))
             .filter(item -> item != null)
+            .filter(item -> protectedCategory == null || !protectedCategory.name().equals(item.getCategory()))
             .collect(Collectors.toMap(
                 item -> item.getActionType().name() + ":" + item.getCategory(),
                 Function.identity(),
@@ -116,14 +126,19 @@ public class FinancialRecommendationService {
     }
 
     private FinancialRecommendationResponse.RecommendationItem toItem(OpenAiRecommendationResult.Recommendation item,
-        Map<ExpenseCategory, Integer> previousMonthLimits) {
+        Map<ExpenseCategory, Integer> previousMonthLimits,
+        Map<ExpenseCategory, Integer> analysisPeriodAverageLimits) {
         if (!isValid(item)) return null;
         int amount = item.getSuggestedMonthlyAmount();
         String title = item.getTitle();
         if (item.getActionType().name().equals("REDUCE_EXPENSE")) {
             try {
                 ExpenseCategory category = ExpenseCategory.valueOf(item.getCategory());
-                amount = Math.min(amount, previousMonthLimits.getOrDefault(category, 0));
+                int limit = previousMonthLimits.getOrDefault(
+                    category,
+                    analysisPeriodAverageLimits.getOrDefault(category, 0)
+                );
+                amount = Math.min(amount, limit);
                 if (amount <= 0) return null;
             } catch (IllegalArgumentException e) {
                 return null;
