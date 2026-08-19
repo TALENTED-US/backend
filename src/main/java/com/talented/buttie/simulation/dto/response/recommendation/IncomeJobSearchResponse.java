@@ -15,6 +15,10 @@ public class IncomeJobSearchResponse {
     private String searchKeyword;
     private String region;
     private String notice;
+    private Integer requiredMonthlyIncome;
+    private Integer appliedMonthlyExpenseReduction;
+    private Integer availableHoursPerWeek;
+    private Integer recommendedMinimumHourlyWage;
     private List<JobSearchLink> links;
     private List<JobPosting> jobs;
 
