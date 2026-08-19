@@ -15,24 +15,29 @@ public class AiRecommendationFacade {
     private final FinancialRecommendationService financialRecommendationService;
     private final IncomeJobSearchLinkService incomeJobSearchLinkService;
     private final PolicySuggestionService policySuggestionService;
+    private final AiRecommendationPromptScopeValidator promptScopeValidator;
 
     public AiRecommendationBundleResponse getDefault(Long userId) {
         return createBundle(userId, null);
     }
 
     public AiRecommendationBundleResponse getCustom(Long userId, String prompt) {
+        promptScopeValidator.validate(prompt);
         return createBundle(userId, prompt);
     }
 
     public FinancialRecommendationResponse getExpense(Long userId, String prompt) {
+        promptScopeValidator.validateExpense(prompt);
         return financialRecommendationService.getRecommendations(userId, prompt, RecommendationFocus.EXPENSE);
     }
 
     public IncomeJobSearchResponse getIncome(Long userId, String prompt) {
+        promptScopeValidator.validateIncome(prompt);
         return incomeJobSearchLinkService.create(userId, prompt);
     }
 
     public List<PolicyResponse> getPolicies(Long userId, String prompt) {
+        promptScopeValidator.validatePolicy(prompt);
         return policySuggestionService.find(userId, prompt);
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.simulation.dto.response.recommendation.OpenAiRecommendationResult;
+import com.talented.buttie.simulation.dto.response.recommendation.PolicyRecommendationReasonResult;
 import com.talented.buttie.simulation.exception.SimulationErrorCode;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +68,38 @@ public class OpenAiChatClient {
         } catch (RestClientException | JsonProcessingException | IllegalStateException e) {
             log.warn("OpenAI 재정 추천 요청 또는 응답 처리 실패: {}", e.getMessage());
             throw ApplicationException.from(SimulationErrorCode.AI_RECOMMENDATION_UNAVAILABLE);
+        }
+    }
+
+    public PolicyRecommendationReasonResult createPolicyRecommendationReasons(String prompt) {
+        if (apiKey == null || apiKey.isBlank()) {
+            return null;
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(apiKey);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Object> request = Map.of(
+            "model", model,
+            "store", false,
+            "input", List.of(Map.of(
+                "role", "developer",
+                "content", List.of(Map.of("type", "input_text", "text", prompt))
+            )),
+            "text", Map.of("format", Map.of("type", "json_object"))
+        );
+
+        try {
+            Map<?, ?> response = restTemplate.postForObject(
+                RESPONSES_URL,
+                new HttpEntity<>(request, headers),
+                Map.class
+            );
+            return objectMapper.readValue(extractOutputText(response), PolicyRecommendationReasonResult.class);
+        } catch (RestClientException | JsonProcessingException | IllegalStateException e) {
+            log.warn("OpenAI 정책 추천 이유 생성 실패: exceptionType={}", e.getClass().getSimpleName());
+            return null;
         }
     }
 
