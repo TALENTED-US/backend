@@ -1,5 +1,6 @@
 package com.talented.buttie.catalog.controller;
 
+import com.talented.buttie.catalog.domain.PolicyCategory;
 import com.talented.buttie.catalog.domain.PolicyStatus;
 import com.talented.buttie.catalog.dto.request.PolicySearchRequest;
 import com.talented.buttie.catalog.dto.response.PolicyResponse;
@@ -31,7 +32,7 @@ public class PolicyController {
     @GetMapping("")
     public ApplicationResponse<PageResponse<PolicyResponse>> getAllPolicies(
         @ApiParam(value = "검색 키워드 (정책명, 필요서류)") @RequestParam(value = "keyword", required = false) String keyword,
-        @ApiParam(value = "정책 카테고리 (주거, 교통, 복지, 취업, 교육, 청년지원)") @RequestParam(value = "policyCategory", required = false) String policyCategory,
+        @ApiParam(value = "정책 카테고리 (HOUSING, TRANSPORT, WELFARE, EMPLOYMENT, EDUCATION, YOUTH_SUPPORT)") @RequestParam(value = "policyCategory", required = false) PolicyCategory policyCategory,
         @ApiParam(value = "정책 지역 (서울, 경기, 인천, 부산, 대구, 광주, 대전, 울산, 세종, 전국 또는 우편번호 zipCd)") @RequestParam(value = "policyRegion", required = false) String policyRegion,
         @ApiParam(value = "사용자 나이") @RequestParam(value = "age", required = false) Integer age,
         @ApiParam(value = "취업 준비 상태 (첫취업, 재취업, 재직자, 예비창업자, 미취업자)") @RequestParam(value = "employmentPrepStatus", required = false) String employmentPrepStatus,

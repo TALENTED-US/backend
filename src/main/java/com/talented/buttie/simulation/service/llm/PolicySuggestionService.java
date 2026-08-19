@@ -2,6 +2,7 @@ package com.talented.buttie.simulation.service.llm;
 
 import com.talented.buttie.catalog.dto.request.PolicySearchRequest;
 import com.talented.buttie.catalog.dto.response.PolicyResponse;
+import com.talented.buttie.catalog.domain.PolicyCategory;
 import com.talented.buttie.catalog.service.PolicyService;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
@@ -11,6 +12,7 @@ import com.talented.buttie.simulation.mapper.FinancialSnapshotMapper;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 public class PolicySuggestionService {
 
     private static final int RECOMMENDATION_SIZE = 5;
+    private static final List<String> RECOMMENDATION_LABELS = List.of("가장 적합", "우선 검토", "추가 조건 확인");
 
     private final PolicyService policyService;
     private final EmploymentPreparationMapper employmentPreparationMapper;
@@ -34,9 +37,9 @@ public class PolicySuggestionService {
         Integer age = resolveAge(preparation);
         String status = preparation == null || preparation.getEmploymentPrepType() == null
             ? null : preparation.getEmploymentPrepType().name();
-        String category = resolveCategory(prompt);
+        PolicyCategory category = resolveCategory(prompt);
         PolicySearchRequest request = PolicySearchRequest.builder()
-            .keyword(category == null ? normalize(prompt) : null)
+            .keyword(null)
             .policyCategory(category)
             .policyRegion(region)
             .age(age)
@@ -76,7 +79,9 @@ public class PolicySuggestionService {
                 PolicyResponse policy = policies.get(index);
                 String reason = findReason(result, index);
                 return withRecommendationReason(policy,
-                    reason == null ? createDefaultRecommendationReason(preparation, policy) : reason);
+                    reason == null
+                        ? createDefaultRecommendationReason(preparation, policy)
+                        : normalizeRecommendationReason(reason));
             })
             .toList();
     }
@@ -105,6 +110,19 @@ public class PolicySuggestionService {
         }
         return "[가장 적합] " + userCondition + "을 고려했을 때, " + policyName + "의 " + support
             + " 조건에 부합할 수 있으므로 재정 부담을 줄이기 위해 신청을 검토하는 것을 추천합니다.";
+    }
+
+    private String normalizeRecommendationReason(String reason) {
+        String normalized = reason.trim()
+            .replace("FIRST_JOB", "첫 취업 준비 중")
+            .replace("REEMPLOYMENT", "재취업 준비 중");
+        for (String label : RECOMMENDATION_LABELS) {
+            Pattern pattern = Pattern.compile("^\\[?" + Pattern.quote(label) + "\\]?\\s*[:：]?\\s*");
+            if (pattern.matcher(normalized).find()) {
+                return pattern.matcher(normalized).replaceFirst("[" + label + "] ");
+            }
+        }
+        return "[우선 검토] " + normalized;
     }
 
     private String describeUserCondition(EmploymentPreparationVO preparation) {
@@ -160,19 +178,25 @@ public class PolicySuggestionService {
         return Period.between(preparation.getBirthDate(), LocalDate.now()).getYears();
     }
 
-    private String resolveCategory(String prompt) {
+    private PolicyCategory resolveCategory(String prompt) {
         String value = normalize(prompt);
+        if (value.contains("청년") || value.contains("지원금") || value.contains("청년지원")) {
+            return PolicyCategory.YOUTH_SUPPORT;
+        }
         if (value.contains("월세") || value.contains("주거") || value.contains("전세")) {
-            return "HOUSING";
+            return PolicyCategory.HOUSING;
         }
         if (value.contains("자격증") || value.contains("교육") || value.contains("학원")) {
-            return "EDUCATION";
+            return PolicyCategory.EDUCATION;
         }
         if (value.contains("취업") || value.contains("면접") || value.contains("구직")) {
-            return "EMPLOYMENT";
+            return PolicyCategory.EMPLOYMENT;
         }
         if (value.contains("교통")) {
-            return "TRANSPORT";
+            return PolicyCategory.TRANSPORT;
+        }
+        if (value.contains("복지") || value.contains("생활") || value.contains("건강") || value.contains("의료")) {
+            return PolicyCategory.WELFARE;
         }
         return null;
     }

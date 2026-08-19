@@ -1,6 +1,7 @@
 package com.talented.buttie.catalog.service;
 
 import com.talented.buttie.catalog.domain.PolicyVO;
+import com.talented.buttie.catalog.domain.PolicyCategory;
 import com.talented.buttie.catalog.dto.request.PolicySearchRequest;
 import com.talented.buttie.catalog.dto.response.PolicyResponse;
 import com.talented.buttie.catalog.exception.CatalogErrorCode;
@@ -47,7 +48,7 @@ public class PolicyService {
 
         PolicySearchRequest searchRequest = PolicySearchRequest.builder()
             .keyword(raw.keyword() != null ? raw.keyword().trim() : null)
-            .policyCategory(raw.policyCategory() != null ? raw.policyCategory().trim() : null)
+            .policyCategory(raw.policyCategory())
             .policyRegion(raw.policyRegion() != null ? raw.policyRegion().trim() : null)
             .age(raw.age())
             .policySupportAmount(raw.policySupportAmount())

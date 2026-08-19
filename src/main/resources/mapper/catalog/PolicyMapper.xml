@@ -47,28 +47,28 @@
       </if>
 
       <!-- 카테고리 필터 (policyCategory 단일 파라미터 사용, OGNL 안전 동등 비교) -->
-      <if test="request.policyCategory != null and request.policyCategory != ''">
+      <if test="request.policyCategory != null">
         <choose>
-          <when test="request.policyCategory == 'HOUSING' or request.policyCategory == '주거'">
+          <when test="request.policyCategory == @com.talented.buttie.catalog.domain.PolicyCategory@HOUSING">
             and (p.POLICY_CATEGORY like '%주거%' or p.POLICY_CATEGORY like '%월세%' or p.POLICY_CATEGORY like '%전세%' or p.POLICY_CATEGORY like '%임대%')
           </when>
-          <when test="request.policyCategory == 'TRANSPORT' or request.policyCategory == '교통'">
+          <when test="request.policyCategory == @com.talented.buttie.catalog.domain.PolicyCategory@TRANSPORT">
             and (p.POLICY_CATEGORY like '%교통%' or p.POLICY_CATEGORY like '%패스%' or p.POLICY_CATEGORY like '%이동%')
           </when>
-          <when test="request.policyCategory == 'WELFARE' or request.policyCategory == '복지' or request.policyCategory == '생활'">
+          <when test="request.policyCategory == @com.talented.buttie.catalog.domain.PolicyCategory@WELFARE">
             and (p.POLICY_CATEGORY like '%복지%' or p.POLICY_CATEGORY like '%생활%' or p.POLICY_CATEGORY like '%건강%' or p.POLICY_CATEGORY like '%의료%' or p.POLICY_CATEGORY like '%지원%')
           </when>
-          <when test="request.policyCategory == 'EMPLOYMENT' or request.policyCategory == '취업'">
+          <when test="request.policyCategory == @com.talented.buttie.catalog.domain.PolicyCategory@EMPLOYMENT">
             and (p.POLICY_CATEGORY like '%취업%' or p.POLICY_CATEGORY like '%일자리%' or p.POLICY_CATEGORY like '%구직%' or p.POLICY_CATEGORY like '%인턴%')
           </when>
-          <when test="request.policyCategory == 'EDUCATION' or request.policyCategory == '교육'">
+          <when test="request.policyCategory == @com.talented.buttie.catalog.domain.PolicyCategory@EDUCATION">
             and (p.POLICY_CATEGORY like '%교육%' or p.POLICY_CATEGORY like '%역량강화%' or p.POLICY_CATEGORY like '%자격증%' or p.POLICY_CATEGORY like '%학자금%' or p.POLICY_CATEGORY like '%장학%')
           </when>
-          <when test="request.policyCategory == 'YOUTH_SUPPORT' or request.policyCategory == '청년지원' or request.policyCategory == '청년'">
+          <when test="request.policyCategory == @com.talented.buttie.catalog.domain.PolicyCategory@YOUTH_SUPPORT">
             and (p.POLICY_CATEGORY like '%청년%' or p.POLICY_CATEGORY like '%자산%' or p.POLICY_CATEGORY like '%참여%' or p.POLICY_CATEGORY like '%창업%')
           </when>
           <otherwise>
-            and p.POLICY_CATEGORY like concat('%', #{request.policyCategory}, '%')
+            and p.POLICY_CATEGORY like '%기타%'
           </otherwise>
         </choose>
       </if>
