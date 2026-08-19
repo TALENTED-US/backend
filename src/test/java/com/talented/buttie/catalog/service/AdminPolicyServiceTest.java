@@ -8,6 +8,7 @@ import static org.mockito.Mockito.inOrder;
 
 import com.talented.buttie.catalog.domain.AmountParseConfidence;
 import com.talented.buttie.catalog.domain.PolicyStatus;
+import com.talented.buttie.catalog.domain.PolicyCategory;
 import com.talented.buttie.catalog.domain.PolicyVO;
 import com.talented.buttie.catalog.dto.request.AdminPolicyUpsertRequest;
 import com.talented.buttie.catalog.dto.response.AdminPolicyResponse;
@@ -54,7 +55,7 @@ class AdminPolicyServiceTest {
         PolicyVO savedPolicy = PolicyVO.builder()
             .policyId(1L)
             .policyName("수정된 정책")
-            .policyCategory("취업")
+            .policyCategory(PolicyCategory.EMPLOYMENT)
             .familyCount(1)
             .policyStatus(PolicyStatus.AVAILABLE)
             .externalSource("YOUTHCENTER")
@@ -65,7 +66,7 @@ class AdminPolicyServiceTest {
 
         AdminPolicyUpsertRequest request = AdminPolicyUpsertRequest.builder()
             .policyName("수정된 정책")
-            .policyCategory("취업")
+            .policyCategory(PolicyCategory.EMPLOYMENT)
             .policyStatus(PolicyStatus.AVAILABLE)
             .build();
 

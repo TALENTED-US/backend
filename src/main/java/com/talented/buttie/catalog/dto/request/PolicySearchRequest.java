@@ -1,5 +1,6 @@
 package com.talented.buttie.catalog.dto.request;
 
+import com.talented.buttie.catalog.domain.PolicyCategory;
 import com.talented.buttie.catalog.domain.PolicyStatus;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
@@ -11,7 +12,7 @@ public record PolicySearchRequest(
     String keyword,
 
     @ApiModelProperty(value = "정책 카테고리 (주거, 교통, 복지, 취업, 교육, 청년지원 또는 HOUSING, TRANSPORT, WELFARE, EMPLOYMENT, EDUCATION, YOUTH_SUPPORT)", example = "주거")
-    String policyCategory,
+    PolicyCategory policyCategory,
 
     @ApiModelProperty(value = "정책 지역 (서울, 경기, 인천, 부산, 대구, 광주, 대전, 울산, 세종, 전국 또는 우편번호 zipCd)", example = "부산")
     String policyRegion,

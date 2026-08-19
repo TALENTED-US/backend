@@ -1,5 +1,6 @@
 package com.talented.buttie.catalog.external.youthcenter;
 
+import com.talented.buttie.catalog.domain.PolicyCategory;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -24,27 +25,27 @@ public class YouthCenterCodeTable {
     private YouthCenterCodeTable() {
     }
 
-    public static String normalizeCategory(String rawLclsfNm) {
+    public static PolicyCategory normalizeCategory(String rawLclsfNm) {
         if (rawLclsfNm == null || rawLclsfNm.isBlank()) {
             return null;
         }
         if (rawLclsfNm.contains("일자리")) {
-            return "취업";
+            return PolicyCategory.EMPLOYMENT;
         }
         if (rawLclsfNm.contains("주거")) {
-            return "주거";
+            return PolicyCategory.HOUSING;
         }
         if (rawLclsfNm.contains("교육")) {
-            return "교육";
+            return PolicyCategory.EDUCATION;
         }
         if (rawLclsfNm.contains("복지") || rawLclsfNm.contains("문화")) {
-            return "복지";
+            return PolicyCategory.WELFARE;
         }
         if (rawLclsfNm.contains("참여")) {
-            return "참여";
+            return PolicyCategory.YOUTH_SUPPORT;
         }
         log.warn("엑셀 코드표(정책대분류)에 없는 값 발견: {}", rawLclsfNm);
-        return rawLclsfNm;
+        return PolicyCategory.OTHER;
     }
 
     /**

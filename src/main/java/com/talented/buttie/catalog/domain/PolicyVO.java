@@ -8,7 +8,7 @@ import lombok.*;
 public class PolicyVO {
     private Long policyId;
     private String policyName;
-    private String policyCategory;
+    private PolicyCategory policyCategory;
     private Integer policyMinAge;
     private Integer policyMaxAge;
     private String policyRegion;
