@@ -1,6 +1,7 @@
 package com.talented.buttie.simulation.dto.response.simulation;
 
 import com.talented.buttie.catalog.domain.PolicyStatus;
+import com.talented.buttie.catalog.domain.PolicyCategory;
 import com.talented.buttie.catalog.domain.PolicyVO;
 import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.simulation.domain.SimulationItemVO;
@@ -20,7 +21,7 @@ public record PolicySummaryResponse(
     String policyName,
 
     @ApiModelProperty(value = "정책 카테고리", example = "주거")
-    String policyCategory,
+    PolicyCategory policyCategory,
 
     @ApiModelProperty(value = "지원 대상 최소 나이", example = "19")
     Integer policyMinAge,

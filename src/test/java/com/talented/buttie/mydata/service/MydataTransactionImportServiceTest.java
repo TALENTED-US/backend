@@ -63,7 +63,6 @@ class MydataTransactionImportServiceTest {
             .approvedDateTime("20260804123300")
             .merchantName("넷플릭스")
             .merchantRegistrationNumber("900-00-00003")
-            .merchantCategoryCode("4899")
             .build();
 
         given(mydataApiClient.getAccountTransactions(101L, "ACCOUNT-1"))
@@ -72,7 +71,7 @@ class MydataTransactionImportServiceTest {
             .willReturn(List.of(cardExpense));
         given(merchantCategoryClassifier.classify(cardExpense)).willReturn(
             new MerchantCategoryClassifier.ClassificationResult(
-                ExpenseCategory.SUBSCRIPTION,
+                ExpenseCategory.HOBBY_LEISURE,
                 ClassificationMethod.MERCHANT_REGNO
             )
         );
@@ -94,7 +93,7 @@ class MydataTransactionImportServiceTest {
         assertEquals(TransactionType.INCOME, savedIncome.getTransactionType());
         assertEquals(TransactionSource.ACCOUNT, savedIncome.getTransactionSource());
         assertEquals(TransactionType.EXPENSE, savedCardExpense.getTransactionType());
-        assertEquals(ExpenseCategory.SUBSCRIPTION, savedCardExpense.getExpenseCategory());
+        assertEquals(ExpenseCategory.HOBBY_LEISURE, savedCardExpense.getExpenseCategory());
         assertEquals("900-00-00003", savedCardExpense.getMerchantRegistrationNumber());
         assertEquals(2, result.insertedCount());
     }

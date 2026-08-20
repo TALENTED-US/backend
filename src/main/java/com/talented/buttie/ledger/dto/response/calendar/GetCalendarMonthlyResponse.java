@@ -32,7 +32,7 @@ public record GetCalendarMonthlyResponse(
     @ApiModel(description = "카테고리별 지출 요약")
     public record CategoryExpense(
 
-        @ApiModelProperty(value = "지출 카테고리", example = "HOUSING", required = true)
+        @ApiModelProperty(value = "지출 카테고리", example = "HOUSING_COMMUNICATION", required = true)
         ExpenseCategory category,
 
         @ApiModelProperty(value = "해당 카테고리 총 지출", example = "500000", required = true)

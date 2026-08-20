@@ -34,7 +34,7 @@ public record TransactionDetailResponse(
     @ApiModelProperty(value = "거래 출처", example = "ACCOUNT, CARD, MANUAL")
     TransactionSource transactionSource,
 
-    @ApiModelProperty(value = "분류 방식", example = "UNCLASSIFIED, USER_CONFIRMED")
+    @ApiModelProperty(value = "분류 방식", example = "MERCHANT_REGNO, MERCHANT_NAME, ACCOUNT_INFLOW, USER_CONFIRMED, UNCLASSIFIED, MANUAL")
     ClassificationMethod classificationMethod,
 
     @ApiModelProperty(value = "가맹점명")
@@ -43,7 +43,7 @@ public record TransactionDetailResponse(
     @ApiModelProperty(value = "가맹점 사업자등록번호")
     String merchantRegistrationNumber,
 
-    @ApiModelProperty(value = "지출 카테고리", example = "HOUSING")
+    @ApiModelProperty(value = "지출 카테고리", example = "HOUSING_COMMUNICATION")
     ExpenseCategory expenseCategory,
 
     @ApiModelProperty(value = "거래 일시", example = "2026-08-03T12:30:00")

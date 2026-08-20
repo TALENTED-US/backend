@@ -35,7 +35,10 @@ public record PolicyResponse(
     String policyUrl,
 
     @ApiModelProperty(value = "정책 상태 (AVAILABLE, CLOSED)", example = "AVAILABLE")
-    PolicyStatus policyStatus
+    PolicyStatus policyStatus,
+
+    @ApiModelProperty(value = "AI가 생성한 추천 이유", example = "서울 거주와 첫 취업 준비 조건에 맞는 정책이라 추천합니다.")
+    String recommendationReason
 ) {
 
     public static PolicyResponse from(PolicyVO vo) {
@@ -50,6 +53,7 @@ public record PolicyResponse(
             .requiredDocument(vo.getRequiredDocument())
             .policyUrl(vo.getPolicyUrl())
             .policyStatus(vo.getPolicyStatus())
+            .recommendationReason(null)
             .build();
     }
 }

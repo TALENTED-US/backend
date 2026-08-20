@@ -25,7 +25,6 @@
            CLASSIFICATION_METHOD   AS classificationMethod,
            MERCHANT_NAME           AS merchantName,
            MERCHANT_REGNO          AS merchantRegistrationNumber,
-           MERCHANT_CATEGORY_CODE  AS merchantCategoryCode,
            TRANSACTION_CONTENT     AS transactionContent,
            TRANSACTION_TYPE        AS transactionType,
            EXPENSE_CATEGORY        AS expenseCategory,
@@ -54,7 +53,6 @@
                                CLASSIFICATION_METHOD,
                                MERCHANT_NAME,
                                MERCHANT_REGNO,
-                               MERCHANT_CATEGORY_CODE,
                                TRANSACTION_CONTENT,
                                TRANSACTION_TYPE,
                                EXPENSE_CATEGORY,
@@ -73,7 +71,6 @@
             #{classificationMethod},
             #{merchantName},
             #{merchantRegistrationNumber},
-            #{merchantCategoryCode},
             #{transactionContent},
             #{transactionType},
             #{expenseCategory},
@@ -111,7 +108,6 @@
            CLASSIFICATION_METHOD   AS classificationMethod,
            MERCHANT_NAME           AS merchantName,
            MERCHANT_REGNO          AS merchantRegistrationNumber,
-           MERCHANT_CATEGORY_CODE  AS merchantCategoryCode,
            TRANSACTION_CONTENT     AS transactionContent,
            TRANSACTION_TYPE        AS transactionType,
            EXPENSE_CATEGORY        AS expenseCategory,
@@ -144,7 +140,6 @@
            CLASSIFICATION_METHOD   AS classificationMethod,
            MERCHANT_NAME           AS merchantName,
            MERCHANT_REGNO          AS merchantRegistrationNumber,
-           MERCHANT_CATEGORY_CODE  AS merchantCategoryCode,
            TRANSACTION_CONTENT     AS transactionContent,
            TRANSACTION_TYPE        AS transactionType,
            EXPENSE_CATEGORY        AS expenseCategory,
@@ -214,6 +209,22 @@
       and ANALYSIS_EXCLUDED = false
       and TRANSACTION_AT >= #{fromDateTime}
       and #{toDateTime} > TRANSACTION_AT
+  </select>
+
+  <select id="aggregateExpenseByCategory"
+    resultType="com.talented.buttie.simulation.dto.response.recommendation.CategoryExpenseAggregateResponse">
+    SELECT EXPENSE_CATEGORY AS expenseCategory,
+           COALESCE(SUM(TRANSACTION_AMOUNT), 0) AS totalAmount
+    FROM `TRANSACTION`
+    WHERE USER_ID = #{userId}
+      AND IS_DELETED = false
+      AND ANALYSIS_EXCLUDED = false
+      AND TRANSACTION_TYPE IN ('EXPENSE', 'FIXED')
+      AND EXPENSE_CATEGORY IS NOT NULL
+      AND TRANSACTION_AT >= #{fromDateTime}
+      AND #{toDateTime} > TRANSACTION_AT
+    GROUP BY EXPENSE_CATEGORY
+    ORDER BY totalAmount DESC
   </select>
 
   <!-- 수동 등록 거래 전체 수정 (외부거래 ID가 없을 때 사용) -->

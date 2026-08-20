@@ -1,5 +1,6 @@
 package com.talented.buttie.catalog.dto.request;
 
+import com.talented.buttie.catalog.domain.PolicyCategory;
 import com.talented.buttie.catalog.domain.PolicyStatus;
 import java.time.LocalDate;
 import javax.validation.constraints.NotBlank;
@@ -14,8 +15,8 @@ public record AdminPolicyUpsertRequest(
     @NotBlank(message = "정책명은 필수입니다.")
     String policyName,
 
-    @NotBlank(message = "정책 카테고리는 필수입니다.")
-    String policyCategory,
+    @NotNull(message = "정책 카테고리는 필수입니다.")
+    PolicyCategory policyCategory,
 
     Integer policyMinAge,
     Integer policyMaxAge,

@@ -2,6 +2,7 @@ package com.talented.buttie.catalog.dto.response;
 
 import com.talented.buttie.catalog.domain.AmountParseConfidence;
 import com.talented.buttie.catalog.domain.PolicyStatus;
+import com.talented.buttie.catalog.domain.PolicyCategory;
 import com.talented.buttie.catalog.domain.PolicyVO;
 import java.time.LocalDate;
 import lombok.Builder;
@@ -10,7 +11,7 @@ import lombok.Builder;
 public record AdminPolicyResponse(
     Long policyId,
     String policyName,
-    String policyCategory,
+    PolicyCategory policyCategory,
     Integer policyMinAge,
     Integer policyMaxAge,
     String policyRegion,

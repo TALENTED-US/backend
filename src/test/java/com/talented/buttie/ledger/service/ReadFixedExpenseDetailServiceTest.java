@@ -44,7 +44,7 @@ class ReadFixedExpenseDetailServiceTest {
             .userId(userId)
             .transactionContent("월세")
             .transactionAmount(500000)
-            .expenseCategory(ExpenseCategory.HOUSING)
+            .expenseCategory(ExpenseCategory.HOUSING_COMMUNICATION)
             .transactionType(TransactionType.FIXED)
             .build();
 
@@ -53,7 +53,7 @@ class ReadFixedExpenseDetailServiceTest {
             .userId(userId)
             .transactionContent("통신비")
             .transactionAmount(60000)
-            .expenseCategory(ExpenseCategory.COMMUNICATION)
+            .expenseCategory(ExpenseCategory.HOUSING_COMMUNICATION)
             .transactionType(TransactionType.FIXED)
             .build();
 
@@ -68,12 +68,12 @@ class ReadFixedExpenseDetailServiceTest {
         assertEquals(101L, result.get(0).getTransactionId());
         assertEquals("월세", result.get(0).getTransactionContent());
         assertEquals(500000, result.get(0).getTransactionAmount());
-        assertEquals(ExpenseCategory.HOUSING, result.get(0).getExpenseCategory());
+        assertEquals(ExpenseCategory.HOUSING_COMMUNICATION, result.get(0).getExpenseCategory());
 
         assertEquals(102L, result.get(1).getTransactionId());
         assertEquals("통신비", result.get(1).getTransactionContent());
         assertEquals(60000, result.get(1).getTransactionAmount());
-        assertEquals(ExpenseCategory.COMMUNICATION, result.get(1).getExpenseCategory());
+        assertEquals(ExpenseCategory.HOUSING_COMMUNICATION, result.get(1).getExpenseCategory());
     }
 
     @Test

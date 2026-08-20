@@ -21,10 +21,14 @@ public enum SimulationErrorCode implements BaseErrorCode {
     ITEM_NAME_NOT_ALLOWED_FOR_EXPENSE(HttpStatus.BAD_REQUEST, "SIMULATION_005", "지출 항목의 이름은 수정 불가합니다."),
     INVALID_SIMULATION_ITEM_APPLY_PERIOD(HttpStatus.BAD_REQUEST, "SIMULATION_006", "항목 적용 기간이 올바르지 않습니다."),
     SIMULATION_CANNOT_BE_CONFIRMED(HttpStatus.BAD_REQUEST, "SIMULATION_007", "시뮬레이션을 최종 확정할 수 없습니다"),
+    AI_PROMPT_OUT_OF_SCOPE(HttpStatus.BAD_REQUEST, "SIMULATION_008",
+        "이 질문은 재정 시뮬레이션 맥락과 맞지 않아요. 지출 절감, 수입 확대, 정책 추천과 관련해 질문해 주세요."),
 
     ALREADY_NOT_CONFIRMED_SIMULATION_EXISTS(HttpStatus.CONFLICT, "SIMULATION_901", "이미 미확정 시뮬레이션이 존재합니다."),
     ALREADY_CONFIRMED_SIMULATION_EXISTS(HttpStatus.CONFLICT, "SIMULATION_902", "이미 확정 시뮬레이션이 존재합니다."),
-    CONFIRMED_SIMULATION_CANNOT_BE_UPDATED(HttpStatus.CONFLICT, "SIMULATION_903", "확정 재정 계획은 수정 불가합니다.");
+    CONFIRMED_SIMULATION_CANNOT_BE_UPDATED(HttpStatus.CONFLICT, "SIMULATION_903", "확정 재정 계획은 수정 불가합니다."),
+
+    AI_RECOMMENDATION_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "SIMULATION_504", "AI 재정 추천을 지금 생성할 수 없습니다.");
 
 
     private final HttpStatus httpStatus;

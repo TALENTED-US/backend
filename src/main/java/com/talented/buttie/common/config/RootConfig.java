@@ -2,10 +2,15 @@ package com.talented.buttie.common.config;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.talented.buttie.ledger.domain.ExpenseCategory;
+import com.talented.buttie.simulation.dto.response.recommendation.FinancialRecommendationResponse;
+import com.talented.buttie.catalog.dto.response.PolicyResponse;
+import com.talented.buttie.simulation.dto.response.recommendation.IncomeJobSearchResponse;
 import com.talented.buttie.user.dto.response.auth.VerifiedCustomer;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.time.Duration;
+import java.util.Optional;
 import javax.sql.DataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.flywaydb.core.Flyway;
@@ -159,6 +164,38 @@ public class RootConfig {
         return Caffeine.newBuilder()
             .maximumSize(10_000)
             .expireAfterWrite(Duration.ofMinutes(30))
+            .build();
+    }
+
+    @Bean
+    public Cache<String, Optional<ExpenseCategory>> merchantCategoryCache() {
+        return Caffeine.newBuilder()
+            .maximumSize(10_000)
+            .expireAfterWrite(Duration.ofMinutes(30))
+            .build();
+    }
+
+    @Bean
+    public Cache<String, FinancialRecommendationResponse> financialRecommendationCache() {
+        return Caffeine.newBuilder()
+            .maximumSize(10_000)
+            .expireAfterWrite(Duration.ofHours(6))
+            .build();
+    }
+
+    @Bean
+    public Cache<String, java.util.List<PolicyResponse>> policyRecommendationCache() {
+        return Caffeine.newBuilder()
+            .maximumSize(10_000)
+            .expireAfterWrite(Duration.ofHours(6))
+            .build();
+    }
+
+    @Bean
+    public Cache<String, IncomeJobSearchResponse> incomeJobSearchCache() {
+        return Caffeine.newBuilder()
+            .maximumSize(10_000)
+            .expireAfterWrite(Duration.ofHours(1))
             .build();
     }
 

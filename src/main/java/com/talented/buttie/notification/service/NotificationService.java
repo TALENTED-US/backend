@@ -42,7 +42,6 @@ public class NotificationService {
             setting.getServiceNoticeNotificationYn()
         );
     }
-
     public Long modifyNotificationSettings(Long userId, UpdateNotificationSettingRequest request) {
         UserNotificationVO vo = new UserNotificationVO(
             userId,
@@ -54,6 +53,10 @@ public class NotificationService {
 
         notificationMapper.upsertUserNotification(vo);
         return userId;
+    }
+
+    public void modifyAllNotificationsRead(Long userId) {
+        notificationMapper.updateAllNotificationsRead(userId);
     }
 
     public Long modifyNotificationRead(Long userId, Long notificationId) {

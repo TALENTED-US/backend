@@ -2,13 +2,15 @@ package com.talented.buttie.ledger.domain;
 
 public enum ExpenseCategory {
     FOOD("식비"),
-    TRANSPORT("교통비"),
-    HOUSING("주거비"),
-    COMMUNICATION("통신비"),
-    SUBSCRIPTION("구독비"),
-    EDUCATION("교육비"),
-    CERTIFICATE("자격증 비용"),
-    ETC_EXPENSE("기타 비용");
+    ALCOHOL_ENTERTAINMENT("술, 유흥"),
+    CAFE_SNACK("카페, 간식"),
+    JOB_PREPARATION("취준 비용"),
+    SHOPPING("쇼핑"),
+    HOBBY_LEISURE("취미, 여가"),
+    HOUSING_COMMUNICATION("주거, 통신"),
+    TRANSPORT_FUEL("교통, 유류비"),
+    HEALTH_FITNESS("의료, 건강, 피트니스"),
+    OTHER_FINANCE("기타 금융");
 
     private final String value;
 

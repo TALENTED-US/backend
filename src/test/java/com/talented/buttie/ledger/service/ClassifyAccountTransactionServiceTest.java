@@ -45,7 +45,7 @@ class ClassifyAccountTransactionServiceTest {
             .build();
         ClassifyAccountTransactionRequest request = ClassifyAccountTransactionRequest.builder()
             .transactionType(TransactionType.FIXED)
-            .expenseCategory(ExpenseCategory.HOUSING)
+            .expenseCategory(ExpenseCategory.HOUSING_COMMUNICATION)
             .build();
 
         given(transactionMapper.findById(10001L)).willReturn(transfer);
@@ -54,7 +54,7 @@ class ClassifyAccountTransactionServiceTest {
         TransactionVO result = classifyAccountTransactionService.classify(1L, 10001L, request);
 
         assertEquals(TransactionType.FIXED, result.getTransactionType());
-        assertEquals(ExpenseCategory.HOUSING, result.getExpenseCategory());
+        assertEquals(ExpenseCategory.HOUSING_COMMUNICATION, result.getExpenseCategory());
         assertEquals(ClassificationMethod.USER_CONFIRMED, result.getClassificationMethod());
         assertFalse(result.getAnalysisExcluded());
     }
@@ -69,7 +69,7 @@ class ClassifyAccountTransactionServiceTest {
             .build();
         ClassifyAccountTransactionRequest request = ClassifyAccountTransactionRequest.builder()
             .transactionType(TransactionType.FIXED)
-            .expenseCategory(ExpenseCategory.SUBSCRIPTION)
+            .expenseCategory(ExpenseCategory.HOBBY_LEISURE)
             .build();
 
         given(transactionMapper.findById(10L)).willReturn(cardExpense);
@@ -93,7 +93,7 @@ class ClassifyAccountTransactionServiceTest {
             .build();
         ClassifyAccountTransactionRequest request = ClassifyAccountTransactionRequest.builder()
             .transactionType(TransactionType.INCOME)
-            .expenseCategory(ExpenseCategory.HOUSING)
+            .expenseCategory(ExpenseCategory.HOUSING_COMMUNICATION)
             .build();
 
         given(transactionMapper.findById(10001L)).willReturn(transfer);

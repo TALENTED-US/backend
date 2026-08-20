@@ -3,6 +3,7 @@ package com.talented.buttie.catalog.external.youthcenter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import com.talented.buttie.catalog.domain.PolicyCategory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -11,17 +12,17 @@ class YouthCenterCodeTableTest {
     @Test
     @DisplayName("실응답 기준 lclsfNm 값을 POLICY_CATEGORY로 정규화한다.")
     void normalizeCategory() {
-        assertEquals("취업", YouthCenterCodeTable.normalizeCategory("일자리"));
-        assertEquals("주거", YouthCenterCodeTable.normalizeCategory("주거"));
-        assertEquals("교육", YouthCenterCodeTable.normalizeCategory("교육･직업훈련"));
-        assertEquals("복지", YouthCenterCodeTable.normalizeCategory("금융･복지･문화"));
-        assertEquals("참여", YouthCenterCodeTable.normalizeCategory("참여･기반"));
+        assertEquals(PolicyCategory.EMPLOYMENT, YouthCenterCodeTable.normalizeCategory("일자리"));
+        assertEquals(PolicyCategory.HOUSING, YouthCenterCodeTable.normalizeCategory("주거"));
+        assertEquals(PolicyCategory.EDUCATION, YouthCenterCodeTable.normalizeCategory("교육･직업훈련"));
+        assertEquals(PolicyCategory.WELFARE, YouthCenterCodeTable.normalizeCategory("금융･복지･문화"));
+        assertEquals(PolicyCategory.YOUTH_SUPPORT, YouthCenterCodeTable.normalizeCategory("참여･기반"));
     }
 
     @Test
     @DisplayName("매핑에 없는 lclsfNm은 원본 값을 그대로 반환한다.")
     void normalizeCategoryUnknownValue() {
-        assertEquals("알수없는분류", YouthCenterCodeTable.normalizeCategory("알수없는분류"));
+        assertEquals(PolicyCategory.OTHER, YouthCenterCodeTable.normalizeCategory("알수없는분류"));
     }
 
     @Test
