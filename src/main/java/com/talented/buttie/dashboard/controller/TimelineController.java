@@ -7,6 +7,7 @@ import com.talented.buttie.dashboard.dto.TimelineResponse;
 import com.talented.buttie.dashboard.service.TimelineReadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,8 +23,13 @@ public class TimelineController {
     @ApiOperation("월별 재정 타임라인 조회")
     @GetMapping
     public ApplicationResponse<TimelineResponse> getTimeline(
-        @AuthUser AuthenticationUser user
+        @AuthUser AuthenticationUser user,
+        HttpServletResponse httpServletResponse
     ){
+        httpServletResponse.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        httpServletResponse.setHeader("Pragma", "no-cache");
+        httpServletResponse.setDateHeader("Expires", 0);
+
         Long targetUserId = user.userId();
         TimelineResponse response = timelineReadService.getTimeline(targetUserId);
         return ApplicationResponse.onSuccess(response);

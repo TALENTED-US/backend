@@ -40,8 +40,8 @@ public record TimelineResponse(
 ) {
     public static TimelineResponse from(TimelineVO vo){
         return TimelineResponse.builder()
-            .simulationId(PKCrypto.encrypt(vo.getSimulationId()))
-            .userId(PKCrypto.encrypt(vo.getUserId()))
+            .simulationId(vo.getSimulationId() != null ? PKCrypto.encrypt(vo.getSimulationId()) : null)
+            .userId(vo.getUserId() != null ? PKCrypto.encrypt(vo.getUserId()) : null)
             .currentPrepMonths(vo.getCurrentPrepMonths())
             .expectPrepMonths(vo.getExpectPrepMonths())
             .targetEmploymentDate(vo.getTargetEmploymentDate())
