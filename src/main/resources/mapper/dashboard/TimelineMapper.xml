@@ -6,34 +6,29 @@
   <!-- 유저의 월별 재정 타임라인 정보 조회 (스냅샷, 시뮬레이션, 취업 준비 정보 결합) -->
   <select id="findTimelineByUserId" resultType="com.talented.buttie.dashboard.domain.TimelineVO">
     SELECT
+      u.USER_ID                     AS userId,
       s.SIMULATION_ID               AS simulationId,
-      ep.USER_ID                    AS userId,
       fs.CURRENT_PREP_MONTHS        AS currentPrepMonths,
       s.EXPECT_PREP_MONTHS          AS expectPrepMonths,
       ep.TARGET_EMPLOYMENT_DATE     AS targetEmploymentDate,
       ep.LIVING_FUND_THRESHOLD      AS livingFundThreshold
-    FROM EMPLOYMENT_PREPARATIONS ep
-    LEFT JOIN (
-      SELECT fs1.*
-      FROM SNAPSHOT fs1
-      INNER JOIN (
-        SELECT USER_ID, MAX(SNAPSHOT_CREATED_AT) AS max_created
-        FROM SNAPSHOT
-        WHERE USER_ID = #{userId}
-        GROUP BY USER_ID
-      ) fs_max ON fs1.USER_ID = fs_max.USER_ID AND fs1.SNAPSHOT_CREATED_AT = fs_max.max_created
-    ) fs ON ep.USER_ID = fs.USER_ID
-    LEFT JOIN (
-      SELECT s1.*
-      FROM SIMULATION s1
-      INNER JOIN (
-        SELECT USER_ID, MAX(SIMULATION_ID) AS max_id
-        FROM SIMULATION
-        WHERE USER_ID = #{userId}
-        GROUP BY USER_ID
-      ) s_max ON s1.USER_ID = s_max.USER_ID AND s1.SIMULATION_ID = s_max.max_id
-    ) s ON ep.USER_ID = s.USER_ID
-    WHERE ep.USER_ID = #{userId}
+    FROM USER u
+    LEFT JOIN EMPLOYMENT_PREPARATIONS ep ON u.USER_ID = ep.USER_ID
+    LEFT JOIN SNAPSHOT fs ON fs.SNAPSHOT_ID = (
+      SELECT SNAPSHOT_ID
+      FROM SNAPSHOT
+      WHERE USER_ID = #{userId}
+      ORDER BY SNAPSHOT_BASE_DATE DESC, SNAPSHOT_CREATED_AT DESC, SNAPSHOT_ID DESC
+      LIMIT 1
+    )
+    LEFT JOIN SIMULATION s ON s.SIMULATION_ID = (
+      SELECT SIMULATION_ID
+      FROM SIMULATION
+      WHERE USER_ID = #{userId}
+      ORDER BY (CASE WHEN CONFIRMED_AT IS NOT NULL THEN 0 ELSE 1 END), SIMULATION_ID DESC
+      LIMIT 1
+    )
+    WHERE u.USER_ID = #{userId}
   </select>
 
 </mapper>

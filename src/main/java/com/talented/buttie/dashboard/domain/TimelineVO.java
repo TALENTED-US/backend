@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 public class TimelineVO {
     private Long simulationId;
     private Long userId;
-    private BigDecimal currentPrepMonths;
-    private BigDecimal expectPrepMonths;
+    private BigDecimal currentPrepMonths; //snapshot
+    private BigDecimal expectPrepMonths; //simulation
     private LocalDate targetEmploymentDate;
     private Integer livingFundThreshold;
 }
