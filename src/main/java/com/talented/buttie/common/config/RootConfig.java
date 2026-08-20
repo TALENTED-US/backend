@@ -79,6 +79,19 @@ public class RootConfig {
     @Value("${jdbc.password}")
     String password;
 
+    @Value("${hikari.maximum-pool-size}")
+    int maximumPoolSize;
+    @Value("${hikari.minimum-idle}")
+    int minimumIdle;
+    @Value("${hikari.connection-timeout}")
+    long connectionTimeout;
+    @Value("${hikari.idle-timeout}")
+    long idleTimeout;
+    @Value("${hikari.max-lifetime}")
+    long maxLifetime;
+    @Value("${hikari.validation-timeout}")
+    long validationTimeout;
+
     @Bean
     public DataSource dataSource() {
         HikariConfig config = new HikariConfig();
@@ -86,6 +99,12 @@ public class RootConfig {
         config.setJdbcUrl(url);
         config.setUsername(username);
         config.setPassword(password);
+        config.setMaximumPoolSize(maximumPoolSize);
+        config.setMinimumIdle(minimumIdle);
+        config.setConnectionTimeout(connectionTimeout);
+        config.setIdleTimeout(idleTimeout);
+        config.setMaxLifetime(maxLifetime);
+        config.setValidationTimeout(validationTimeout);
 
         return new HikariDataSource(config);
     }
