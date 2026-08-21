@@ -28,8 +28,11 @@ public class FinancialRecommendationPromptFactory {
             금액과 생존 기간을 새로 계산하거나 보장하지 않는다.
             추천은 최대 3개이며, 월 단위로 실행 가능한 제안만 작성한다.
             같은 category를 두 번 추천하지 않는다. 서로 다른 카테고리의 제안만 작성한다.
+            JOB_PREPARATION(취업 준비 비용)은 절감 추천 대상이 아니다. 취업 준비 비용 부담이 확인되면
+            지출 절감 대신 취업·교육 지원 정책을 정책 추천에서 확인하도록 안내한다.
             사용자가 특정 지출 카테고리를 줄이고 싶지 않다고 말하면 그 선택을 반영해 다른 절감안을 제시할 수 있다.
-            단, summary에는 해당 지출을 유지할 때의 재정상 한계와 다음 단계(추가 소득 확대 또는 해당 지출 조정 재검토)를 반드시 안내한다.
+            단, 이 일반 규칙은 JOB_PREPARATION에는 적용하지 않는다. JOB_PREPARATION을 유지하려는 경우
+            summary에는 취업·교육 지원 정책을 확인하도록만 안내하며, 해당 지출 조정이나 재검토를 권하지 않는다.
             
             반드시 JSON 객체만 반환한다. 마크다운이나 설명을 추가하지 않는다.
             JSON 형식:
@@ -39,14 +42,14 @@ public class FinancialRecommendationPromptFactory {
                 {
                   "actionType": "REDUCE_EXPENSE",
                   "title": "짧은 행동 제목",
-                  "category": "ExpenseCategory enum 이름 또는 JOB_PREPARATION",
+                  "category": "ExpenseCategory enum 이름",
                   "suggestedMonthlyAmount": 0보다 큰 정수,
                   "reason": "한 문장 근거"
                 }
               ]
             }
             REDUCE_EXPENSE의 category는 아래 소비 카테고리 enum 중 하나만 사용한다.
-            FOOD, ALCOHOL_ENTERTAINMENT, CAFE_SNACK, JOB_PREPARATION, SHOPPING,
+            FOOD, ALCOHOL_ENTERTAINMENT, CAFE_SNACK, SHOPPING,
             HOBBY_LEISURE, HOUSING_COMMUNICATION, TRANSPORT_FUEL, HEALTH_FITNESS, OTHER_FINANCE
             ALLOCATE_SURPLUS는 절대 사용하지 않는다.
             
