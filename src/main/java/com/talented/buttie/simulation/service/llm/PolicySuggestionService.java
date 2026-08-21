@@ -4,6 +4,8 @@ import com.talented.buttie.catalog.dto.request.PolicySearchRequest;
 import com.talented.buttie.catalog.dto.response.PolicyResponse;
 import com.talented.buttie.catalog.domain.PolicyCategory;
 import com.talented.buttie.catalog.service.PolicyService;
+import com.talented.buttie.ledger.domain.ExpenseCategory;
+import com.talented.buttie.ledger.mapper.TransactionMapper;
 import com.talented.buttie.user.domain.EmploymentPreparationVO;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import com.talented.buttie.simulation.domain.FinancialSnapshotVO;
@@ -26,6 +28,7 @@ public class PolicySuggestionService {
     private static final List<String> RECOMMENDATION_LABELS = List.of("가장 적합", "우선 검토", "추가 조건 확인");
 
     private final PolicyService policyService;
+    private final TransactionMapper transactionMapper;
     private final EmploymentPreparationMapper employmentPreparationMapper;
     private final FinancialSnapshotMapper financialSnapshotMapper;
     private final PolicyRecommendationPromptFactory policyRecommendationPromptFactory;
@@ -38,6 +41,9 @@ public class PolicySuggestionService {
         String status = preparation == null || preparation.getEmploymentPrepType() == null
             ? null : preparation.getEmploymentPrepType().name();
         PolicyCategory category = resolveCategory(prompt);
+        if (category == null && hasJobPreparationExpense(userId)) {
+            category = PolicyCategory.EMPLOYMENT;
+        }
         PolicySearchRequest request = PolicySearchRequest.builder()
             .keyword(null)
             .policyCategory(category)
@@ -189,7 +195,8 @@ public class PolicySuggestionService {
         if (value.contains("자격증") || value.contains("교육") || value.contains("학원")) {
             return PolicyCategory.EDUCATION;
         }
-        if (value.contains("취업") || value.contains("면접") || value.contains("구직")) {
+        if (value.contains("취업") || value.contains("취준") || value.contains("면접") || value.contains("구직")
+            || value.contains("응시료") || value.contains("스터디카페") || value.contains("인강")) {
             return PolicyCategory.EMPLOYMENT;
         }
         if (value.contains("교통")) {
@@ -199,6 +206,18 @@ public class PolicySuggestionService {
             return PolicyCategory.WELFARE;
         }
         return null;
+    }
+
+    private boolean hasJobPreparationExpense(Long userId) {
+        LocalDate today = LocalDate.now();
+        return transactionMapper.aggregateExpenseByCategory(
+                userId,
+                today.minusMonths(3).atStartOfDay(),
+                today.plusDays(1).atStartOfDay()
+            ).stream()
+            .anyMatch(item -> item.getExpenseCategory() == ExpenseCategory.JOB_PREPARATION
+                && item.getTotalAmount() != null
+                && item.getTotalAmount().signum() > 0);
     }
 
     private String normalize(String value) {

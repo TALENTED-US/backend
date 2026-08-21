@@ -160,12 +160,20 @@ public class FinancialRecommendationService {
     }
 
     private boolean isValid(OpenAiRecommendationResult.Recommendation item) {
-        return item != null
-            && item.getActionType() == com.talented.buttie.simulation.dto.response.recommendation.RecommendationActionType.REDUCE_EXPENSE
-            && item.getTitle() != null && !item.getTitle().isBlank()
-            && item.getCategory() != null && !item.getCategory().isBlank()
-            && item.getSuggestedMonthlyAmount() != null && item.getSuggestedMonthlyAmount() > 0
-            && item.getReason() != null && !item.getReason().isBlank();
+        if (item == null
+            || item.getActionType() != com.talented.buttie.simulation.dto.response.recommendation.RecommendationActionType.REDUCE_EXPENSE
+            || item.getTitle() == null || item.getTitle().isBlank()
+            || item.getCategory() == null || item.getCategory().isBlank()
+            || item.getSuggestedMonthlyAmount() == null || item.getSuggestedMonthlyAmount() <= 0
+            || item.getReason() == null || item.getReason().isBlank()) {
+            return false;
+        }
+
+        try {
+            return ExpenseCategory.valueOf(item.getCategory()) != ExpenseCategory.JOB_PREPARATION;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     private String normalize(String value) {
