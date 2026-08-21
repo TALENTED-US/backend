@@ -105,6 +105,10 @@ public class FinancialRecommendationService {
         ExpenseCategory protectedCategory = findProtectedExpenseCategory(userPrompt);
         if (protectedCategory == null) return summary;
 
+        if (protectedCategory == ExpenseCategory.JOB_PREPARATION) {
+            return summary + " 취업 준비 비용은 절감 대상이 아니므로, 취업·교육 지원 정책을 확인해 보세요.";
+        }
+
         String categoryName = protectedCategory.getValue();
         return summary + " 다만 " + categoryName + " 지출을 유지하면 다른 절감안만으로 재정 균형을 맞추는 데 "
             + "한계가 있을 수 있어요. 다음 단계에서 추가 소득을 늘리거나, 필요하면 " + categoryName
