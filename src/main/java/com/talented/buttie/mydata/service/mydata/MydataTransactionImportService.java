@@ -15,9 +15,11 @@ import com.talented.buttie.mydata.exception.MydataErrorCode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,48 +35,47 @@ public class MydataTransactionImportService {
     private final TransactionMapper transactionMapper;
     private final MerchantCategoryClassifier merchantCategoryClassifier;
 
-    public SyncResult sync(
+    // 외부 마이데이터 API만 호출. DB 커넥션을 사용하지 않음
+    public List<TransactionVO> fetchExternalTransactions(
         Long userId,
         MydataAssetRegistrationService.RegisteredAssets assets
     ) {
-        int inserted = 0;
-        int skipped = 0;
+        List<TransactionVO> candidates = new ArrayList<>();
 
-        for (AccountVO account : assets.accounts()) {
+        for(AccountVO account: assets.accounts()) {
             List<MydataAccountTransactionData> transactions =
                 mydataApiClient.getAccountTransactions(userId, account.getExternalAccountId());
-            for (MydataAccountTransactionData source : transactions) {
-                if (!isValidAccountTransaction(source)
-                    || transactionMapper.existsByAccountAndExternalId(
-                    account.getAccountId(),
-                    source.getTransactionNumber()
-                )) {
-                    skipped++;
-                    continue;
+            for(MydataAccountTransactionData source: transactions) {
+                if(isValidAccountTransaction(source)) {
+                    candidates.add(toAccountTransaction(userId, account, source));
                 }
-                insert(toAccountTransaction(userId, account, source));
-                inserted++;
             }
         }
 
-        for (CardVO card : assets.cards()) {
-            List<MydataCardApprovalData> approvals = mydataApiClient.getCardApprovals(
-                userId,
-                card.getExternalCardId()
-            );
-            for (MydataCardApprovalData source : approvals) {
-                if (!isValidCardApproval(source)
-                    || transactionMapper.existsByCardAndExternalId(
-                    card.getCardId(),
-                    source.getApprovalNumber()
-                )) {
-                    skipped++;
-                    continue;
+        for(CardVO card: assets.cards()) {
+            List<MydataCardApprovalData> approvals =
+                mydataApiClient.getCardApprovals(userId, card.getExternalCardId());
+            for(MydataCardApprovalData source: approvals) {
+                if(isValidCardApproval(source)) {
+                    candidates.add(toCardTransaction(userId, card, source));
                 }
-                insert(toCardTransaction(userId, card, source));
-                inserted++;
             }
         }
+
+        return candidates;
+    }
+
+    // 배치 insert 1회로 dedup + insert를 수행. DB 커넥션을 짧게 점유함.
+    // (ACCOUNT_ID, EXTERNAL_TRANSACTION_ID), (CARD_ID, EXTERNAL_TRANSACTION_ID) UNIQUE 제약을
+    // 활용해 INSERT IGNORE로 중복은 DB가 걸러내고, 건당 존재 여부 SELECT 왕복을 없앤다.
+    @Transactional
+    public SyncResult importTransactions(List<TransactionVO> candidates) {
+        if (candidates.isEmpty()) {
+            return new SyncResult(0, 0);
+        }
+
+        int inserted = transactionMapper.insertTransactionsIgnoreDuplicates(candidates);
+        int skipped = candidates.size() - inserted;
 
         return new SyncResult(inserted, skipped);
     }
@@ -127,12 +128,6 @@ public class MydataTransactionImportService {
             .transactionMemo(source.getMerchantCategoryName())
             .analysisExcluded(false)
             .build();
-    }
-
-    private void insert(TransactionVO transaction) {
-        if (transactionMapper.insertTransaction(transaction) != 1) {
-            throw ApplicationException.from(MydataErrorCode.MYDATA_TRANSACTION_SYNC_FAILED);
-        }
     }
 
     private boolean isValidAccountTransaction(MydataAccountTransactionData source) {

@@ -3,21 +3,20 @@ package com.talented.buttie.mydata.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.ledger.domain.TransactionVO;
 import com.talented.buttie.mydata.domain.AccountVO;
 import com.talented.buttie.mydata.domain.CardVO;
 import com.talented.buttie.mydata.dto.response.MydataTransactionSyncResponse;
 import com.talented.buttie.mydata.exception.MydataErrorCode;
 import com.talented.buttie.mydata.mapper.AccountMapper;
 import com.talented.buttie.mydata.mapper.CardMapper;
-import com.talented.buttie.mydata.mapper.MydataConnectionMapper;
-import com.talented.buttie.mydata.service.mydata.FixedExpenseCandidateService;
-import com.talented.buttie.mydata.service.mydata.MydataAssetRegistrationService;
 import com.talented.buttie.mydata.service.mydata.MydataConnectionValidator;
-import com.talented.buttie.mydata.service.mydata.MydataDuplicateTransactionService;
+import com.talented.buttie.mydata.service.mydata.MydataSyncPersistenceService;
 import com.talented.buttie.mydata.service.mydata.MydataTransactionImportService;
 import com.talented.buttie.mydata.service.mydata.MydataTransactionSyncService;
 import java.time.LocalDateTime;
@@ -40,44 +39,37 @@ class MydataTransactionSyncServiceTest {
     @Mock
     private MydataTransactionImportService mydataTransactionImportService;
     @Mock
-    private MydataDuplicateTransactionService mydataDuplicateTransactionService;
-    @Mock
-    private FixedExpenseCandidateService fixedExpenseCandidateService;
-    @Mock
-    private MydataConnectionMapper mydataConnectionMapper;
+    private MydataSyncPersistenceService mydataSyncPersistenceService;
     @InjectMocks
     private MydataTransactionSyncService service;
 
     @Test
-    void 활성_자산의_거래를_동기화하고_분석한다() {
+    void 활성_자산의_외부_거래를_모아_영속화_단계에_넘긴다() {
         AccountVO account = AccountVO.builder().accountId(1L).build();
         CardVO card = CardVO.builder().cardId(2L).build();
+        List<TransactionVO> candidates = List.of(
+            TransactionVO.builder().userId(101L).accountId(1L).externalTransactionId("A-1").build()
+        );
+        MydataTransactionSyncResponse expected = MydataTransactionSyncResponse.builder()
+            .insertedTransactionCount(3)
+            .skippedTransactionCount(1)
+            .excludedDuplicateCount(1)
+            .fixedExpenseCandidateCount(2)
+            .lastSyncedAt(LocalDateTime.now())
+            .build();
+
         given(accountMapper.findActiveByUserId(101L)).willReturn(List.of(account));
         given(cardMapper.findActiveByUserId(101L)).willReturn(List.of(card));
-        given(mydataTransactionImportService.sync(
-            org.mockito.ArgumentMatchers.eq(101L),
-            any(MydataAssetRegistrationService.RegisteredAssets.class)
-        )).willReturn(new MydataTransactionImportService.SyncResult(3, 1));
-        given(mydataConnectionMapper.updateLastSyncedAt(
-            org.mockito.ArgumentMatchers.eq(101L),
-            org.mockito.ArgumentMatchers.eq("MOCK"),
-            any(LocalDateTime.class)
-        )).willReturn(1);
-        given(mydataDuplicateTransactionService.excludeLikelyAccountDuplicates(101L))
-            .willReturn(1);
-        given(fixedExpenseCandidateService.findCandidates(101L)).willReturn(List.of());
+        given(mydataTransactionImportService.fetchExternalTransactions(eq(101L), any()))
+            .willReturn(candidates);
+        given(mydataSyncPersistenceService.persist(eq(101L), eq(candidates)))
+            .willReturn(expected);
 
         MydataTransactionSyncResponse result = service.syncAndAnalyze(101L);
 
-        assertEquals(3, result.insertedTransactionCount());
-        assertEquals(1, result.skippedTransactionCount());
-        assertEquals(1, result.excludedDuplicateCount());
+        assertEquals(expected, result);
         verify(mydataConnectionValidator).validateConnected(101L);
-        verify(mydataConnectionMapper).updateLastSyncedAt(
-            org.mockito.ArgumentMatchers.eq(101L),
-            org.mockito.ArgumentMatchers.eq("MOCK"),
-            any(LocalDateTime.class)
-        );
+        verify(mydataSyncPersistenceService).persist(101L, candidates);
     }
 
     @Test

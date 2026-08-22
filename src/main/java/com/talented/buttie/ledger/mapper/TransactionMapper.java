@@ -14,6 +14,8 @@ public interface TransactionMapper {
 
     int insertTransaction(TransactionVO transaction);
 
+    int insertTransactionsIgnoreDuplicates(@Param("list") List<TransactionVO> transactions);
+
     boolean existsByAccountAndExternalId(
         @Param("accountId") Long accountId,
         @Param("externalTransactionId") String externalTransactionId
