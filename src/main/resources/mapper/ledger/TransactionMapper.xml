@@ -83,6 +83,50 @@
             NOW())
   </insert>
 
+  <insert id="insertTransactionsIgnoreDuplicates" parameterType="list">
+    INSERT IGNORE INTO `TRANSACTION` (USER_ID,
+                               ACCOUNT_ID,
+                               CARD_ID,
+                               EXTERNAL_TRANSACTION_ID,
+                               TRANSACTION_SOURCE,
+                               CLASSIFICATION_METHOD,
+                               MERCHANT_NAME,
+                               MERCHANT_REGNO,
+                               MERCHANT_CATEGORY_CODE,
+                               TRANSACTION_CONTENT,
+                               TRANSACTION_TYPE,
+                               EXPENSE_CATEGORY,
+                               TRANSACTION_AMOUNT,
+                               TRANSACTION_AT,
+                               TRANSACTION_MEMO,
+                               ANALYSIS_EXCLUDED,
+                               IS_DELETED,
+                               TRANSACTION_CREATED_AT,
+                               TRANSACTION_UPDATED_AT)
+    VALUES
+    <foreach collection="list" item="t" separator=",">
+      (#{t.userId},
+       #{t.accountId},
+       #{t.cardId},
+       #{t.externalTransactionId},
+       #{t.transactionSource},
+       #{t.classificationMethod},
+       #{t.merchantName},
+       #{t.merchantRegistrationNumber},
+       #{t.merchantCategoryCode},
+       #{t.transactionContent},
+       #{t.transactionType},
+       #{t.expenseCategory},
+       #{t.transactionAmount},
+       #{t.transactionAt},
+       #{t.transactionMemo},
+       #{t.analysisExcluded},
+       false,
+       NOW(),
+       NOW())
+    </foreach>
+  </insert>
+
   <select id="existsByAccountAndExternalId" resultType="boolean">
     SELECT COUNT(*) > 0
     FROM `TRANSACTION`
