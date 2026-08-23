@@ -15,6 +15,10 @@ public interface AuthMapper {
 
     boolean existsByNickName(@Param("userNickname") String userNickname);
 
+    boolean existsActiveUserById(@Param("userId") Long userId);
+
+    Long findActiveUserIdForUpdate(@Param("userId") Long userId);
+
     String getPasswordByUserEmail(@Param("email") String email);
 
     Long getUserIdByUserEmail(@Param("email") String email);
