@@ -62,14 +62,14 @@ class MydataTransactionSyncServiceTest {
         given(cardMapper.findActiveByUserId(101L)).willReturn(List.of(card));
         given(mydataTransactionImportService.fetchExternalTransactions(eq(101L), any()))
             .willReturn(candidates);
-        given(mydataSyncPersistenceService.persist(eq(101L), eq(candidates)))
+        given(mydataSyncPersistenceService.persistAndRefreshSnapshot(eq(101L), eq(candidates)))
             .willReturn(expected);
 
         MydataTransactionSyncResponse result = service.syncAndAnalyze(101L);
 
         assertEquals(expected, result);
         verify(mydataConnectionValidator).validateConnected(101L);
-        verify(mydataSyncPersistenceService).persist(101L, candidates);
+        verify(mydataSyncPersistenceService).persistAndRefreshSnapshot(101L, candidates);
     }
 
     @Test

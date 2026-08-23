@@ -42,6 +42,6 @@ public class MydataTransactionSyncService {
                 userId, new MydataAssetRegistrationService.RegisteredAssets(accounts, cards));
 
         // 2단계: DB 쓰기만 짧은 트랜잭션으로 (별도의 Bean이라 @Transactional 정상 적용됨)
-        return mydataSyncPersistenceService.persist(userId, candidates);
+        return mydataSyncPersistenceService.persistAndRefreshSnapshot(userId, candidates);
     }
 }
