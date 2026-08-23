@@ -23,6 +23,7 @@ import com.talented.buttie.user.dto.request.user.WithdrawUserRequest;
 import com.talented.buttie.user.exception.UserErrorCode;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import com.talented.buttie.user.mapper.UserMapper;
+import com.talented.buttie.user.service.auth.AuthTokenService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
@@ -41,6 +42,8 @@ class UserServiceTest {
     private EmploymentPreparationMapper employmentPreparationMapper;
     @Mock
     private UserMapper userMapper;
+    @Mock
+    private AuthTokenService authTokenService;
     @InjectMocks
     private UserService userService;
 
@@ -302,12 +305,13 @@ class UserServiceTest {
         verify(userMapper).updateWithdrawnUser(userCaptor.capture());
 
         UserVO withdrawnUser = userCaptor.getValue();
-        assertEquals("withdrawn-1", withdrawnUser.getUserName());
+        assertTrue(withdrawnUser.getUserName().matches("withdrawn-[0-9a-f]{20}"));
         assertTrue(withdrawnUser.getUserEmail().matches("withdrawn-[0-9a-f]{32}@deleted\\.local"));
         assertTrue(withdrawnUser.getUserNickname().matches("withdrawn-[0-9a-f]{20}"));
         assertTrue(withdrawnUser.getUserPhoneNumber().matches("w[0-9a-f]{19}"));
         assertEquals("withdrawn-password-hash", withdrawnUser.getUserPasswordHash());
         assertNotEquals(password, withdrawnUser.getUserPasswordHash());
+        verify(authTokenService).expirationToken(userId);
     }
 
     @Test

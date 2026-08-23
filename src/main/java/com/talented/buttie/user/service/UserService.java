@@ -11,6 +11,7 @@ import com.talented.buttie.user.dto.request.user.WithdrawUserRequest;
 import com.talented.buttie.user.exception.UserErrorCode;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import com.talented.buttie.user.mapper.UserMapper;
+import com.talented.buttie.user.service.auth.AuthTokenService;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +25,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final EmploymentPreparationMapper employmentPreparationMapper;
+    private final AuthTokenService authTokenService;
 
     public UserProfileVO getUserProfile(Long userId) {
         UserProfileVO userProfile = userMapper.selectUserProfile(userId);
@@ -87,6 +89,7 @@ public class UserService {
             withdrawnPasswordHash
         );
         userMapper.updateWithdrawnUser(withdrawnUser);
+        authTokenService.expirationToken(userId);
 
         return userId;
     }

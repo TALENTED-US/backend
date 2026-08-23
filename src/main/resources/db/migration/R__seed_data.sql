@@ -61,7 +61,7 @@ INSERT INTO `USER`
 (9, '최지우', 'choi009@example.com', '$2b$10$WbFi.6I7vHRL0R5iiBCKSOcg1Z0uGYj870k.PMmihAYF87FP/MaCy', 'choi009', '010-4817-5333', TRUE, 'ACTIVE', NULL),
 (10, '배도윤', 'bae010@example.com', '$2b$10$v0xB3NN3QdPpHRGhwRwrQeB95e0mMQlwNXP0j7IQ9Nzorfg.WjOOS', 'bae010', '010-9971-7201', TRUE, 'ACTIVE', NULL),
 (11, '박은서', 'park011@example.com', '$2b$10$lQd8BbiWlZFqC300HWrQfO9CAs4k5jWp3LuUJb8SvdV4GYifGk3te', 'park011', '010-9253-6925', TRUE, 'ACTIVE', NULL),
-(12, '전유진', 'jeon012@example.com', '$2b$10$FNDm9bT3vCVpRzL5YzA6oeohEqgHxJ1yKlo.xtAUEflsxGJ6lxBum', 'jeon012', '010-3866-5741', TRUE, 'WITHDRAWN', '2026-07-15 10:00:00'),
+(12, 'withdrawn-1e54e354d07b4f03a9a5', 'withdrawn-1e54e354d07b4f03a9a5b553849cbfde@deleted.local', 'withdrawn-password-hash-12', 'withdrawn-1e54e354d07b4f03a9a5', 'w1e54e354d07b4f03a9a', TRUE, 'WITHDRAWN', '2026-07-15 10:00:00'),
 (13, '박채원', 'park013@example.com', '$2b$10$XqC7dmxrfP8jN1//GnKWTOzmJqZoZ6OIp5jlxnC1WEiKRNOUzzKrW', 'park013', '010-5714-6977', FALSE, 'ACTIVE', NULL),
 (14, '강아윤', 'kang014@example.com', '$2b$10$mIMJd5blBm1YMa2c61W7DO3PCQRAS8ZmI9Rn6g7DTcZa4tQPJjT7i', 'kang014', '010-7749-2169', TRUE, 'ACTIVE', NULL),
 (15, '홍서윤', 'hong015@example.com', '$2b$10$7s0fb.q6UWDw1QBon6K86eF5TPepFM5Ryf0p6GIZOIuvlZDX.oqii', 'hong015', '010-5786-7216', TRUE, 'ACTIVE', NULL),
@@ -76,7 +76,7 @@ INSERT INTO `USER`
 (24, '고주원', 'ko024@example.com', '$2b$10$xP2aj8UjFa.IIPlk0WDPeusyArvPysfCVVRC1yYxSP62Zszhrr0aa', 'ko024', '010-4185-6573', TRUE, 'ACTIVE', NULL),
 (25, '최우진', 'choi025@example.com', '$2b$10$GSqyW2vp9aqbHO5WbKZlm..x.wIEJCnvWcbRJdr9C.RENyFAhMbiW', 'choi025', '010-9813-5315', TRUE, 'ACTIVE', NULL),
 (26, '안현우', 'ahn026@example.com', '$2b$10$D9FtAYuwDGctXZUyA1lUleR40EO4nAFmhrWj.MkteufgzMGDS8I3W', 'ahn026', '010-7122-5889', TRUE, 'ACTIVE', NULL),
-(27, '백성민', 'baek027@example.com', '$2b$10$MILKxXGzvgFH77195eHyleuneh3zU8f58BLNyqRM32A1T/hbgGJTC', 'baek027', '010-8246-3646', TRUE, 'WITHDRAWN', '2026-07-15 10:00:00'),
+(27, 'withdrawn-a12f7546172d4b86bc9c', 'withdrawn-a12f7546172d4b86bc9cc99d4664068e@deleted.local', 'withdrawn-password-hash-27', 'withdrawn-a12f7546172d4b86bc9c', 'wa12f7546172d4b86bc9', TRUE, 'WITHDRAWN', '2026-07-15 10:00:00'),
 (28, '송하윤', 'song028@example.com', '$2b$10$OiMY0mKulhVRTf8pdD1v4.xvnV5Kax7TaGALRufgwR9aQUSWQMLOy', 'song028', '010-6002-1319', FALSE, 'ACTIVE', NULL),
 (29, '최아윤', 'choi029@example.com', '$2b$10$wWYzyX5FcKaTrXyC8WqZm.3SEb/mAzFy/BN/xuih2QU/LVNkpJJ0u', 'choi029', '010-4519-4923', FALSE, 'ACTIVE', NULL),
 (30, '이민서', 'lee030@example.com', '$2b$10$cGqzKkEQnQhPY.SSK3Sd0uIwwcY.6XByAxxy4rcI3nKm1qQbVlTxS', 'lee030', '010-7995-8962', FALSE, 'ACTIVE', NULL)

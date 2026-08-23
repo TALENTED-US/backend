@@ -35,7 +35,7 @@ public class UserVO {
     ) {
         return UserVO.builder()
             .userId(userId)
-            .userName(withdrawalIdentifier + "-" + userId)
+            .userName("withdrawn-" + withdrawalIdentifier.substring(0, 20))
             .userEmail("withdrawn-" + withdrawalIdentifier + "@deleted.local")
             .userPasswordHash(withdrawnPasswordHash)
             .userNickname("withdrawn-" + withdrawalIdentifier.substring(0, 20))
