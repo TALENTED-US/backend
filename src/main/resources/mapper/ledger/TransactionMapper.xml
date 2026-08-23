@@ -84,7 +84,7 @@
   </insert>
 
   <insert id="insertTransactionsIgnoreDuplicates" parameterType="list">
-    INSERT IGNORE INTO `TRANSACTION` (USER_ID,
+    INSERT INTO `TRANSACTION` (USER_ID,
                                ACCOUNT_ID,
                                CARD_ID,
                                EXTERNAL_TRANSACTION_ID,
@@ -92,7 +92,6 @@
                                CLASSIFICATION_METHOD,
                                MERCHANT_NAME,
                                MERCHANT_REGNO,
-                               MERCHANT_CATEGORY_CODE,
                                TRANSACTION_CONTENT,
                                TRANSACTION_TYPE,
                                EXPENSE_CATEGORY,
@@ -113,7 +112,6 @@
        #{t.classificationMethod},
        #{t.merchantName},
        #{t.merchantRegistrationNumber},
-       #{t.merchantCategoryCode},
        #{t.transactionContent},
        #{t.transactionType},
        #{t.expenseCategory},
@@ -125,6 +123,7 @@
        NOW(),
        NOW())
     </foreach>
+    ON DUPLICATE KEY UPDATE TRANSACTION_ID = TRANSACTION_ID
   </insert>
 
   <select id="existsByAccountAndExternalId" resultType="boolean">
