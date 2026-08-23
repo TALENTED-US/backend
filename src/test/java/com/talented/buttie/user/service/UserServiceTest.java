@@ -1,8 +1,10 @@
 package com.talented.buttie.user.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
@@ -26,6 +28,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -289,12 +292,22 @@ class UserServiceTest {
 
         given(userMapper.getPasswordByUserId(userId)).willReturn(password);
         given(passwordEncoder.matches(password, password)).willReturn(true);
+        given(passwordEncoder.encode(any(String.class))).willReturn("withdrawn-password-hash");
         given(userMapper.updateWithdrawnUser(any(UserVO.class))).willReturn(1);
 
         Long result = userService.withdrawUser(userId, request);
 
         assertEquals(userId, result);
-        verify(userMapper).updateWithdrawnUser(any(UserVO.class));
+        ArgumentCaptor<UserVO> userCaptor = ArgumentCaptor.forClass(UserVO.class);
+        verify(userMapper).updateWithdrawnUser(userCaptor.capture());
+
+        UserVO withdrawnUser = userCaptor.getValue();
+        assertEquals("withdrawn-1", withdrawnUser.getUserName());
+        assertTrue(withdrawnUser.getUserEmail().matches("withdrawn-[0-9a-f]{32}@deleted\\.local"));
+        assertTrue(withdrawnUser.getUserNickname().matches("withdrawn-[0-9a-f]{20}"));
+        assertTrue(withdrawnUser.getUserPhoneNumber().matches("w[0-9a-f]{19}"));
+        assertEquals("withdrawn-password-hash", withdrawnUser.getUserPasswordHash());
+        assertNotEquals(password, withdrawnUser.getUserPasswordHash());
     }
 
     @Test

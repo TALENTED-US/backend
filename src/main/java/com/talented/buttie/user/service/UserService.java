@@ -11,9 +11,11 @@ import com.talented.buttie.user.dto.request.user.WithdrawUserRequest;
 import com.talented.buttie.user.exception.UserErrorCode;
 import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
 import com.talented.buttie.user.mapper.UserMapper;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -65,6 +67,7 @@ public class UserService {
         return employmentPreparation;
     }
 
+    @Transactional
     public Long withdrawUser(Long userId, WithdrawUserRequest request) {
         String passwordHash = userMapper.getPasswordByUserId(userId);
 
@@ -76,7 +79,13 @@ public class UserService {
             throw ApplicationException.from(UserErrorCode.PASSWORD_MISMATCH);
         }
 
-        UserVO withdrawnUser = UserVO.createWithdrawnUser(userId);
+        String withdrawalIdentifier = UUID.randomUUID().toString().replace("-", "");
+        String withdrawnPasswordHash = passwordEncoder.encode(UUID.randomUUID().toString());
+        UserVO withdrawnUser = UserVO.createWithdrawnUser(
+            userId,
+            withdrawalIdentifier,
+            withdrawnPasswordHash
+        );
         userMapper.updateWithdrawnUser(withdrawnUser);
 
         return userId;

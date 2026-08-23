@@ -31,7 +31,12 @@
   </select>
   <update id="updateWithdrawnUser">
     UPDATE `USER`
-    SET USER_STATUS       = #{user.userStatus},
+    SET USER_NAME         = #{user.userName},
+        USER_EMAIL        = #{user.userEmail},
+        USER_PASSWORD_HASH = #{user.userPasswordHash},
+        USER_NICKNAME     = #{user.userNickname},
+        USER_PHONE_NUMBER = #{user.userPhoneNumber},
+        USER_STATUS       = #{user.userStatus},
         USER_WITHDRAWN_AT = #{user.userWithdrawnAt}
     WHERE USER_ID = #{user.userId}
   </update>
