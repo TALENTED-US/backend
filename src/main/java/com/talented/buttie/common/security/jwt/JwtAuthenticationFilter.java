@@ -1,11 +1,14 @@
 package com.talented.buttie.common.security.jwt;
 
+import com.talented.buttie.common.exception.ApplicationException;
 import com.talented.buttie.common.security.AccountType;
 import com.talented.buttie.common.security.AdminRole;
 import com.talented.buttie.common.security.AuthenticationUser;
 import com.talented.buttie.common.security.SecurityConstants;
 import com.talented.buttie.common.security.TokenAccount;
 import com.talented.buttie.common.security.redis.RefreshTokenRepository;
+import com.talented.buttie.user.mapper.AuthMapper;
+import com.talented.buttie.user.service.auth.AuthTokenService;
 import io.jsonwebtoken.Claims;
 import java.io.IOException;
 import javax.servlet.FilterChain;
@@ -22,13 +25,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AuthMapper authMapper;
+    private final AuthTokenService authTokenService;
 
     public JwtAuthenticationFilter(
         JwtTokenProvider jwtTokenProvider,
-        RefreshTokenRepository refreshTokenRepository
+        RefreshTokenRepository refreshTokenRepository,
+        AuthMapper authMapper,
+        AuthTokenService authTokenService
     ) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.refreshTokenRepository = refreshTokenRepository;
+        this.authMapper = authMapper;
+        this.authTokenService = authTokenService;
     }
 
     @Override
@@ -48,6 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Claims claims = jwtTokenProvider.parseAccessToken(token);
             validateAccessTokenNotInvalidated(claims);
             AuthenticationUser authenticationUser = createAuthenticationUser(claims);
+            validateActiveUser(authenticationUser);
             continueWithAuthenticatedUser(
                 request,
                 response,
@@ -94,26 +104,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             refreshToken
         );
 
-        if (
-            tokenAccount.accountType() != AccountType.USER ||
-                refreshTokenRepository.matches(
-                    tokenAccount.accountId(),
-                    tokenAccount.accountType(),
-                    refreshToken
-                )
-        ) {
+        if (tokenAccount.accountType() != AccountType.USER) {
             throw new IllegalArgumentException("Refresh Token이 유효하지 않습니다.");
         }
 
-        String newAccessToken = jwtTokenProvider.createUserAccessToken(
-            tokenAccount.accountId()
-        );
+        String newAccessToken;
+        try {
+            newAccessToken = authTokenService.reissueAccessToken(refreshToken);
+        } catch (ApplicationException e) {
+            throw new IllegalArgumentException("Refresh Token이 유효하지 않습니다.", e);
+        }
         response.setHeader(
             SecurityConstants.AUTHORIZATION_HEADER,
             SecurityConstants.BEARER_PREFIX + newAccessToken
         );
 
         return AuthenticationUser.user(tokenAccount.accountId());
+    }
+
+    private void validateActiveUser(AuthenticationUser authenticationUser) {
+        if (authenticationUser.isUser()
+            && !authMapper.existsActiveUserById(authenticationUser.userId())) {
+            throw new IllegalArgumentException("탈퇴했거나 비활성화된 사용자입니다.");
+        }
     }
 
     private void continueWithAuthenticatedUser(

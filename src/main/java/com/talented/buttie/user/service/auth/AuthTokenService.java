@@ -7,6 +7,7 @@ import com.talented.buttie.common.security.jwt.JwtTokenProvider;
 import com.talented.buttie.common.security.redis.RefreshTokenRepository;
 import com.talented.buttie.user.dto.response.auth.AuthTokenResponse;
 import com.talented.buttie.user.exception.AuthErrorCode;
+import com.talented.buttie.user.mapper.AuthMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,11 @@ public class AuthTokenService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AuthMapper authMapper;
 
     public AuthTokenResponse createToken(Long userId) {
+        validateActiveUserForTokenIssue(userId);
+
         String accessToken = jwtTokenProvider.createUserAccessToken(userId);
         String refreshToken = jwtTokenProvider.createRefreshToken(userId, AccountType.USER);
         long refreshTokenExpiration = jwtTokenProvider.getRefreshTokenExpiration();
@@ -55,21 +59,41 @@ public class AuthTokenService {
     }
 
     public AuthTokenResponse reissue(String refreshToken) {
-        TokenAccount account;
-
-        try {
-            account = jwtTokenProvider.parseRefreshToken(refreshToken);
-        } catch (IllegalArgumentException e) {
-            throw ApplicationException.from(AuthErrorCode.INVALID_TOKEN);
-        }
-
-        if (account.accountType() != AccountType.USER) {
-            throw ApplicationException.from(AuthErrorCode.INVALID_TOKEN);
-        }
+        TokenAccount account = parseUserRefreshToken(refreshToken);
 
         if (refreshTokenRepository.matches(account.accountId(), account.accountType(), refreshToken)) {
             throw ApplicationException.from(AuthErrorCode.INVALID_TOKEN);
         }
         return createToken(account.accountId());
+    }
+
+    public String reissueAccessToken(String refreshToken) {
+        TokenAccount account = parseUserRefreshToken(refreshToken);
+
+        if (refreshTokenRepository.matches(account.accountId(), account.accountType(), refreshToken)) {
+            throw ApplicationException.from(AuthErrorCode.INVALID_TOKEN);
+        }
+
+        validateActiveUserForTokenIssue(account.accountId());
+        return jwtTokenProvider.createUserAccessToken(account.accountId());
+    }
+
+    private TokenAccount parseUserRefreshToken(String refreshToken) {
+        try {
+            TokenAccount account = jwtTokenProvider.parseRefreshToken(refreshToken);
+            if (account.accountType() != AccountType.USER) {
+                throw ApplicationException.from(AuthErrorCode.INVALID_TOKEN);
+            }
+            return account;
+        } catch (IllegalArgumentException e) {
+            throw ApplicationException.from(AuthErrorCode.INVALID_TOKEN);
+        }
+    }
+
+    private void validateActiveUserForTokenIssue(Long userId) {
+        if (authMapper.findActiveUserIdForUpdate(userId) == null) {
+            expirationToken(userId);
+            throw ApplicationException.from(AuthErrorCode.INVALID_TOKEN);
+        }
     }
 }
