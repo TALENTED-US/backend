@@ -28,9 +28,18 @@ public class UserVO {
     private UserStatus userStatus;
     private LocalDateTime userWithdrawnAt;
 
-    public static UserVO createWithdrawnUser(Long userId) {
+    public static UserVO createWithdrawnUser(
+        Long userId,
+        String withdrawalIdentifier,
+        String withdrawnPasswordHash
+    ) {
         return UserVO.builder()
             .userId(userId)
+            .userName(withdrawalIdentifier + "-" + userId)
+            .userEmail("withdrawn-" + withdrawalIdentifier + "@deleted.local")
+            .userPasswordHash(withdrawnPasswordHash)
+            .userNickname("withdrawn-" + withdrawalIdentifier.substring(0, 20))
+            .userPhoneNumber("w" + withdrawalIdentifier.substring(0, 19))
             .userStatus(UserStatus.WITHDRAWN)
             .userWithdrawnAt(LocalDateTime.now())
             .build();
