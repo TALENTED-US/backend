@@ -85,7 +85,7 @@ class MydataTransactionImportServiceTest {
         TransactionVO savedCardExpense = candidates.get(1);
         assertEquals(TransactionType.INCOME, savedIncome.getTransactionType());
         assertEquals(TransactionSource.ACCOUNT, savedIncome.getTransactionSource());
-        assertEquals(TransactionType.EXPENSE, savedCardExpense.getTransactionType());
+        assertEquals(TransactionType.FIXED, savedCardExpense.getTransactionType());
         assertEquals(ExpenseCategory.HOBBY_LEISURE, savedCardExpense.getExpenseCategory());
         assertEquals("900-00-00003", savedCardExpense.getMerchantRegistrationNumber());
     }

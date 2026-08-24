@@ -47,23 +47,19 @@ class FixedExpenseCandidateServiceTest {
     }
 
     @Test
-    void 서로_다른_카드의_동일_가맹점_거래를_별도_후보로_반환한다() {
+    void 서로_다른_카드의_동일_가맹점_거래도_하나의_고정지출_후보로_통합한다() {
         List<TransactionVO> transactions = List.of(
             subscription(1L, 11L, 6, 17_000, TransactionType.EXPENSE),
-            subscription(2L, 11L, 7, 17_000, TransactionType.EXPENSE),
-            subscription(3L, 22L, 6, 25_000, TransactionType.EXPENSE),
-            subscription(4L, 22L, 7, 25_000, TransactionType.EXPENSE)
+            subscription(2L, 22L, 7, 25_000, TransactionType.EXPENSE)
         );
         given(transactionMapper.findExternalTransactionsForAnalysis(101L))
             .willReturn(transactions);
         given(pkCrypto.encryptValue(2L)).willReturn("encrypted-2");
-        given(pkCrypto.encryptValue(4L)).willReturn("encrypted-4");
 
         List<FixedExpenseCandidateResponse> result = service.findCandidates(101L);
 
-        assertEquals(2, result.size());
-        assertEquals(25_000, result.get(0).expectedAmount());
-        assertEquals(17_000, result.get(1).expectedAmount());
+        assertEquals(1, result.size());
+        assertEquals(21_000, result.get(0).expectedAmount());
     }
 
     @Test

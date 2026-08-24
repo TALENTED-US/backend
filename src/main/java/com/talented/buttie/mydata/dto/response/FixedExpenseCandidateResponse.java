@@ -6,7 +6,7 @@ import com.talented.buttie.ledger.domain.TransactionSource;
 public record FixedExpenseCandidateResponse(
     String representativeTransactionId,
     String transactionContent,
-    ExpenseCategory expenseCategory,
+    String expenseCategory,
     TransactionSource transactionSource,
     int expectedAmount,
     int expectedPaymentDay,
