@@ -1,59 +1,54 @@
-# Local performance baseline
+# 로컬 성능 기준선
 
-These measurements run against an isolated local MySQL/Redis stack. They are
-useful for comparing a configuration on the same Mac, but are not production
-capacity figures.
+이 측정은 격리된 로컬 MySQL/Redis 환경에서 실행했습니다. 같은 Mac에서 설정 변경 전후를
+비교하는 데는 유용하지만, 운영 환경의 처리 용량을 나타내는 수치는 아닙니다.
 
-## Scripts
+## 스크립트
 
-- `k6/policy-baseline.js`: 1 → 5 → 10 → 20 VU read-only policy query.
-- `k6/policy-high-load.js`: ramping-arrival-rate at 100 → 300 → 500 RPS for
-  the same endpoint.
-- `k6/policy-vu-load.js`: 500 → 1,000 → 2,000 → 3,000 concurrent VUs,
-  with a 3-second think time between read-only policy queries.
+- `k6/policy-baseline.js`: 읽기 전용 정책 조회를 1 → 5 → 10 → 20 VU로 실행합니다.
+- `k6/policy-high-load.js`: 동일 엔드포인트에 `ramping-arrival-rate`로
+  100 → 300 → 500 RPS 부하를 인가합니다.
+- `k6/policy-vu-load.js`: 읽기 전용 정책 조회 사이에 3초의 think time을 두고
+  500 → 1,000 → 2,000 → 3,000 동시 VU로 실행합니다.
 
-All JSON outputs are intentionally ignored by Git and are kept under
-`performance/results/`.
+JSON 결과 파일은 의도적으로 Git에서 제외하며 `performance/results/`에 보관합니다.
 
-## 2026-08-24 local results
+## 2026-08-24 로컬 측정 결과
 
-Endpoint: `GET /api/catalog/policy?page=1&size=10`
+엔드포인트: `GET /api/catalog/policy?page=1&size=10`
 
-| Scenario | GC | Requests | Error rate | p95 | Max | Dropped iterations |
+| 시나리오 | GC | 요청 수 | 오류율 | p95 | 최대값 | dropped iteration |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Low load (1 → 20 VU) | Default G1, no container limit | 833 | 0% | 17.81ms | 23.02ms | 0 |
-| Low load (1 → 20 VU) | G1, 640MiB container / 384MiB heap | 833 | 0% | 19.12ms | 25.09ms | 0 |
-| High load (100 → 500 RPS, 5-run average) | G1, 640MiB container / 384MiB heap | 29,540 | 0% | 8.93ms | 129.09ms* | 9.2* |
-| High load (100 → 500 RPS, 5-run average) | Serial, 640MiB container / 384MiB heap | 29,536 | 0% | 9.11ms | 210.13ms* | 13.6* |
-| VU load (500 → 3,000 VU, 3s think time) | G1, 640MiB container / 384MiB heap | 193,120 | 0% | 30.34ms | 950.18ms | 0 |
+| 저부하 (1 → 20 VU) | 기본 G1, 컨테이너 제한 없음 | 833 | 0% | 17.81ms | 23.02ms | 0 |
+| 저부하 (1 → 20 VU) | G1, 640MiB 컨테이너 / 384MiB heap | 833 | 0% | 19.12ms | 25.09ms | 0 |
+| 고부하 (100 → 500 RPS, 5회 평균) | G1, 640MiB 컨테이너 / 384MiB heap | 29,540 | 0% | 8.93ms | 129.09ms* | 9.2* |
+| 고부하 (100 → 500 RPS, 5회 평균) | Serial, 640MiB 컨테이너 / 384MiB heap | 29,536 | 0% | 9.11ms | 210.13ms* | 13.6* |
+| VU 부하 (500 → 3,000 VU, think time 3초) | G1, 640MiB 컨테이너 / 384MiB heap | 193,120 | 0% | 30.34ms | 950.18ms | 0 |
 
-`*` Average of each run's value. G1 p95 values were 7.24ms, 9.34ms, 9.16ms,
-10.45ms, and 8.46ms (median 9.16ms; range 7.24–10.45ms). Serial p95 values
-were 7.46ms, 9.30ms, 11.12ms, 9.69ms, and 7.99ms (median 9.30ms; range
-7.46–11.12ms).
+`*` 각 실행값의 평균입니다. G1의 p95는 7.24ms, 9.34ms, 9.16ms, 10.45ms,
+8.46ms였으며 중앙값은 9.16ms, 범위는 7.24~10.45ms입니다. Serial의 p95는
+7.46ms, 9.30ms, 11.12ms, 9.69ms, 7.99ms였으며 중앙값은 9.30ms, 범위는
+7.46~11.12ms입니다.
 
-Across five local runs, G1 reduced average high-load p95 by about 2.0% and
-average dropped iterations by about 32%. The result supports G1 as the safer
-explicit choice for this 640MiB container, but does not establish a large
-latency improvement. Keep `-XX:+UseG1GC` explicit: otherwise Java 17
-ergonomics selects Serial GC under this container limit.
+로컬에서 5회 측정한 결과 G1은 고부하 p95 평균을 약 2.0%, dropped iteration
+평균을 약 32% 줄였습니다. 이 결과는 640MiB 컨테이너에서 G1을 명시적으로
+선택하는 편이 안전하다는 근거이지만, 큰 응답시간 개선을 입증하지는 않습니다.
+`-XX:+UseG1GC`를 명시적으로 유지해야 합니다. 그렇지 않으면 Java 17의 ergonomics가
+이 컨테이너 제한 환경에서 Serial GC를 선택합니다.
 
-## 3,000 VU local result
+## 3,000 VU 로컬 측정 결과
 
-The VU scenario is a read-only request from up to 3,000 concurrent virtual
-users. Each virtual user waits three seconds after a request, so the 3,000 VU
-stage approximates up to 1,000 RPS when responses are fast; it is not 3,000
-requests per second or 3,000 distinct authenticated users.
+VU 시나리오는 최대 3,000명의 동시 가상 사용자가 보내는 읽기 전용 요청입니다. 각 VU는
+요청 뒤 3초를 기다리므로, 응답이 빠른 경우 3,000 VU 구간은 최대 약 1,000 RPS에
+해당합니다. 3,000 RPS 또는 서로 다른 인증 사용자 3,000명을 의미하지는 않습니다.
 
-The API completed all requests successfully, but the Prometheus samples during
-the test show the beginning of database-pool pressure: Tomcat busy threads
-reached 147 of 200, Hikari active connections reached 10, and up to 121 threads
-were awaiting a connection. JVM current/peak threads reached 222 and heap usage
-reached about 215MiB. G1 Young Generation collection time increased by about
-4.37 seconds, with no G1 Old Generation collection observed.
+API는 모든 요청을 성공적으로 처리했지만, 테스트 중 Prometheus 표본에서는 DB 커넥션 풀
+압박이 시작되는 모습이 관찰됐습니다. Tomcat busy thread는 200개 중 147개까지 증가했고,
+Hikari active connection은 10개, 커넥션을 기다린 스레드는 최대 121개였습니다. JVM 현재/최대
+스레드는 222개였고 heap 사용량은 약 215MiB였습니다. G1 Young Generation의 수집 시간은 약
+4.37초 증가했으며 G1 Old Generation 수집은 관찰되지 않았습니다.
 
-Treat this as a local stress-test boundary, not production capacity. k6 and the
-API container share the same Mac, the endpoint is a single public read query,
-and Prometheus has a 15-second scrape interval. The next improvement candidate
-is therefore Hikari/DB-query capacity and connection-wait alerting, rather than
-raising the advertised concurrent-user limit.
+이 결과는 운영 용량이 아니라 로컬 스트레스 테스트의 경계값으로 해석해야 합니다. k6와 API
+컨테이너가 같은 Mac을 공유하고, 대상은 단일 공개 읽기 쿼리이며 Prometheus 수집 주기는
+15초입니다. 따라서 다음 개선 후보는 광고하는 동시 사용자 수를 높이는 것이 아니라
+Hikari/DB 쿼리 처리 용량과 커넥션 대기 알림입니다.
