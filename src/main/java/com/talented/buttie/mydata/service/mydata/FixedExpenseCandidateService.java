@@ -93,7 +93,7 @@ public class FixedExpenseCandidateService {
         return new FixedExpenseCandidateResponse(
             pkCrypto.encryptValue(latest.getTransactionId()),
             latest.getTransactionContent(),
-            latest.getExpenseCategory(),
+            ExpenseCategory.toKoreanName(latest.getExpenseCategory()),
             latest.getTransactionSource(),
             expectedAmount,
             latest.getTransactionAt().getDayOfMonth(),
@@ -104,16 +104,7 @@ public class FixedExpenseCandidateService {
     private String candidateKey(TransactionVO transaction) {
         return normalize(transaction.getTransactionContent())
             + "|" + transaction.getExpenseCategory()
-            + "|" + transaction.getTransactionSource()
-            + "|" + assetKey(transaction);
-    }
-
-    private String assetKey(TransactionVO transaction) {
-        return switch (transaction.getTransactionSource()) {
-            case CARD -> "CARD:" + transaction.getCardId();
-            case ACCOUNT -> "ACCOUNT:" + transaction.getAccountId();
-            case MANUAL -> "MANUAL";
-        };
+            + "|" + transaction.getTransactionSource();
     }
 
     private String normalize(String value) {

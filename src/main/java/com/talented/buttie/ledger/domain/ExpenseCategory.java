@@ -21,4 +21,15 @@ public enum ExpenseCategory {
     public String getValue(){
         return value;
     }
+
+    public String toKoreanName() {
+        return value.replace(", ", "·").replace(" ", "·");
+    }
+
+    public static String toKoreanName(ExpenseCategory category) {
+        if (category == null) {
+            return null;
+        }
+        return category.toKoreanName();
+    }
 }

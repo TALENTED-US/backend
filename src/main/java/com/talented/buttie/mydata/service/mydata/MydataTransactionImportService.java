@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,12 +81,34 @@ public class MydataTransactionImportService {
         return new SyncResult(inserted, skipped);
     }
 
+    private static final List<String> RECURRING_KEYWORDS = List.of(
+        "구독", "넷플릭스", "유튜브", "보험", "월세", "공과금", "정기권"
+    );
+
+    private boolean isFixedExpense(String text) {
+        if (text == null || text.trim().isEmpty()) {
+            return false;
+        }
+        String normalized = text.replaceAll("\\s+", "").toLowerCase(Locale.ROOT);
+        return RECURRING_KEYWORDS.stream()
+            .anyMatch(keyword -> normalized.contains(keyword.toLowerCase(Locale.ROOT)));
+    }
+
     private TransactionVO toAccountTransaction(
         Long userId,
         AccountVO account,
         MydataAccountTransactionData source
     ) {
         boolean income = DEPOSIT_TYPE.equals(source.getTransactionType());
+        boolean fixed = !income && isFixedExpense(source.getTransactionMemo());
+        TransactionType transactionType;
+        if (income) {
+            transactionType = TransactionType.INCOME;
+        } else if (fixed) {
+            transactionType = TransactionType.FIXED;
+        } else {
+            transactionType = TransactionType.TRANSFER;
+        }
         return TransactionVO.builder()
             .userId(userId)
             .accountId(account.getAccountId())
@@ -95,7 +118,7 @@ public class MydataTransactionImportService {
                 income ? ClassificationMethod.ACCOUNT_INFLOW : ClassificationMethod.UNCLASSIFIED
             )
             .transactionContent(defaultText(source.getTransactionMemo(), "계좌 거래"))
-            .transactionType(income ? TransactionType.INCOME : TransactionType.TRANSFER)
+            .transactionType(transactionType)
             .expenseCategory(null)
             .transactionAmount(source.getTransactionAmount())
             .transactionAt(parseDateTime(source.getTransactionDateTime()))
@@ -111,6 +134,7 @@ public class MydataTransactionImportService {
     ) {
         MerchantCategoryClassifier.ClassificationResult classification =
             merchantCategoryClassifier.classify(source);
+        boolean fixed = isFixedExpense(source.getMerchantName());
         return TransactionVO.builder()
             .userId(userId)
             .cardId(card.getCardId())
@@ -120,7 +144,7 @@ public class MydataTransactionImportService {
             .merchantName(source.getMerchantName())
             .merchantRegistrationNumber(source.getMerchantRegistrationNumber())
             .transactionContent(defaultText(source.getMerchantName(), "카드 결제"))
-            .transactionType(TransactionType.EXPENSE)
+            .transactionType(fixed ? TransactionType.FIXED : TransactionType.EXPENSE)
             .expenseCategory(classification.category())
             .transactionAmount(source.getApprovedAmount())
             .transactionAt(parseDateTime(source.getApprovedDateTime()))
