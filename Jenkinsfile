@@ -7,6 +7,7 @@ pipeline {
         DEPLOY_DIR = '/home/ubuntu/deploy'
         WAR_FILE = 'build/libs/backend-1.0-SNAPSHOT.war'
         MOCK_MYDATA_DIR = 'mock-mydata'
+        JMX_EXPORTER_CONFIG = 'monitoring/jmx-exporter/config.yml'
     }
 
     stages {
@@ -30,7 +31,7 @@ pipeline {
 
                             ssh -o StrictHostKeyChecking=accept-new \
                               ${SPRING_USER}@${SPRING_HOST} \
-                              "mkdir -p ${DEPLOY_DIR}/mock-mydata"
+                              "mkdir -p ${DEPLOY_DIR}/mock-mydata ${DEPLOY_DIR}/monitoring/jmx-exporter"
 
                             scp -o StrictHostKeyChecking=accept-new \
                               "${WAR_FILE}" \
@@ -47,6 +48,10 @@ pipeline {
                               ${MOCK_MYDATA_DIR}/server.js \
                               ${SPRING_USER}@${SPRING_HOST}:${DEPLOY_DIR}/mock-mydata/
 
+                            scp -o StrictHostKeyChecking=accept-new \
+                              "${JMX_EXPORTER_CONFIG}" \
+                              ${SPRING_USER}@${SPRING_HOST}:${DEPLOY_DIR}/monitoring/jmx-exporter/
+
                             ssh -o StrictHostKeyChecking=accept-new \
                               ${SPRING_USER}@${SPRING_HOST} '
                                 set -eu
@@ -54,6 +59,15 @@ pipeline {
 
                                 docker network inspect buttie-network > /dev/null 2>&1 \
                                   || docker network create buttie-network
+
+                                jmx_agent_path=/home/ubuntu/deploy/monitoring/jmx-exporter/jmx_prometheus_javaagent-1.5.0.jar
+                                jmx_agent_url=https://github.com/prometheus/jmx_exporter/releases/download/1.5.0/jmx_prometheus_javaagent-1.5.0.jar
+                                jmx_agent_sha256=0315f3f657876302c6205a98d4036ec775dca529c5d0419ca60ee669c688239f
+                                curl --fail --location --proto "=https" --tlsv1.2 \
+                                  --output "$jmx_agent_path.next" "$jmx_agent_url"
+                                printf "%s  %s\\n" "$jmx_agent_sha256" "$jmx_agent_path.next" \
+                                  | sha256sum -c -
+                                mv "$jmx_agent_path.next" "$jmx_agent_path"
 
                                 docker rm -f buttie-mydata-mock || true
 
@@ -80,13 +94,39 @@ pipeline {
 
                                 docker rm -f buttie-api || true
 
+                                METRICS_BIND_ADDRESS=$(sed -n "s/^METRICS_BIND_ADDRESS=//p" \
+                                  /home/ubuntu/deploy/.env | tail -n 1)
+                                METRICS_BIND_ADDRESS=${METRICS_BIND_ADDRESS:-127.0.0.1}
+
+                                # t3.micro(1 GiB)에서 OS와 mock 서버가 사용할 여유를 남긴다.
+                                # 운영 수치가 쌓이면 .env 값으로만 조정할 수 있다.
+                                APP_CONTAINER_MEMORY=$(sed -n "s/^APP_CONTAINER_MEMORY=//p" \
+                                  /home/ubuntu/deploy/.env | tail -n 1)
+                                APP_CONTAINER_MEMORY=${APP_CONTAINER_MEMORY:-640m}
+                                APP_CONTAINER_MEMORY_RESERVATION=$(sed -n \
+                                  "s/^APP_CONTAINER_MEMORY_RESERVATION=//p" \
+                                  /home/ubuntu/deploy/.env | tail -n 1)
+                                APP_CONTAINER_MEMORY_RESERVATION=${APP_CONTAINER_MEMORY_RESERVATION:-512m}
+                                JVM_MAX_RAM_PERCENTAGE=$(sed -n \
+                                  "s/^JVM_MAX_RAM_PERCENTAGE=//p" \
+                                  /home/ubuntu/deploy/.env | tail -n 1)
+                                JVM_MAX_RAM_PERCENTAGE=${JVM_MAX_RAM_PERCENTAGE:-60.0}
+                                mkdir -p /home/ubuntu/deploy/logs
+
                                 docker run -d \
                                   --name buttie-api \
                                   --restart unless-stopped \
                                   --network buttie-network \
+                                  --memory "$APP_CONTAINER_MEMORY" \
+                                  --memory-reservation "$APP_CONTAINER_MEMORY_RESERVATION" \
                                   --env-file /home/ubuntu/deploy/.env \
                                   -e MYDATA_MOCK_BASE_URL=http://buttie-mydata-mock:3000 \
+                                  -e CATALINA_OPTS="-XX:+UseG1GC -XX:InitialRAMPercentage=25.0 -XX:MaxRAMPercentage=$JVM_MAX_RAM_PERCENTAGE -XX:MaxGCPauseMillis=200 -Xlog:gc*,safepoint:file=/usr/local/tomcat/logs/gc.log:time,level,tags:filecount=5,filesize=10M -javaagent:/opt/jmx-exporter/jmx_prometheus_javaagent-1.5.0.jar=9404:/opt/jmx-exporter/config.yml" \
                                   -p 8080:8080 \
+                                  -p "${METRICS_BIND_ADDRESS}:9404:9404" \
+                                  -v /home/ubuntu/deploy/monitoring/jmx-exporter/jmx_prometheus_javaagent-1.5.0.jar:/opt/jmx-exporter/jmx_prometheus_javaagent-1.5.0.jar:ro \
+                                  -v /home/ubuntu/deploy/monitoring/jmx-exporter/config.yml:/opt/jmx-exporter/config.yml:ro \
+                                  -v /home/ubuntu/deploy/logs:/usr/local/tomcat/logs \
                                   -v /home/ubuntu/deploy/backend.war:/usr/local/tomcat/webapps/ROOT.war:ro \
                                   tomcat:9.0-jdk17-temurin
                               '
@@ -126,6 +166,17 @@ pipeline {
                                 docker logs buttie-mydata-mock || true
                                 exit 1
                             fi
+
+                            metrics_address=$(docker port buttie-api 9404/tcp | head -n 1)
+                            if [ -z "$metrics_address" ] \
+                              || ! curl -fsS "http://$metrics_address/metrics" \
+                                | grep -q "^jmx_scrape_error"; then
+                                docker logs buttie-api || true
+                                exit 1
+                            fi
+
+                            docker inspect --format="memory={{.HostConfig.Memory}} reservation={{.HostConfig.MemoryReservation}}" \
+                              buttie-api
 
                             for i in $(seq 1 30); do
                                 curl -fsS http://localhost:8080/swagger-ui.html > /dev/null && exit 0

@@ -1,0 +1,84 @@
+{
+  "annotations": { "list": [] },
+  "editable": false,
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "none" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true } },
+      "targets": [
+        { "expr": "jvm_threads_current", "legendFormat": "live" },
+        { "expr": "jvm_threads_peak", "legendFormat": "peak" },
+        { "expr": "jvm_threads_daemon", "legendFormat": "daemon" }
+      ],
+      "title": "JVM Threads",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true } },
+      "targets": [
+        { "expr": "jvm_memory_used_bytes{area=\"heap\"}", "legendFormat": "used" },
+        { "expr": "jvm_memory_committed_bytes{area=\"heap\"}", "legendFormat": "committed" },
+        { "expr": "jvm_memory_max_bytes{area=\"heap\"}", "legendFormat": "max" }
+      ],
+      "title": "JVM Heap",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "none" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "id": 3,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true } },
+      "targets": [
+        { "expr": "tomcat_threads_busy", "legendFormat": "{{connector}} busy" },
+        { "expr": "tomcat_threads_current", "legendFormat": "{{connector}} current" },
+        { "expr": "tomcat_threads_max", "legendFormat": "{{connector}} max" }
+      ],
+      "title": "Tomcat Threads",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "none" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "id": 4,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true } },
+      "targets": [
+        { "expr": "hikari_connections_active", "legendFormat": "active" },
+        { "expr": "hikari_connections_idle", "legendFormat": "idle" },
+        { "expr": "hikari_connections", "legendFormat": "total" },
+        { "expr": "hikari_connections_pending", "legendFormat": "pending" }
+      ],
+      "title": "Hikari Connections",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
+      "id": 5,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true } },
+      "targets": [
+        { "expr": "rate(jvm_gc_collection_seconds_sum[5m])", "legendFormat": "{{gc}}" }
+      ],
+      "title": "GC Collection Time Rate",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 41,
+  "tags": ["buttie", "runtime"],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
+  "timezone": "browser",
+  "title": "Buttie API Runtime",
+  "uid": "buttie-api-runtime",
+  "version": 1
+}

@@ -105,6 +105,8 @@ public class RootConfig {
         config.setIdleTimeout(idleTimeout);
         config.setMaxLifetime(maxLifetime);
         config.setValidationTimeout(validationTimeout);
+        config.setPoolName("buttie-hikari");
+        config.setRegisterMbeans(true);
 
         return new HikariDataSource(config);
     }

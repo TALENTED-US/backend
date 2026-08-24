@@ -1,0 +1,41 @@
+startDelaySeconds: 0
+lowercaseOutputName: true
+lowercaseOutputLabelNames: true
+excludeJvmMetrics: false
+
+rules:
+  - pattern: 'Catalina<type=ThreadPool, name="([^"]+)"><>currentThreadsBusy'
+    name: tomcat_threads_busy
+    labels:
+      connector: '$1'
+    type: GAUGE
+  - pattern: 'Catalina<type=ThreadPool, name="([^"]+)"><>currentThreadCount'
+    name: tomcat_threads_current
+    labels:
+      connector: '$1'
+    type: GAUGE
+  - pattern: 'Catalina<type=ThreadPool, name="([^"]+)"><>maxThreads'
+    name: tomcat_threads_max
+    labels:
+      connector: '$1'
+    type: GAUGE
+  - pattern: 'com.zaxxer.hikari<type=Pool \(([^)]+)\)><>ActiveConnections'
+    name: hikari_connections_active
+    labels:
+      pool: '$1'
+    type: GAUGE
+  - pattern: 'com.zaxxer.hikari<type=Pool \(([^)]+)\)><>IdleConnections'
+    name: hikari_connections_idle
+    labels:
+      pool: '$1'
+    type: GAUGE
+  - pattern: 'com.zaxxer.hikari<type=Pool \(([^)]+)\)><>TotalConnections'
+    name: hikari_connections_total
+    labels:
+      pool: '$1'
+    type: GAUGE
+  - pattern: 'com.zaxxer.hikari<type=Pool \(([^)]+)\)><>ThreadsAwaitingConnection'
+    name: hikari_connections_pending
+    labels:
+      pool: '$1'
+    type: GAUGE

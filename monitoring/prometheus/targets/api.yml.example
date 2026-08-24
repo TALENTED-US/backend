@@ -1,0 +1,5 @@
+- targets:
+    - "10.0.0.10:9404"
+  labels:
+    service: buttie-api
+    environment: production
