@@ -9,15 +9,24 @@ public class MydataConnectionVO {
     private Long userId;
     private String provider;
     @ToString.Exclude
-    private String providerUserId;
-    @ToString.Exclude
     private String refreshTokenEncrypted;
-    private LocalDateTime accessTokenExpiresAt;
     private LocalDateTime refreshTokenExpiresAt;
-    private String scope;
-    private ConnectionStatus status;
-    private LocalDateTime lastTokenRefreshedAt;
+    private ConnectionStatus mydataStatus;
     private LocalDateTime lastSyncedAt;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+
+    public static MydataConnectionVO connected(
+        Long userId,
+        String provider,
+        String encryptedRefreshToken,
+        LocalDateTime refreshTokenExpiresAt
+    ) {
+        return MydataConnectionVO.builder()
+            .userId(userId)
+            .provider(provider)
+            .refreshTokenEncrypted(encryptedRefreshToken)
+            .refreshTokenExpiresAt(refreshTokenExpiresAt)
+            .mydataStatus(ConnectionStatus.CONNECTED)
+            .lastSyncedAt(null)
+            .build();
+    }
 }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.talented.buttie.catalog.mapper.PolicyRegionMapMapper">
+
+  <insert id="insert">
+    insert into POLICY_REGION_MAP (POLICY_ID, ZIP_CD, REGION_NAME)
+    values (#{policyId}, #{zipCd}, #{regionName})
+  </insert>
+
+  <delete id="deleteByPolicyId">
+    delete from POLICY_REGION_MAP where POLICY_ID = #{policyId}
+  </delete>
+
+</mapper>

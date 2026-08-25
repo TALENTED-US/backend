@@ -1,1 +1,193 @@
-<!-- TODO: Add MyBatis mapper statements. -->
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.talented.buttie.simulation.mapper.SimulationItemMapper">
+  <insert id="save"
+          parameterType="com.talented.buttie.simulation.domain.SimulationItemVO"
+          useGeneratedKeys="true"
+          keyProperty="simulationItemId"
+          keyColumn="SIMULATION_ITEM_ID">
+    insert into SIMULATION_ITEM(
+              SIMULATION_ID,
+              SIMULATION_ITEM_CATEGORY,
+              SIMULATION_ITEM_NAME,
+              SIMULATION_ITEM_EXPENSE_CATEGORY,
+              SIMULATION_ITEM_APPLY_AMOUNT,
+              APPLY_START_DATE,
+              APPLY_END_DATE,
+              POLICY_ID,
+              RECURRENCE_TYPE,
+              IS_DELETED
+    ) values (
+              #{simulationId},
+              #{simulationItemCategory},
+              #{simulationItemName},
+              #{simulationItemExpenseCategory},
+              #{simulationItemApplyAmount},
+              #{applyStartDate},
+              #{applyEndDate},
+              #{policyId},
+              #{recurrenceType},
+              false
+    )
+  </insert>
+
+  <resultMap id="simulationItemWithPolicyMap"
+    type="com.talented.buttie.simulation.domain.SimulationItemVO">
+    <id property="simulationItemId" column="simulationItemId"/>
+    <result property="simulationId" column="simulationId"/>
+    <result property="simulationItemCategory" column="simulationItemCategory"/>
+    <result property="simulationItemName" column="simulationItemName"/>
+    <result property="simulationItemExpenseCategory" column="simulationItemExpenseCategory"/>
+    <result property="simulationItemApplyAmount" column="simulationItemApplyAmount"/>
+    <result property="applyStartDate" column="applyStartDate"/>
+    <result property="applyEndDate" column="applyEndDate"/>
+    <result property="policyId" column="policyId"/>
+    <result property="recurrenceType" column="recurrenceType"/>
+    <result property="isDeleted" column="isDeleted"/>
+    <association property="policy" javaType="com.talented.buttie.catalog.domain.PolicyVO">
+      <id property="policyId" column="p_policyId"/>
+      <result property="policyName" column="p_policyName"/>
+      <result property="policyCategory" column="p_policyCategory"/>
+      <result property="policyMinAge" column="p_policyMinAge"/>
+      <result property="policyMaxAge" column="p_policyMaxAge"/>
+      <result property="policyRegion" column="p_policyRegion"/>
+      <result property="policySupportAmount" column="p_policySupportAmount"/>
+      <result property="supportMonthCount" column="p_supportMonthCount"/>
+      <result property="dueDate" column="p_dueDate"/>
+      <result property="requiredDocument" column="p_requiredDocument"/>
+      <result property="employmentPrepStatus" column="p_employmentPrepStatus"/>
+      <result property="familyCount" column="p_familyCount"/>
+      <result property="policyStatus" column="p_policyStatus"/>
+      <result property="policyUrl" column="p_policyUrl"/>
+    </association>
+  </resultMap>
+  <select id="findAllActiveBySimulationId" resultMap="simulationItemWithPolicyMap">
+    select I.SIMULATION_ITEM_ID as simulationItemId,
+           I.SIMULATION_ID as simulationId,
+           I.SIMULATION_ITEM_CATEGORY as simulationItemCategory,
+           I.SIMULATION_ITEM_NAME as simulationItemName,
+           I.SIMULATION_ITEM_EXPENSE_CATEGORY as
+             simulationItemExpenseCategory,
+           I.SIMULATION_ITEM_APPLY_AMOUNT as
+             simulationItemApplyAmount,
+           I.APPLY_START_DATE as applyStartDate,
+           I.APPLY_END_DATE as applyEndDate,
+           I.POLICY_ID as policyId,
+           I.RECURRENCE_TYPE as recurrenceType,
+           I.IS_DELETED as isDeleted,
+           P.POLICY_ID as p_policyId,
+           P.POLICY_NAME as p_policyName,
+           P.POLICY_CATEGORY as p_policyCategory,
+           P.POLICY_MIN_AGE as p_policyMinAge,
+           P.POLICY_MAX_AGE as p_policyMaxAge,
+           P.POLICY_REGION as p_policyRegion,
+           P.POLICY_SUPPORT_AMOUNT as p_policySupportAmount,
+           P.SUPPORT_MONTH_COUNT as p_supportMonthCount,
+           P.DUE_DATE as p_dueDate,
+           P.REQUIRED_DOCUMENT as p_requiredDocument,
+           P.EMPLOYMENT_PREP_STATUS as p_employmentPrepStatus,
+           P.FAMILY_COUNT as p_familyCount,
+           P.POLICY_STATUS as p_policyStatus,
+           P.POLICY_URL as p_policyUrl
+    from SIMULATION_ITEM I
+    left join POLICY P on I.POLICY_ID = P.POLICY_ID
+    where I.SIMULATION_ID = #{simulationId}
+        and I.IS_DELETED is false
+  </select>
+
+  <select id="findAllByCategory" resultMap="simulationItemWithPolicyMap">
+    select I.SIMULATION_ITEM_ID as simulationItemId,
+           I.SIMULATION_ID as simulationId,
+           I.SIMULATION_ITEM_CATEGORY as simulationItemCategory,
+           I.SIMULATION_ITEM_NAME as simulationItemName,
+           I.SIMULATION_ITEM_EXPENSE_CATEGORY as
+             simulationItemExpenseCategory,
+           I.SIMULATION_ITEM_APPLY_AMOUNT as
+             simulationItemApplyAmount,
+           I.APPLY_START_DATE as applyStartDate,
+           I.APPLY_END_DATE as applyEndDate,
+           I.RECURRENCE_TYPE as recurrenceType,
+           I.IS_DELETED as isDeleted,
+           I.POLICY_ID as policyId,
+           P.POLICY_ID as p_policyId,
+           P.POLICY_NAME as p_policyName,
+           P.POLICY_CATEGORY as p_policyCategory,
+           P.POLICY_MIN_AGE as p_policyMinAge,
+           P.POLICY_MAX_AGE as p_policyMaxAge,
+           P.POLICY_REGION as p_policyRegion,
+           P.POLICY_SUPPORT_AMOUNT as p_policySupportAmount,
+           P.SUPPORT_MONTH_COUNT as p_supportMonthCount,
+           P.DUE_DATE as p_dueDate,
+           P.REQUIRED_DOCUMENT as p_requiredDocument,
+           P.EMPLOYMENT_PREP_STATUS as p_employmentPrepStatus,
+           P.FAMILY_COUNT as p_familyCount,
+           P.POLICY_STATUS as p_policyStatus,
+           P.POLICY_URL as p_policyUrl
+    from SIMULATION_ITEM I
+           left join POLICY P on I.POLICY_ID = P.POLICY_ID
+    where I.SIMULATION_ID = #{simulationId}
+      and I.SIMULATION_ITEM_CATEGORY = #{itemCategory}
+      and I.IS_DELETED = false
+    order by I.SIMULATION_ITEM_CATEGORY, I.APPLY_START_DATE
+  </select>
+
+  <select id="findActiveByIdAndSimulationId"
+          resultType="com.talented.buttie.simulation.domain.SimulationItemVO">
+    select I.SIMULATION_ITEM_ID as simulationItemId,
+           I.SIMULATION_ID as simulationId,
+           I.SIMULATION_ITEM_CATEGORY as simulationItemCategory,
+           I.SIMULATION_ITEM_NAME as simulationItemName,
+           I.SIMULATION_ITEM_EXPENSE_CATEGORY as simulationItemExpenseCategory,
+           I.SIMULATION_ITEM_APPLY_AMOUNT as simulationItemApplyAmount,
+           I.APPLY_START_DATE as applyStartDate,
+           I.APPLY_END_DATE as applyEndDate,
+           I.POLICY_ID as policyId,
+           I.RECURRENCE_TYPE as recurrenceType,
+           I.IS_DELETED as isDeleted
+    from SIMULATION_ITEM I
+    where I.SIMULATION_ITEM_ID = #{itemId}
+      and I.SIMULATION_ID = #{simulationId}
+      and I.IS_DELETED = false
+  </select>
+  
+  <select id="findById"
+          resultType="com.talented.buttie.simulation.domain.SimulationItemVO">
+    select I.SIMULATION_ITEM_ID as simulationItemId,
+           I.SIMULATION_ID as simulationId,
+           I.SIMULATION_ITEM_CATEGORY as simulationItemCategory,
+           I.SIMULATION_ITEM_NAME as simulationItemName,
+           I.SIMULATION_ITEM_EXPENSE_CATEGORY as simulationItemExpenseCategory,
+           I.SIMULATION_ITEM_APPLY_AMOUNT as simulationItemApplyAmount,
+           I.APPLY_START_DATE as applyStartDate,
+           I.APPLY_END_DATE as applyEndDate,
+           I.POLICY_ID as policyId,
+           I.RECURRENCE_TYPE as recurrenceType,
+           I.IS_DELETED as isDeleted
+    from SIMULATION_ITEM I
+    where I.SIMULATION_ITEM_ID = #{simulationItemId}
+  </select>
+
+  <update id="update"
+          parameterType="com.talented.buttie.simulation.domain.SimulationItemVO">
+    update SIMULATION_ITEM
+    set SIMULATION_ITEM_NAME = #{simulationItemName},
+        SIMULATION_ITEM_APPLY_AMOUNT = #{simulationItemApplyAmount},
+        APPLY_START_DATE = #{applyStartDate},
+        APPLY_END_DATE = #{applyEndDate},
+        RECURRENCE_TYPE = #{recurrenceType}
+    where SIMULATION_ITEM_ID = #{simulationItemId}
+      and SIMULATION_ID = #{simulationId}
+      and IS_DELETED = false
+  </update>
+
+  <update id="deleteByIdAndSimulationId">
+    update SIMULATION_ITEM
+    set IS_DELETED = true
+    where SIMULATION_ITEM_ID = #{itemId}
+        and SIMULATION_ID = #{simulationId}
+        and IS_DELETED = false
+  </update>
+</mapper>

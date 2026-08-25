@@ -1,1 +1,77 @@
-<!-- TODO: Add MyBatis mapper statements. -->
+<?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  <mapper namespace="com.talented.buttie.simulation.mapper.SimulationMapper">
+  <insert id="save"
+          parameterType="com.talented.buttie.simulation.domain.SimulationVO"
+          useGeneratedKeys="true"
+          keyProperty="simulationId"
+          keyColumn="SIMULATION_ID"
+  >
+    insert into SIMULATION(USER_ID, SNAPSHOT_ID, SIMULATION_START_DATE, SIMULATION_DUE_DATE, SIMULATION_END_AMOUNT, EXPECT_PREP_MONTHS)
+    values(#{userId}, #{snapshotId}, #{simulationStartDate}, #{simulationDueDate}, #{simulationEndAmount}, #{expectPrepMonths})
+  </insert>
+
+    <select id="findActiveByUserId"
+          resultType="com.talented.buttie.simulation.domain.SimulationVO">
+    select * from SIMULATION
+    where USER_ID = #{userId}
+        and CONFIRMED_AT is null
+    order by SIMULATION_ID desc
+    limit 1
+  </select>
+
+  <select id="findLatestConfirmedByUserId"
+          resultType="com.talented.buttie.simulation.domain.SimulationVO">
+    select * from SIMULATION
+    where USER_ID = #{userId}
+        and CONFIRMED_AT is not null
+    order by CONFIRMED_AT desc, SIMULATION_ID desc
+    limit 1
+  </select>
+
+  <update id="updateSimulationPeriod">
+    update SIMULATION
+    set SIMULATION_START_DATE = #{simulationStartDate},
+        SIMULATION_DUE_DATE = #{simulationDueDate},
+        SIMULATION_END_AMOUNT = #{simulationEndAmount}
+    where SIMULATION_ID = #{simulationId}
+      and CONFIRMED_AT is null
+  </update>
+
+  <update id="updateSummary">
+    update SIMULATION
+    set SIMULATION_END_AMOUNT = #{simulationEndAmount},
+        EXPECT_PREP_MONTHS = #{expectPrepMonths}
+    where SIMULATION_ID = #{simulationId}
+      and CONFIRMED_AT is null
+  </update>
+
+  <update id="confirmSimulation">
+    update SIMULATION
+    set CONFIRMED_AT = CURRENT_TIMESTAMP
+    where SIMULATION_ID = #{simulationId}
+      and CONFIRMED_AT is null
+  </update>
+
+  <update id="revertSimulation">
+    update SIMULATION
+    set CONFIRMED_AT = null
+    where SIMULATION_ID = #{simulationId}
+      and CONFIRMED_AT is not null
+  </update>
+
+  <delete id="deleteById">
+    delete from SIMULATION
+    where SIMULATION_ID = #{simulationId}
+      and CONFIRMED_AT is not null
+  </delete>
+
+  <delete id="deleteActiveById">
+    delete from SIMULATION
+    where SIMULATION_ID = #{simulationId}
+      and CONFIRMED_AT is null
+  </delete>
+</mapper>

@@ -1,1 +1,94 @@
-<!-- TODO: Add MyBatis mapper statements. -->
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.talented.buttie.notification.mapper.NotificationMapper">
+
+  <select id="selectNotificationList"
+    resultType="com.talented.buttie.notification.domain.NotificationVO">
+    SELECT
+    NOTIFICATION_ID          AS notificationId,
+    USER_ID                  AS userId,
+    NOTIFICATION_TYPE        AS notificationType,
+    NOTIFICATION_TITLE       AS notificationTitle,
+    NOTIFICATION_CONTENT     AS notificationContent,
+    NOTIFICATION_URL         AS notificationUrl,
+    IS_READ                  AS isRead,
+    NOTIFICATION_CREATED_AT  AS notificationCreatedAt
+    FROM NOTIFICATION
+    WHERE USER_ID = #{userId}
+    <if test="unreadOnly">
+      AND IS_READ = FALSE
+    </if>
+    ORDER BY NOTIFICATION_CREATED_AT DESC
+  </select>
+
+  <select id="selectUnreadCount" resultType="int">
+    SELECT COUNT(*)
+    FROM NOTIFICATION
+    WHERE USER_ID = #{userId}
+      AND IS_READ = FALSE
+  </select>
+
+  <select id="existsUnreadNotification" resultType="boolean">
+    SELECT EXISTS(
+      SELECT 1
+        FROM NOTIFICATION
+       WHERE USER_ID = #{userId}
+         AND IS_READ = FALSE
+    )
+  </select>
+
+  <select id="selectUserNotification" resultType="com.talented.buttie.notification.domain.UserNotificationVO">
+    SELECT
+      USER_ID AS userId,
+      POLICY_DEADLINE_NOTIFICATION_YN AS policyDeadlineNotificationYn,
+      FINANCIAL_CHANGE_NOTIFICATION_YN AS financialChangeNotificationYn,
+      PLAN_DEVIATION_NOTIFICATION_YN AS planDeviationNotificationYn,
+      SERVICE_NOTICE_NOTIFICATION_YN AS serviceNoticeNotificationYn
+    FROM USER_NOTIFICATION
+    WHERE USER_ID = #{userId}
+  </select>
+
+  <insert id="upsertUserNotification">
+    INSERT INTO USER_NOTIFICATION (
+      USER_ID,
+      POLICY_DEADLINE_NOTIFICATION_YN,
+      FINANCIAL_CHANGE_NOTIFICATION_YN,
+      PLAN_DEVIATION_NOTIFICATION_YN,
+      SERVICE_NOTICE_NOTIFICATION_YN
+    ) VALUES (
+      #{userId},
+      #{policyDeadlineNotificationYn},
+      #{financialChangeNotificationYn},
+      #{planDeviationNotificationYn},
+      #{serviceNoticeNotificationYn}
+    )
+    ON DUPLICATE KEY UPDATE
+      POLICY_DEADLINE_NOTIFICATION_YN = #{policyDeadlineNotificationYn},
+      FINANCIAL_CHANGE_NOTIFICATION_YN = #{financialChangeNotificationYn},
+      PLAN_DEVIATION_NOTIFICATION_YN = #{planDeviationNotificationYn},
+      SERVICE_NOTICE_NOTIFICATION_YN = #{serviceNoticeNotificationYn}
+  </insert>
+
+  <select id="selectUserIdByNotificationId" resultType="java.lang.Long">
+    SELECT USER_ID
+    FROM NOTIFICATION
+    WHERE NOTIFICATION_ID = #{notificationId}
+  </select>
+
+  <update id="updateNotificationRead">
+    UPDATE NOTIFICATION
+    SET IS_READ = TRUE
+    WHERE NOTIFICATION_ID = #{notificationId}
+  </update>
+
+  <update id="updateAllNotificationsRead">
+    UPDATE NOTIFICATION
+    SET IS_READ = TRUE
+    WHERE USER_ID = #{userId}
+      AND IS_READ = FALSE
+  </update>
+
+</mapper>

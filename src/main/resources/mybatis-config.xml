@@ -3,4 +3,11 @@
   PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+  <settings>
+    <setting name="mapUnderscoreToCamelCase" value="true"/>
+  </settings>
+  <typeHandlers>
+    <typeHandler javaType="com.talented.buttie.catalog.domain.PolicyCategory"
+      handler="com.talented.buttie.catalog.mapper.PolicyCategoryTypeHandler"/>
+  </typeHandlers>
 </configuration>

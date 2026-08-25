@@ -7,10 +7,10 @@ import lombok.*;
 public class NotificationVO {
     private Long notificationId;
     private Long userId;
-    private NotificationType type;
-    private String title;
-    private String content;
-    private String url;
+    private NotificationType notificationType;
+    private String notificationTitle;
+    private String notificationContent;
+    private String notificationUrl;
     private Boolean isRead;
-    private LocalDateTime createdAt;
+    private LocalDateTime notificationCreatedAt;
 }
