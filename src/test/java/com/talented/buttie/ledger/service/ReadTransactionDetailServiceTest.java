@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
 import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.common.util.PKCrypto;
 import com.talented.buttie.ledger.domain.TransactionVO;
 import com.talented.buttie.ledger.dto.response.transaction.TransactionDetailResponse;
 import com.talented.buttie.ledger.exception.LedgerErrorCode;
@@ -33,6 +34,7 @@ class ReadTransactionDetailServiceTest {
 
     @BeforeEach
     void setUp() {
+        new PKCrypto("AES", "1234567890123456").init();
         userId = 1L;
         transactionId = 100L;
         sampleTransaction = TransactionVO.builder()

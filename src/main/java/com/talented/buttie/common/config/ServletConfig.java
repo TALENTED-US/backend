@@ -24,15 +24,12 @@ import org.springframework.web.servlet.view.JstlView;
 @ComponentScan(basePackages = {
     "com.talented.buttie.user.controller",
     "com.talented.buttie.mydata.controller",
-    "com.talented.buttie.account.controller",
     "com.talented.buttie.ledger.controller",
-    "com.talented.buttie.snapshot.controller",
     "com.talented.buttie.simulation.controller",
     "com.talented.buttie.dashboard.controller",
     "com.talented.buttie.quest.controller",
     "com.talented.buttie.catalog.controller",
     "com.talented.buttie.notification.controller",
-    "com.talented.buttie.batch.controller",
     "com.talented.buttie.common.exception"
 })
 @Import(SwaggerConfig.class)

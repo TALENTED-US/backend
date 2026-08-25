@@ -1,4 +1,4 @@
-package com.talented.buttie.simulation.service;
+package com.talented.buttie.dashboard.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
@@ -52,7 +52,7 @@ class TimelineReadServiceTest {
     }
 
     @Test
-    @DisplayName("성공: 월별 재정 타임라인 정상 조회")
+    @DisplayName("?깃났: ?붾퀎 ?ъ젙 ??꾨씪???뺤긽 議고쉶")
     void getTimelineSuccess() {
         TimelineVO timelineVO = TimelineVO.builder()
             .simulationId(simulationId)
@@ -77,7 +77,7 @@ class TimelineReadServiceTest {
     }
 
     @Test
-    @DisplayName("실패: 타임라인 데이터 자체가 없는 경우 TIMELINE_NOT_FOUND 예외 발생")
+    @DisplayName("?ㅽ뙣: ??꾨씪???곗씠???먯껜媛 ?녿뒗 寃쎌슦 TIMELINE_NOT_FOUND ?덉쇅 諛쒖깮")
     void whenTimelineNotFound() {
         given(timelineMapper.findTimelineByUserId(userId)).willReturn(null);
 
@@ -88,7 +88,7 @@ class TimelineReadServiceTest {
     }
 
     @Test
-    @DisplayName("실패: 취업 준비 정보(targetEmploymentDate 등)가 누락된 경우 EMPLOYMENT_PREPARATION_NOT_FOUND 예외 발생")
+    @DisplayName("?ㅽ뙣: 痍⑥뾽 以鍮??뺣낫(targetEmploymentDate ??媛 ?꾨씫??寃쎌슦 EMPLOYMENT_PREPARATION_NOT_FOUND ?덉쇅 諛쒖깮")
     void whenEmploymentPreparationNotFound() {
         TimelineVO timelineVO = TimelineVO.builder()
             .simulationId(simulationId)
@@ -108,7 +108,7 @@ class TimelineReadServiceTest {
     }
 
     @Test
-    @DisplayName("실패: 스냅샷 정보(currentPrepMonths)가 누락된 경우 SNAPSHOT_NOT_FOUND 예외 발생")
+    @DisplayName("?ㅽ뙣: ?ㅻ깄???뺣낫(currentPrepMonths)媛 ?꾨씫??寃쎌슦 SNAPSHOT_NOT_FOUND ?덉쇅 諛쒖깮")
     void whenSnapshotNotFound() {
         TimelineVO timelineVO = TimelineVO.builder()
             .simulationId(simulationId)
@@ -128,7 +128,7 @@ class TimelineReadServiceTest {
     }
 
     @Test
-    @DisplayName("실패: 시뮬레이션 정보(expectPrepMonths)가 누락된 경우 SIMULATION_NOT_FOUND 예외 발생")
+    @DisplayName("?ㅽ뙣: ?쒕??덉씠???뺣낫(expectPrepMonths)媛 ?꾨씫??寃쎌슦 SIMULATION_NOT_FOUND ?덉쇅 諛쒖깮")
     void whenSimulationNotFound() {
         TimelineVO timelineVO = TimelineVO.builder()
             .simulationId(simulationId)
@@ -147,3 +147,4 @@ class TimelineReadServiceTest {
         assertEquals(TimelineErrorCode.SIMULATION_NOT_FOUND, exception.getCode());
     }
 }
+
