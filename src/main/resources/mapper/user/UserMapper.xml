@@ -1,1 +1,143 @@
-<!-- TODO: Add MyBatis mapper statements. -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.talented.buttie.user.mapper.UserMapper">
+  <select id="getPasswordByUserId" resultType="string">
+    SELECT USER_PASSWORD_HASH
+    FROM `USER`
+    WHERE USER_ID = #{userId}
+      AND USER_STATUS != 'WITHDRAWN'
+  </select>
+  <select id="selectUserProfile" resultType="com.talented.buttie.user.domain.UserProfileVO">
+    SELECT u.USER_ID           AS userId,
+           ub.BUTTIE_LEVEL     AS buttieLevel,
+           CASE COALESCE(s.RISK_LEVEL, 'STABLE')
+             WHEN 'STABLE' THEN bl.IMAGE_URL_STABLE
+             WHEN 'CAUTION' THEN bl.IMAGE_URL_CAUTION
+             WHEN 'DANGER' THEN bl.IMAGE_URL_DANGER
+             END               AS buttieImageUrl,
+           u.USER_NICKNAME     AS userNickname,
+           u.USER_NAME         AS userName,
+           ep.BIRTH_DATE       AS birthDate,
+           u.USER_PHONE_NUMBER AS userPhoneNumber,
+           u.USER_EMAIL        AS userEmail
+    FROM USER u
+           JOIN USER_BUTTIE ub ON u.USER_ID = ub.USER_ID
+           JOIN BUTTIE_LEVEL bl ON ub.BUTTIE_LEVEL = bl.LEVEL
+           JOIN EMPLOYMENT_PREPARATIONS ep ON u.USER_ID = ep.USER_ID
+           LEFT JOIN SNAPSHOT s ON ub.USER_ID = s.USER_ID
+    WHERE u.USER_ID = #{userId}
+  </select>
+  <update id="updateWithdrawnUser">
+    UPDATE `USER`
+    SET USER_NAME         = #{user.userName},
+        USER_EMAIL        = #{user.userEmail},
+        USER_PASSWORD_HASH = #{user.userPasswordHash},
+        USER_NICKNAME     = #{user.userNickname},
+        USER_PHONE_NUMBER = #{user.userPhoneNumber},
+        USER_STATUS       = #{user.userStatus},
+        USER_WITHDRAWN_AT = #{user.userWithdrawnAt}
+    WHERE USER_ID = #{user.userId}
+  </update>
+
+
+  <update id="updateUser">
+    UPDATE USER
+    SET USER_NICKNAME   = #{user.userNickname},
+        USER_UPDATED_AT = NOW()
+    WHERE USER_ID = #{user.userId}
+      AND USER_STATUS != 'WITHDRAWN'
+  </update>
+
+  <select id="countByNickname" resultType="int">
+    SELECT COUNT(*)
+    FROM USER
+    WHERE USER_NICKNAME = #{nickname}
+  </select>
+
+  <select id="selectMyProfileSummary" resultType="com.talented.buttie.user.domain.MyProfileSummaryVO">
+    SELECT
+      CASE COALESCE(s.RISK_LEVEL, 'STABLE')
+        WHEN 'STABLE'  THEN bl.IMAGE_URL_STABLE
+        WHEN 'CAUTION' THEN bl.IMAGE_URL_CAUTION
+        WHEN 'DANGER'  THEN bl.IMAGE_URL_DANGER
+        END                                          AS buttieImageUrl,
+        ub.BUTTIE_LEVEL                              AS buttieLevel,
+        ub.BUTTIE_TOTAL_EXP                          AS buttieTotalExp,
+        (SELECT bl2.REQUIRED_EXP
+           FROM BUTTIE_LEVEL bl2
+          WHERE bl2.LEVEL = ub.BUTTIE_LEVEL + 1)     AS requiredExp,
+        COALESCE(s.RISK_LEVEL, 'STABLE')             AS riskLevel,
+        u.USER_NICKNAME                              AS userNickname,
+        u.USER_EMAIL                                 AS userEmail,
+        ep.EMPLOYMENT_PREP_TYPE                      AS employmentPrepType,
+        ep.PREP_START_DATE                           AS prepStartDate,
+        ep.TARGET_EMPLOYMENT_DATE                    AS targetEmploymentDate,
+        (SELECT m.MYDATA_STATUS
+           FROM MYDATA m
+          WHERE m.USER_ID = u.USER_ID
+          ORDER BY m.LAST_SYNCED_AT DESC
+          LIMIT 1)                                   AS mydataStatus,
+        (SELECT MAX(m.LAST_SYNCED_AT)
+           FROM MYDATA m
+          WHERE m.USER_ID = u.USER_ID)               AS lastSyncedAt
+    FROM USER u
+           JOIN USER_BUTTIE ub ON u.USER_ID = ub.USER_ID
+           JOIN BUTTIE_LEVEL bl ON ub.BUTTIE_LEVEL = bl.LEVEL
+           JOIN EMPLOYMENT_PREPARATIONS ep ON u.USER_ID = ep.USER_ID
+           LEFT JOIN SNAPSHOT s ON u.USER_ID = s.USER_ID
+    WHERE u.USER_ID = #{userId}
+  </select>
+
+  <insert id="createUserButtie">
+    INSERT INTO USER_BUTTIE (USER_ID, BUTTIE_LEVEL, BUTTIE_TOTAL_EXP)
+    VALUES (#{userId},
+            1,
+            0)
+  </insert>
+  <insert id="createUserConsent">
+    INSERT INTO USER_CONSENTS (USER_ID, TERMS_AGREED_AT, PRIVACY_AGREED_AT,
+                               FINANCIAL_INFO_AGREED_AT)
+    VALUES (#{userId}, NOW(), NOW(), NOW())
+    ON DUPLICATE KEY UPDATE USER_ID = USER_ID
+  </insert>
+
+  <update id="deductUserExp">
+    UPDATE USER_BUTTIE ub
+    JOIN (
+      SELECT
+        c.user_id,
+        c.target_exp,
+        COALESCE(MAX(bl.LEVEL), 1) AS target_level
+      FROM (
+        SELECT USER_ID, GREATEST(0, BUTTIE_TOTAL_EXP - #{expAmount}) AS target_exp
+        FROM USER_BUTTIE
+        WHERE USER_ID = #{userId}
+      ) c
+      LEFT JOIN BUTTIE_LEVEL bl ON bl.REQUIRED_EXP &lt;= c.target_exp
+      GROUP BY c.user_id, c.target_exp
+    ) calc ON ub.USER_ID = calc.user_id
+    SET ub.BUTTIE_TOTAL_EXP = calc.target_exp,
+        ub.BUTTIE_LEVEL = calc.target_level
+  </update>
+
+  <update id="addUserExp">
+    UPDATE USER_BUTTIE ub
+    JOIN (
+      SELECT
+        c.user_id,
+        c.target_exp,
+        COALESCE(MAX(bl.LEVEL), 1) AS target_level
+      FROM (
+        SELECT USER_ID, (BUTTIE_TOTAL_EXP + #{expAmount}) AS target_exp
+        FROM USER_BUTTIE
+        WHERE USER_ID = #{userId}
+      ) c
+      LEFT JOIN BUTTIE_LEVEL bl ON bl.REQUIRED_EXP &lt;= c.target_exp
+      GROUP BY c.user_id, c.target_exp
+    ) calc ON ub.USER_ID = calc.user_id
+    SET ub.BUTTIE_TOTAL_EXP = calc.target_exp,
+        ub.BUTTIE_LEVEL = calc.target_level
+  </update>
+</mapper>

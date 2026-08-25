@@ -1,1 +1,64 @@
-<!-- TODO: Add MyBatis mapper statements. -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.talented.buttie.simulation.mapper.FinancialSnapshotMapper">
+  <select id="findById"
+    resultType="com.talented.buttie.simulation.domain.FinancialSnapshotVO">
+    select *
+    from SNAPSHOT
+    where SNAPSHOT_ID = #{snapshotId}
+  </select>
+
+  <insert id="save"
+    parameterType="com.talented.buttie.simulation.domain.FinancialSnapshotVO"
+    useGeneratedKeys="true"
+    keyProperty="snapshotId">
+    insert into SNAPSHOT(USER_ID,
+                         SNAPSHOT_BASE_DATE,
+                         LIQUID_ASSETS,
+                         MONTHLY_NET_CASHFLOW,
+                         CURRENT_PREP_MONTHS,
+                         AVG_MONTHLY_EXPENSE,
+                         AVG_MONTHLY_INCOME,
+                         AVG_WEEKEND_EXPENSE,
+                         AVG_WEEKEND_INCOME,
+                         AVG_WEEK_EXPENSE,
+                         AVG_WEEK_INCOME,
+                         RISK_LEVEL)
+    values (#{userId},
+            #{snapshotBaseDate},
+            #{liquidAssets},
+            #{monthlyNetCashflow},
+            #{currentPrepMonths},
+            #{avgMonthlyExpense},
+            #{avgMonthlyIncome},
+            #{avgWeekendExpense},
+            #{avgWeekendIncome},
+            #{avgWeekExpense},
+            #{avgWeekIncome},
+            #{riskLevel})
+    on duplicate key update SNAPSHOT_ID          = LAST_INSERT_ID(SNAPSHOT_ID),
+                            SNAPSHOT_BASE_DATE   = values(SNAPSHOT_BASE_DATE),
+                            LIQUID_ASSETS        = values(LIQUID_ASSETS),
+                            MONTHLY_NET_CASHFLOW = values(MONTHLY_NET_CASHFLOW),
+                            CURRENT_PREP_MONTHS  = values(CURRENT_PREP_MONTHS),
+                            AVG_MONTHLY_EXPENSE  = values(AVG_MONTHLY_EXPENSE),
+                            AVG_MONTHLY_INCOME   = values(AVG_MONTHLY_INCOME),
+                            AVG_WEEKEND_EXPENSE  = values(AVG_WEEKEND_EXPENSE),
+                            AVG_WEEKEND_INCOME   = values(AVG_WEEKEND_INCOME),
+                            AVG_WEEK_EXPENSE     = values(AVG_WEEK_EXPENSE),
+                            AVG_WEEK_INCOME      = values(AVG_WEEK_INCOME),
+                            RISK_LEVEL           = values(RISK_LEVEL)
+  </insert>
+
+  <select id="findLatestByUserId"
+    resultType="com.talented.buttie.simulation.domain.FinancialSnapshotVO">
+    select *
+    from SNAPSHOT
+    where USER_ID = #{userId}
+    order by SNAPSHOT_BASE_DATE desc, SNAPSHOT_CREATED_AT desc
+    limit 1
+  </select>
+</mapper>

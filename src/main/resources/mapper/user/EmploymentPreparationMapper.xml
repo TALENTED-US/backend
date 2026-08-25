@@ -1,1 +1,54 @@
-<!-- TODO: Add MyBatis mapper statements. -->
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.talented.buttie.user.mapper.EmploymentPreparationMapper">
+  <select id="getLivingThresholdByUserId" resultType="java.lang.Integer">
+    select LIVING_FUND_THRESHOLD
+    from EMPLOYMENT_PREPARATIONS
+    where USER_ID = #{userId}
+  </select>
+  <update id="updateEmploymentPreparation">
+    UPDATE EMPLOYMENT_PREPARATIONS
+    SET
+      EMPLOYMENT_PREP_REGION  = #{employmentPreparation.employmentPrepRegion},
+      FAMILY_COUNT = #{employmentPreparation.familyCount},
+      EMPLOYMENT_PREP_TYPE = #{employmentPreparation.employmentPrepType},
+      PREP_START_DATE = #{employmentPreparation.prepStartDate},
+      TARGET_EMPLOYMENT_DATE = #{employmentPreparation.targetEmploymentDate}
+    WHERE USER_ID = #{employmentPreparation.userId}
+  </update>
+
+  <insert id="createEmploymentPreparation">
+    INSERT INTO EMPLOYMENT_PREPARATIONS (USER_ID,
+                                         BIRTH_DATE,
+                                         EMPLOYMENT_PREP_REGION,
+                                         FAMILY_COUNT,
+                                         EMPLOYMENT_PREP_TYPE,
+                                         PREP_START_DATE,
+                                         TARGET_EMPLOYMENT_DATE,
+                                         LIVING_FUND_THRESHOLD)
+    VALUES (#{employmentPreparation.userId},
+            #{employmentPreparation.birthDate},
+            #{employmentPreparation.employmentPrepRegion},
+            #{employmentPreparation.familyCount},
+            #{employmentPreparation.employmentPrepType},
+            #{employmentPreparation.prepStartDate},
+            #{employmentPreparation.targetEmploymentDate},
+            #{employmentPreparation.livingFundThreshold})
+  </insert>
+
+  <select id="selectEmploymentPreparation"
+    resultType="com.talented.buttie.user.domain.EmploymentPreparationVO">
+    SELECT USER_ID,
+           BIRTH_DATE,
+           EMPLOYMENT_PREP_REGION,
+           FAMILY_COUNT,
+           EMPLOYMENT_PREP_TYPE,
+           PREP_START_DATE,
+           TARGET_EMPLOYMENT_DATE,
+           LIVING_FUND_THRESHOLD
+    FROM EMPLOYMENT_PREPARATIONS
+    WHERE USER_ID = #{userId}
+  </select>
+</mapper>

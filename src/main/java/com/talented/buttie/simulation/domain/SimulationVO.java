@@ -1,21 +1,44 @@
 package com.talented.buttie.simulation.domain;
 
+import com.talented.buttie.simulation.dto.request.CreateSimulationRequest;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import lombok.*;
+import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data @Builder @NoArgsConstructor @AllArgsConstructor
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SimulationVO {
+
     private Long simulationId;
     private Long userId;
     private Long snapshotId;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
-    private Integer endingBalance;
-    private BigDecimal targetRate;
-    private BigDecimal prepMonths;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+    private LocalDate simulationStartDate;
+    private LocalDate simulationDueDate;
+    private Integer simulationEndAmount;
+    private BigDecimal expectPrepMonths;
     private LocalDateTime confirmedAt;
-    private Boolean isDeleted;
+
+    private List<MonthlyProjectionVO> monthlyProjections;
+
+    public static SimulationVO createCurrentSimulation(
+        Long userId,
+        CreateSimulationRequest request,
+        FinancialSnapshotVO snapshot
+    ) {
+        return SimulationVO.builder()
+            .userId(userId)
+            .snapshotId(snapshot.getSnapshotId())
+            .simulationStartDate(request.simulationStartDate())
+            .simulationDueDate(request.simulationDueDate())
+            .simulationEndAmount(snapshot.getLiquidAssets())
+            .expectPrepMonths(snapshot.getCurrentPrepMonths())
+            .build();
+    }
 }

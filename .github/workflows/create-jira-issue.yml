@@ -25,6 +25,7 @@ jobs:
         uses: stefanbuck/github-issue-parser@v3
         with:
           template-path: .github/ISSUE_TEMPLATE/feature-issue-template.yml
+
       - name: Set Jira issue type
         id: issue_type
         env:
@@ -40,7 +41,51 @@ jobs:
               exit 1
               ;;
           esac
-          
+
+      - name: Resolve Jira assignee
+        id: assignee
+        env:
+          GITHUB_ASSIGNEE: ${{ github.event.issue.assignees[0].login }}
+        run: |
+          JIRA_ACCOUNT_ID=""
+
+          case "$GITHUB_ASSIGNEE" in
+            IWNFSky)
+              JIRA_ACCOUNT_ID="712020:bd978ec6-6d8f-48e7-a072-a969aae3c091"
+              ;;
+            sudpdj124)
+              JIRA_ACCOUNT_ID="712020:b3b40598-ed19-4274-9513-cee4a7969571"
+              ;;
+            ahhyunii)
+              JIRA_ACCOUNT_ID="712020:6533c9c5-99f0-40a9-ac2f-badae9da4f58"
+              ;;
+            hurrayPersimmon)
+              JIRA_ACCOUNT_ID="712020:bcf14a89-664f-4921-8d7b-4d4895443c5e"
+              ;;
+            M00NJK)
+              JIRA_ACCOUNT_ID="712020:380017fb-c8d8-4881-9cbc-bb2fff999c76"
+              ;;
+            nanemo4168-arch)
+              JIRA_ACCOUNT_ID="712020:a5eed99e-2cbf-41f7-8b35-0a95f42b8f8b"
+              ;;
+            "")
+              echo "GitHub 담당자가 지정되지 않았습니다."
+              ;;
+            *)
+              echo "Jira 계정 매핑이 없는 GitHub 담당자입니다: $GITHUB_ASSIGNEE"
+              ;;
+          esac
+
+          echo "GitHub assignee: ${GITHUB_ASSIGNEE:-미지정}"
+
+          if [ -n "$JIRA_ACCOUNT_ID" ]; then
+            echo "Jira 담당자 매핑 완료"
+          else
+            echo "Jira 이슈를 담당자 없이 생성합니다."
+          fi
+
+          echo "jiraAccountId=$JIRA_ACCOUNT_ID" >> "$GITHUB_OUTPUT"
+
       - name: Check parsed values
         env:
           PARENT_KEY: ${{ steps.parser.outputs.issueparser_parentKey }}
@@ -61,6 +106,7 @@ jobs:
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
           JIRA_TYPE: ${{ steps.issue_type.outputs.jiraType }}
+          JIRA_ACCOUNT_ID: ${{ steps.assignee.outputs.jiraAccountId }}
           PARENT_KEY: ${{ steps.parser.outputs.issueparser_parentKey }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}
@@ -77,6 +123,7 @@ jobs:
             --arg summary "$ISSUE_TITLE" \
             --arg description "$DESCRIPTION" \
             --arg parentKey "$PARENT_KEY" \
+            --arg assigneeId "$JIRA_ACCOUNT_ID" \
             '{
               fields: {
                 project: {
@@ -105,7 +152,17 @@ jobs:
                   key: $parentKey
                 }
               }
-            }')
+            }
+            | if $assigneeId != "" then
+                .fields.assignee = {
+                  id: $assigneeId
+                }
+              else
+                .
+              end')
+
+          echo "Jira request payload:"
+          echo "$PAYLOAD" | jq .
 
           HTTP_STATUS=$(curl -sS \
             -o response.json \

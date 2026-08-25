@@ -1,0 +1,69 @@
+package com.talented.buttie.simulation.service;
+
+import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.simulation.domain.FinancialSnapshotVO;
+import com.talented.buttie.simulation.domain.MonthlyProjectionVO;
+import com.talented.buttie.simulation.domain.SimulationVO;
+import com.talented.buttie.simulation.dto.request.CreateSimulationRequest;
+import com.talented.buttie.simulation.exception.SimulationErrorCode;
+import com.talented.buttie.simulation.mapper.MonthlyProjectionMapper;
+import com.talented.buttie.simulation.mapper.SimulationMapper;
+import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
+import java.math.BigDecimal;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class SimulationCreateService {
+
+    private final FinancialSnapshotCreateService financialSnapshotCreateService;
+    private final SimulationMapper simulationMapper;
+    private final MonthlyProjectionMapper monthlyProjectionMapper;
+    private final ProjectionEngine projectionEngine;
+    private final EmploymentPreparationMapper employmentPreparationMapper;
+
+    // 시뮬레이션 생성
+    @Transactional
+    public SimulationVO createSimulation(Long userId, CreateSimulationRequest request) {
+        SimulationVO activeSimulation = simulationMapper.findActiveByUserId(userId);
+
+        if (activeSimulation != null) {
+            throw ApplicationException.from(SimulationErrorCode.ALREADY_NOT_CONFIRMED_SIMULATION_EXISTS);
+        }
+
+        SimulationVO confirmedSimulation = simulationMapper.findLatestConfirmedByUserId(userId);
+
+        if (confirmedSimulation != null) {
+            throw ApplicationException.from(SimulationErrorCode.ALREADY_CONFIRMED_SIMULATION_EXISTS);
+        }
+
+        FinancialSnapshotVO snapshot = financialSnapshotCreateService.createSnapshot(userId);
+
+        SimulationVO simulation = SimulationVO.createCurrentSimulation(userId, request, snapshot);
+        simulationMapper.save(simulation);
+
+        Integer livingThreshold = employmentPreparationMapper.getLivingThresholdByUserId(userId);
+
+        List<MonthlyProjectionVO> monthlyProjections = projectionEngine.createInitialProjections(
+            simulation.getSimulationId(), simulation.getSimulationStartDate(),
+            simulation.getSimulationDueDate(), valueOf(snapshot.getLiquidAssets()),
+            intValueOf(snapshot.getAvgMonthlyIncome()), intValueOf(snapshot.getAvgMonthlyExpense()), valueOf(livingThreshold)
+        );
+        monthlyProjectionMapper.saveAll(monthlyProjections);
+        simulation.setMonthlyProjections(monthlyProjections);
+
+        return simulation;
+    }
+
+    private int valueOf(Integer value) {
+        return value == null ? 0 : value;
+    }
+
+    private int intValueOf(BigDecimal value) {
+        return value == null ? 0 : value.intValue();
+    }
+
+}

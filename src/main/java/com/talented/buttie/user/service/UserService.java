@@ -1,9 +1,123 @@
 package com.talented.buttie.user.service;
 
+import com.talented.buttie.common.exception.ApplicationException;
+import com.talented.buttie.user.domain.EmploymentPreparationVO;
+import com.talented.buttie.user.domain.MyProfileSummaryVO;
+import com.talented.buttie.user.domain.UserProfileVO;
+import com.talented.buttie.user.domain.UserVO;
+import com.talented.buttie.user.dto.request.user.ModifyUserProfileRequest;
+import com.talented.buttie.user.dto.request.user.UpdateEmploymentPreparationRequest;
+import com.talented.buttie.user.dto.request.user.WithdrawUserRequest;
+import com.talented.buttie.user.exception.UserErrorCode;
+import com.talented.buttie.user.mapper.EmploymentPreparationMapper;
+import com.talented.buttie.user.mapper.UserMapper;
+import com.talented.buttie.user.service.auth.AuthTokenService;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final EmploymentPreparationMapper employmentPreparationMapper;
+    private final AuthTokenService authTokenService;
+
+    public UserProfileVO getUserProfile(Long userId) {
+        UserProfileVO userProfile = userMapper.selectUserProfile(userId);
+
+        if (userProfile == null) {
+            throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
+        }
+
+        return userProfile;
+    }
+
+    public MyProfileSummaryVO getMyProfileSummary(Long userId) {
+        MyProfileSummaryVO myProfileSummary = userMapper.selectMyProfileSummary(userId);
+
+        if (myProfileSummary == null) {
+            throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
+        }
+
+        return myProfileSummary;
+    }
+
+    public Long modifyEmploymentPreparation(Long userId, UpdateEmploymentPreparationRequest request) {
+        EmploymentPreparationVO employmentPreparation =
+            EmploymentPreparationVO.createEmploymentPreparation(userId, request);
+
+        int updated = employmentPreparationMapper.updateEmploymentPreparation(employmentPreparation);
+        if (updated == 0) {
+            throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_NOT_FOUND);
+        }
+        return userId;
+    }
+
+    public EmploymentPreparationVO getEmploymentPreparation(Long userId) {
+        EmploymentPreparationVO employmentPreparation =
+            employmentPreparationMapper.selectEmploymentPreparation(userId);
+
+        if (employmentPreparation == null) {
+            throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_NOT_FOUND);
+        }
+
+        return employmentPreparation;
+    }
+
+    @Transactional
+    public Long withdrawUser(Long userId, WithdrawUserRequest request) {
+        String passwordHash = userMapper.getPasswordByUserId(userId);
+
+        if (passwordHash == null || passwordHash.isBlank()) {
+            throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
+        }
+
+        if (!passwordEncoder.matches(request.password(), passwordHash)) {
+            throw ApplicationException.from(UserErrorCode.PASSWORD_MISMATCH);
+        }
+
+        String withdrawalIdentifier = UUID.randomUUID().toString().replace("-", "");
+        String withdrawnPasswordHash = passwordEncoder.encode(UUID.randomUUID().toString());
+        UserVO withdrawnUser = UserVO.createWithdrawnUser(
+            userId,
+            withdrawalIdentifier,
+            withdrawnPasswordHash
+        );
+        userMapper.updateWithdrawnUser(withdrawnUser);
+        authTokenService.expirationToken(userId);
+
+        return userId;
+    }
+
+    public Long modifyUserProfile(Long userId, ModifyUserProfileRequest request) {
+        if (userMapper.countByNickname(request.nickname()) > 0) {
+            throw ApplicationException.from(UserErrorCode.DUPLICATE_NICKNAME);
+        }
+
+        UserVO user = UserVO.createModifiedUser(userId, request.nickname());
+        int updatedUserId = userMapper.updateUser(user);
+
+        if (updatedUserId == 0) {
+            throw ApplicationException.from(UserErrorCode.USER_NOT_FOUND);
+        }
+
+        return userId;
+    }
+
+//    public Long createEmploymentPreparation(Long userId, CreateEmploymentPreparationRequest request) {
+//
+//        EmploymentPreparationVO employmentPreparation =
+//            EmploymentPreparationVO.createEmploymentPreparation(userId, request);
+//
+//        int inserted = employmentPreparationMapper.createEmploymentPreparation(employmentPreparation);
+//        if (inserted == 0) {
+//            throw ApplicationException.from(UserErrorCode.EMPLOYMENT_PREPARATION_CREATE_FAILED);
+//        }
+//        return userId;
+//    }
 }

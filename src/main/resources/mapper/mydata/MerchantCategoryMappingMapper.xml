@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.talented.buttie.mydata.mapper.MerchantCategoryMappingMapper">
+
+  <select id="findActiveExpenseCategory"
+          resultType="com.talented.buttie.ledger.domain.ExpenseCategory">
+    SELECT EXPENSE_CATEGORY
+    FROM `MERCHANT_CATEGORY_MAPPING`
+    WHERE MAPPING_TYPE = #{mappingType}
+      AND MAPPING_VALUE = #{mappingValue}
+      AND IS_ACTIVE = TRUE
+    LIMIT 1
+  </select>
+
+</mapper>
