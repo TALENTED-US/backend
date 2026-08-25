@@ -1,4 +1,4 @@
-package com.talented.buttie.snapshot.service;
+package com.talented.buttie.simulation.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -69,7 +69,7 @@ class FinancialSnapshotCreateServiceTest {
     }
 
     @Test
-    @DisplayName("유동자산 계좌만 합산한다.")
+    @DisplayName("?좊룞?먯궛 怨꾩쥖留??⑹궛?쒕떎.")
     void liquidAssetsSum() {
 
         List<AccountVO> accounts = List.of(
@@ -86,7 +86,7 @@ class FinancialSnapshotCreateServiceTest {
                 .balance(300_000)
                 .build(),
             AccountVO.builder()
-                .accountType(AccountType.LOAN) // 비유동자산은 제외 확인
+                .accountType(AccountType.LOAN) // 鍮꾩쑀?숈옄?곗? ?쒖쇅 ?뺤씤
                 .balance(999_999)
                 .build()
         );
@@ -109,7 +109,7 @@ class FinancialSnapshotCreateServiceTest {
     }
 
     @Test
-    @DisplayName("최근 3개월 거래 집계로 평균 수입/지출을 계산한다.")
+    @DisplayName("理쒓렐 3媛쒖썡 嫄곕옒 吏묎퀎濡??됯퇏 ?섏엯/吏異쒖쓣 怨꾩궛?쒕떎.")
     void recentThreeMonthsAggregate() {
 
         // given
@@ -124,12 +124,12 @@ class FinancialSnapshotCreateServiceTest {
 
         SnapshotTransactionAggregateResponse aggregate =
             new SnapshotTransactionAggregateResponse(
-                BigDecimal.valueOf(weekDays * 10_000L), // 평일 수입 총합
-                BigDecimal.valueOf(weekDays * 20_000L), // 평일 지출 총합
-                BigDecimal.valueOf(weekendDays * 5_000L), // 주말 수입 총합
-                BigDecimal.valueOf(weekendDays * 30_000L), // 주말 지출 총합
-                BigDecimal.valueOf(900_000), // 최근 3개월 수입 총합
-                BigDecimal.valueOf(1_200_000) // 최근 3개월 지출 총합
+                BigDecimal.valueOf(weekDays * 10_000L), // ?됱씪 ?섏엯 珥앺빀
+                BigDecimal.valueOf(weekDays * 20_000L), // ?됱씪 吏異?珥앺빀
+                BigDecimal.valueOf(weekendDays * 5_000L), // 二쇰쭚 ?섏엯 珥앺빀
+                BigDecimal.valueOf(weekendDays * 30_000L), // 二쇰쭚 吏異?珥앺빀
+                BigDecimal.valueOf(900_000), // 理쒓렐 3媛쒖썡 ?섏엯 珥앺빀
+                BigDecimal.valueOf(1_200_000) // 理쒓렐 3媛쒖썡 吏異?珥앺빀
             );
 
         given(transactionMapper.aggregateSnapshotTransactions(
@@ -151,7 +151,7 @@ class FinancialSnapshotCreateServiceTest {
     }
 
     @Test
-    @DisplayName("월 순소진이 0 이하이면 버티는 기간은 null이고 안정상태이다.")
+    @DisplayName("???쒖냼吏꾩씠 0 ?댄븯?대㈃ 踰꾪떚??湲곌컙? null?닿퀬 ?덉젙?곹깭?대떎.")
     void surplusIsStable() {
         // given
         given(accountMapper.findActiveByUserId(userId))
@@ -179,7 +179,7 @@ class FinancialSnapshotCreateServiceTest {
     }
 
     @Test
-    @DisplayName("버티는 기간은 전체 유동자산을 월 순소진으로 나누어 계산한다.")
+    @DisplayName("踰꾪떚??湲곌컙? ?꾩껜 ?좊룞?먯궛?????쒖냼吏꾩쑝濡??섎늻??怨꾩궛?쒕떎.")
     void calculatePrepPossibleMonths() {
         // given
         given(accountMapper.findActiveByUserId(userId))
@@ -217,61 +217,61 @@ class FinancialSnapshotCreateServiceTest {
     }
 
     @Test
-    @DisplayName("목표취업일까지 10일 남고 생존일수가 24일이면 안정이다.")
+    @DisplayName("紐⑺몴痍⑥뾽?쇨퉴吏 10???④퀬 ?앹〈?쇱닔媛 24?쇱씠硫??덉젙?대떎.")
     void riskLevelD10Stable() {
         assertRiskLevel(10, 24, RiskLevel.STABLE);
     }
 
     @Test
-    @DisplayName("목표취업일까지 10일 남고 생존일수가 10일이면 주의이다.")
+    @DisplayName("紐⑺몴痍⑥뾽?쇨퉴吏 10???④퀬 ?앹〈?쇱닔媛 10?쇱씠硫?二쇱쓽?대떎.")
     void riskLevelD10Caution() {
         assertRiskLevel(10, 10, RiskLevel.CAUTION);
     }
 
     @Test
-    @DisplayName("목표취업일까지 10일 남고 생존일수가 9일이면 위험이다.")
+    @DisplayName("紐⑺몴痍⑥뾽?쇨퉴吏 10???④퀬 ?앹〈?쇱닔媛 9?쇱씠硫??꾪뿕?대떎.")
     void riskLevelD10Danger() {
         assertRiskLevel(10, 9, RiskLevel.DANGER);
     }
 
     @Test
-    @DisplayName("목표취업일까지 90일 남고 생존일수가 108일이면 안정이다.")
+    @DisplayName("紐⑺몴痍⑥뾽?쇨퉴吏 90???④퀬 ?앹〈?쇱닔媛 108?쇱씠硫??덉젙?대떎.")
     void riskLevelD90Stable() {
         assertRiskLevel(90, 108, RiskLevel.STABLE);
     }
 
     @Test
-    @DisplayName("목표취업일까지 90일 남고 생존일수가 90일이면 주의이다.")
+    @DisplayName("紐⑺몴痍⑥뾽?쇨퉴吏 90???④퀬 ?앹〈?쇱닔媛 90?쇱씠硫?二쇱쓽?대떎.")
     void riskLevelD90Caution() {
         assertRiskLevel(90, 90, RiskLevel.CAUTION);
     }
 
     @Test
-    @DisplayName("목표취업일까지 90일 남고 생존일수가 89일이면 위험이다.")
+    @DisplayName("紐⑺몴痍⑥뾽?쇨퉴吏 90???④퀬 ?앹〈?쇱닔媛 89?쇱씠硫??꾪뿕?대떎.")
     void riskLevelD90Danger() {
         assertRiskLevel(90, 89, RiskLevel.DANGER);
     }
 
     @Test
-    @DisplayName("목표취업일까지 365일 남고 생존일수가 425일이면 안정이다.")
+    @DisplayName("紐⑺몴痍⑥뾽?쇨퉴吏 365???④퀬 ?앹〈?쇱닔媛 425?쇱씠硫??덉젙?대떎.")
     void riskLevelD365Stable() {
         assertRiskLevel(365, 425, RiskLevel.STABLE);
     }
 
     @Test
-    @DisplayName("목표취업일까지 365일 남고 생존일수가 365일이면 주의이다.")
+    @DisplayName("紐⑺몴痍⑥뾽?쇨퉴吏 365???④퀬 ?앹〈?쇱닔媛 365?쇱씠硫?二쇱쓽?대떎.")
     void riskLevelD365Caution() {
         assertRiskLevel(365, 365, RiskLevel.CAUTION);
     }
 
     @Test
-    @DisplayName("목표취업일까지 365일 남고 생존일수가 364일이면 위험이다.")
+    @DisplayName("紐⑺몴痍⑥뾽?쇨퉴吏 365???④퀬 ?앹〈?쇱닔媛 364?쇱씠硫??꾪뿕?대떎.")
     void riskLevelD365Danger() {
         assertRiskLevel(365, 364, RiskLevel.DANGER);
     }
 
     @Test
-    @DisplayName("거래와 계좌가 없어도 0 기준값으로 스냅샷을 생성한다.")
+    @DisplayName("嫄곕옒? 怨꾩쥖媛 ?놁뼱??0 湲곗?媛믪쑝濡??ㅻ깄?룹쓣 ?앹꽦?쒕떎.")
     void createSnapshotWithoutAccountAndTransaction() {
         // given
         given(accountMapper.findActiveByUserId(userId))
@@ -412,3 +412,4 @@ class FinancialSnapshotCreateServiceTest {
     }
 
 }
+

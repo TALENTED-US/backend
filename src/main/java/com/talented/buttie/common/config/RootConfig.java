@@ -30,8 +30,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
@@ -49,7 +47,6 @@ import org.springframework.web.client.RestTemplate;
     "com.talented.buttie.dashboard.service",
     "com.talented.buttie.quest.service",
     "com.talented.buttie.catalog.service",
-    "com.talented.buttie.catalog.elasticsearch",
     "com.talented.buttie.catalog.external",
     "com.talented.buttie.notification.service",
     "com.talented.buttie.common.security",
